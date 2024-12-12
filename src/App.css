@@ -11,3 +11,6 @@
 .footer-container{
   grid-column: 2;
 }
+.login-container{
+  grid-column: 2;
+}

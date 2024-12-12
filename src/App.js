@@ -1,9 +1,10 @@
 import './App.css';
 import React from 'react';
-import Navbar from './component/navbar/myNavbar';
-import Slidebar from './component/center/slidebar/Slidebar';
-import Content from './component/center/content/Content';
-import Footer from './component/footer/myFooter';
+import Navbar from './component/Navbar/myNavbar';
+import Slidebar from './component/center/Slidebar/Slidebar';
+import Content from './component/center/Content/Content';
+import Footer from './component/Footer/myFooter';
+import AuthForm from './component/Auth/AuthForm';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Slidebar />
       <Content />
       <Footer />
+      <AuthForm />
       </div>
     </div>
   );
