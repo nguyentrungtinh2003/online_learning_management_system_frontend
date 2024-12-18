@@ -1,0 +1,12 @@
+#active{
+    box-shadow: -6px -6px 10px #f9f9f9, 6px 6px 10px rgb(103, 103, 109);
+    background-color: #67e8f9 ;
+    color: rgb(30, 15, 15);
+}
+#toggle-form{
+    transition: all 1s cubic-bezier(0.7, -.5, 0.3, 1.8);
+    transform-style: preserve-3d;
+}
+.animate{
+    transform: rotateY(180deg);
+}

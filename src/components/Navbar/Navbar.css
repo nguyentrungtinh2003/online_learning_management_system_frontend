@@ -1,0 +1,21 @@
+#logo-name {
+    stroke: #fff;
+    stroke-width: 0.3;
+    stroke-dasharray: 50;
+    stroke-dashoffset: 50;
+    animation: textAnimation 3s ease-in-out 1 forwards;
+  }
+  
+  @keyframes textAnimation {
+    0%{
+      stroke-dashoffset: 100;
+    }
+    80%{
+      fill: transparent;
+    }
+    100%{
+      stroke-dashoffset: 0;
+      stroke-width: none;
+      stroke: none;
+    }
+  }
