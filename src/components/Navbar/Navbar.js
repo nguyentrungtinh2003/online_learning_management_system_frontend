@@ -1,5 +1,6 @@
 import React from "react";
 import "./Navbar.css";
+import { Link } from 'react-router-dom'
 
 export default function Navbar() {
   return ( 
@@ -28,7 +29,9 @@ export default function Navbar() {
           Media
         </li>
       </ul>
-      <button className="rounded-2xl font-bold text-lg text-gray-600 bg-cyan-100 hover:bg-cyan-300 font-semibold h-auto m-2 px-10 border-2 border-cyan-200 w-fit col-start-3">Start Leaning</button>
+      <button className="hover:shadow-custom rounded-2xl font-bold text-lg text-gray-600 hover:bg-cyan-300 font-semibold h-auto m-2 px-10 border-2 w-fit col-start-3">
+        <Link to={"/login"}>Start Leaning</Link>
+        </button>
     </div>
   );
 }

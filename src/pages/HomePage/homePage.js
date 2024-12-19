@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import "./HomePage.css";
 import Rating from "@mui/material/Rating";
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CourseLanding from "../../components/CourseLanding/CourseLanding";
+import Navbar from "../../components/Navbar/Navbar";
+import { Link } from "react-router-dom";
 
 export default function homePage() {
-
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-
     const fetchPosts = async () => {
       const response = await axios.get(
         "https://jsonplaceholder.typicode.com/posts"
@@ -22,6 +22,7 @@ export default function homePage() {
 
   return (
     <>
+      <Navbar />
       <div className="grid grid-cols-2 ml-20 mt-20 text-gray-600 font-sans h-[800px]">
         <div className="">
           <div className="cursor-default">
@@ -85,9 +86,11 @@ export default function homePage() {
               </div>
             </div>
           </div>
-          <button className="animate-pulse border-2 rounded-xl border-gray-400 mt-10 px-20 py-4 flex text-2xl font-bold hover:bg-cyan-300">
-            I'm ready - Start Now
-            <img src="sword.svg" className="h-8 ml-4" />
+          <button className="hover:shadow-custom animate-pulse border-2 rounded-xl border-gray-300 mt-10 px-20 py-4 text-2xl font-bold hover:bg-cyan-300">
+            <Link className="flex" to={"/login"}>
+              I'm ready - Start Now
+              <img src="sword.svg" className="h-8 ml-4" />
+            </Link>
           </button>
         </div>
         <div id="right-content" className="min-h-full pb-20 m-0">
