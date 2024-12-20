@@ -1,12 +1,11 @@
 import React from "react";
-import "./Navbar.css";
 import { Link } from 'react-router-dom'
 
 export default function Navbar() {
   return ( 
-    <div className="fix-top w-full border-b-2 border-gray-300 h-16 flex justify-between font-sans">
+    <div className="border-b-2 border-gray-300 h-16 flex justify-between font-sans">
       <div className="flex w-auto min-h-full">
-        <img className="h-auto w-auto p-2 ml-4" src="logoCode.jpg" alt="" />
+        <img className="h-auto w-auto p-2 ml-4" src="logoCode.png" alt="" />
         <div id="logoName" className="">
           <p className="text-4xl leading-none m-0 pt-2 text-cyan-400">Code</p>
           <p className="text-2xl leading-[0] m-0 p-0">Arena</p>
