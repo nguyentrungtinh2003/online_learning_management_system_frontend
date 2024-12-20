@@ -4,7 +4,6 @@ import Navbar from "./components/Navbar/Navbar";
 import HomePage from "./pages/HomePage/homePage";
 import AuthForm from "./pages/Auth/AuthForm";
 import { Routes, Route } from "react-router-dom";
-
 function App() {
   return (
     <>

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react"
 export default function CourseLanding() {
   const divs = [
     <div
-      className="text-2xl bg-cyan-200 h-[400px] mt-20 p-10 rounded-3xl"
+      className="box-border text-2xl bg-cyan-200 h-[400px] w-full mt-20 p-10 rounded-3xl"
       key="1"
     >
       <h1>Code Arena on FaceBook</h1>
@@ -76,8 +76,8 @@ export default function CourseLanding() {
 
   return (
     <div className="h-[500px] m-10 relative">
-      <button className="p-4 mr-2 bg-cyan-300 absolute bottom-0 left-0 z-10" onClick={handlePrevClick}>Prev</button>
-      <button className="p-4 bg-cyan-300 absolute bottom-0 left-20 z-1" onClick={handleNextClick}>Next</button>
+      <button className="p-4 mr-2 bg-cyan-300 absolute mt-[180px]" onClick={handlePrevClick}></button>
+      <button className="p-4 bg-cyan-300 absolute right-0 mt-[180px]" onClick={handleNextClick}></button>
       {divs[currentDivIndex]}
       <div className="flex m-2">
       <button className="bg-gray-300 rounded-2xl h-2 w-10 mr-2"
