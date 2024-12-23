@@ -81,7 +81,20 @@ export default function Navbar() {
                 alt="User"
                 className="w-8 h-8 rounded-full mr-2"
               />
-              <span className="text-gray-600">Trung Tinh</span>
+              <span className="text-gray-600">
+                {localStorage.getItem("token")
+                  ? localStorage.getItem("username")
+                  : ""}
+              </span>
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("username");
+                  window.location.reload();
+                }}
+              >
+                Logout
+              </button>
             </div>
 
             {/* Button */}
