@@ -23,9 +23,15 @@ export default function AuthForm() {
     axios.post(`${URL}/api/auth/login`, fromData).then((response) => {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", response.data.data.username);
+      localStorage.setItem("img", response.data.data.img);
       console.log(response.data.data);
       window.location.replace("/dashboard");
     });
+  };
+
+  //--- login google ----
+  const handleGoogleLogin = () => {
+    window.location.href = `${URL}/oauth2/authorization/google`;
   };
 
   const handelRegister = () => {
@@ -111,7 +117,9 @@ export default function AuthForm() {
                 src="google-color.svg"
                 alt="Google logo"
               />
-              <p className="ml-4">Login with Google</p>
+              <p className="ml-4" onClick={() => handleGoogleLogin()}>
+                Login with Google
+              </p>
             </button>
             <p className="text-rose-600 text-sm text-center mt-4">
               You don't have an account?{" "}
