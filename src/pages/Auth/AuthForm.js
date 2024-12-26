@@ -3,6 +3,8 @@ import { FaSignInAlt, FaUserPlus } from "react-icons/fa"; // Import Font Awesome
 import "./AuthForm.css";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import SendOtpButton from "../../components/Button/SendOtpButton";
 
 export default function AuthForm() {
   const [fromData, setFromData] = useState({
@@ -41,6 +43,8 @@ export default function AuthForm() {
     });
   };
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isCreatePassword, setIsCreatePassword] = useState(false);
   const formContainerRef = useRef(null);
 
   useEffect(() => {
@@ -58,30 +62,120 @@ export default function AuthForm() {
         className="h-auto shadow-lg rounded-lg w-full sm:w-96 md:w-1/3 lg:w-1/4 p-8 bg-white"
         ref={formContainerRef}
       >
-        <div className="flex justify-center items-center font-bold text-2xl text-gray-700 mb-10">
-          <button
-            className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
-              isLogin
-                ? "bg-cyan-500 text-white shadow-lg"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => setIsLogin(true)}
-          >
-            <FaSignInAlt size={24} /> {/* Sign In Icon */}
-          </button>
-          <button
-            className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
-              !isLogin
-                ? "bg-cyan-500 text-white shadow-lg"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => setIsLogin(false)}
-          >
-            <FaUserPlus size={24} /> {/* Sign Up Icon */}
-          </button>
-        </div>
+        {isForgotPassword || isCreatePassword ? (
+          <div className="flex items-center mb-2">
+            <button
+              onClick={() => {
+                setIsLogin(true);
+                setIsCreatePassword(false);
+                setIsForgotPassword(false);
+              }}
+            >
+              <ArrowBackIosNewIcon fontSize="small" className="mr-4 mb-2" />
+            </button>
+            <h1 className="text-center text-2xl font-semibold text-gray-500 mb-2">
+              Forgot Password
+            </h1>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center font-bold text-2xl text-gray-700 mb-10">
+            <button
+              className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
+                isLogin
+                  ? "bg-cyan-500 text-white shadow-lg"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+              onClick={() => {
+                setIsLogin(true);
+                setIsForgotPassword(false);
+              }}
+            >
+              <FaSignInAlt size={24} /> {/* Sign In Icon */}
+            </button>
+            <button
+              className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
+                !isLogin
+                  ? "bg-cyan-500 text-white shadow-lg"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+              onClick={() => {
+                setIsLogin(false);
+                setIsForgotPassword(false);
+              }}
+            >
+              <FaUserPlus size={24} /> {/* Sign Up Icon */}
+            </button>
+          </div>
+        )}
 
-        {isLogin ? (
+        {isForgotPassword ? (
+          <div className="grid space-y-4">
+            <div className="flex">
+              <input
+                className="border-2 w-full h-12 pl-4 rounded-xl text-lg"
+                type="email"
+                placeholder="Enter your email"
+                id="email"
+                name="email"
+                value={fromData.email}
+                onChange={handelInputChange}
+              />
+              <SendOtpButton/>
+            </div>
+            <input
+              className="border-2 h-12 pl-4 rounded-xl text-lg"
+              type="number"
+              placeholder="Enter your OTP"
+              id="otpcode"
+              name="otpcode"
+              onChange={handelInputChange}
+            />
+            <button
+              className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
+              onClick={() => {
+                setIsForgotPassword(false);
+                setIsCreatePassword(true);
+              }}
+            >
+              Verify Code
+            </button>
+            <p className="text-rose-600 text-sm text-center mt-4">
+              Back to Sign In?
+              <a
+                href="#"
+                className="cursor-pointer ml-1"
+                onClick={() => setIsForgotPassword(false)}
+              >
+                Click here
+              </a>
+            </p>
+          </div>
+        ) : isCreatePassword ? (
+          <div className="grid space-y-4">
+            <input
+              className="border-2 h-12 pl-4 rounded-xl text-lg"
+              type="password"
+              placeholder="Password"
+              id="password"
+              name="password"
+              value={fromData.password}
+              onChange={handelInputChange}
+            />
+            <input
+              className="border-2 h-12 pl-4 rounded-xl text-lg"
+              type="password"
+              placeholder="Confirm Password"
+            />
+            <button
+              onClick={() => {
+                handelRegister();
+              }}
+              className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
+            >
+              Create New Password
+            </button>
+          </div>
+        ) : isLogin ? (
           <div className="grid space-y-4">
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
@@ -101,7 +195,13 @@ export default function AuthForm() {
               value={fromData.password}
               onChange={handelInputChange}
             />
-            <a className="text-rose-600 text-sm text-center block" href="#">
+            <a
+              className="text-rose-600 text-sm text-center block"
+              href="#"
+              onClick={() => {
+                setIsForgotPassword(true);
+              }}
+            >
               Forget your Password? Click here!
             </a>
             <button
