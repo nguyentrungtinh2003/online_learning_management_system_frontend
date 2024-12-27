@@ -1,8 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaUser, FaCoins } from "react-icons/fa";
+import URL from "../../config/URLconfig";
+import axios from "axios";
 
 export default function Navbar() {
+  useEffect(() => {
+    axios
+      .get(`${URL}/api/auth/user`, { withCredentials: true })
+      .then((response) => {
+        console.log(response.data.data);
+        const { email, name, picture } = response.data.data;
+        localStorage.setItem("email", email);
+        localStorage.setItem("username", name);
+        localStorage.setItem("img", picture);
+        console.log(localStorage.getItem("img"));
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleGoogleLogout = async () => {
+    try {
+      await axios.get(`${URL}/api/auth/logout/google`, {
+        withCredentials: true,
+      }); // Gửi yêu cầu logout Google
+      localStorage.removeItem("username");
+      localStorage.removeItem("token");
+      localStorage.removeItem("img");
+      localStorage.removeItem("email");
+      localStorage.removeItem("img");
+      window.location.href = "/"; // Chuyển về trang login hoặc home
+    } catch (error) {
+      console.error("Google Logout failed:", error);
+    }
+  };
+
   return (
     <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,25 +108,37 @@ export default function Navbar() {
 
             {/* User */}
             <div className="flex items-center cursor-pointer hover:text-cyan-500">
-              <img
-                src="https://www.pngkey.com/png/full/72-729716_user-avatar-png-graphic-free-download-icon.png"
-                alt="User"
-                className="w-8 h-8 rounded-full mr-2"
-              />
-              <span className="text-gray-600">
-                {localStorage.getItem("token")
-                  ? localStorage.getItem("username")
-                  : ""}
-              </span>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("username");
-                  window.location.reload();
-                }}
-              >
-                Logout
-              </button>
+              {localStorage.getItem("username") ? (
+                <>
+                  <img
+                    src={
+                      localStorage.getItem("token")
+                        ? localStorage.getItem("img")
+                        : "http://pngimg.com/uploads/google/google_PNG19635.png"
+                    }
+                    alt="User"
+                    className="w-8 h-8 rounded-full mr-2"
+                    style={{
+                      width: "50px", // Cố gắng chỉ định kích thước rõ ràng
+                      height: "50px",
+                      borderRadius: "50%",
+                      objectFit: "cover", // Đảm bảo ảnh không bị co giãn sai tỷ lệ
+                    }}
+                  />
+                  <span className="text-gray-600">
+                    {localStorage.getItem("username")}
+                  </span>
+                  <button
+                    onClick={() => {
+                      handleGoogleLogout();
+                    }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                " "
+              )}
             </div>
 
             {/* Button */}
