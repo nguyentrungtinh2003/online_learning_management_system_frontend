@@ -1,36 +1,55 @@
 import Checkbox from "@mui/material/Checkbox";
-import React from "react";
+import React, { useState } from "react";
 import ReplayIcon from "@mui/icons-material/Replay";
 import AddIcon from "@mui/icons-material/Add";
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from '@mui/icons-material/Favorite';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Favorite from "@mui/icons-material/Favorite";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 export default function SendEmail() {
   return (
     <>
       <div className="flex justify-between border-b-2">
         <div className="flex items-center">
-          <Checkbox />
+          <div className="flex items-center border-2">
+            <Checkbox />
+            <details className="relative">
+              <summary></summary>
+              <ul className="absolute w-40 cursor-pointer bg-gray-50 z-50">
+                <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
+                  All email
+                </li>
+                <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
+                  Have not read
+                </li>
+                <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
+                  Have ever read
+                </li>
+              </ul>
+            </details>
+          </div>
+          <button className="hover:bg-blue-50 hover:rounded-2xl p-2">
+            <ReplayIcon fontSize="medium" />
+          </button>
           <details className="relative">
-            <summary></summary>
-            <ul className="absolute w-40 cursor-pointer bg-gray-50 z-50">
+            <summary className="flex cursor-poiner hover:bg-blue-50 p-2 rounded-2xl">
+              <MoreVertIcon />
+            </summary>
+            <ul className="absolute w-48 cursor-pointer bg-gray-50 z-50">
               <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
-                All email
+                Delete
               </li>
               <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
-                Have not read
+                Save
               </li>
               <li className="hover:shadow-xl hover:bg-gray-100 px-3 m-2">
-                Have ever read
+                Mark as had read
               </li>
             </ul>
           </details>
-          <button className="hover:bg-blue-50 hover:rounded-xl p-1">
-            <ReplayIcon fontSize="medium" />
-          </button>
         </div>
-        <button className="hover:bg-blue-50 text-gray-500 flex items-center border-1 rounded-2xl px-4 mb-2">
+        <button className="hover:bg-blue-50 text-gray-500 flex items-center border-1 rounded-2xl pr-4 mb-2">
           <AddIcon fontSize="large" />
           <p className="text-lg font-bold ml-2">New</p>
         </button>
@@ -41,7 +60,7 @@ export default function SendEmail() {
             <Checkbox />
           </button>
           <button>
-          <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
           </button>
           <p>Google Play</p>
         </div>
@@ -50,8 +69,8 @@ export default function SendEmail() {
         </div>
         <div className="relative place-content-center">
           <p>10:30</p>
-          <button className="absolute right-5 bottom-2 hover:bg-sky-100 hover:rounded-xl px-1">
-          <MoreVertIcon/>
+          <button className="absolute right-3 bottom-2 hover:bg-sky-100 hover:rounded-xl px-1">
+            <DeleteForeverIcon />
           </button>
         </div>
       </div>
@@ -61,7 +80,7 @@ export default function SendEmail() {
             <Checkbox />
           </button>
           <button>
-          <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
+            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} />
           </button>
           <p>Google Play</p>
         </div>
@@ -70,9 +89,11 @@ export default function SendEmail() {
         </div>
         <div className="relative place-content-center">
           <p>26/12/2024</p>
-          <button className="absolute right-5 bottom-2 hover:bg-sky-100 hover:rounded-xl px-1">
-          <MoreVertIcon/>
-          </button>
+          <div>
+            <button className="absolute right-3 bottom-2 hover:bg-sky-100 hover:rounded-xl px-1">
+              <DeleteForeverIcon />
+            </button>
+          </div>
         </div>
       </div>
     </>
