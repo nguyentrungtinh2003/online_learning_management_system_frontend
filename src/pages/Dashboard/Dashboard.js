@@ -1,9 +1,10 @@
 import React from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import OverviewCards from "./OverviewCards";
-import Charts from "./Charts";
-import DetailsTable from "./DetailsTable";
+import OverviewCards from "./OverViewPage/OverviewCards";
+import Charts from "./OverViewPage/Charts";
+import DetailsTable from "./OverViewPage/DetailsTable";
+import SendEmail from "./AdminPages/SendEmail";
 
 const Dashboard = () => {
   return (
@@ -12,9 +13,10 @@ const Dashboard = () => {
       <div className="flex-grow-1 mt-20">
         <Header />
         <div className="p-4">
-          <OverviewCards />
+          {/* <OverviewCards />
           <Charts />
-          <DetailsTable />
+          <DetailsTable /> */}
+          <SendEmail/>
         </div>
       </div>
     </div>

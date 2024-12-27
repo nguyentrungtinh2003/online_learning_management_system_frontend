@@ -22,15 +22,16 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              localStorage.getItem("token") ? (
-                <Dashboard />
-              ) : (
-                <>
-                  <h1 className="h-[100px] box-border 2xl:text-2xl mt-20">
-                    Không có quyền truy cập !
-                  </h1>
-                </>
-              )
+              // localStorage.getItem("token") ? (
+              //   <Dashboard />
+              // ) : (
+              //   <>
+              //     <h1 className="h-[100px] box-border 2xl:text-2xl mt-20">
+              //       Không có quyền truy cập !
+              //     </h1>
+              //   </>
+              // )
+              <Dashboard />
             }
           />
           <Route path="/all-user" element={<ManagementUser />} />

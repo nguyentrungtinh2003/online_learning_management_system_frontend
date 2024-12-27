@@ -7,7 +7,7 @@ export default function CourseLanding() {
     <div
       className="text-2xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 h-[400px] sm:h-[350px] md:h-[400px] w-full mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
-        backgroundImage: "url('https://wallpapercave.com/wp/wp10167060.jpg')",
+        backgroundImage: "linear-gradient(to right, #30cfd033, #33086733),url('https://wallpapercave.com/wp/wp10167060.jpg')",
       }}
       key="1"
     >
@@ -24,7 +24,7 @@ export default function CourseLanding() {
       className="text-2xl bg-gradient-to-l from-rose-700 via-red-500 to-yellow-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
         backgroundImage:
-          "url('https://www.newtechdojo.com/wp-content/uploads/2018/08/Data-Science.png')",
+          "linear-gradient(to right, #30cfd033, #33086733),url('https://www.newtechdojo.com/wp-content/uploads/2018/08/Data-Science.png')",
       }}
       key="2"
     >
@@ -40,7 +40,7 @@ export default function CourseLanding() {
     <div
       className="text-2xl bg-gradient-to-r from-rose-400 via-cyan-400 to-teal-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
-        backgroundImage: "url('https://i.imgur.com/lkanFrg.jpg')",
+        backgroundImage: "linear-gradient(to right, #30cfd033, #33086733),url('https://i.imgur.com/lkanFrg.jpg')",
       }}
       key="3"
     >
@@ -57,7 +57,7 @@ export default function CourseLanding() {
       className="text-2xl bg-gradient-to-l from-purple-400 via-blue-300 to-teal-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
         backgroundImage:
-          "url('https://www.mindinventory.com/blog/wp-content/uploads/2022/04/unity-3d-for-game-development-1024x647.webp')",
+          "linear-gradient(to right, #30cfd033, #33086733),url('https://www.mindinventory.com/blog/wp-content/uploads/2022/04/unity-3d-for-game-development-1024x647.webp')",
       }}
       key="4"
     >
@@ -73,7 +73,7 @@ export default function CourseLanding() {
       className="text-2xl bg-gradient-to-r from-purple-400 via-blue-400 to-pink-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
         backgroundImage:
-          "url('https://static.vecteezy.com/system/resources/previews/006/198/869/non_2x/internet-security-protection-from-hacker-attacking-cyber-attack-and-network-security-concept-free-photo.jpg')",
+          "linear-gradient(to right, #30cfd033, #33086733),url('https://static.vecteezy.com/system/resources/previews/006/198/869/non_2x/internet-security-protection-from-hacker-attacking-cyber-attack-and-network-security-concept-free-photo.jpg')",
       }}
       key="5"
     >

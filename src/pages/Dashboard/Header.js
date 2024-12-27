@@ -5,10 +5,10 @@ import { IoCalendarOutline } from "react-icons/io5"; // Biểu tượng lịch
 
 const Header = () => {
   return (
-    <div className="bg-white shadow-sm py-3">
+    <div className="bg-white shadow-sm items-center justify-center">
       <Container className="d-flex justify-content-between align-items-center">
         {/* Logo */}
-        <h4 className="text-primary fw-bold m-0">My Dashboard</h4>
+        <h4 className="text-primary fw-bold m-0">Admin Dashboard</h4>
 
         <div className="relative hidden lg:block">
           <input
@@ -20,8 +20,8 @@ const Header = () => {
         </div>
 
         {/* Nút ngày */}
-        <Button variant="outline-primary" className="d-flex align-items-center">
-          <IoCalendarOutline className="me-2" />
+        <Button variant="outline-primary" className="flex items-center mb-1">
+          <IoCalendarOutline className=""/>
           Apr 17, 2023
         </Button>
       </Container>

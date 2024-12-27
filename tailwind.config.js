@@ -3,6 +3,13 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
+      details: {
+        'no-marker': {
+          '::-webkit-details-marker': {
+            display: 'none',
+          },
+        },
+      },
       boxShadow: {
         'custom': '5px 5px 10px rgba(0, 0, 0, 0.2)',
         'custom-btn-off': '2px 2px 2px #f9f9f9, -2px -2px 2px rgb(103, 103, 109)',
