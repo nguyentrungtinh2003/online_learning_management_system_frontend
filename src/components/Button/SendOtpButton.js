@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 export default function SendOtpButton() {
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(60);
   const [isCounting, setIsCounting] = useState(false);
 
   useEffect(() => {
