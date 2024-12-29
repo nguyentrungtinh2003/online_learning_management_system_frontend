@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 export default function SendOtpButton() {
-  const [count, setCount] = useState(60);
+  const [count, setCount] = useState(10);
   const [isCounting, setIsCounting] = useState(false);
 
   useEffect(() => {
@@ -9,7 +9,14 @@ export default function SendOtpButton() {
 
     if (isCounting) {
       interval = setInterval(() => {
-        setCount((prevCount) => prevCount - 1);
+        setCount((prevCount) => {
+          if (prevCount > 0) {
+            return prevCount - 1;
+          } else {
+            setIsCounting(false); // Stop counting when count reaches 0
+            return 0; // Reset count to 0
+          }
+        });
       }, 1000);
     }
 
