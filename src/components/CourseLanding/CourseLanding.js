@@ -7,7 +7,8 @@ export default function CourseLanding() {
     <div
       className="text-2xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 h-[400px] sm:h-[350px] md:h-[400px] w-full mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
-        backgroundImage: "linear-gradient(to right, #30cfd033, #33086733),url('https://wallpapercave.com/wp/wp10167060.jpg')",
+        backgroundImage:
+          "linear-gradient(to right, #30cfd033, #33086733),url('https://wallpapercave.com/wp/wp10167060.jpg')",
       }}
       key="1"
     >
@@ -40,7 +41,8 @@ export default function CourseLanding() {
     <div
       className="text-2xl bg-gradient-to-r from-rose-400 via-cyan-400 to-teal-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       style={{
-        backgroundImage: "linear-gradient(to right, #30cfd033, #33086733),url('https://i.imgur.com/lkanFrg.jpg')",
+        backgroundImage:
+          "linear-gradient(to right, #30cfd033, #33086733),url('https://i.imgur.com/lkanFrg.jpg')",
       }}
       key="3"
     >
@@ -113,7 +115,7 @@ export default function CourseLanding() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentDivIndex((prevIndex) => (prevIndex + 1) % divs.length);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(intervalId);
   }, []);

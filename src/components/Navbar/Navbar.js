@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaSearch, FaUser, FaCoins } from "react-icons/fa";
+import { FaSearch, FaCoins } from "react-icons/fa";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 

@@ -23,7 +23,7 @@ export default function SendOtpButton() {
     <button
       className="ml-2 bg-cyan-500 text-white rounded-xl px-3 text-xs font-semibold hover:bg-cyan-400"
       disabled={isCounting && count > 0}
-      onClick={handleClick}
+      onClick={() => handleClick()}
     >
       {isCounting ? count : "Send OTP"}
     </button>

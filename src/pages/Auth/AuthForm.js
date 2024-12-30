@@ -13,12 +13,33 @@ export default function AuthForm() {
     email: "",
   });
 
+  const [emailOTP, setEmailOTP] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [resetPassword, setResetPassword] = useState({
+    email: emailOTP,
+    otp: "",
+    password: "",
+  });
+
+  const handelInputChangeResetPassword = (e) => {
+    const { name, value } = e.target;
+    setResetPassword({
+      ...resetPassword,
+      [name]: value,
+    });
+  };
+
   const handelInputChange = (e) => {
     const { name, value } = e.target;
     setFromData({
       ...fromData,
       [name]: value,
     });
+  };
+
+  const handelInputChangeEmailOTP = (e) => {
+    setEmailOTP(e.target.value);
   };
 
   const handelLogin = () => {
@@ -55,6 +76,59 @@ export default function AuthForm() {
       formContainer.classList.remove("animate");
     }, 1000); // Duration of animation
   }, [isLogin]);
+
+  // logic forgot password and reset password
+  const [count, setCount] = useState(60);
+  const [isCounting, setIsCounting] = useState(false);
+
+  useEffect(() => {
+    let intervalId;
+    if (isCounting) {
+      //--- func send OTP ---
+      handelSendOTP();
+      intervalId = setInterval(() => {
+        setCount((prevCount) => {
+          if (prevCount <= 1) {
+            clearInterval(intervalId);
+            setIsCounting(false);
+            setIsForgotPassword(false);
+            return 0;
+          }
+          return prevCount - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(intervalId); // Dọn dẹp interval khi component unmount
+  }, [isCounting]);
+
+  const handleClick = () => {
+    setCount(60);
+    setIsCounting(true);
+  };
+
+  //--------------------------//
+  const handelSendOTP = () => {
+    axios.post(`${URL}/api/auth/forgot-password`, emailOTP);
+    console
+      .log(emailOTP)
+      .then((response) => {
+        console.log("Send OTP success !", response);
+      })
+      .catch((error) => {
+        console.log("Error : ", error);
+      });
+  };
+  //--------------------------//
+  const handelResetPassword = () => {
+    axios
+      .post(`${URL}/api/auth/reset-password`, resetPassword)
+      .then((response) => {
+        console.log("Reset password success !", response);
+      })
+      .catch((error) => {
+        console.log("Error : ", error);
+      });
+  };
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
@@ -117,12 +191,18 @@ export default function AuthForm() {
                 placeholder="Enter your email"
                 id="email"
                 name="email"
-                value={fromData.email}
-                onChange={handelInputChange}
+                value={emailOTP}
+                onChange={handelInputChangeEmailOTP}
               />
-              <SendOtpButton/>
+              <button
+                className="ml-2 bg-cyan-500 text-white rounded-xl px-3 text-xs font-semibold hover:bg-cyan-400"
+                disabled={isCounting}
+                onClick={() => handleClick()}
+              >
+                {isCounting ? `${count}s` : "Send OTP"}
+              </button>
             </div>
-            <input
+            {/* <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
               type="number"
               placeholder="Enter your OTP"
@@ -138,7 +218,7 @@ export default function AuthForm() {
               }}
             >
               Verify Code
-            </button>
+            </button> */}
             <p className="text-rose-600 text-sm text-center mt-4">
               Back to Sign In?
               <a
@@ -155,21 +235,32 @@ export default function AuthForm() {
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
               type="password"
+              placeholder="OTP"
+              id="otp"
+              name="otp"
+              value={resetPassword.otp}
+              onChange={handelInputChangeResetPassword}
+            />
+            <input
+              className="border-2 h-12 pl-4 rounded-xl text-lg"
+              type="password"
               placeholder="Password"
               id="password"
               name="password"
-              value={fromData.password}
-              onChange={handelInputChange}
+              value={resetPassword.password}
+              onChange={handelInputChangeResetPassword}
             />
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
               type="password"
               placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+              }}
             />
             <button
-              onClick={() => {
-                handelRegister();
-              }}
+              onClick={() => handelResetPassword}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
               Create New Password
