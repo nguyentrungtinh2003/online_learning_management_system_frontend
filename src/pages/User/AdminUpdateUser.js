@@ -1,11 +1,127 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Button from "@mui/material/Button";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
+
+// Sample user data
+const users = [
+  {
+    id: 1,
+    username: "John Boa",
+    email: "john.doe@example.com",
+    phoneNumber: "+1234567890",
+    birthDay: "2000-01-01",
+    address: "123 Main St, Anytown, CA 12345",
+    img: "./google-color.svg", // Placeholder image
+  },
+  // You can add more user objects here
+];
+
+// const [users, setUsers] = useState([]);
+
+// // eslint-disable-next-line react-hooks/rules-of-hooks
+// useEffect(() => {
+//   axios.get(`${URL}/api/auth/all-user`).then((response) => {
+//     setUsers(response.data.data);
+//   });
+// });
 
 const AdminUpdateUser = () => {
-    return (
-        <>
-        <h1>Viết giao diện admin update user là admin có thể update tất cả thông tin của user luôn, còn file UpdateUser.js thì chỉ cho user cập nhật 1 số thông tin cơ bản của bản thân thôi.</h1>
-        </>
-    )
-}
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => setSelectedImage(e.target.result);
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="m-20 h-[700px] relative">
+      <button className="absolute top-0 right-0 bg-blue-500 hover:drop-shadow-xl text-white font-bold py-2 px-4 rounded">
+        SAVE
+      </button>
+      <div className="col-span-4 text-slate-500 grid grid-cols-3 place-items-center">
+        <div className="place-items-center p-40">
+          <img
+            id="input"
+            className="border-8 w-fit rounded-[50%] h-60 w-full mb-4 mt-10"
+            src={selectedImage || users[0].img} // Use first user's image
+          />
+          <Button
+            className="h-fit"
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            startIcon={<CloudUploadIcon />}
+          >
+            Change Your Image
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleImageChange}
+              multiple
+            />
+          </Button>
+        </div>
+        <div className="col-span-2 w-full">
+          <div className="">
+            <h1>User Account With Id Number: {users[0].id}</h1>
+            <TextField
+              className="mt-4 w-full"
+              required
+              id="outlined-required"
+              label="User Name"
+              defaultValue={users[0].username} // Access first user's data
+            />
+            <TextField
+              className="mt-4 w-full"
+              required
+              id="outlined-required"
+              label="Email"
+              defaultValue={users[0].email}
+            />
+            <TextField
+              className="mt-4 w-full"
+              required
+              id="outlined-required"
+              label="Phone Number"
+              defaultValue={users[0].phoneNumber}
+            />
+            <TextField
+              className="mt-4 w-full"
+              required
+              id="outlined-required"
+              label="Date Of Birth"
+              defaultValue={users[0].birthDay}
+              type="Date"
+            />
+            <TextField
+              className="mt-4 w-full"
+              required
+              id="outlined-required"
+              label="Address"
+              defaultValue={users[0].address}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default AdminUpdateUser;
