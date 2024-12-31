@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import axios from "axios";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -18,15 +17,27 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-const [users, setUsers] = useState([]);
+// Sample user data
+const users = [
+  {
+    username: "John Doe",
+    email: "john.doe@example.com",
+    phoneNumber: "+1234567890",
+    birthDay: "2000-01-01",
+    address: "123 Main St, Anytown, CA 12345",
+    img: "./google-ico.svg", // Placeholder image
+  },
+  // You can add more user objects here
+];
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-useEffect(() => {
-  axios.get(`${URL}/api/auth/all-user`).then((response) => {
-    setUsers(response.data.data);
-  });
-});
+// const [users, setUsers] = useState([]);
+
+// // eslint-disable-next-line react-hooks/rules-of-hooks
+// useEffect(() => {
+//   axios.get(`${URL}/api/auth/all-user`).then((response) => {
+//     setUsers(response.data.data);
+//   });
+// });
 
 const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -50,28 +61,28 @@ const Profile = () => {
               required
               id="outlined-required"
               label="User Name"
-              defaultValue={users.username}
+              defaultValue={users[0].username} // Access first user's data
             />
             <TextField
               className="mt-4 w-full"
               required
               id="outlined-required"
               label="Email"
-              defaultValue={users.email}
+              defaultValue={users[0].email}
             />
             <TextField
               className="mt-4 w-full"
               required
               id="outlined-required"
               label="Phone Number"
-              defaultValue={users.phoneNumber}
+              defaultValue={users[0].phoneNumber}
             />
             <TextField
               className="mt-4 w-full"
               required
               id="outlined-required"
               label="Date Of Birth"
-              defaultValue={users.birthDay}
+              defaultValue={users[0].birthDay}
               type="Date"
             />
             <TextField
@@ -79,15 +90,15 @@ const Profile = () => {
               required
               id="outlined-required"
               label="Address"
-              defaultValue={users.address}
+              defaultValue={users[0].address}
             />
           </div>
         </div>
         <div className="place-items-center p-40">
           <img
             id="input"
-            className="border-8 w-fit rounded-[50%] h-auto mb-4 mt-10"
-            src={selectedImage || users.img}
+            className="border-8 w-fit rounded-[50%] h-60 mb-4 mt-10"
+            src={selectedImage || users[0].img} // Use first user's image
             alt="Selected or default image"
           />
           <Button

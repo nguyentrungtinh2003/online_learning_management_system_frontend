@@ -5,13 +5,25 @@ import axios from "axios";
 import URL from "../../config/URLconfig";
 const ManagementUser = () => {
   // Sample data for users
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${URL}/api/auth/all-user`).then((response) => {
-      setUsers(response.data.data);
+  const users = [];
+  for (let i = 0; i < 5; i++) {
+    users.push({
+      id: i + 1,
+      username: `User ${i + 1}`,
+      email: `user${i + 1}@example.com`,
+      phoneNumber: `+1234567890${i}`,
+      address: `123 Main St, Anytown, CA ${i + 10000}`,
+      statusUserEnum: Math.random() > 0.5 ? "Online" : "Offline",
     });
-  });
+  }
+
+  // const [users, setUsers] = useState([]);
+
+  // useEffect(() => {
+  //   axios.get(`${URL}/api/auth/all-user`).then((response) => {
+  //     setUsers(response.data.data);
+  //   });
+  // });
 
   return (
     <div className="container mt-20">
@@ -45,9 +57,15 @@ const ManagementUser = () => {
                 <td>{user.address}</td>
                 <td>
                   {user.statusUserEnum === "Online" ? (
-                    <FaCircle style={{ color: "green" }} />
+                    <div className="flex items-center m-0 pt-3 justify-center box-border">
+                      <FaCircle style={{ color: "green" }} />
+                      <p className="pl-2">Online</p>
+                    </div>
                   ) : (
-                    <FaCircle style={{ color: "red" }} />
+                    <div className="flex items-center m-0 pt-3 justify-center box-border">
+                      <FaCircle style={{ color: "red" }} />
+                      <p className="pl-2">Offline</p>
+                    </div>
                   )}
                 </td>
                 <td>
