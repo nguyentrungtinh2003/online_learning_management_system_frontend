@@ -5,6 +5,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
+import URL from "../../config/URLconfig";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -18,18 +19,20 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-const [users, setUsers] = useState([]);
-
-// eslint-disable-next-line react-hooks/rules-of-hooks
-useEffect(() => {
-  axios.get(`${URL}/api/auth/all-user`).then((response) => {
-    setUsers(response.data.data);
-  });
-});
-
 const Profile = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [users, setUsers] = useState([]);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    axios
+      .get(`${URL}/api/auth/user/${localStorage.getItem("id")}`)
+      .then((response) => {
+        setUsers(response.data.data);
+      });
+  });
 
   const handleImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {

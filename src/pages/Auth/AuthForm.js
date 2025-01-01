@@ -16,19 +16,8 @@ export default function AuthForm() {
   const [emailOTP, setEmailOTP] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [resetPassword, setResetPassword] = useState({
-    email: emailOTP,
-    otp: "",
-    password: "",
-  });
-
-  const handelInputChangeResetPassword = (e) => {
-    const { name, value } = e.target;
-    setResetPassword({
-      ...resetPassword,
-      [name]: value,
-    });
-  };
+  const [otpResetPassword, setOtpResetPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   const handelInputChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +70,34 @@ export default function AuthForm() {
   const [count, setCount] = useState(60);
   const [isCounting, setIsCounting] = useState(false);
 
+  //--------------------------//
+  const handelSendOTP = () => {
+    axios
+      .post(`${URL}/api/auth/forgot-password`, { email: emailOTP })
+      .then((response) => {
+        console.log("Send OTP success !", response);
+      })
+      .catch((error) => {
+        console.log("Error : ", error);
+      });
+  };
+  //--------------------------//
+  const resetPassword = {
+    email: emailOTP,
+    otp: otpResetPassword,
+    password: newPassword,
+  };
+  const handelResetPassword = () => {
+    axios
+      .post(`${URL}/api/auth/reset-password`, resetPassword)
+      .then((response) => {
+        console.log("Reset password success !", response);
+      })
+      .catch((error) => {
+        console.log("Error : ", error);
+      });
+  };
+
   useEffect(() => {
     let intervalId;
     if (isCounting) {
@@ -92,6 +109,7 @@ export default function AuthForm() {
             clearInterval(intervalId);
             setIsCounting(false);
             setIsForgotPassword(false);
+            setIsCreatePassword(true);
             return 0;
           }
           return prevCount - 1;
@@ -102,32 +120,8 @@ export default function AuthForm() {
   }, [isCounting]);
 
   const handleClick = () => {
-    setCount(60);
+    setCount(30);
     setIsCounting(true);
-  };
-
-  //--------------------------//
-  const handelSendOTP = () => {
-    axios.post(`${URL}/api/auth/forgot-password`, emailOTP);
-    console
-      .log(emailOTP)
-      .then((response) => {
-        console.log("Send OTP success !", response);
-      })
-      .catch((error) => {
-        console.log("Error : ", error);
-      });
-  };
-  //--------------------------//
-  const handelResetPassword = () => {
-    axios
-      .post(`${URL}/api/auth/reset-password`, resetPassword)
-      .then((response) => {
-        console.log("Reset password success !", response);
-      })
-      .catch((error) => {
-        console.log("Error : ", error);
-      });
   };
 
   return (
@@ -239,7 +233,7 @@ export default function AuthForm() {
               id="otp"
               name="otp"
               value={resetPassword.otp}
-              onChange={handelInputChangeResetPassword}
+              onChange={(e) => setOtpResetPassword(e.target.value)}
             />
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
@@ -248,7 +242,7 @@ export default function AuthForm() {
               id="password"
               name="password"
               value={resetPassword.password}
-              onChange={handelInputChangeResetPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
@@ -260,7 +254,7 @@ export default function AuthForm() {
               }}
             />
             <button
-              onClick={() => handelResetPassword}
+              onClick={() => handelResetPassword()}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
               Create New Password

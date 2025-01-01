@@ -1,3 +1,6 @@
-#logoName{
-    font-family: "Jersey 10", sans-serif;;
+#logoName {
+  font-family: "Jersey 10", sans-serif;
+}
+.mt-100 {
+  margin-top: 100px;
 }

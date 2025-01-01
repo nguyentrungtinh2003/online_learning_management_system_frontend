@@ -13,10 +13,10 @@ const Dashboard = () => {
       <div className="flex-grow-1 mt-20">
         <Header />
         <div className="p-4">
-          {/* <OverviewCards />
+          <OverviewCards />
           <Charts />
-          <DetailsTable /> */}
-          <SendEmail/>
+          <DetailsTable />
+          <SendEmail />
         </div>
       </div>
     </div>
