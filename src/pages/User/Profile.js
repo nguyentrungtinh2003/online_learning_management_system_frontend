@@ -6,6 +6,7 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import { useParams } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -20,6 +21,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
+  const id = localStorage.getItem("id");
   const [selectedImage, setSelectedImage] = useState(null);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -27,12 +29,10 @@ const Profile = () => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    axios
-      .get(`${URL}/api/auth/user/${localStorage.getItem("id")}`)
-      .then((response) => {
-        setUsers(response.data.data);
-      });
-  });
+    axios.get(`${URL}/api/auth/user/${id}`).then((response) => {
+      setUsers(response.data.data);
+    });
+  }, [id]);
 
   const handleImageChange = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -53,7 +53,7 @@ const Profile = () => {
               required
               id="outlined-required"
               label="User Name"
-              defaultValue={users.username}
+              defaultValue={users.username} // Access first user's data
             />
             <TextField
               className="mt-4 w-full"
@@ -89,8 +89,8 @@ const Profile = () => {
         <div className="place-items-center p-40">
           <img
             id="input"
-            className="border-8 w-fit rounded-[50%] h-auto mb-4 mt-10"
-            src={selectedImage || users.img}
+            className="border-8 w-fit rounded-[50%] h-60 mb-4 mt-10"
+            src={selectedImage || users.img} // Use first user's image
             alt="Selected or default image"
           />
           <Button

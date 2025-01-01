@@ -33,6 +33,7 @@ export default function AuthForm() {
 
   const handelLogin = () => {
     axios.post(`${URL}/api/auth/login`, fromData).then((response) => {
+      localStorage.setItem("id", response.data.data.id);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("username", response.data.data.username);
       localStorage.setItem("img", response.data.data.img);
