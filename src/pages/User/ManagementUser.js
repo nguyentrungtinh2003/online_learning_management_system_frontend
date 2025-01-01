@@ -15,7 +15,10 @@ const ManagementUser = () => {
   });
 
   return (
-    <div className="container mt-20">
+    <div className="container mt-100">
+      <button>
+        <a href="/add-user">add</a>
+      </button>
       {/* Users Table */}
       <Table striped bordered hover responsive>
         <thead>
@@ -52,12 +55,15 @@ const ManagementUser = () => {
                   )}
                 </td>
                 <td>
-                  <Button variant="warning" className="mr-2">
-                    <FaEdit /> Edit
-                  </Button>
-                  <Button variant="danger">
-                    <FaTrashAlt /> Delete
-                  </Button>
+                  <button className="btn btn-primary">
+                    <a href={`/view-user/${user.id}`}>view</a>
+                  </button>
+                  <button className="btn btn-primary">
+                    <a href={`/admin-update-user/${user.id}`}>Edit</a>
+                  </button>
+                  <button className="btn btn-primary">
+                    <a href={`/view-user/${user.id}`}>Delete</a>
+                  </button>
                 </td>
               </tr>
             ))

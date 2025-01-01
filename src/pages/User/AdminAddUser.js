@@ -11,7 +11,7 @@ const AdminAddUser = () => {
     phoneNumber: "",
     birthDay: "",
     address: "",
-    roleEnum: "USER", // Default value, can be changed
+    roleEnum: "STUDENT", // Default value, can be changed
   });
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
@@ -41,22 +41,14 @@ const AdminAddUser = () => {
       data.append("img", image);
     }
 
-    try {
-      const response = await axios.post(
-        `${URL}/api/auth/admin-register-user`,
-        data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      setMessage(response.data.message || "User created successfully!");
-      setError("");
-    } catch (err) {
-      setError(
-        err.response?.data?.message || "Error occurred while creating user."
-      );
-      setMessage("");
-    }
+    await axios
+      .post(`${URL}/api/auth/admin-register-user`, data)
+      .then((response) => {
+        setMessage("Success");
+      })
+      .catch((error) => {
+        setError("Error occurred while creating user.");
+      });
   };
 
   return (
@@ -118,10 +110,11 @@ const AdminAddUser = () => {
             <Form.Group controlId="formBirthDay" className="mb-3">
               <Form.Label>Birth Day</Form.Label>
               <Form.Control
-                type="date"
                 name="birthDay"
                 value={formData.birthDay}
                 onChange={handleInputChange}
+                type="date"
+                InputLabelProps={{ shrink: true }}
                 required
               />
             </Form.Group>
@@ -146,7 +139,7 @@ const AdminAddUser = () => {
                 onChange={handleInputChange}
                 required
               >
-                <option value="USER">USER</option>
+                <option value="STUDENT">STUDENT</option>
                 <option value="TEACHER">TEACHER</option>
               </Form.Select>
             </Form.Group>

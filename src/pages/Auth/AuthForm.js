@@ -4,9 +4,12 @@ import "./AuthForm.css";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import SendOtpButton from "../../components/Button/SendOtpButton";
 
 export default function AuthForm() {
+  const [fromLogin, setFromLogin] = useState({
+    username: "",
+    password: "",
+  });
   const [fromData, setFromData] = useState({
     username: "",
     password: "",
@@ -18,6 +21,14 @@ export default function AuthForm() {
 
   const [otpResetPassword, setOtpResetPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+
+  const handleInputChangeLogin = (event) => {
+    const { name, value } = event.target;
+    setFromLogin((prevFromLogin) => ({
+      ...prevFromLogin,
+      [name]: value,
+    }));
+  };
 
   const handelInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,14 +43,28 @@ export default function AuthForm() {
   };
 
   const handelLogin = () => {
-    axios.post(`${URL}/api/auth/login`, fromData).then((response) => {
-      localStorage.setItem("id", response.data.data.id);
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("username", response.data.data.username);
-      localStorage.setItem("img", response.data.data.img);
-      console.log(response.data.data);
-      window.location.replace("/dashboard");
-    });
+    console.log(fromLogin); // Kiểm tra dữ liệu gửi
+    axios
+      .post(`${URL}/api/auth/login`, fromLogin, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        localStorage.setItem("id", response.data.data.id);
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("username", response.data.data.username);
+        localStorage.setItem("img", response.data.data.img);
+        console.log(response.data.data);
+        // Dùng navigate để điều hướng mà không tải lại trang
+        window.location.replace("/");
+      })
+      .catch((error) => {
+        console.error(
+          "Error login:",
+          error.response ? error.response.data : error.message
+        );
+      });
   };
 
   //--- login google ----
@@ -269,8 +294,8 @@ export default function AuthForm() {
               placeholder="Username"
               id="username"
               name="username"
-              value={fromData.username}
-              onChange={handelInputChange}
+              value={fromLogin.username}
+              onChange={handleInputChangeLogin}
             />
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
@@ -278,8 +303,8 @@ export default function AuthForm() {
               placeholder="Password"
               id="password"
               name="password"
-              value={fromData.password}
-              onChange={handelInputChange}
+              value={fromLogin.password}
+              onChange={handleInputChangeLogin}
             />
             <a
               className="text-rose-600 text-sm text-center block"
@@ -291,7 +316,7 @@ export default function AuthForm() {
               Forget your Password? Click here!
             </a>
             <button
-              onClick={handelLogin}
+              onClick={() => handelLogin()}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
               Sign In
