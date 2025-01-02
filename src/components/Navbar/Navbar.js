@@ -42,11 +42,11 @@ export default function Navbar() {
           {/* Logo */}
           <div>
             <Link to="/" className="flex items-center space-x-3">
-            <img className="h-12 w-auto" src="logoCode.png" alt="Logo" />
-            <div>
-              <p className="text-2xl font-bold text-cyan-500">Code</p>
-              <p className="text-lg text-gray-600 font-semibold">Arena</p>
-            </div>
+              <img className="h-12 w-auto" src="logoCode.png" alt="Logo" />
+              <div>
+                <p className="text-2xl font-bold text-cyan-500">Code</p>
+                <p className="text-lg text-gray-600 font-semibold">Arena</p>
+              </div>
             </Link>
           </div>
 
@@ -91,7 +91,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search courses..."
-                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-[400px]"
+                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
             </div>
@@ -102,11 +102,11 @@ export default function Navbar() {
               <span className="text-gray-600 font-medium">1200 Coins</span>
             </div>
 
-            {/* Points */}
+            {/* Points
             <div className="flex items-center space-x-1">
               <span className="text-gray-600 font-medium">Points:</span>
               <span className="text-cyan-500 font-bold">75</span>
-            </div>
+            </div> */}
 
             {/* User */}
             <div className="flex items-center cursor-pointer hover:text-cyan-500">
@@ -139,16 +139,15 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                " "
+                <>
+                  <button className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+                    <Link to="/login" className="no-underline text-white">
+                      Start Learning
+                    </Link>
+                  </button>
+                </>
               )}
             </div>
-
-            {/* Button */}
-            <button className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-              <Link to="/login" className="no-underline text-white">
-                Start Learning
-              </Link>
-            </button>
           </div>
         </div>
       </div>

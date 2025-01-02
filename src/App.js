@@ -13,6 +13,7 @@ import Profile from "./pages/User/Profile";
 import AdminAddUser from "./pages/User/AdminAddUser";
 import Sidebar from "./pages/Dashboard/Sidebar";
 import Header from "./pages/Dashboard/Header";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
