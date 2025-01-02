@@ -96,7 +96,12 @@ const AdminUpdateUser = () => {
   };
 
   return (
-    <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="mx-10 mt-24 grid grid-cols-1 lg:grid-cols-3 gap-8 relative shadow">
+      <button className="absolute top-0 right-0 m-2">
+        <Button variant="contained" color="primary" onClick={handleSubmit}>
+          Update
+        </Button>
+      </button>
       {/* Form thông tin người dùng */}
       <div className="col-span-2 p-6 bg-white shadow rounded">
         <h2 className="text-2xl font-semibold text-gray-700 mb-6">
@@ -167,20 +172,12 @@ const AdminUpdateUser = () => {
             <option value="STUDENT">STUDENT</option>
             <option value="TEACHER">TEACHER</option>
           </TextField>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload Profile Image
-            <VisuallyHiddenInput type="file" onChange={handleImageChange} />
-          </Button>
         </div>
       </div>
       {/* Hình ảnh đại diện */}
-      <div className="flex flex-col items-center p-6 bg-white shadow rounded">
+      <div className="flex flex-col items-center justify-center bg-white rounded">
         <img
-          className="w-40 h-40 rounded-full border-4 border-gray-300 mb-6"
+          className="h-60 w-60 rounded-full border-4 border-gray-300 mb-6"
           src={
             selectedImage
               ? URL.createObjectURL(selectedImage)
@@ -188,8 +185,13 @@ const AdminUpdateUser = () => {
           }
           alt="Profile"
         />
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
-          Update User
+        <Button
+          variant="contained"
+          component="label"
+          startIcon={<CloudUploadIcon />}
+        >
+          Upload Profile Image
+          <VisuallyHiddenInput type="file" onChange={handleImageChange} />
         </Button>
       </div>
     </div>

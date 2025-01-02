@@ -36,16 +36,18 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-0 w-full z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white shadow-md fixed top-0 w-full z-50 px-20">
+      <div className="min-w-full px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <div>
+            <Link to="/" className="flex items-center space-x-3">
             <img className="h-12 w-auto" src="logoCode.png" alt="Logo" />
             <div>
               <p className="text-2xl font-bold text-cyan-500">Code</p>
-              <p className="text-lg text-gray-600">Arena</p>
+              <p className="text-lg text-gray-600 font-semibold">Arena</p>
             </div>
+            </Link>
           </div>
 
           {/* Navigation Links */}
@@ -83,13 +85,13 @@ export default function Navbar() {
           </div>
 
           {/* Search + Coins + Points + User */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-6 w-[60%] justify-between">
             {/* Search Bar */}
             <div className="relative hidden lg:block">
               <input
                 type="text"
                 placeholder="Search courses..."
-                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-52"
+                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-[400px]"
               />
               <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
             </div>

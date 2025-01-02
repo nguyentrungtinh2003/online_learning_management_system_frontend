@@ -11,16 +11,32 @@ import UpdateUser from "./pages/User/UpdateUser";
 import AdminUpdateUser from "./pages/User/AdminUpdateUser";
 import Profile from "./pages/User/Profile";
 import AdminAddUser from "./pages/User/AdminAddUser";
+import Sidebar from "./pages/Dashboard/Sidebar";
+import Header from "./pages/Dashboard/Header";
 
 function App() {
   return (
     <>
       <Router>
-        <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<AuthForm />} />
-          <Route path="profile" element={<Profile />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Navbar />
+                <HomePage />
+              </>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <>
+                <Navbar />
+                <AuthForm />
+              </>
+            }
+          />
           <Route
             path="/dashboard"
             element={
@@ -36,12 +52,64 @@ function App() {
               <Dashboard />
             }
           />
-          <Route path="/all-user" element={<ManagementUser />} />
-          <Route path="/view-user/:id" element={<ViewUser />} />
-          <Route path="/add-user" element={<AdminAddUser />} />
+          <Route
+            path="/all-user"
+            element={
+              <div className="flex m-4">
+                <Sidebar />
+                <div className="flex-grow-1">
+                  <Header />
+                  <ManagementUser />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/view-user/:id"
+            element={
+              <div className="flex m-4">
+                <Sidebar />
+                <div className="flex-grow-1">
+                  <Header />
+                  <ViewUser />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/add-user"
+            element={
+              <div className="flex m-4">
+                <Sidebar />
+                <div className="flex-grow-1">
+                  <Header />
+                  <AdminAddUser />
+                </div>
+              </div>
+            }
+          />
           <Route path="/update-user/:id" element={<UpdateUser />} />
-          <Route path="/admin-update-user/:id" element={<AdminUpdateUser />} />
-          <Route path="/profile/:id" element={<Profile />} />
+          <Route
+            path="/admin-update-user/:id"
+            element={
+              <div className="flex m-4">
+                <Sidebar />
+                <div className="flex-grow-1">
+                  <Header />
+                  <AdminUpdateUser />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/profile/:id"
+            element={
+              <>
+                <Navbar />
+                <Profile />
+              </>
+            }
+          />
         </Routes>
       </Router>
     </>

@@ -8,6 +8,7 @@ import SectionCoursePro from "./SectionPage/SectionCoursePro";
 import SectionBlog from "./SectionPage/SectionBlog";
 import SectionRewards from "./SectionPage/SectionRewards ";
 import Footer from "../../components/Footer/Footer";
+import Navbar from "../../components/Navbar/Navbar";
 
 export default function homePage() {
   return (

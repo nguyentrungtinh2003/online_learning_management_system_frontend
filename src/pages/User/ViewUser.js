@@ -50,14 +50,14 @@ const ViewUser = () => {
 
   if (error) {
     return (
-      <Container className="mt-100">
+      <Container className="mt-4">
         <Alert variant="danger">{error}</Alert>
       </Container>
     );
   }
 
   return (
-    <Container className="mt-100">
+    <Container className="m-4">
       <Card className="shadow-lg border-0 p-4" style={{ borderRadius: "15px" }}>
         <Row>
           <Col md={4} className="text-center">

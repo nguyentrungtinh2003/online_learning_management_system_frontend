@@ -56,7 +56,7 @@ const courses = [
 export default function SectionCourseFree() {
   return (
     <section id="section-course-free" className="py-12 bg-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center text-cyan-500 mb-8">
           Free Courses
         </h2>

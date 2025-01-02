@@ -4,7 +4,7 @@ import { FaChartLine, FaUsers, FaTasks, FaHome } from "react-icons/fa"; // Impor
 
 const Sidebar = () => {
   return (
-    <div className="bg-white text-black vh-100 p-3 d-flex flex-column">
+    <div className="bg-white text-black vh-100 p-2 flex flex-column border-r-2">
       {/* Tiêu đề */}
       <h5 className="mb-4 fw-bold text-uppercase text-center">Dashboard</h5>
 

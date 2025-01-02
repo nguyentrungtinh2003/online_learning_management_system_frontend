@@ -52,110 +52,116 @@ const AdminAddUser = () => {
   };
 
   return (
-    <Container className="mt-4">
-      <Card>
-        <Card.Header as="h5">Add New User</Card.Header>
-        <Card.Body>
+    <Container className="place-items mt-4">
+      <Card className="">
+        <Card.Header className="text-2xl font-bold text-slate-500">Add New User</Card.Header>
+        <Card.Body className="">
           {message && <Alert variant="success">{message}</Alert>}
           {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formUsername" className="mb-3">
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleInputChange}
-                placeholder="Enter username"
-                required
-              />
-            </Form.Group>
+          <Form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
+            <div>
+              <Form.Group controlId="formUsername" className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  placeholder="Enter username"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formPassword" className="mb-3">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter password"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formPassword" className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formEmail" className="mb-3">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter email"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formEmail" className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter email"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formPhoneNumber" className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
-              <Form.Control
-                type="text"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleInputChange}
-                placeholder="Enter phone number"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formPhoneNumber" className="mb-3">
+                <Form.Label>Phone Number</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="Enter phone number"
+                  required
+                />
+              </Form.Group>
+            </div>
 
-            <Form.Group controlId="formBirthDay" className="mb-3">
-              <Form.Label>Birth Day</Form.Label>
-              <Form.Control
-                name="birthDay"
-                value={formData.birthDay}
-                onChange={handleInputChange}
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                required
-              />
-            </Form.Group>
+            <div>
+              <Form.Group controlId="formBirthDay" className="mb-3">
+                <Form.Label>Birth Day</Form.Label>
+                <Form.Control
+                  name="birthDay"
+                  value={formData.birthDay}
+                  onChange={handleInputChange}
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formAddress" className="mb-3">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                placeholder="Enter address"
-                required
-              />
-            </Form.Group>
+              <Form.Group controlId="formAddress" className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Enter address"
+                  required
+                />
+              </Form.Group>
 
-            <Form.Group controlId="formRoleEnum" className="mb-3">
-              <Form.Label>Role</Form.Label>
-              <Form.Select
-                name="roleEnum"
-                value={formData.roleEnum}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="STUDENT">STUDENT</option>
-                <option value="TEACHER">TEACHER</option>
-              </Form.Select>
-            </Form.Group>
+              <Form.Group controlId="formRoleEnum" className="mb-3">
+                <Form.Label>Role</Form.Label>
+                <Form.Select
+                  name="roleEnum"
+                  value={formData.roleEnum}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="STUDENT">STUDENT</option>
+                  <option value="TEACHER">TEACHER</option>
+                </Form.Select>
+              </Form.Group>
 
-            <Form.Group controlId="formImage" className="mb-3">
-              <Form.Label>Profile Image</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </Form.Group>
+              <Form.Group controlId="formImage" className="mb-3">
+                <Form.Label>Profile Image</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Form.Group>
+            </div>
 
-            <Button variant="primary" type="submit">
-              Create User
-            </Button>
+            <div className="col-span-2 flex justify-end">
+              <Button variant="primary" type="submit">
+                Create User
+              </Button>
+            </div>
           </Form>
         </Card.Body>
       </Card>
