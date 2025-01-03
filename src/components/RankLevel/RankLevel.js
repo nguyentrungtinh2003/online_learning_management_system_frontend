@@ -41,8 +41,8 @@ export default function RankLevel() {
   const currentRank = getCurrentRank();
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="mt-32 box-border border-x-4 px-24 rounded-[15%] border-amber-300 drop-shadow-xl">
+    <div className="flex items-center">
+      <div className="box-border border-x-4 px-24 rounded-[15%] border-amber-300 drop-shadow-xl">
         <FaMedal size={250} color={currentRank.color} />
         <div className="grid place-items-center">
           <p className="font-bold text-3xl mt-4 mb-2">{currentRank.name}</p>

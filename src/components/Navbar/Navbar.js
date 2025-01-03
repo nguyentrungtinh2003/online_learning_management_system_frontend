@@ -85,13 +85,13 @@ export default function Navbar() {
           </div>
 
           {/* Search + Coins + Points + User */}
-          <div className="flex items-center space-x-6 w-[60%] justify-between">
+          <div className="flex items-center space-x-6 w-[65%] justify-between">
             {/* Search Bar */}
             <div className="relative hidden lg:block">
               <input
                 type="text"
                 placeholder="Search courses..."
-                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-[400px]"
+                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
               <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
             </div>

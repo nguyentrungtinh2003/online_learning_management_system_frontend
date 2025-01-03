@@ -9,6 +9,7 @@ import SectionBlog from "./SectionPage/SectionBlog";
 import SectionRewards from "./SectionPage/SectionRewards ";
 import Footer from "../../components/Footer/Footer";
 import Navbar from "../../components/Navbar/Navbar";
+import LevelUp from "../../components/RankLevel/LevelUp";
 
 export default function homePage() {
   return (
@@ -18,7 +19,7 @@ export default function homePage() {
       <SectionCoursePro />
       <SectionRewards />
       <SectionBlog />
-      <Footer />
+      <Footer id="about" />
     </div>
   );
 }

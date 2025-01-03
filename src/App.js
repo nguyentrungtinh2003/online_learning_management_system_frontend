@@ -65,7 +65,7 @@ function App() {
             }
           />
           <Route
-            path="/view-user/:id"
+            path="/view-user"
             element={
               <div className="flex m-4">
                 <Sidebar />
@@ -90,7 +90,7 @@ function App() {
           />
           <Route path="/update-user/:id" element={<UpdateUser />} />
           <Route
-            path="/admin-update-user/:id"
+            path="/admin-update-user"
             element={
               <div className="flex m-4">
                 <Sidebar />
@@ -102,7 +102,7 @@ function App() {
             }
           />
           <Route
-            path="/profile/:id"
+            path="/profile"
             element={
               <>
                 <Navbar />
