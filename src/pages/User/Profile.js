@@ -22,8 +22,8 @@ const VisuallyHiddenInput = styled("input")({
 
 const Profile = () => {
   const [isIntroduce, setIsIntroduce] = useState(true);
-  const [isRanks, setIsIsRanks] = useState(true);
-  const [isCourse, setIsCourse] = useState(true);
+  const [isRanks, setIsIsRanks] = useState(false);
+  const [isCourse, setIsCourse] = useState(false);
 
   const formContainerRef = useRef(null);
 
@@ -58,14 +58,16 @@ const Profile = () => {
   // };
 
   return (
-    <div className="mx-20 mt-100 ">
+    <div className="mx-20 mt-100 mb-10 ">
       <div className="h-[370px] border-b-2">
         <div className="relative">
-          <div className="bg-cyan-300 h-60 rounded-2xl m-2"></div>
-          <div className="absolute top-40 left-20 z-50">
+          <div class="bg-cyan-300 h-60 rounded-2xl m-2 bg-gradient-to-b from-transparent to-blue-500"></div>
+          <div className="absolute top-40 left-10 z-50">
             <img
-              className="border-8 border-slate-50 w-48 rounded-[50%] h-48"
-              src={selectedImage || users.img}
+              className="bg-white border-8 border-slate-50 w-48 rounded-[50%] h-48"
+              src={
+                "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
+              }
             />
           </div>
         </div>
@@ -73,7 +75,9 @@ const Profile = () => {
       <div ref={formContainerRef}>
         <ul className="flex">
           <button
-            className="m-2 border-b-2 border-cyan-300 p-2 hover:text-cyan-300"
+            className={`m-2 p-2 hover:text-cyan-300 ${
+              isIntroduce ? "border-b-2 border-cyan-300" : ""
+            }`}
             onClick={() => {
               setIsIntroduce(true);
               setIsCourse(false);
@@ -83,7 +87,9 @@ const Profile = () => {
             Introduce
           </button>
           <button
-            className="m-2 border-b-2 border-cyan-300 p-2 hover:text-cyan-300"
+            className={`m-2 p-2 hover:text-cyan-300 ${
+              isRanks ? "border-b-2 border-cyan-300" : ""
+            }`}
             onClick={() => {
               setIsIntroduce(false);
               setIsCourse(false);
@@ -93,7 +99,9 @@ const Profile = () => {
             Rank
           </button>
           <button
-            className="m-2 border-b-2 border-cyan-300 p-2 hover:text-cyan-300"
+            className={`m-2 p-2 hover:text-cyan-300 ${
+              isCourse ? "border-b-2 border-cyan-300" : ""
+            }`}
             onClick={() => {
               setIsIntroduce(false);
               setIsCourse(true);
@@ -168,8 +176,8 @@ const Profile = () => {
         <></>
       )}
       {isRanks ? (
-        <div className="h-100 grid grid-cols-3 m-2 gap-8 shadow-custom-btn-off p-4 rounded-xl">
-          <RankLevel/>
+        <div className="h-100 grid grid-cols-3 m-2 gap-8 p-4 rounded-xl">
+          <RankLevel />
           <div className="grid col-span-2 text-xl p-4">
             <ul>
               <li className="w-full border-l-8 border-cyan-300 px-3 py-1 mb-4 rounded-lg">
@@ -188,6 +196,60 @@ const Profile = () => {
                 Watched Video +8 points
               </li>
             </ul>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+      {isCourse ? (
+        <div className="p-4 py-2 grid place-items-center">
+          <p className="text-2xl font-bold text-slate-500 mb-4">
+            Courses attended
+          </p>
+          <div className="border-b-2 mx-20 pb-4 flex justify-center mx-[15%] mb-4">
+            <div className="flex items-center">
+              <div className="h-36 bg-cyan-300 w-80 rounded-2xl" />
+              <div className="col-span-2 ml-10 text-xl text-slate-500">
+                <p className="text-2xl font-bold">
+                  Xây Dựng Website với ReactJS
+                </p>
+                <p>
+                  Khóa học ReactJS từ cơ bản tới nâng cao, kết quả của khóa học
+                  này là bạn có thể làm hầu hết các dự án thường gặp với
+                  ReactJS. Cuối khóa học này bạn
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="border-b-2 mx-20 pb-4 flex justify-center mx-[15%] mb-4">
+            <div className="flex items-center">
+              <div className="h-36 bg-cyan-300 w-80 rounded-2xl" />
+              <div className="col-span-2 ml-10 text-xl text-slate-500">
+                <p className="text-2xl font-bold">
+                  Xây Dựng Website với ReactJS
+                </p>
+                <p>
+                  Khóa học ReactJS từ cơ bản tới nâng cao, kết quả của khóa học
+                  này là bạn có thể làm hầu hết các dự án thường gặp với
+                  ReactJS. Cuối khóa học này bạn
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="border-b-2 mx-20 pb-4 flex justify-center mx-[15%] mb-4">
+            <div className="flex items-center">
+              <div className="h-36 bg-cyan-300 w-80 rounded-2xl" />
+              <div className="col-span-2 ml-10 text-xl text-slate-500">
+                <p className="text-2xl font-bold">
+                  Xây Dựng Website với ReactJS
+                </p>
+                <p>
+                  Khóa học ReactJS từ cơ bản tới nâng cao, kết quả của khóa học
+                  này là bạn có thể làm hầu hết các dự án thường gặp với
+                  ReactJS. Cuối khóa học này bạn
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       ) : (

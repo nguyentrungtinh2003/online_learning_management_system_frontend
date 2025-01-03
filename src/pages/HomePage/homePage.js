@@ -13,13 +13,12 @@ import LevelUp from "../../components/RankLevel/LevelUp";
 
 export default function homePage() {
   return (
-    <div className="h-[100px] box-border 2xl:text-2xl mt-20">
+    <div className=" box-border 2xl:text-2xl mt-20">
       <CourseLanding />
       <SectionCourseFree />
       <SectionCoursePro />
       <SectionRewards />
       <SectionBlog />
-      <Footer id="about" />
     </div>
   );
 }
