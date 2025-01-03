@@ -4,6 +4,7 @@ import "./AuthForm.css";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 export default function AuthForm() {
   const [fromLogin, setFromLogin] = useState({
@@ -57,7 +58,14 @@ export default function AuthForm() {
         localStorage.setItem("img", response.data.data.img);
         console.log(response.data.data);
         // Dùng navigate để điều hướng mà không tải lại trang
-        window.location.replace("/");
+        toast.success("Đăng nhập thành công!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Slide,
+        });
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
       })
       .catch((error) => {
         console.error(
@@ -152,6 +160,7 @@ export default function AuthForm() {
 
   return (
     <div className="h-screen flex justify-center items-center bg-gray-100">
+      <ToastContainer />
       <div
         className="h-auto shadow-lg rounded-lg w-full sm:w-96 md:w-1/3 lg:w-1/4 p-8 bg-white"
         ref={formContainerRef}

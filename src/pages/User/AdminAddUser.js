@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Container, Card, Alert } from "react-bootstrap";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const AdminAddUser = () => {
   const [formData, setFormData] = useState({
@@ -44,17 +45,34 @@ const AdminAddUser = () => {
     await axios
       .post(`${URL}/api/auth/admin-register-user`, data)
       .then((response) => {
-        setMessage("Success");
+        toast.success("Tạo người dùng thành công !", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Slide,
+        });
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
       })
       .catch((error) => {
-        setError("Error occurred while creating user.");
+        toast.error("Tạo người dùng thất bại !", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Slide,
+        });
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
       });
   };
 
   return (
     <Container className="place-items mt-4">
+      <ToastContainer />
       <Card className="">
-        <Card.Header className="text-2xl font-bold text-slate-500">Add New User</Card.Header>
+        <Card.Header className="text-2xl font-bold text-slate-500">
+          Add New User
+        </Card.Header>
         <Card.Body className="">
           {message && <Alert variant="success">{message}</Alert>}
           {error && <Alert variant="danger">{error}</Alert>}
