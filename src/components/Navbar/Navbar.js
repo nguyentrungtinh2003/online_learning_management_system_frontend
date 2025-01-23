@@ -36,119 +36,72 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 w-full z-50 px-20">
-      <div className="min-w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div>
-            <Link to="/" className="flex items-center space-x-3">
-              <img className="h-12 w-auto" src="logoCode.png" alt="Logo" />
-              <div>
-                <p className="text-2xl font-bold text-cyan-500">Code</p>
-                <p className="text-lg text-gray-600 font-semibold">Arena</p>
-              </div>
-            </Link>
-          </div>
+    <nav className="bg-white shadow-md fixed top-0 w-full z-30 h-20">
+      <div className="max-w-screen-xl mx-auto flex justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center">
+            <img className="h-20 w-auto" src="/image2.jpg" alt="Logo" />
+          </Link>
+          <h3 className="text-xl font-semibold text-gray-800">Code Arena</h3>
+        </div>
 
-          {/* Navigation Links */}
-          <div className="hidden lg:flex space-x-8">
-            <Link
-              to="/about"
-              className="text-gray-600 hover:text-cyan-500 transition duration-300"
-            >
-              About
-            </Link>
-            <Link
-              to="/courses"
-              className="text-gray-600 hover:text-cyan-500 transition duration-300"
-            >
-              Courses
-            </Link>
-            <Link
-              to="/trainers"
-              className="text-gray-600 hover:text-cyan-500 transition duration-300"
-            >
-              Trainers
-            </Link>
-            <Link
-              to="/reviews"
-              className="text-gray-600 hover:text-cyan-500 transition duration-300"
-            >
-              Reviews
-            </Link>
-            <Link
-              to="/media"
-              className="text-gray-600 hover:text-cyan-500 transition duration-300"
-            >
-              Media
-            </Link>
+        {/* Search Bar */}
+        <div className="relative w-full max-w-md">
+          <input
+            type="text"
+            placeholder="Search courses..."
+            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none hover:ring-2 hover:ring-cyan-500"
+          />
+          <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+          {/* Results */}
+          <div className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10">
+            <ul className="max-h-48 overflow-y-auto">
+              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                Khoá học Java backend cho người mới
+              </li>
+              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                Làm chủ frontend với Javascript
+              </li>
+              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                Fetch data với Axios
+              </li>
+            </ul>
           </div>
+        </div>
 
-          {/* Search + Coins + Points + User */}
-          <div className="flex items-center space-x-6 w-[65%] justify-between">
-            {/* Search Bar */}
-            <div className="relative hidden lg:block">
-              <input
-                type="text"
-                placeholder="Search courses..."
-                className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+        {/* User or Login */}
+        <div className="flex items-center space-x-4">
+          {localStorage.getItem("username") ? (
+            <>
+              <img
+                src={
+                  localStorage.getItem("token")
+                    ? localStorage.getItem("img")
+                    : "http://pngimg.com/uploads/google/google_PNG19635.png"
+                }
+                alt="User"
+                className="w-10 h-10 rounded-full object-cover"
               />
-              <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
-            </div>
-
-            {/* Coins */}
-            <div className="flex items-center space-x-2">
-              <FaCoins className="text-yellow-500" />
-              <span className="text-gray-600 font-medium">1200 Coins</span>
-            </div>
-
-            {/* Points
-            <div className="flex items-center space-x-1">
-              <span className="text-gray-600 font-medium">Points:</span>
-              <span className="text-cyan-500 font-bold">75</span>
-            </div> */}
-
-            {/* User */}
-            <div className="flex items-center cursor-pointer hover:text-cyan-500">
-              {localStorage.getItem("username") ? (
-                <>
-                  <img
-                    src={
-                      localStorage.getItem("token")
-                        ? localStorage.getItem("img")
-                        : "http://pngimg.com/uploads/google/google_PNG19635.png"
-                    }
-                    alt="User"
-                    className="w-8 h-8 rounded-full mr-2"
-                    style={{
-                      width: "50px", // Cố gắng chỉ định kích thước rõ ràng
-                      height: "50px",
-                      borderRadius: "50%",
-                      objectFit: "cover", // Đảm bảo ảnh không bị co giãn sai tỷ lệ
-                    }}
-                  />
-                  <span className="text-gray-600">
-                    {localStorage.getItem("username")}
-                  </span>
-                  <button
-                    onClick={() => {
-                      handleGoogleLogout();
-                    }}
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-                    <Link to="/login" className="no-underline text-white">
-                      Start Learning
-                    </Link>
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+              <span className="text-gray-600">
+                {localStorage.getItem("username")}
+              </span>
+              <button
+                onClick={() => {
+                  handleGoogleLogout();
+                }}
+                className="text-cyan-500 hover:text-cyan-700 transition duration-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <button className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+              <Link to="/login" className="no-underline text-white">
+                Start Learning
+              </Link>
+            </button>
+          )}
         </div>
       </div>
     </nav>

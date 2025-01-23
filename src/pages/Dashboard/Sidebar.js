@@ -16,11 +16,11 @@ const Sidebar = () => {
           <HomeIcon className="mr-2" />
           <p>Home</p>
         </Link>
-        <Link to="/view-user/:id" className="flex items-center">
+        <Link to="" className="flex items-center">
           <GroupIcon className="mr-2" />
           <p>Users</p>
         </Link>
-        <Link to="all-user" className="flex items-center">
+        <Link to="/all-user" className="flex items-center">
           <ManageAccountsIcon className="mr-2" />
           <p>Management</p>
         </Link>
