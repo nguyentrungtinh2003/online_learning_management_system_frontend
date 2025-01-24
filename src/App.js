@@ -15,6 +15,8 @@ import Sidebar from "./pages/Dashboard/Sidebar";
 import Header from "./pages/Dashboard/Header";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer/Footer";
+import AddCourse from "./pages/Course/AddCourse";
+import AddLesson from "./pages/Lesson/AddLesson";
 
 function App() {
   return (
@@ -109,6 +111,24 @@ function App() {
               <>
                 <Navbar />
                 <Profile />
+              </>
+            }
+          />
+          <Route
+            path="/add-course"
+            element={
+              <>
+                <Navbar />
+                <AddCourse />
+              </>
+            }
+          />
+          <Route
+            path="/add-lesson"
+            element={
+              <>
+                <Navbar />
+                <AddLesson />
               </>
             }
           />

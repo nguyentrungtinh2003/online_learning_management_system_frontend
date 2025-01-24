@@ -57,15 +57,21 @@ export default function Navbar() {
           {/* Results */}
           <div className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10">
             <ul className="max-h-48 overflow-y-auto">
-              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                Khoá học Java backend cho người mới
-              </li>
-              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                Làm chủ frontend với Javascript
-              </li>
-              <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                Fetch data với Axios
-              </li>
+              <a className="" href="#">
+                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                  Khoá học Java backend cho người mới
+                </li>
+              </a>
+              <a className="" href="#">
+                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                  Khoá học JavaScript cho người mới
+                </li>
+              </a>
+              <a className="" href="#">
+                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
+                  Làm chủ Axios trong React
+                </li>
+              </a>
             </ul>
           </div>
         </div>
