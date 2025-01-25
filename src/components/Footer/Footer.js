@@ -7,8 +7,10 @@ export default function Footer() {
         <div className="p-20 grid grid-cols-3 place-items-center">
           <div>
             <div className="flex text-2xl font-bold items-center">
-              <img className="h-14 mr-4 " src="logoCode.png" />
-              <p>Code Arena</p>
+              <img className="h-14 mr-4 rounded-full" src="image2.jpg" />
+              <h3 className="text-xl font-semibold text-white-800">
+                Code Arena
+              </h3>
             </div>
             <ul className="mt-4">
               <li>Phone: 0334023469</li>
@@ -28,9 +30,18 @@ export default function Footer() {
           <div className="items-center">
             <p className="font-bold text-2xl">Follow Us</p>
             <ul className="mt-4">
-              <li className="flex items-center"><img className="h-14 mr-2" src="youtube.svg"/>Youtube</li>
-              <li className="flex items-center"><img className="h-14 mr-2" src="facebook-ico.svg"/>Facebook</li>
-              <li className="flex items-center"><img className="h-14 mr-2 mt-2 bg-gray-400" src="tiktok.svg"/>Tiktok</li>
+              <li className="flex items-center">
+                <img className="h-14 mr-2" src="youtube.svg" />
+                Youtube
+              </li>
+              <li className="flex items-center">
+                <img className="h-14 mr-2" src="facebook-ico.svg" />
+                Facebook
+              </li>
+              <li className="flex items-center">
+                <img className="h-14 mr-2 mt-2 bg-gray-400" src="tiktok.svg" />
+                Tiktok
+              </li>
             </ul>
           </div>
         </div>

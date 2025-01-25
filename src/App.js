@@ -17,6 +17,10 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer/Footer";
 import AddCourse from "./pages/Course/AddCourse";
 import AddLesson from "./pages/Lesson/AddLesson";
+import ManagementCourse from "./pages/Course/ManagementCourse";
+import WatchLesson from "./pages/Lesson/WatchLesson";
+import ManagementLesson from "./pages/Lesson/ManagementLesson";
+import UpdateCourse from "./pages/Course/UpdateCourse";
 
 function App() {
   return (
@@ -115,6 +119,18 @@ function App() {
             }
           />
           <Route
+            path="/all-course"
+            element={
+              <div className="flex m-4">
+                <Sidebar />
+                <div className="flex-grow-1">
+                  <Header />
+                  <ManagementCourse />
+                </div>
+              </div>
+            }
+          />
+          <Route
             path="/add-course"
             element={
               <>
@@ -124,11 +140,38 @@ function App() {
             }
           />
           <Route
+            path="/update-course/:id"
+            element={
+              <>
+                <Navbar />
+                <UpdateCourse />
+              </>
+            }
+          />
+          <Route
+            path="/all-lesson"
+            element={
+              <>
+                <Navbar />
+                <ManagementLesson />
+              </>
+            }
+          />
+          <Route
             path="/add-lesson"
             element={
               <>
                 <Navbar />
                 <AddLesson />
+              </>
+            }
+          />
+          <Route
+            path="/watch-lesson"
+            element={
+              <>
+                <Navbar />
+                <WatchLesson />
               </>
             }
           />
