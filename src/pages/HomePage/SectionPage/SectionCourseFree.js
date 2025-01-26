@@ -23,7 +23,7 @@ export default function SectionCourseFree() {
           Free Courses
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {courses?.map((course) => (
+          {/* {courses?.map((course) => (
             <div
               key={course.id}
               className="bg-white shadow-lg rounded-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl"
@@ -35,23 +35,42 @@ export default function SectionCourseFree() {
               />
               <div className="p-6">
                 <h3 className="text-xl font-semibold text-gray-800">
-                  {course.courseName}
+                  {course.courseName || "Java Backend"}
                 </h3>
                 <p className="text-sm text-gray-600 mt-2">
-                  {course.description}
+                  {course.description ||
+                    "Khoá học Java Springboot API cho người mới."}
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  {course.lessons?.length} lessons
+                  {course.lessons?.length || 60} lessons
                 </p>
                 <p className="text-sm text-gray-600 mt-1">
-                  Lecturer {course.user?.username}
+                  Lecturer {course.user?.username || "Nguyen trung Tinh"}
                 </p>
                 <button className="mt-4 w-full bg-cyan-500 text-white py-2 rounded-lg hover:bg-cyan-400 transition duration-300">
                   Enroll Now
                 </button>
               </div>
             </div>
-          ))}
+          ))} */}
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
+            <img src="" className="w-full h-48 object-cover" />
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Java Backend
+              </h3>
+              <p className="text-sm text-gray-600 mt-2">
+                Khoá học Java Springboot API cho người mới.
+              </p>
+              <p className="text-sm text-gray-600 mt-1">60 lessons</p>
+              <p className="text-sm text-gray-600 mt-1">
+                Lecturer Nguyen trung Tinh
+              </p>
+              <button className="mt-4 w-full bg-cyan-500 text-white py-2 rounded-lg hover:bg-cyan-400 transition duration-300">
+                Enroll Now
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

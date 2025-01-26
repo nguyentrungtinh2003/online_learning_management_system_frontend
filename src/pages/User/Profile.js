@@ -26,11 +26,11 @@ const Profile = () => {
 
   const userId = localStorage.getItem("id");
 
-  useEffect(() => {
-    axios.get(`${URL}/api/auth/user/${userId}`).then((response) => {
-      setUser(response.data.data);
-    });
-  }, [userId]);
+  // useEffect(() => {
+  //   axios.get(`${URL}/api/auth/user/${userId}`).then((response) => {
+  //     setUser(response.data.data);
+  //   });
+  // }, [userId]);
 
   useEffect(() => {
     const formContainer = formContainerRef.current;
@@ -65,16 +65,18 @@ const Profile = () => {
           <div className="mt-20">
             <div className="flex items-center space-x-4">
               <h2 className="text-3xl font-semibold text-gray-800">
-                {user.username}
+                {user.username || `Nguyen trung Tinh`}
               </h2>
             </div>
-            <p className="text-sm text-gray-500 mt-1">{user.email}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {user.email || "admin@gmail.com"}
+            </p>
 
             {/* Coins */}
             <div className="flex items-center mt-2 space-x-3">
               <FaCoins className="text-yellow-500 text-xl" />
               <span className="text-gray-700 font-medium text-lg">
-                {user.coin}
+                {user.coin || 1900000}
               </span>
             </div>
           </div>
@@ -108,37 +110,43 @@ const Profile = () => {
           <div className="introduce-section text-slate-500">
             <div className="grid grid-cols-2 gap-8 p-6 bg-white shadow rounded-lg">
               <div>
+                <label>Username</label>
                 <TextField
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                   required
                   value={user.username}
                 />
+                <label className="mt-2">Email</label>
                 <TextField
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                   required
                   value={user.email}
                 />
+                <label className="mt-2">Phone Number</label>
                 <TextField
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                   required
                   value={user.phoneNumber}
                 />
               </div>
               <div>
+                <label>Birth Day</label>
                 <TextField
-                  className="mt-4 w-full"
+                  className="mt-2 w-full "
                   required
                   value={user.birthDay}
                   type="date"
                 />
+                <label className="mt-2">Address</label>
                 <TextField
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                   required
                   value={user.address}
                 />
+                <label className="mt-2">Role</label>
                 <TextField
                   select
-                  className="mt-4 w-full"
+                  className="mt-2 w-full"
                   required
                   SelectProps={{ native: true }}
                   value={user.roleEnum}

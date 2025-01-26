@@ -1,25 +1,45 @@
 import React from "react";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
-import OverviewCards from "./OverViewPage/OverviewCards";
-import Charts from "./OverViewPage/Charts";
-import DetailsTable from "./OverViewPage/DetailsTable";
-import SendEmail from "./AdminPages/SendEmail";
+import { Box, Grid } from "@mui/material";
+import Sidebar from "./Sidebar ";
+import DashboardCard from "./DashboardCard";
+import Chart from "./Chart";
 
 const Dashboard = () => {
   return (
-    <div className="d-flex m-4">
+    <Box
+      sx={{
+        display: "flex",
+        minHeight: "100vh",
+        backgroundColor: "#f9f9f9",
+        marginTop: "10vh",
+      }}
+    >
+      {/* Sidebar */}
       <Sidebar />
-      <div className="flex-grow-1">
-        <Header />
-        <div className="p-4">
-          <OverviewCards />
-          <Charts />
-          <DetailsTable />
-          <SendEmail />
-        </div>
-      </div>
-    </div>
+
+      {/* Main Content */}
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Grid container spacing={3}>
+          {/* Top Section */}
+          {/* <Grid item xs={12}>
+            <DashboardCard
+              title="Doanh Số"
+              border={true}
+              boxShadow={true}
+              content={true}
+            />
+          </Grid> */}
+          {/* Bottom Section with Chart */}
+          <Grid item xs={12} md={8}>
+            <Chart />
+          </Grid>
+
+          {/* <Grid item xs={12} md={4}>
+            <ManagementCourse />
+          </Grid> */}
+        </Grid>
+      </Box>
+    </Box>
   );
 };
 
