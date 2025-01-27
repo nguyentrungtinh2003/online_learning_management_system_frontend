@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer/Footer";
 import AddCourse from "./pages/Course/AddCourse";
 import AddLesson from "./pages/Lesson/AddLesson";
+import AdminCourseManagement from "./pages/Dashboard/AdminManagement/AdminCourseManagement";
 
 function App() {
   return (
@@ -59,9 +60,9 @@ function App() {
           <Route
             path="/all-user"
             element={
-              <div className="flex m-4">
+              <div className="flex">
                 <Sidebar />
-                <div className="flex-grow-1">
+                <div className="flex">
                   <Header />
                   <ManagementUser />
                 </div>
@@ -69,11 +70,23 @@ function App() {
             }
           />
           <Route
+            path="/admin-course-management"
+            element={
+              <div className="flex">
+                <Sidebar />
+                <div className="flex-1 box-border">
+                  <Header/>
+                  <AdminCourseManagement/>
+                </div>
+              </div>
+            }
+          />
+          <Route
             path="/view-user"
             element={
-              <div className="flex m-4">
+              <div className="flex">
                 <Sidebar />
-                <div className="flex-grow-1">
+                <div className="flex">
                   <Header />
                   <ViewUser />
                 </div>
@@ -83,9 +96,9 @@ function App() {
           <Route
             path="/add-user"
             element={
-              <div className="flex m-4">
+              <div className="flex">
                 <Sidebar />
-                <div className="flex-grow-1">
+                <div className="flex">
                   <Header />
                   <AdminAddUser />
                 </div>
@@ -96,9 +109,9 @@ function App() {
           <Route
             path="/admin-update-user"
             element={
-              <div className="flex m-4">
+              <div className="flex">
                 <Sidebar />
-                <div className="flex-grow-1">
+                <div className="flex">
                   <Header />
                   <AdminUpdateUser />
                 </div>

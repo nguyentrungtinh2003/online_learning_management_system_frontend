@@ -5,7 +5,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 export default function CourseLanding() {
   const divs = [
     <div
-      className="text-2xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 h-[400px] sm:h-[350px] md:h-[400px] w-full mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+      className="text-2xl bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 h-[400px] sm:h-[350px] md:h-[400px] w-full mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:shadow-xl"
       style={{
         backgroundImage:
           "linear-gradient(to right, #30cfd033, #33086733),url('https://wallpapercave.com/wp/wp10167060.jpg')",
@@ -22,7 +22,7 @@ export default function CourseLanding() {
       </p>
     </div>,
     <div
-      className="text-2xl bg-gradient-to-l from-rose-700 via-red-500 to-yellow-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+      className="text-2xl bg-gradient-to-l from-rose-700 via-red-500 to-yellow-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform  hover:shadow-xl"
       style={{
         backgroundImage:
           "linear-gradient(to right, #30cfd033, #33086733),url('https://www.newtechdojo.com/wp-content/uploads/2018/08/Data-Science.png')",
@@ -39,7 +39,7 @@ export default function CourseLanding() {
       </p>
     </div>,
     <div
-      className="text-2xl bg-gradient-to-r from-rose-400 via-cyan-400 to-teal-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+      className="text-2xl bg-gradient-to-r from-rose-400 via-cyan-400 to-teal-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform  hover:shadow-xl"
       style={{
         backgroundImage:
           "linear-gradient(to right, #30cfd033, #33086733),url('https://i.imgur.com/lkanFrg.jpg')",
@@ -56,7 +56,7 @@ export default function CourseLanding() {
       </p>
     </div>,
     <div
-      className="text-2xl bg-gradient-to-l from-purple-400 via-blue-300 to-teal-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+      className="text-2xl bg-gradient-to-l from-purple-400 via-blue-300 to-teal-200 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:shadow-xl"
       style={{
         backgroundImage:
           "linear-gradient(to right, #30cfd033, #33086733),url('https://www.mindinventory.com/blog/wp-content/uploads/2022/04/unity-3d-for-game-development-1024x647.webp')",
@@ -72,7 +72,7 @@ export default function CourseLanding() {
       </p>
     </div>,
     <div
-      className="text-2xl bg-gradient-to-r from-purple-400 via-blue-400 to-pink-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+      className="text-2xl bg-gradient-to-r from-purple-400 via-blue-400 to-pink-500 h-[400px] sm:h-[350px] md:h-[400px] mt-10 p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:shadow-xl"
       style={{
         backgroundImage:
           "linear-gradient(to right, #30cfd033, #33086733),url('https://static.vecteezy.com/system/resources/previews/006/198/869/non_2x/internet-security-protection-from-hacker-attacking-cyber-attack-and-network-security-concept-free-photo.jpg')",

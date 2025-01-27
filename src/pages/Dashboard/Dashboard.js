@@ -8,10 +8,9 @@ import SendEmail from "./AdminPages/SendEmail";
 
 const Dashboard = () => {
   return (
-    <div className="d-flex m-4">
+    <div className="flex">
       <Sidebar />
-      <div className="flex-grow-1">
-        <Header />
+      <div className="flex items-center w-full justify-center">
         <div className="p-4">
           <OverviewCards />
           <Charts />

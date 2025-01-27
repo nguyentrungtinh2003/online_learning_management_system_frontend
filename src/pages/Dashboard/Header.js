@@ -1,30 +1,22 @@
 import React from "react";
-import { FormControl, InputGroup, Button, Container } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
-import { IoCalendarOutline } from "react-icons/io5"; // Biểu tượng lịch
+import { CiSearch } from "react-icons/ci";
+import { PiBellRingingLight } from "react-icons/pi";
 
 const Header = () => {
   return (
-    <div className="shadow-sm flex justify-center items-center">
-      <Container className="flex justify-between items-center p-2">
-        {/* Logo */}
-        <h4 className="text-primary fw-bold m-0">Admin Dashboard</h4>
-
-        <div className="relative hidden lg:block w-[50%]">
-          <input
-            type="text"
-            placeholder="Search courses..."
-            className="border rounded-full pl-10 pr-4 py-1 text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-50"
-          />
-          <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+    <div className="text-slate-700 p-2 flex justify-between w-full">
+      <div className="border-2 flex items-center justify-center rounded-lg py-1 px-2 font-semibold">
+        <CiSearch />
+        <input placeholder="Search..." className="px-2" />
+      </div>
+      <div className="flex">
+        <div className="p-2 border-2 w-fit rounded-lg">
+          <PiBellRingingLight />
         </div>
-
-        {/* Nút ngày */}
-        <Button variant="outline-primary" className="flex items-center mb-1">
-          <IoCalendarOutline className=""/>
-          Apr 17, 2023
-        </Button>
-      </Container>
+        <div className="py-1 px-2 border-2 rounded-lg mx-1">
+          <img className="h-6" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTohFwdU4sY3J7mARcwIlradG-A3ojX5-1dfA&s" />
+        </div>
+      </div>
     </div>
   );
 };
