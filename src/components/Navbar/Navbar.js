@@ -36,12 +36,12 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 w-full z-30 h-20">
-      <div className="max-w-screen-xl mx-auto flex justify-between items-center">
+    <nav className="bg-white shadow-md fixed top-0 w-full z-30 h-fit">
+      <div className="max-w-screen mx-4 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-3">
           <Link to="/" className="flex items-center">
-            <img className="h-20 w-auto" src="/image2.jpg" alt="Logo" />
+            <img className="h-16" src="/image2.jpg" alt="Logo" />
           </Link>
           <h3 className="text-xl font-semibold text-gray-800">Code Arena</h3>
         </div>
