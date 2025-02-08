@@ -5,9 +5,9 @@ import { PiBellRingingLight } from "react-icons/pi";
 const Header = () => {
   return (
     <div className="text-slate-700 p-2 flex justify-between w-full">
-      <div className="border-2 flex items-center justify-center rounded-lg py-1 px-2 font-semibold">
+      <div className="group border-2 flex items-center justify-center rounded-lg py-1 px-2 font-semibold">
         <CiSearch />
-        <input placeholder="Search..." className="px-2" />
+        <input placeholder="Search..." className="px-2 focus:outline-none" />
       </div>
       <div className="flex">
         <div className="p-2 border-2 w-fit rounded-lg">
