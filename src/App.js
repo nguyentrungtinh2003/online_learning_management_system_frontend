@@ -15,7 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from "./components/Footer/Footer";
 import AddCourse from "./pages/Course/AddCourse";
 import AddLesson from "./pages/Lesson/AddLesson";
-import AdminCourseManagement from "./pages/Dashboard/AdminManagement/AdminCourseManagement";
+import ManagementCourse from "./pages/Course/ManagementCourse";
 
 function App() {
   return (
@@ -66,7 +66,7 @@ function App() {
             }
           />
           <Route
-            path="/admin-course-management"
+            path="/course-management"
             element={
               <div className="flex">
                 <div className="flex-1 box-border">
