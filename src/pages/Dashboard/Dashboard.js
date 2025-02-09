@@ -9,12 +9,9 @@ const Dashboard = () => {
     <div className="d-flex m-4">
       <Sidebar />
       <div className="flex-grow-1">
-        <Header />
         <div className="p-4">
-          <OverviewCards />
-          <Charts />
-          <DetailsTable />
-          <SendEmail />
+          <DashboardCard />
+          <Chart />
         </div>
       </div>
     </div>

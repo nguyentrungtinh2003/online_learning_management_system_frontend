@@ -21,7 +21,7 @@ ChartJS.register(
   Tooltip
 );
 
-const ChartComponent = () => {
+const Chart = () => {
   // Data for Bar Chart
   const barData = {
     labels: [
@@ -141,4 +141,4 @@ const ChartComponent = () => {
   );
 };
 
-export default ChartComponent;
+export default Chart;
