@@ -16,6 +16,9 @@ import Footer from "./components/Footer/Footer";
 import AddCourse from "./pages/Course/AddCourse";
 import AddLesson from "./pages/Lesson/AddLesson";
 import ManagementCourse from "./pages/Course/ManagementCourse";
+import ManagementLesson from "./pages/Lesson/ManagementLesson";
+import QuizzManagement from "./pages/Quizz/QuizzManagement";
+import ManagementQuestion from "./pages/Question/QuestionManagement";
 
 function App() {
   return (
@@ -65,16 +68,10 @@ function App() {
               </div>
             }
           />
-          <Route
-            path="/course-management"
-            element={
-              <div className="flex">
-                <div className="flex-1 box-border">
-                  <AdminCourseManagement />
-                </div>
-              </div>
-            }
-          />
+          <Route path="/course" element={<ManagementCourse />} />
+          <Route path="/quiz" element={<QuizzManagement />} />
+          <Route path="/lesson" element={<ManagementLesson />} />
+          <Route path="/question" element={<ManagementQuestion />} />
           <Route
             path="/view-user"
             element={
