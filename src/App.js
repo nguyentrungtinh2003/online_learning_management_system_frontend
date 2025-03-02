@@ -20,13 +20,14 @@ import ManagementLesson from "./pages/Lesson/ManagementLesson";
 import QuizzManagement from "./pages/Quizz/QuizzManagement";
 import ManagementQuestion from "./pages/Question/QuestionManagement";
 import LearningProgress from "./pages/User/LearningProcess";
+import CommentManagement from "./pages/Comment/CommentManagement";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/test" element={<LearningProgress />} />
+          <Route path="/test" element={<CommentManagement />} />
           <Route
             path="/"
             element={
