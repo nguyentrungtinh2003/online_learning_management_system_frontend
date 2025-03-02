@@ -19,12 +19,14 @@ import ManagementCourse from "./pages/Course/ManagementCourse";
 import ManagementLesson from "./pages/Lesson/ManagementLesson";
 import QuizzManagement from "./pages/Quizz/QuizzManagement";
 import ManagementQuestion from "./pages/Question/QuestionManagement";
+import LearningProgress from "./pages/User/LearningProcess";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
+          <Route path="/test" element={<LearningProgress />} />
           <Route
             path="/"
             element={

@@ -51,7 +51,7 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Search courses..."
-            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none hover:ring-2 hover:ring-cyan-500"
+            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
           />
           <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
           {/* Results */}
