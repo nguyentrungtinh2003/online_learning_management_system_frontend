@@ -24,13 +24,14 @@ import CommentManagement from "./pages/Comment/CommentManagement";
 import AdminBlogManagement from "./pages/Blog/AdminBlogManagement";
 import AdminPaymentManagement from "./pages/Payment/AdminPaymentManagement";
 import PaymentPage from "./pages/Payment/PaymentPage";
+import PaymentHistory from "./pages/Payment/PaymentHistory";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/test" element={<PaymentPage />} />
+          <Route path="/test" element={<PaymentHistory />} />
           <Route
             path="/"
             element={
