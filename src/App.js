@@ -23,13 +23,14 @@ import LearningProgress from "./pages/User/LearningProcess";
 import CommentManagement from "./pages/Comment/CommentManagement";
 import AdminBlogManagement from "./pages/Blog/AdminBlogManagement";
 import AdminPaymentManagement from "./pages/Payment/AdminPaymentManagement";
+import PaymentPage from "./pages/Payment/PaymentPage";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/test" element={<AdminPaymentManagement />} />
+          <Route path="/test" element={<PaymentPage />} />
           <Route
             path="/"
             element={
