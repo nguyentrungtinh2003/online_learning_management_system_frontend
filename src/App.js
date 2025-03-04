@@ -31,7 +31,12 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="/test" element={<PaymentHistory />} />
+          <Route path="/admin/comment" element={<CommentManagement />} />
+          <Route path="/admin/blog" element={<AdminBlogManagement />} />
+          <Route path="/admin/payment" element={<AdminPaymentManagement />} />
+          <Route path="/user/process" element={<LearningProgress />} />
+          <Route path="/user/payment" element={<PaymentPage />} />
+          <Route path="/user/payment/history" element={<PaymentHistory />} />
           <Route
             path="/"
             element={
