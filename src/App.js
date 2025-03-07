@@ -25,18 +25,23 @@ import AdminBlogManagement from "./pages/Blog/AdminBlogManagement";
 import AdminPaymentManagement from "./pages/Payment/AdminPaymentManagement";
 import PaymentPage from "./pages/Payment/PaymentPage";
 import PaymentHistory from "./pages/Payment/PaymentHistory";
+import RankManagement from "./pages/Ranking/RankManagement";
 
 function App() {
   return (
     <>
       <Router>
         <Routes>
+          <Route path="/test" element={<RankManagement />} />
+          <Route path="/admin/*" element={<Dashboard />} />
+          <Route path="/admin/all-user" element={<ManagementUser />} />
           <Route path="/admin/comment" element={<CommentManagement />} />
           <Route path="/admin/blog" element={<AdminBlogManagement />} />
           <Route path="/admin/payment" element={<AdminPaymentManagement />} />
           <Route path="/user/process" element={<LearningProgress />} />
           <Route path="/user/payment" element={<PaymentPage />} />
           <Route path="/user/payment/history" element={<PaymentHistory />} />
+          <Route path="/admin/lesson" element={<ManagementLesson />} />
           <Route
             path="/"
             element={

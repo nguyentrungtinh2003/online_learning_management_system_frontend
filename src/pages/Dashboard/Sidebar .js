@@ -1,58 +1,34 @@
-import React from "react";
-import { FaBook, FaGraduationCap, FaUser, FaHome } from "react-icons/fa";
-import { HiOutlineDocumentText } from "react-icons/hi";
-import { FiMenu } from "react-icons/fi";
+import { useState } from "react";
+import { MdDashboardCustomize, MdForum, MdSettingsSuggest } from "react-icons/md";
+import { FaBuffer, FaUsers } from "react-icons/fa";
 
-const Sidebar = () => {
+export default function Sidebar() {
+  const [activeItem, setActiveItem] = useState("Users");
+
+  const menuItems = [
+    { id: "Dashboard", label: "Dashboard", icon: <MdDashboardCustomize size={25} /> },
+    { id: "Courses", label: "Courses", icon: <FaBuffer size={25} /> },
+    { id: "Users", label: "Users", icon: <FaUsers size={25} /> },
+    { id: "Blog", label: "Blog", icon: <MdForum size={25} /> },
+    { id: "Setting", label: "Setting", icon: <MdSettingsSuggest size={25} /> },
+  ];
+
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="bg-white shadow-lg w-64 flex flex-col">
-        {/* Logo and Menu Button */}
-        <div className="flex items-center justify-between px-4 py-5">
-          <div className="flex items-center">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Logo"
-              className="mr-3"
-            />
-            <span className="font-bold text-lg text-blue-900">Code Arena</span>
-          </div>
-          <button className="text-blue-500 text-2xl">
-            <FiMenu />
-          </button>
-        </div>
-        {/* Menu Items */}
-        <nav className="flex-1 px-4 mt-4">
-          {/* Dashboard */}
-          <div className="hover:bg-blue-100 rounded-lg flex items-center gap-3 p-2 mb-4 cursor-pointer">
-            <FaHome className="text-blue-500" />
-            <span className="text-blue-500 font-semibold">Dashboard</span>
-          </div>
-          {/* Records */}
-          <div className="hover:bg-blue-100 rounded-lg flex items-center gap-3 p-2 mb-4 cursor-pointer">
-            <HiOutlineDocumentText className="text-blue-500" />
-            <span className="text-blue-500 font-semibold">Records</span>
-          </div>
-          {/* Books */}
-          <div className="flex items-center gap-3 p-2 mb-4 cursor-pointer hover:bg-blue-100 rounded-lg">
-            <FaBook className="text-blue-500" />
-            <span className="text-blue-500">Books</span>
-          </div>
-          {/* Students */}
-          <div className="flex items-center gap-3 p-2 mb-4 cursor-pointer hover:bg-blue-100 rounded-lg">
-            <FaGraduationCap className="text-blue-500" />
-            <span className="text-blue-500">Students</span>
-          </div>
-          {/* Users */}
-          <div className="flex items-center gap-3 p-2 cursor-pointer hover:bg-blue-100 rounded-lg">
-            <FaUser className="text-blue-500" />
-            <span className="text-blue-500">Users</span>
-          </div>
-        </nav>
-      </div>
+    <div className="w-64 bg-white border-2 p-4 m-2 rounded-2xl font-semibold">
+      <h2 className="text-xl font-bold mb-4 text-center">Code Arena</h2>
+      <ul className="space-y-2">
+        {menuItems.map((item) => (
+          <li
+            key={item.id}
+            className={`p-2 rounded cursor-pointer flex items-center gap-3 transition-colors ${
+              activeItem === item.id ? "bg-fcolor text-focolor" : "hover:bg-sicolor"
+            }`}
+            onClick={() => setActiveItem(item.id)}
+          >
+            {item.icon} {item.label}
+          </li>
+        ))}
+      </ul>
     </div>
   );
-};
-
-export default Sidebar;
+}
