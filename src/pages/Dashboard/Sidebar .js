@@ -14,14 +14,14 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-white border-2 p-4 m-2 rounded-2xl font-semibold">
+    <div className="w-64 bg-white drop-shadow-lg p-4 mx-2 my-4 rounded-2xl font-semibold">
       <h2 className="text-xl font-bold mb-4 text-center">Code Arena</h2>
       <ul className="space-y-2">
         {menuItems.map((item) => (
           <li
             key={item.id}
-            className={`p-2 rounded cursor-pointer flex items-center gap-3 transition-colors ${
-              activeItem === item.id ? "bg-fcolor text-focolor" : "hover:bg-sicolor"
+            className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-colors ${
+              activeItem === item.id ? "bg-scolor text-ficolor scale-105" : "hover:bg-tcolor duration-500"
             }`}
             onClick={() => setActiveItem(item.id)}
           >

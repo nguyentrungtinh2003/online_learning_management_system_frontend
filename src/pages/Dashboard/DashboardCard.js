@@ -19,6 +19,7 @@ import {
   Legend,
 } from "chart.js";
 import { useTheme } from "@mui/material/styles"; // Import useTheme hook
+import { blue } from "@mui/material/colors"; // Import màu blue
 import { AddBox } from "@mui/icons-material"; // Example icon (Material UI)
 
 // Register chart.js components
@@ -55,8 +56,8 @@ const DashboardCard = ({
       {
         label: "Revenue",
         data: [12, 19, 3, 5, 2, 3], // Example revenue data
-        borderColor: theme.palette.blue[500], // Blue color for the line chart
-        backgroundColor: theme.palette.blue[200], // Light blue background
+        borderColor: blue[500], // Sử dụng màu blue từ @mui/material/colors
+        backgroundColor: blue[200], // Light blue background
         fill: true,
       },
     ],
@@ -73,7 +74,7 @@ const DashboardCard = ({
         boxShadow: boxShadow
           ? shadow || "0 2px 12px rgba(0, 0, 0, 0.1)"
           : "none", // Lighter shadow
-        backgroundColor: theme.palette.blue[500], // Set background to blue
+        backgroundColor: blue[500], // Set background to blue
         color: "#fff", // Text color white to contrast with blue background
         padding: "1rem",
         marginBottom: "20px",

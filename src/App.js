@@ -30,126 +30,117 @@ import RankManagement from "./pages/Ranking/RankManagement";
 function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/test" element={<RankManagement />} />
-          <Route path="/admin/*" element={<Dashboard />} />
-          <Route path="/admin/all-user" element={<ManagementUser />} />
-          <Route path="/admin/comment" element={<CommentManagement />} />
-          <Route path="/admin/blog" element={<AdminBlogManagement />} />
-          <Route path="/admin/payment" element={<AdminPaymentManagement />} />
-          <Route path="/user/process" element={<LearningProgress />} />
-          <Route path="/user/payment" element={<PaymentPage />} />
-          <Route path="/user/payment/history" element={<PaymentHistory />} />
-          <Route path="/admin/lesson" element={<ManagementLesson />} />
-          <Route
-            path="/"
-            element={
-              <>
-                <Navbar />
-                <HomePage />
-              </>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <>
-                <Navbar />
-                <AuthForm />
-              </>
-            }
-          />
-          <Route
-            path="/dashboard"
-            element={
-              // localStorage.getItem("token") ? (
-              //   <Dashboard />
-              // ) : (
-              //   <>
-              //     <h1 className="h-[100px] box-border 2xl:text-2xl mt-20">
-              //       Không có quyền truy cập !
-              //     </h1>
-              //   </>
-              // )
-              <Dashboard />
-            }
-          />
-          <Route
-            path="/all-user"
-            element={
-              <div className="flex">
+      <>
+        <Router>
+          <Routes>
+            <Route path="/admin/*" element={<Dashboard />} />
+            <Route path="/admin/comment" element={<CommentManagement />} />
+            <Route path="/admin/payment" element={<AdminPaymentManagement />} />
+            <Route path="/admin/lesson" element={<ManagementLesson />} />
+          </Routes>
+        </Router>
+      </>
+      <>
+        <Router>
+          <Routes>
+            <Route path="/test" element={<RankManagement />} />
+            <Route path="/user/process" element={<LearningProgress />} />
+            <Route path="/user/payment" element={<PaymentPage />} />
+            <Route path="/user/payment/history" element={<PaymentHistory />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Navbar />
+                  <HomePage />
+                </>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <>
+                  <Navbar />
+                  <AuthForm />
+                </>
+              }
+            />
+            <Route
+              path="/all-user"
+              element={
                 <div className="flex">
-                  <ManagementUser />
+                  <div className="flex">
+                    <ManagementUser />
+                  </div>
                 </div>
-              </div>
-            }
-          />
-          <Route path="/course" element={<ManagementCourse />} />
-          <Route path="/quiz" element={<QuizzManagement />} />
-          <Route path="/lesson" element={<ManagementLesson />} />
-          <Route path="/question" element={<ManagementQuestion />} />
-          <Route
-            path="/view-user"
-            element={
-              <div className="flex">
+              }
+            />
+            <Route path="/course" element={<ManagementCourse />} />
+            <Route path="/quiz" element={<QuizzManagement />} />
+            <Route path="/lesson" element={<ManagementLesson />} />
+            <Route path="/question" element={<ManagementQuestion />} />
+            <Route
+              path="/view-user"
+              element={
                 <div className="flex">
-                  <ViewUser />
+                  <div className="flex">
+                    <ViewUser />
+                  </div>
                 </div>
-              </div>
-            }
-          />
-          <Route
-            path="/add-user"
-            element={
-              <div className="flex">
+              }
+            />
+            <Route
+              path="/add-user"
+              element={
                 <div className="flex">
-                  <AdminAddUser />
+                  <div className="flex">
+                    <AdminAddUser />
+                  </div>
                 </div>
-              </div>
-            }
-          />
-          <Route path="/update-user/:id" element={<UpdateUser />} />
-          <Route
-            path="/admin-update-user"
-            element={
-              <div className="flex">
+              }
+            />
+            <Route path="/update-user/:id" element={<UpdateUser />} />
+            <Route
+              path="/admin-update-user"
+              element={
                 <div className="flex">
-                  <AdminUpdateUser />
+                  <div className="flex">
+                    <AdminUpdateUser />
+                  </div>
                 </div>
-              </div>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <>
-                <Navbar />
-                <Profile />
-              </>
-            }
-          />
-          <Route
-            path="/add-course"
-            element={
-              <>
-                <Navbar />
-                <AddCourse />
-              </>
-            }
-          />
-          <Route
-            path="/add-lesson"
-            element={
-              <>
-                <Navbar />
-                <AddLesson />
-              </>
-            }
-          />
-        </Routes>
-      </Router>
-      <Footer />
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <>
+                  <Navbar />
+                  <Profile />
+                </>
+              }
+            />
+            <Route
+              path="/add-course"
+              element={
+                <>
+                  <Navbar />
+                  <AddCourse />
+                </>
+              }
+            />
+            <Route
+              path="/add-lesson"
+              element={
+                <>
+                  <Navbar />
+                  <AddLesson />
+                </>
+              }
+            />
+          </Routes>
+        </Router>
+        <Footer />
+      </>
     </>
   );
 }

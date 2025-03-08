@@ -1,96 +1,132 @@
 import { useState } from "react";
-import { PlusCircle, Trash2, Edit } from "lucide-react";
+import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+  MdForum,
+} from "react-icons/md";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
 
-const initialPosts = [
+const blogs = [
   {
-    id: 1,
-    title: "Introduction to Real Estate",
-    category: "Investment",
-    content: "Basic guide on real estate investments.",
+    id: "001",
+    title: "How blogs boost work",
+    description: "Tips & tricks for using blogs...",
+    image: "img1.jpg",
+    video: "video1.mp4",
+    createdAt: "11/01/2023",
+    interactions: 325,
+    views: 700,
+    author: "Yuki Tam",
   },
   {
-    id: 2,
-    title: "Top 10 Property Insurance Tips",
-    category: "Insurance",
-    content: "Important things to know about property insurance.",
+    id: "002",
+    title: "Python for Beginners",
+    description: "Let's write Python codes...",
+    image: "img2.jpg",
+    video: "video2.mp4",
+    createdAt: "12/03/2023",
+    interactions: 203,
+    views: 512,
+    author: "Tom Kha",
+  },
+  {
+    id: "003",
+    title: "Master Java",
+    description: "An advanced Java tutorial...",
+    image: "img3.jpg",
+    video: "video3.mp4",
+    createdAt: "17/05/2023",
+    interactions: 121,
+    views: 715,
+    author: "Alice Tran",
   },
 ];
 
-export default function BlogAdmin() {
-  const [posts, setPosts] = useState(initialPosts);
-  const [newPost, setNewPost] = useState({
-    title: "",
-    category: "",
-    content: "",
-  });
-
-  const addPost = () => {
-    if (!newPost.title || !newPost.content) return;
-    setPosts([...posts, { id: posts.length + 1, ...newPost }]);
-    setNewPost({ title: "", category: "", content: "" });
-  };
-
-  const deletePost = (id) => setPosts(posts.filter((post) => post.id !== id));
+export default function BlogManagement() {
+  const [search, setSearch] = useState("");
+  const filteredBlogs = blogs.filter((blog) =>
+    blog.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Admin Blog Management</h1>
-
-      {/* Add New Post */}
-      <div className="p-4 border border-gray-300 rounded-lg mb-6">
-        <input
-          type="text"
-          placeholder="Title"
-          value={newPost.title}
-          onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-          className="w-full p-2 border border-gray-300 rounded mb-2"
-        />
-        <input
-          type="text"
-          placeholder="Category"
-          value={newPost.category}
-          onChange={(e) => setNewPost({ ...newPost, category: e.target.value })}
-          className="w-full p-2 border border-gray-300 rounded mb-2"
-        />
-        <textarea
-          placeholder="Content"
-          value={newPost.content}
-          onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-          className="w-full p-2 border border-gray-300 rounded mb-2"
-        ></textarea>
-        <button
-          onClick={addPost}
-          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2"
-        >
-          <PlusCircle size={16} /> Add Post
-        </button>
-      </div>
-
-      {/* List of Posts */}
-      <div className="space-y-4">
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="p-4 border border-gray-300 rounded-lg flex justify-between items-center"
-          >
-            <div>
-              <h2 className="text-lg font-semibold">{post.title}</h2>
-              <p className="text-sm text-gray-600">Category: {post.category}</p>
-              <p className="text-gray-700">{post.content}</p>
-            </div>
-            <div className="flex gap-2">
-              <button className="border border-yellow-500 text-yellow-500 px-3 py-1 rounded flex items-center gap-2">
-                <Edit size={16} /> Edit
-              </button>
-              <button
-                onClick={() => deletePost(post.id)}
-                className="border border-red-500 text-red-500 px-3 py-1 rounded flex items-center gap-2"
-              >
-                <Trash2 size={16} /> Delete
-              </button>
-            </div>
+    <div className="flex-1 h-screen">
+      <div className="flex-1 flex flex-col h-full p-6">
+        <AdminNavbar />
+        <div className="flex justify-between mb-4">
+          <div className="flex gap-2">
+            <MdForum size={30} />
+            <MdNavigateNext size={30} />
+            <h2 className="text-lg font-bold mb-4">Blog Management</h2>
           </div>
-        ))}
+          <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+            <FaPlus size={30} />
+          </button>
+        </div>
+        <div className="flex-1 drop-shadow-lg">
+          <div className="bg-white p-4 rounded-2xl">
+            <table className="w-full">
+              <thead>
+                <tr className=" text-center font-bold">
+                  <th className="p-2">ID</th>
+                  <th className="p-2">Blog Title</th>
+                  <th className="p-2">Description</th>
+                  <th className="p-2">Image</th>
+                  <th className="p-2">Video</th>
+                  <th className="p-2">Created Date</th>
+                  <th className="p-2">Interactions</th>
+                  <th className="p-2">Views</th>
+                  <th className="p-2">Author</th>
+                  <th className="p-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredBlogs.map((blog) => (
+                  <tr key={blog.id} className="text-center">
+                    <td className="p-2">{blog.id}</td>
+                    <td className="p-2">{blog.title}</td>
+                    <td className="p-2">{blog.description}</td>
+                    <td className="p-2">
+                      <img
+                        src={blog.image}
+                        alt="blog"
+                        className="w-8 h-8 rounded mx-auto"
+                      />
+                    </td>
+                    <td className="p-2">{blog.video}</td>
+                    <td className="p-2">{blog.createdAt}</td>
+                    <td className="p-2">{blog.interactions}</td>
+                    <td className="p-2">{blog.views}</td>
+                    <td className="p-2">{blog.author}</td>
+                    <td className="p-2 flex justify-center gap-1">
+                      <button className="p-2 border rounded">
+                        <FaEye />
+                      </button>
+                      <button className="p-2 border rounded">
+                        <FaEdit />
+                      </button>
+                      <button className="p-2 border rounded">
+                        <MdDeleteForever />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="flex justify-between mt-4">
+          <p>Showing 1 of 4 pages</p>
+          <div className="space-x-2">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+              <MdNavigateBefore size={30} />
+            </button>
+            <button className="bg-scolor p-1 hover:scale-105 duration-500 ">
+              <MdNavigateNext size={30} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

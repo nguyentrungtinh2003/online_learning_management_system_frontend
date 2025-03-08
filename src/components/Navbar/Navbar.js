@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaCoins } from "react-icons/fa";
 import URL from "../../config/URLconfig";
@@ -18,6 +18,20 @@ export default function Navbar() {
       })
       .catch(() => {});
   }, []);
+
+  const [isFocused, setIsFocused] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const searchResults = [
+    "Khoá học Java backend cho người mới",
+    "Khoá học JavaScript cho người mới",
+    "Làm chủ Axios trong React",
+  ];
+
+  const handleSelect = (value) => {
+    setInputValue(value); // Cập nhật giá trị input
+    setIsFocused(false); // Ẩn form kết quả
+  };
 
   const handleGoogleLogout = async () => {
     try {
@@ -48,33 +62,38 @@ export default function Navbar() {
 
         {/* Search Bar */}
         <div className="relative w-full max-w-md">
-          <input
-            type="text"
-            placeholder="Search courses..."
-            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
-          />
-          <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
-          {/* Results */}
-          <div className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10">
-            <ul className="max-h-48 overflow-y-auto">
-              <a className="" href="#">
-                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                  Khoá học Java backend cho người mới
-                </li>
-              </a>
-              <a className="" href="#">
-                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                  Khoá học JavaScript cho người mới
-                </li>
-              </a>
-              <a className="" href="#">
-                <li className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer">
-                  Làm chủ Axios trong React
-                </li>
-              </a>
-            </ul>
-          </div>
+      {/* Search Input */}
+      <input
+        type="text"
+        value={inputValue}
+        placeholder="Search courses..."
+        className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+
+      {/* Results - Hiện khi isFocused = true */}
+      {isFocused && (
+        <div
+          className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10"
+          onMouseDown={(e) => e.preventDefault()} // Giữ form khi click vào danh sách
+        >
+          <ul className="max-h-48 overflow-y-auto">
+            {searchResults.map((item, index) => (
+              <li
+                key={index}
+                className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer"
+                onClick={() => handleSelect(item)}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
+      )}
+    </div>
 
         {/* User or Login */}
         <div className="flex items-center space-x-4">
