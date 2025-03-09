@@ -6,6 +6,7 @@ import {
   MdNavigateBefore,
 } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { Link } from "react-router-dom";
 
 const courses = [
   {
@@ -53,9 +54,11 @@ export default function CourseManagement() {
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold mb-4">Course Management</h2>
           </div>
-          <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-            <FaPlus size={30} />
-          </button>
+          <Link className="hover:text-ficolor" to="/admin/courses/add-course">
+            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+              <FaPlus size={30} />
+            </button>
+          </Link>
         </div>
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-white p-4 rounded-2xl">

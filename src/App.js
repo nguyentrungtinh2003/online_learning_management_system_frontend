@@ -26,6 +26,8 @@ import AdminPaymentManagement from "./pages/Payment/AdminPaymentManagement";
 import PaymentPage from "./pages/Payment/PaymentPage";
 import PaymentHistory from "./pages/Payment/PaymentHistory";
 import RankManagement from "./pages/Ranking/RankManagement";
+import AdminSidebar from "./components/Sidebar/AdminSidebar";
+import AdminSettings from "./pages/Dashboard/AdminSetting";
 
 function App() {
   return (
@@ -33,17 +35,79 @@ function App() {
       <>
         <Router>
           <Routes>
-            <Route path="/admin/*" element={<Dashboard />} />
             <Route path="/admin/comment" element={<CommentManagement />} />
             <Route path="/admin/payment" element={<AdminPaymentManagement />} />
             <Route path="/admin/lesson" element={<ManagementLesson />} />
+            <Route
+              path="/admin/*"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <Dashboard />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/courses"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <ManagementCourse />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <ManagementUser />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/blog"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <AdminBlogManagement />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <AdminSettings />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/courses/add-course"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <AddCourse />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/users/add-user"
+              element={
+                <div className="flex h-fit bg-focolor">
+                  <AdminSidebar />
+                  <AdminAddUser />
+                </div>
+              }
+            />
           </Routes>
         </Router>
       </>
       <>
         <Router>
           <Routes>
-            <Route path="/test" element={<RankManagement />} />
+            <Route path="/test" element={<AddCourse />} />
             <Route path="/user/process" element={<LearningProgress />} />
             <Route path="/user/payment" element={<PaymentPage />} />
             <Route path="/user/payment/history" element={<PaymentHistory />} />

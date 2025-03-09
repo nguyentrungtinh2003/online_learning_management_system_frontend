@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   MdDashboardCustomize,
   MdForum,
@@ -8,8 +8,9 @@ import {
 import { FaBuffer, FaUsers } from "react-icons/fa";
 
 export default function Sidebar() {
-  const [activeItem, setActiveItem] = useState("Dashboard");
-  const navigate = useNavigate(); // Hook điều hướng
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeItem, setActiveItem] = useState("");
 
   const menuItems = [
     {
@@ -44,13 +45,22 @@ export default function Sidebar() {
     },
   ];
 
+  useEffect(() => {
+    const currentItem = menuItems.find(
+      (item) => item.path === location.pathname
+    );
+    if (currentItem) {
+      setActiveItem(currentItem.id);
+    }
+  }, [location.pathname]);
+
   const handleNavigate = (id, path) => {
     setActiveItem(id);
     navigate(path);
   };
 
   return (
-    <div className="w-64 bg-white drop-shadow-lg p-4 mx-2 my-4 rounded-2xl font-semibold">
+    <div className="w-64 bg-white drop-shadow-lg p-4 ml-4 rounded-2xl font-semibold sticky top-0 h-screen">
       <h2 className="text-xl font-bold mb-4 text-center">Code Arena</h2>
       <ul className="space-y-2">
         {menuItems.map((item) => (

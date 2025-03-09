@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Card, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { FaUsers } from "react-icons/fa";
+import { MdNavigateNext } from "react-icons/md";
 import { ToastContainer, toast, Slide } from "react-toastify";
 
 const AdminAddUser = () => {
@@ -12,11 +15,9 @@ const AdminAddUser = () => {
     phoneNumber: "",
     birthDay: "",
     address: "",
-    roleEnum: "STUDENT", // Default value, can be changed
+    roleEnum: "STUDENT", // Default value
   });
   const [image, setImage] = useState(null);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,146 +45,107 @@ const AdminAddUser = () => {
 
     await axios
       .post(`${URL}/api/auth/admin-register-user`, data)
-      .then((response) => {
-        toast.success("Tạo người dùng thành công !", {
+      .then(() => {
+        toast.success("User added successfully!", {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
         });
         setTimeout(() => {
-          window.location.replace("/");
+          window.location.replace("/admin/users");
         }, 3000);
       })
-      .catch((error) => {
-        toast.error("Tạo người dùng thất bại !", {
+      .catch(() => {
+        toast.error("Failed to add user!", {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
         });
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 3000);
       });
   };
 
   return (
-    <Container className="place-items mt-4">
+    <div className="flex-1">
+      <div className="flex-1 flex flex-col h-fit p-6">
+        <AdminNavbar />
+        <div className="flex gap-2 items-center">
+          <FaUsers size={30} />
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">User Management</h2>
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">Add New User</h2>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-6 rounded-lg shadow mt-4"
+        >
+          <div className="space-y-4">
+            {[
+              { label: "Username", name: "username", type: "text" },
+              { label: "Password", name: "password", type: "password" },
+              { label: "Email", name: "email", type: "email" },
+              { label: "Phone Number", name: "phoneNumber", type: "text" },
+              { label: "Birth Day", name: "birthDay", type: "date" },
+              { label: "Address", name: "address", type: "text" },
+            ].map((field) => (
+              <div key={field.name} className="flex items-center space-x-4">
+                <label className="w-1/4 text-gray-700 font-medium">
+                  {field.label}:
+                </label>
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleInputChange}
+                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  required
+                />
+              </div>
+            ))}
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Role:</label>
+              <select
+                name="roleEnum"
+                value={formData.roleEnum}
+                onChange={handleInputChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              >
+                <option value="STUDENT">STUDENT</option>
+                <option value="TEACHER">TEACHER</option>
+              </select>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                Profile Image:
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="flex-1 border rounded-lg px-3 py-2"
+              />
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              to="/admin/users"
+              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
       <ToastContainer />
-      <Card className="">
-        <Card.Header className="text-2xl font-bold text-slate-500">
-          Add New User
-        </Card.Header>
-        <Card.Body className="">
-          {message && <Alert variant="success">{message}</Alert>}
-          {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
-            <div>
-              <Form.Group controlId="formUsername" className="mb-3">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  placeholder="Enter username"
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formPassword" className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Enter password"
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formEmail" className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Enter email"
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formPhoneNumber" className="mb-3">
-                <Form.Label>Phone Number</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  placeholder="Enter phone number"
-                  required
-                />
-              </Form.Group>
-            </div>
-
-            <div>
-              <Form.Group controlId="formBirthDay" className="mb-3">
-                <Form.Label>Birth Day</Form.Label>
-                <Form.Control
-                  name="birthDay"
-                  value={formData.birthDay}
-                  onChange={handleInputChange}
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formAddress" className="mb-3">
-                <Form.Label>Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Enter address"
-                  required
-                />
-              </Form.Group>
-
-              <Form.Group controlId="formRoleEnum" className="mb-3">
-                <Form.Label>Role</Form.Label>
-                <Form.Select
-                  name="roleEnum"
-                  value={formData.roleEnum}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="STUDENT">STUDENT</option>
-                  <option value="TEACHER">TEACHER</option>
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group controlId="formImage" className="mb-3">
-                <Form.Label>Profile Image</Form.Label>
-                <Form.Control
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </Form.Group>
-            </div>
-
-            <div className="col-span-2 flex justify-end">
-              <Button variant="primary" type="submit">
-                Create User
-              </Button>
-            </div>
-          </Form>
-        </Card.Body>
-      </Card>
-    </Container>
+    </div>
   );
 };
 

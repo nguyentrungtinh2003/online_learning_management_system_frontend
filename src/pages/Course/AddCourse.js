@@ -1,17 +1,23 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 
 const AddCourse = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    users: [], // Nếu cần, thêm danh sách user ID
-    user: { id: localStorage.getItem("id") }, // Đối tượng user cơ bản
-    lessons: [], // Nếu cần, thêm danh sách lesson ID
+    users: [],
+    user: { id: localStorage.getItem("id") },
+    lessons: [],
   });
-
   const [img, setImg] = useState(null);
 
   const handleChange = (e) => {
@@ -20,12 +26,11 @@ const AddCourse = () => {
   };
 
   const handleImageChange = (e) => {
-    setImg(e.target.files[0]); // Sửa lỗi setImage thành setImg
+    setImg(e.target.files[0]);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const data = new FormData();
     data.append(
       "course",
@@ -34,14 +39,11 @@ const AddCourse = () => {
     if (img) {
       data.append("img", img);
     }
-
     axios
       .post(`${URL}/api/courses/add`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((response) => {
+      .then(() => {
         alert("Course added successfully!");
         window.location.reload();
       })
@@ -51,76 +53,107 @@ const AddCourse = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group className="mt-100" controlId="formCourseName">
-        <Form.Label>Course Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter course name"
-          name="courseName"
-          value={courseData.courseName}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          placeholder="Enter course description"
-          name="description"
-          value={courseData.description}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formImage">
-        <Form.Label>Course Image</Form.Label>
-        <Form.Control
-          type="file"
-          name="img"
-          onChange={handleImageChange} // Đảm bảo tải file lên
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formDate">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="datetime-local"
-          name="date"
-          value={courseData.date}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formUserId">
-        <Form.Label>User ID</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter user ID"
-          name="userId"
-          value={courseData.userId}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formIsDeleted">
-        <Form.Check
-          type="checkbox"
-          label="Is Deleted"
-          name="isDeleted"
-          checked={courseData.isDeleted}
-          onChange={(e) =>
-            setCourseData({ ...courseData, isDeleted: e.target.checked })
-          }
-        />
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Add Course
-      </Button>
-    </Form>
+    <div className="flex-1">
+      <div className="flex-1 flex flex-col h-fit p-6">
+        <AdminNavbar />
+        <div className="flex gap-2">
+          <FaBuffer size={30} />
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold mb-4">Course Management</h2>
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold mb-4">Add New Course</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                Course Title:
+              </label>
+              <input
+                type="text"
+                name="courseName"
+                value={courseData.courseName}
+                onChange={handleChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+              <input
+                type="file"
+                name="img"
+                onChange={handleImageChange}
+                className="flex-1 border rounded-lg px-3 py-2"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                Description:
+              </label>
+              <textarea
+                name="description"
+                rows={3}
+                value={courseData.description}
+                onChange={handleChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              ></textarea>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Price:</label>
+              <input
+                type="number"
+                name="price"
+                value={courseData.price}
+                onChange={handleChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Type:</label>
+              <select
+                name="type"
+                value={courseData.type}
+                onChange={handleChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              >
+                <option>Select Type</option>
+                <option value="free">Free</option>
+                <option value="paid">Paid</option>
+              </select>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                Lecturer:
+              </label>
+              <select
+                name="lecturer"
+                value={courseData.lecturer}
+                onChange={handleChange}
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              >
+                <option>Select Lecturer</option>
+                <option value="1">John Doe</option>
+                <option value="2">Jane Smith</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              to="/admin/courses"
+              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 
