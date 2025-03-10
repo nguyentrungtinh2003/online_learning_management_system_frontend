@@ -19,8 +19,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex-1 h-fit">
-      {/* Sidebar */}
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full p-6">
         <AdminNavbar />

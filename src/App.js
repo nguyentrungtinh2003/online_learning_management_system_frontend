@@ -168,75 +168,16 @@ function App() {
                 </>
               }
             />
-            <Route
-              path="/all-user"
-              element={
-                <div className="flex">
-                  <div className="flex">
-                    <ManagementUser />
-                  </div>
-                </div>
-              }
-            />
             <Route path="/course" element={<ManagementCourse />} />
             <Route path="/quiz" element={<QuizzManagement />} />
             <Route path="/lesson" element={<ManagementLesson />} />
             <Route path="/question" element={<ManagementQuestion />} />
-            <Route
-              path="/view-user"
-              element={
-                <div className="flex">
-                  <div className="flex">
-                    <ViewUser />
-                  </div>
-                </div>
-              }
-            />
-            <Route
-              path="/add-user"
-              element={
-                <div className="flex">
-                  <div className="flex">
-                    <AdminAddUser />
-                  </div>
-                </div>
-              }
-            />
-            <Route path="/update-user/:id" element={<UpdateUser />} />
-            <Route
-              path="/admin-update-user"
-              element={
-                <div className="flex">
-                  <div className="flex">
-                    <AdminUpdateUser />
-                  </div>
-                </div>
-              }
-            />
             <Route
               path="/profile"
               element={
                 <>
                   <Navbar />
                   <Profile />
-                </>
-              }
-            />
-            <Route
-              path="/add-course"
-              element={
-                <>
-                  <Navbar />
-                  <AddCourse />
-                </>
-              }
-            />
-            <Route
-              path="/add-lesson"
-              element={
-                <>
-                  <Navbar />
-                  <AddLesson />
                 </>
               }
             />

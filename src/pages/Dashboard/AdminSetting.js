@@ -6,74 +6,139 @@ const AdminSettings = () => {
   const [activeTab, setActiveTab] = useState("general");
 
   return (
-    <div className="flex-1 h-screen">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full p-6">
+    <div className="flex-1">
+      <div className="flex-1 flex flex-col h-fit p-6">
         <AdminNavbar />
-        <h2 className="text-2xl font-bold mb-4">Admin Settings</h2>
+
+        <div className="flex gap-2 items-center mb-4">
+          <FaCog size={30} />
+          <h2 className="text-lg font-bold">Admin Settings</h2>
+        </div>
 
         {/* Tabs */}
         <div className="flex gap-4 border-b pb-2">
-          <button
-            onClick={() => setActiveTab("general")}
-            className={activeTab === "general" ? "font-bold" : ""}
-          >
-            <FaCog /> General
-          </button>
-          <button
-            onClick={() => setActiveTab("users")}
-            className={activeTab === "users" ? "font-bold" : ""}
-          >
-            <FaUserShield /> Users
-          </button>
-          <button
-            onClick={() => setActiveTab("notifications")}
-            className={activeTab === "notifications" ? "font-bold" : ""}
-          >
-            <FaBell /> Notifications
-          </button>
-          <button
-            onClick={() => setActiveTab("payments")}
-            className={activeTab === "payments" ? "font-bold" : ""}
-          >
-            <FaCreditCard /> Payments
-          </button>
+          {[
+            { key: "general", icon: <FaCog />, label: "General" },
+            {
+              key: "account",
+              icon: <FaUserShield />,
+              label: "Account Settings",
+            },
+            {
+              key: "configuration",
+              icon: <FaCreditCard />,
+              label: "Configuration",
+            },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                activeTab === tab.key
+                  ? "font-bold bg-scolor text-ficolor"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </div>
 
         {/* Content */}
-        <div className="mt-4">
+        <div className="mt-6 bg-white p-6 rounded-lg shadow space-y-4">
           {activeTab === "general" && (
             <div>
-              <h3 className="text-lg font-bold">General Settings</h3>
-              <label>Website Name:</label>
-              <input
-                type="text"
-                className="border p-2 rounded w-full"
-                placeholder="Code Arena"
-              />
-              <label>Logo:</label>
-              <input type="file" className="border p-2 rounded w-full" />
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Website Name:
+                  </label>
+                  <input
+                    type="text"
+                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                    placeholder="Code Arena"
+                  />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Logo:
+                  </label>
+                  <input
+                    type="file"
+                    className="flex-1 border rounded-lg px-3 py-2"
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80">
+                    Save
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
-          {activeTab === "users" && (
+          {activeTab === "account" && (
             <div>
-              <h3 className="text-lg font-bold">User Management</h3>
-              <p>Manage admin, instructors, and students.</p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Avatar:
+                  </label>
+                  <input
+                    type="file"
+                    className="flex-1 border rounded-lg px-3 py-2"
+                  />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Name:
+                  </label>
+                  <input
+                    type="text"
+                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Email:
+                  </label>
+                  <input
+                    type="email"
+                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Password:
+                  </label>
+                  <input
+                    type="password"
+                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  />
+                </div>
+              </div>
             </div>
           )}
 
-          {activeTab === "notifications" && (
+          {activeTab === "configuration" && (
             <div>
-              <h3 className="text-lg font-bold">Notification Settings</h3>
-              <p>Configure email and system notifications.</p>
-            </div>
-          )}
-
-          {activeTab === "payments" && (
-            <div>
-              <h3 className="text-lg font-bold">Payment & Subscription</h3>
-              <p>Manage payment methods and subscription plans.</p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Dark Mode:
+                  </label>
+                  <input type="checkbox" className="w-6 h-6" />
+                </div>
+                <div className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium">
+                    Language:
+                  </label>
+                  <select className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor">
+                    <option>English</option>
+                    <option>Vietnamese</option>
+                  </select>
+                </div>
+              </div>
             </div>
           )}
         </div>
