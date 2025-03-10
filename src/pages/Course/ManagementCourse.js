@@ -8,7 +8,7 @@ import {
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
 
-const courses = [
+const initialCourses = [
   {
     id: "001",
     name: "Basic JavaScript",
@@ -39,7 +39,14 @@ const courses = [
 ];
 
 export default function CourseManagement() {
+  const [courses, setCourses] = useState(initialCourses);
   const [search, setSearch] = useState("");
+
+  const handleDelete = (id) => {
+    const updatedCourses = courses.filter((course) => course.id !== id);
+    setCourses(updatedCourses);
+  };
+
   const filteredCourses = courses.filter((course) =>
     course.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -92,13 +99,16 @@ export default function CourseManagement() {
                     <td className="p-2">{course.createdAt}</td>
                     <td className="p-2">{course.status}</td>
                     <td className="p-2 flex justify-center gap-1">
-                      <button className="p-2 border rounded">
-                        <FaEye />
-                      </button>
-                      <button className="p-2 border rounded">
+                      <Link
+                        to="/admin/courses/edit-course"
+                        className="p-2 border rounded"
+                      >
                         <FaEdit />
-                      </button>
-                      <button className="p-2 border rounded">
+                      </Link>
+                      <button
+                        className="p-2 border rounded"
+                        onClick={() => handleDelete(course.id)}
+                      >
                         <MdDeleteForever />
                       </button>
                     </td>

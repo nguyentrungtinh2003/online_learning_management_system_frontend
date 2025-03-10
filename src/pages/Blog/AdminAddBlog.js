@@ -3,21 +3,16 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
-import { FaUsers } from "react-icons/fa";
-import { MdNavigateNext } from "react-icons/md";
+import { MdForum, MdNavigateNext } from "react-icons/md";
 import { ToastContainer, toast, Slide } from "react-toastify";
 
-const AdminAddUser = () => {
+const AdminAddBlog = () => {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
-    phoneNumber: "",
-    birthDay: "",
-    address: "",
-    roleEnum: "STUDENT", // Default value
+    title: "",
+    description: "",
   });
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,8 +22,8 @@ const AdminAddUser = () => {
     });
   };
 
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+  const handleFileChange = (e, setFile) => {
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -36,27 +31,30 @@ const AdminAddUser = () => {
 
     const data = new FormData();
     data.append(
-      "user",
+      "blog",
       new Blob([JSON.stringify(formData)], { type: "application/json" })
     );
     if (image) {
-      data.append("img", image);
+      data.append("image", image);
+    }
+    if (video) {
+      data.append("video", video);
     }
 
     await axios
-      .post(`${URL}/api/auth/admin-register-user`, data)
+      .post(`${URL}/api/blogs/create`, data)
       .then(() => {
-        toast.success("User added successfully!", {
+        toast.success("Blog added successfully!", {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
         });
         setTimeout(() => {
-          window.location.replace("/admin/users");
+          window.location.replace("/admin/blog");
         }, 3000);
       })
       .catch(() => {
-        toast.error("Failed to add user!", {
+        toast.error("Failed to add blog!", {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
@@ -66,27 +64,23 @@ const AdminAddUser = () => {
 
   return (
     <div className="flex-1">
-      <div className="flex-1 flex flex-col h-fit p-6">
+      <div className="flex-1 flex flex-col h-full p-6">
         <AdminNavbar />
         <div className="flex gap-2 items-center">
-          <FaUsers size={30} />
+          <MdForum size={30} />
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">User Management</h2>
+          <h2 className="text-lg font-bold">Blog Management</h2>
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">Add New User</h2>
+          <h2 className="text-lg font-bold">Add New Blog</h2>
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded-lg shadow mt-4"
+          className="bg-white flex-col flex-1 flex p-6 rounded-lg shadow mt-4"
         >
           <div className="space-y-4">
             {[
-              { label: "Username", name: "username", type: "text" },
-              { label: "Password", name: "password", type: "password" },
-              { label: "Email", name: "email", type: "email" },
-              { label: "Phone Number", name: "phoneNumber", type: "text" },
-              { label: "Birth Day", name: "birthDay", type: "date" },
-              { label: "Address", name: "address", type: "text" },
+              { label: "Blog Title", name: "title", type: "text" },
+              { label: "Description", name: "description", type: "text" },
             ].map((field) => (
               <div key={field.name} className="flex items-center space-x-4">
                 <label className="w-1/4 text-gray-700 font-medium">
@@ -104,33 +98,28 @@ const AdminAddUser = () => {
             ))}
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">Role:</label>
-              <select
-                name="roleEnum"
-                value={formData.roleEnum}
-                onChange={handleInputChange}
-                className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-              >
-                <option value="STUDENT">STUDENT</option>
-                <option value="TEACHER">LECTURE</option>
-              </select>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
-                Profile Image:
-              </label>
+              <label className="w-1/4 text-gray-700 font-medium">Image:</label>
               <input
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={(e) => handleFileChange(e, setImage)}
+                className="flex-1 border rounded-lg px-2 py-2"
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Video:</label>
+              <input
+                type="file"
+                accept="video/*"
+                onChange={(e) => handleFileChange(e, setVideo)}
                 className="flex-1 border rounded-lg px-2 py-2"
               />
             </div>
           </div>
           <div className="flex justify-end space-x-2 mt-6">
             <Link
-              to="/admin/users"
+              to="/admin/blog"
               className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
             >
               Cancel
@@ -149,4 +138,4 @@ const AdminAddUser = () => {
   );
 };
 
-export default AdminAddUser;
+export default AdminAddBlog;

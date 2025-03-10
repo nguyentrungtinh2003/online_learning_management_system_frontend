@@ -7,8 +7,9 @@ import {
   MdForum,
 } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { Link } from "react-router-dom";
 
-const blogs = [
+const initialBlogs = [
   {
     id: "001",
     title: "How blogs boost work",
@@ -45,7 +46,14 @@ const blogs = [
 ];
 
 export default function BlogManagement() {
+  const [blogs, setBlogs] = useState(initialBlogs);
   const [search, setSearch] = useState("");
+
+  const handleDelete = (id) => {
+    const updatedBlogs = blogs.filter((blog) => blog.id !== id);
+    setBlogs(updatedBlogs);
+  };
+
   const filteredBlogs = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(search.toLowerCase())
   );
@@ -60,9 +68,12 @@ export default function BlogManagement() {
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold mb-4">Blog Management</h2>
           </div>
-          <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+          <Link
+            className="hover:text-ficolor cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
+            to="/admin/blog/add-blog"
+          >
             <FaPlus size={30} />
-          </button>
+          </Link>
         </div>
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-white p-4 rounded-2xl">
@@ -74,7 +85,7 @@ export default function BlogManagement() {
                   <th className="p-2">Description</th>
                   <th className="p-2">Image</th>
                   <th className="p-2">Video</th>
-                  <th className="p-2">Created Date</th>
+                  <th className="p-2 whitespace-nowrap">Created Date</th>
                   <th className="p-2">Interactions</th>
                   <th className="p-2">Views</th>
                   <th className="p-2">Author</th>
@@ -100,13 +111,16 @@ export default function BlogManagement() {
                     <td className="p-2">{blog.views}</td>
                     <td className="p-2">{blog.author}</td>
                     <td className="p-2 flex justify-center gap-1">
-                      <button className="p-2 border rounded">
-                        <FaEye />
-                      </button>
-                      <button className="p-2 border rounded">
+                      <Link
+                        to="/admin/blog/edit-blog"
+                        className="p-2 border rounded"
+                      >
                         <FaEdit />
-                      </button>
-                      <button className="p-2 border rounded">
+                      </Link>
+                      <button
+                        className="p-2 border rounded"
+                        onClick={() => handleDelete(blog.id)}
+                      >
                         <MdDeleteForever />
                       </button>
                     </td>

@@ -3,8 +3,6 @@ import {
   FaUsers,
   FaCheckCircle,
   FaTimesCircle,
-  FaSearch,
-  FaCog,
   FaEdit,
   FaEye,
   FaUserPlus,
@@ -16,10 +14,9 @@ import {
 } from "react-icons/md";
 import axios from "axios";
 import URL from "../../config/URLconfig";
-import Sidebar from "../Dashboard/Sidebar ";
 import { ToastContainer, toast, Slide } from "react-toastify";
-import AdminSidebar from "../../components/Sidebar/AdminSidebar";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { Link } from "react-router-dom";
 
 export default function UserManagement() {
   const [search, setSearch] = useState("");
@@ -93,9 +90,12 @@ export default function UserManagement() {
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold mb-4">User Management</h2>
         </div>
-        <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+        <Link
+          className="cursor-pointer hover:text-ficolor bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
+          to="/admin/users/add-user"
+        >
           <FaUserPlus size={30} />
-        </button>
+        </Link>
       </div>
 
       {/* User Table */}
@@ -156,15 +156,7 @@ export default function UserManagement() {
                       <button
                         className="p-2 border rounded"
                         onClick={() =>
-                          (window.location.href = `/view-user/${user.id}`)
-                        }
-                      >
-                        <FaEye />
-                      </button>
-                      <button
-                        className="p-2 border rounded"
-                        onClick={() =>
-                          (window.location.href = `/admin-update-user/${user.id}`)
+                          (window.location.href = `/admin/users/edit-user/${user.id}`)
                         }
                       >
                         <FaEdit />

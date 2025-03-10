@@ -10,7 +10,7 @@ import { FaBuffer, FaUsers } from "react-icons/fa";
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeItem, setActiveItem] = useState("");
+  const [activeItem, setActiveItem] = useState("Dashboard");
 
   const menuItems = [
     {
@@ -46,13 +46,25 @@ export default function Sidebar() {
   ];
 
   useEffect(() => {
-    const currentItem = menuItems.find(
-      (item) => item.path === location.pathname
-    );
-    if (currentItem) {
-      setActiveItem(currentItem.id);
+    if (location.pathname === "/") {
+      setActiveItem("Dashboard");
+      navigate("/admin/dashboard");
+      return;
     }
-  }, [location.pathname]);
+
+    if (location.pathname.startsWith("/admin/blog/")) {
+      setActiveItem("Blog");
+    } else if (location.pathname.startsWith("/admin/courses/")) {
+      setActiveItem("Courses");
+    } else if (location.pathname.startsWith("/admin/users/")) {
+      setActiveItem("Users");
+    } else {
+      const matchedItem = menuItems.find(
+        (item) => location.pathname === item.path
+      );
+      setActiveItem(matchedItem ? matchedItem.id : "Dashboard");
+    }
+  }, [location.pathname, navigate]);
 
   const handleNavigate = (id, path) => {
     setActiveItem(id);

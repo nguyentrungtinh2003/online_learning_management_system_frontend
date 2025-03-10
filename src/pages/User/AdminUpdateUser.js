@@ -1,213 +1,147 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { styled } from "@mui/material/styles";
 import URL from "../../config/URLconfig";
-import { ToastContainer, toast, Slide } from "react-toastify";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { FaBuffer } from "react-icons/fa";
+import { MdNavigateNext } from "react-icons/md";
 
 const AdminUpdateUser = () => {
-  const { id } = useParams(); // Lấy ID từ URL
-  const [user, setUser] = useState({});
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [updatedData, setUpdatedData] = useState({
-    username: "",
-    password: "",
+  const { id } = useParams();
+  const [userData, setUserData] = useState({
+    userId: "",
+    userName: "",
     email: "",
-    phoneNumber: "",
-    birthDay: "",
-    address: "",
-    roleEnum: "STUDENT", // hoặc "TEACHER"
+    phone: "",
+    img: "",
+    coin: "",
+    point: "",
+    rank: "Silver",
   });
+  const [imgFile, setImgFile] = useState(null);
 
   useEffect(() => {
-    // Lấy thông tin user từ API
     axios
-      .get(`${URL}/api/auth/user/${id}`)
+      .get(`${URL}/api/users/${id}`)
       .then((response) => {
-        setUser(response.data.data);
-        setUpdatedData({
-          username: response.data.data.username,
-          password: response.data.data.password,
-          email: response.data.data.email,
-          phoneNumber: response.data.data.phoneNumber,
-          address: response.data.data.address,
-          birthDay: response.data.data.birthDay,
-          roleEnum: response.data.data.roleEnum || "STUDENT",
-        });
+        setUserData(response.data);
       })
       .catch((error) => {
-        console.error("Lỗi khi lấy thông tin người dùng:", error);
+        console.error("Error fetching user:", error);
       });
   }, [id]);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setUpdatedData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({ ...userData, [name]: value });
   };
 
-  const handleImageChange = (event) => {
-    setSelectedImage(event.target.files[0]); // Lưu file ảnh để gửi
+  const handleImageChange = (e) => {
+    setImgFile(e.target.files[0]);
   };
 
-  const handleSubmit = () => {
-    const formData = new FormData();
-    formData.append(
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append(
       "user",
-      new Blob([JSON.stringify(updatedData)], { type: "application/json" })
+      new Blob([JSON.stringify(userData)], { type: "application/json" })
     );
-    if (selectedImage) {
-      formData.append("img", selectedImage);
+    if (imgFile) {
+      data.append("img", imgFile);
     }
-
     axios
-      .put(`${URL}/api/auth/update-user/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      .put(`${URL}/api/users/update/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((response) => {
-        console.log("Cập nhật thành công:", response.data);
-        toast.success("Cập nhật người dùng thành công !", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Slide,
-        });
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 3000);
+      .then(() => {
+        alert("User updated successfully!");
       })
       .catch((error) => {
-        console.error("Lỗi khi cập nhật thông tin người dùng:", error);
-        toast.error("Cập nhật người dùng thất bại !", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Slide,
-        });
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 3000);
+        console.error("Error updating user:", error);
       });
   };
 
   return (
-    <>
-      <ToastContainer />
-      <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Form thông tin người dùng */}
-        <div className="col-span-2 p-6 bg-white shadow rounded">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-6">
-            Cập nhật thông tin người dùng
-          </h2>
+    <div className="flex-1">
+      <div className="flex-1 flex flex-col h-fit p-6">
+        <AdminNavbar />
+        <div className="flex gap-2 mb-4 items-center">
+          <FaBuffer size={30} />
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">User Management</h2>
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">Edit User</h2>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-6 rounded-lg shadow"
+        >
           <div className="space-y-4">
-            <TextField
-              fullWidth
-              label="Username"
-              name="username"
-              value={updatedData.username}
-              onChange={handleInputChange}
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
-              value={updatedData.password}
-              onChange={handleInputChange}
-              type="password"
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              value={updatedData.email}
-              onChange={handleInputChange}
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              label="Phone Number"
-              name="phoneNumber"
-              value={updatedData.phoneNumber}
-              onChange={handleInputChange}
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              label="Birth Day"
-              name="birthDay"
-              value={updatedData.birthDay}
-              onChange={handleInputChange}
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              variant="outlined"
-            />
-            <TextField
-              fullWidth
-              label="Address"
-              name="address"
-              value={updatedData.address}
-              onChange={handleInputChange}
-              variant="outlined"
-            />
-            <TextField
-              select
-              fullWidth
-              label="Role"
-              name="roleEnum"
-              value={updatedData.roleEnum}
-              onChange={handleInputChange}
-              SelectProps={{ native: true }}
-              variant="outlined"
-            >
-              <option value="STUDENT">STUDENT</option>
-              <option value="TEACHER">TEACHER</option>
-            </TextField>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-            >
-              Upload Profile Image
-              <VisuallyHiddenInput type="file" onChange={handleImageChange} />
-            </Button>
+            {Object.keys(userData).map((key) =>
+              key !== "rank" && key !== "img" ? (
+                <div key={key} className="flex items-center space-x-4">
+                  <label className="w-1/4 text-gray-700 font-medium capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}:
+                  </label>
+                  <input
+                    type={
+                      key === "email"
+                        ? "email"
+                        : key === "phone"
+                        ? "tel"
+                        : "text"
+                    }
+                    name={key}
+                    value={userData[key]}
+                    onChange={handleChange}
+                    readOnly={key === "userId"}
+                    className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  />
+                </div>
+              ) : null
+            )}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+              <input
+                type="file"
+                name="img"
+                onChange={handleImageChange}
+                className="flex-1 border rounded-lg px-2 py-2"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">Rank:</label>
+              <select
+                name="rank"
+                value={userData.rank}
+                onChange={handleChange}
+                className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              >
+                <option value="Silver">Silver</option>
+                <option value="Bronze">Bronze</option>
+                <option value="Gold">Gold</option>
+                <option value="Diamond">Diamond</option>
+              </select>
+            </div>
           </div>
-        </div>
-        {/* Hình ảnh đại diện */}
-        <div className="flex flex-col items-center p-6 bg-white shadow rounded">
-          <img
-            className="w-40 h-40 rounded-full border-4 border-gray-300 mb-6"
-            src={
-              selectedImage
-                ? URL.createObjectURL(selectedImage)
-                : user.img || "default-image-url"
-            }
-            alt="Profile"
-          />
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Update User
-          </Button>
-        </div>
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              to="/admin/users"
+              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 

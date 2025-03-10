@@ -28,6 +28,9 @@ import PaymentHistory from "./pages/Payment/PaymentHistory";
 import RankManagement from "./pages/Ranking/RankManagement";
 import AdminSidebar from "./components/Sidebar/AdminSidebar";
 import AdminSettings from "./pages/Dashboard/AdminSetting";
+import AdminAddBlog from "./pages/Blog/AdminAddBlog";
+import UpdateCourse from "./pages/Course/UpdateCourse";
+import AdminEditBlog from "./pages/Blog/AdminEditBlog";
 
 function App() {
   return (
@@ -98,6 +101,42 @@ function App() {
                 <div className="flex h-fit bg-focolor">
                   <AdminSidebar />
                   <AdminAddUser />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/blog/add-blog"
+              element={
+                <div className="flex h-screen bg-focolor">
+                  <AdminSidebar />
+                  <AdminAddBlog />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/courses/edit-course"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <UpdateCourse />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/users/edit-user"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <AdminUpdateUser />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/blog/edit-blog"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <AdminEditBlog />
                 </div>
               }
             />
@@ -203,7 +242,6 @@ function App() {
             />
           </Routes>
         </Router>
-        <Footer />
       </>
     </>
   );
