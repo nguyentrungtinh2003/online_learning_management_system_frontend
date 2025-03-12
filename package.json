@@ -10,7 +10,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.2",
     "chart.js": "^4.4.7",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.3",
