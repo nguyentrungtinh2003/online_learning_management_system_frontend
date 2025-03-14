@@ -38,7 +38,24 @@ export default function CourseManagement() {
     course.courseName && course.courseName.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleDelete = async (id, name) => {
+    const isConfirmed = window.confirm(`Bạn có chắc muốn xóa khóa học "${name}" không?`);
+    if (isConfirmed) {
+      try {
+        const response = await deleteCourse(id);
+        console.log("Delete API Response:", response);
+  
+        // Gọi API để lấy danh sách mới nhất
+        const updatedCourses = await getCourses();
+        setCourses(updatedCourses.data);
 
+        alert("Xóa thành công!");
+      } catch (error) {
+        console.error("Lỗi khi xóa khóa học:", error);
+        alert("Xóa thất bại, vui lòng thử lại.");
+      }
+    }
+  };
   
   
   
