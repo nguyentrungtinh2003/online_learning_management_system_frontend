@@ -3,7 +3,8 @@ import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
-import { getCourses } from "../../services/courseapi";
+import { getCourses,deleteCourse } from "../../services/courseapi";
+
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
@@ -37,10 +38,11 @@ export default function CourseManagement() {
     course.courseName && course.courseName.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = (id) => {
-    const updatedCourses = courses.filter((course) => course.id !== id);
-    setCourses(updatedCourses);
-  };
+
+  
+  
+  
+
 
   return (
     <div className="flex-1 h-screen">
@@ -106,17 +108,18 @@ export default function CourseManagement() {
                         <td className="p-2">
                           {course.date ? new Date(course.date).toLocaleDateString() : "N/A"}
                         </td>
-                        <td className="p-2">{course.isDeleted ? "Inactive" : "Active"}</td>
+                        <td className="p-2">{course.deleted ? "False" : "True"}</td>
+                     
                         <td className="p-2 flex justify-center gap-1">
                           <Link
-                            to="/admin/courses/edit-course"
+                            to={`/admin/courses/edit-course/${course.id}`}
                             className="p-2 border rounded"
                           >
                             <FaEdit />
                           </Link>
                           <button
                             className="p-2 border rounded"
-                            onClick={() => handleDelete(course.id)}
+                            onClick={() => handleDelete(course.id,course.courseName)}
                           >
                             <MdDeleteForever />
                           </button>
