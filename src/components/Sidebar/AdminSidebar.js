@@ -87,7 +87,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed lg:relative lg:h-screen top-0 left-0 h-fit w-64 bg-white drop-shadow-lg p-4 rounded-2xl font-semibold transition-transform duration-300 z-40 
+        className={`ml-2 fixed lg:relative lg:h-screen top-0 left-0 h-fit w-64 bg-white drop-shadow-lg p-4 rounded-2xl font-semibold transition-transform duration-300 z-40 
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:w-64 lg:block`}
       >

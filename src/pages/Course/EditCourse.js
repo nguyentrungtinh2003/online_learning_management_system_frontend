@@ -9,13 +9,17 @@ import { Link } from "react-router-dom";
 const EditCourse = () => {
   const { id } = useParams();
   const [course, setCourse] = useState({ courseName: "", description: "", price: "", img: "" });
+  const [lessons, setLessons] = useState([]);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     axios.get(`https://codearena-backend-dev.onrender.com/api/courses/${id}`)
-      .then(({ data }) => setCourse(data.data))
+      .then(({ data }) => {
+        setCourse(data.data);
+        setLessons(data.data.lessons || []);
+      })
       .catch(() => setError("Không thể tải dữ liệu khóa học"))
       .finally(() => setLoading(false));
   }, [id]);
@@ -39,6 +43,11 @@ const EditCourse = () => {
     }
   };
 
+  const handleAddLesson = () => {
+    // Chuyển hướng đến trang thêm bài học mới
+    window.location.href = `/admin/courses/${id}/lesson`;
+  };
+
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
@@ -54,21 +63,26 @@ const EditCourse = () => {
       </div>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
-          {[
-            { label: "Course Title:", name: "courseName", type: "text" },
-            { label: "Price:", name: "price", type: "number" },
-          ].map(({ label, name, type }) => (
-            <div key={name} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">{label}</label>
-              <input
-                type={type}
-                name={name}
-                value={course[name]}
-                onChange={handleChange}
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-              />
-            </div>
-          ))}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Course Title:</label>
+            <input
+              type="text"
+              name="courseName"
+              value={course.courseName}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Price:</label>
+            <input
+              type="number"
+              name="price"
+              value={course.price}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            />
+          </div>
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Image:</label>
             <div className="flex-1">
@@ -102,6 +116,24 @@ const EditCourse = () => {
             </select>
           </div>
         </div>
+        
+        {/* Danh sách bài học */}
+        <div className="mt-6">
+          <h3 className="text-lg font-bold mb-2">Lessons:</h3>
+          <ul className="list-disc pl-5">
+            {lessons.map((lesson, index) => (
+              <li key={index} className="mb-1">{lesson.title}</li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={handleAddLesson}
+            className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            Add New Lesson
+          </button>
+        </div>
+
         <div className="flex justify-end space-x-2 mt-6">
           <Link to="/admin/courses" className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80">Cancel</Link>
           <button type="submit" className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80">Update</button>

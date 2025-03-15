@@ -123,6 +123,24 @@ function App() {
               }
             />
             <Route
+              path="/admin/courses/:id/lesson"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <ManagementLesson />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/courses/:id/lesson/add-lesson"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <AddLesson />
+                </div>
+              }
+            />
+            <Route
               path="/admin/users/edit-user/:userId"
               element={
                 <div className="flex bg-focolor">
