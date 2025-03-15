@@ -59,20 +59,6 @@ export default function UserManagement() {
     }
   };
 
-  const getMedalColor = (rank) => {
-    return rank === "BRONZE"
-      ? "#cd7f32"
-      : rank === "SILVER"
-      ? "#c0c0c0"
-      : rank === "GOLD"
-      ? "#ffd700"
-      : rank === "PLATINUM"
-      ? "#e5e4e2"
-      : rank === "DIAMOND"
-      ? "#00c3ff"
-      : "#ff4500";
-  };
-
   const filteredUsers = users.filter((user) =>
     user.username.toLowerCase().includes(search.toLowerCase())
   );
@@ -129,24 +115,15 @@ export default function UserManagement() {
                     <td className="p-2">{user.email}</td>
                     <td className="p-2">{user.phoneNumber}</td>
                     <td className="p-2">{user.point}</td>
-                    <td className="p-2">
-                      <span
-                        className="px-2 py-1 rounded text-white"
-                        style={{
-                          backgroundColor: getMedalColor(user.rankEnum),
-                        }}
-                      >
-                        {user.rankEnum}
-                      </span>
-                    </td>
+                    <td className="p-2">{user.rankEnum}</td>
                     <td className="p-2">
                       {user.statusUserEnum === "ACTIVE" ? (
-                        <div className="flex items-center gap-1">
+                        <div className="flex justify-center items-center gap-1">
                           <FaCheckCircle className="text-green-500" />
                           <p>Online</p>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1">
+                        <div className="justify-center items-center gap-1">
                           <FaTimesCircle className="text-red-500" />
                           <p>Offline</p>
                         </div>

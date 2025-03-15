@@ -7,64 +7,60 @@ import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
 const AdminUpdateUser = () => {
-  const { id } = useParams();
-  const [userData, setUserData] = useState({
-    userId: "",
-    userName: "",
-    email: "",
-    phone: "",
-    img: "",
-    coin: "",
-    point: "",
-    rank: "Silver",
-  });
+  const { userId } = useParams();
+  const [userData, setUserData] = useState(null);
   const [imgFile, setImgFile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/users/${id}`)
+      .get(`${URL}/api/users/${userId}`)
       .then((response) => {
         setUserData(response.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching user:", error);
+        setLoading(false);
       });
-  }, [id]);
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     setImgFile(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append(
+    const formData = new FormData();
+    formData.append(
       "user",
       new Blob([JSON.stringify(userData)], { type: "application/json" })
     );
     if (imgFile) {
-      data.append("img", imgFile);
+      formData.append("img", imgFile);
     }
-    axios
-      .put(`${URL}/api/users/update/${id}`, data, {
+
+    try {
+      await axios.put(`${URL}/api/users/update/${userId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then(() => {
-        alert("User updated successfully!");
-      })
-      .catch((error) => {
-        console.error("Error updating user:", error);
       });
+      alert("User updated successfully!");
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
   };
+
+  if (loading) return <div className="p-6">Loading user data...</div>;
+  if (!userData) return <div className="p-6 text-red-500">User not found!</div>;
 
   return (
     <div className="flex-1">
-      <div className="flex-1 flex flex-col h-fit p-6">
+      <div className="flex flex-col h-fit p-6">
         <AdminNavbar />
         <div className="flex gap-2 mb-4 items-center">
           <FaBuffer size={30} />
@@ -93,7 +89,7 @@ const AdminUpdateUser = () => {
                         : "text"
                     }
                     name={key}
-                    value={userData[key]}
+                    value={userData[key] || ""}
                     onChange={handleChange}
                     readOnly={key === "userId"}
                     className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"

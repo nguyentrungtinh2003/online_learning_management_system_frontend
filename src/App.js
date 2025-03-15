@@ -29,7 +29,7 @@ import RankManagement from "./pages/Ranking/RankManagement";
 import AdminSidebar from "./components/Sidebar/AdminSidebar";
 import AdminSettings from "./pages/Dashboard/AdminSetting";
 import AdminAddBlog from "./pages/Blog/AdminAddBlog";
-import UpdateCourse from "./pages/Course/UpdateCourse";
+import UpdateCourse from "./pages/Course/EditCourse";
 import AdminEditBlog from "./pages/Blog/AdminEditBlog";
 
 function App() {
@@ -114,7 +114,7 @@ function App() {
               }
             />
             <Route
-              path="/admin/courses/edit-course"
+              path="/admin/courses/edit-course/:id"
               element={
                 <div className="flex bg-focolor">
                   <AdminSidebar />
@@ -123,7 +123,7 @@ function App() {
               }
             />
             <Route
-              path="/admin/users/edit-user"
+              path="/admin/users/edit-user/:userId"
               element={
                 <div className="flex bg-focolor">
                   <AdminSidebar />

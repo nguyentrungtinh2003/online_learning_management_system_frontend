@@ -7,7 +7,7 @@ import {
 } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
-import { getCourses } from "../../services/courseapi";
+import { getCourses, deleteCourse } from "../../services/courseapi";
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
@@ -43,9 +43,25 @@ export default function CourseManagement() {
       course.courseName.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = (id) => {
-    const updatedCourses = courses.filter((course) => course.id !== id);
-    setCourses(updatedCourses);
+  const handleDelete = async (id, name) => {
+    const isConfirmed = window.confirm(
+      `Bạn có chắc muốn xóa khóa học "${name}" không?`
+    );
+    if (isConfirmed) {
+      try {
+        const response = await deleteCourse(id);
+        console.log("Delete API Response:", response);
+
+        // Gọi API để lấy danh sách mới nhất
+        const updatedCourses = await getCourses();
+        setCourses(updatedCourses.data);
+
+        alert("Xóa thành công!");
+      } catch (error) {
+        console.error("Lỗi khi xóa khóa học:", error);
+        alert("Xóa thất bại, vui lòng thử lại.");
+      }
+    }
   };
 
   return (
@@ -125,13 +141,13 @@ export default function CourseManagement() {
                         </td>
                         <td className="p-2 flex justify-center gap-1">
                           <Link
-                            to="/admin/courses/edit-course"
+                            to={`/admin/courses/edit-course/${course.id}`}
                             className="p-2 border rounded"
                           >
                             <FaEdit />
                           </Link>
                           <button
-                            className="p-2 border rounded text-red-600"
+                            className="p-2 border rounded"
                             onClick={() => handleDelete(course.id)}
                           >
                             <MdDeleteForever />
