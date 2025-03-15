@@ -1,22 +1,8 @@
 import { FaUsers, FaDollarSign, FaBookOpen, FaChartLine } from "react-icons/fa";
-import { Line } from "react-chartjs-2";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import Chart from "./Chart";
 
 const Dashboard = () => {
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-    datasets: [
-      {
-        label: "Sales Analytics",
-        data: [5000, 10000, 7500, 12000, 9000, 15000, 13000],
-        borderColor: "#4CAF50",
-        backgroundColor: "rgba(76, 175, 80, 0.2)",
-        fill: true,
-      },
-    ],
-  };
-
   return (
     <div className="flex-1 h-fit">
       {/* Main Content */}
@@ -24,53 +10,51 @@ const Dashboard = () => {
         <AdminNavbar />
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white px-4 w-full rounded-xl shadow-md text-center">
-            <div className="flex-1 py-4 w-full flex justify-between">
-              <div>
-                <p className="font-bold text-2xl">Total Revenue</p>
-                <p className="text-left text-lg">Last 30 days</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            {
+              title: "Total Revenue",
+              value: "$80,620",
+              icon: <FaDollarSign className="text-green-500" />,
+            },
+            {
+              title: "Total Users",
+              value: "1632",
+              icon: <FaUsers className="text-blue-500" />,
+            },
+            {
+              title: "Total Courses",
+              value: "65",
+              icon: <FaBookOpen className="text-purple-500" />,
+            },
+            {
+              title: "New Access",
+              value: "120",
+              icon: <FaChartLine className="text-orange-500" />,
+            },
+          ].map((item, index) => (
+            <div
+              key={index}
+              className="bg-white space-y-2 px-4 pt-4 pb-2 sm: w-full rounded-xl shadow-md text-center"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-lg sm:text-xl">{item.title}</p>
+                  <p className="text-left text-sm sm:text-xs">Last 30 days</p>
+                </div>
+                <div className="text-2xl sm:text-2xl">{item.icon}</div>
               </div>
-              <FaDollarSign size={30} className="text-green-500" />
+              <h3 className="text-xl sm:text-xl text-left text-fcolor font-bold">
+                {item.value}
+              </h3>
             </div>
-            <h3 className="text-2xl text-left text-fcolor font-bold">
-              $80,620
-            </h3>
-          </div>
-          <div className="bg-white px-4 w-full rounded-xl shadow-md text-center">
-            <div className="flex-1 py-4 w-full flex justify-between">
-              <div>
-                <p className="font-bold text-2xl">Total Users</p>
-                <p className="text-left text-lg">Last 30 days</p>
-              </div>
-              <FaUsers size={30} className="text-blue-500" />
-            </div>
-            <h3 className="text-2xl text-left text-fcolor font-bold">1632</h3>
-          </div>
-          <div className="bg-white px-4 w-full rounded-xl shadow-md text-center">
-            <div className="flex-1 py-4 w-full flex justify-between">
-              <div>
-                <p className="font-bold text-2xl">Total Courses</p>
-                <p className="text-left text-lg">Last 30 days</p>
-              </div>
-              <FaBookOpen size={30} className="text-purple-500" />
-            </div>
-            <h3 className="text-2xl text-left text-fcolor font-bold">65</h3>
-          </div>
-          <div className="bg-white px-4 w-full rounded-xl shadow-md text-center">
-            <div className="flex-1 py-4 w-full flex justify-between">
-              <div>
-                <p className="font-bold text-2xl">New Access</p>
-                <p className="text-left text-lg">Last 30 days</p>
-              </div>
-              <FaChartLine size={30} className="text-orange-500" />
-            </div>
-            <h3 className="text-2xl text-left text-fcolor font-bold">120</h3>
-          </div>
+          ))}
         </div>
 
         {/* Sales Analytics Chart */}
-        <Chart />
+        <div className="flex-1 gap-4">
+          <Chart />
+        </div>
       </div>
     </div>
   );

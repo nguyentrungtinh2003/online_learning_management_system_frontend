@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
 import { getCourses } from "../../services/courseapi";
@@ -24,7 +28,7 @@ export default function CourseManagement() {
         }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
-        setCourses([]); 
+        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -33,8 +37,10 @@ export default function CourseManagement() {
   }, []);
 
   // Lọc các khóa học theo tên
-  const filteredCourses = courses.filter(course =>
-    course.courseName && course.courseName.toLowerCase().includes(search.toLowerCase())
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.courseName &&
+      course.courseName.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleDelete = (id) => {
@@ -64,7 +70,7 @@ export default function CourseManagement() {
           <input
             type="text"
             placeholder="Search courses..."
-            className="p-2 border rounded w-full"
+            className="p-2 border rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -94,19 +100,29 @@ export default function CourseManagement() {
                       <tr key={course.id} className="text-center">
                         <td className="p-2">{course.id}</td>
                         <td className="p-2">{course.courseName || "N/A"}</td>
-                        <td className="p-2">{course.description || "No description"}</td>
+                        <td className="p-2">
+                          {course.description || "No description"}
+                        </td>
                         <td className="p-2">
                           {course.img ? (
-                            <img src={course.img} alt="course" className="w-8 h-8 rounded mx-auto" />
+                            <img
+                              src={course.img}
+                              alt="course"
+                              className="w-8 h-8 rounded mx-auto"
+                            />
                           ) : (
                             "No image"
                           )}
                         </td>
                         <td className="p-2">{course.price || "Free"}</td>
                         <td className="p-2">
-                          {course.date ? new Date(course.date).toLocaleDateString() : "N/A"}
+                          {course.date
+                            ? new Date(course.date).toLocaleDateString()
+                            : "N/A"}
                         </td>
-                        <td className="p-2">{course.isDeleted ? "Inactive" : "Active"}</td>
+                        <td className="p-2">
+                          {course.isDeleted ? "Inactive" : "Active"}
+                        </td>
                         <td className="p-2 flex justify-center gap-1">
                           <Link
                             to="/admin/courses/edit-course"
@@ -115,7 +131,7 @@ export default function CourseManagement() {
                             <FaEdit />
                           </Link>
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded text-red-600"
                             onClick={() => handleDelete(course.id)}
                           >
                             <MdDeleteForever />

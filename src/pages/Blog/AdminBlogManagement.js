@@ -113,12 +113,12 @@ export default function BlogManagement() {
                     <td className="p-2 flex justify-center gap-1">
                       <Link
                         to="/admin/blog/edit-blog"
-                        className="p-2 border rounded"
+                        className="p-2 border rounded hover:text-fcolor hover:scale-105"
                       >
                         <FaEdit />
                       </Link>
                       <button
-                        className="p-2 border rounded"
+                        className="p-2 border rounded text-red-600 hover:scale-105"
                         onClick={() => handleDelete(blog.id)}
                       >
                         <MdDeleteForever />

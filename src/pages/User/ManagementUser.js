@@ -24,7 +24,7 @@ export default function UserManagement() {
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/auth/all-user`)
+      .get(`${"https://codearena-backend-dev.onrender.com"}/api/auth/all-user`)
       .then((response) => {
         setUsers(response.data.data);
       })
