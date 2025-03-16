@@ -75,8 +75,8 @@ export default function CourseManagement() {
             <h2 className="text-lg font-bold mb-4">Course Management</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
-            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-              <FaPlus size={30} />
+            <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+              <FaPlus size={30} color="white" />
             </button>
           </Link>
         </div>

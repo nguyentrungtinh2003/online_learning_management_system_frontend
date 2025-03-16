@@ -1,3 +1,3 @@
-const URL = "http://localhost:8081";
+const URL = "https://codearena-backend-dev.onrender.com";
 
 export default URL;

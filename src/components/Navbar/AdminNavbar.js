@@ -20,7 +20,9 @@ export default function AdminNavbar() {
         </span>
         <FaCog className="cursor-pointer" />
         <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-        <p>Admin</p>
+        <p>
+          {localStorage.getItem("username")},{localStorage.getItem("id")}
+        </p>
       </div>
     </div>
   );

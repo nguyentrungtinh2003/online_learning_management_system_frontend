@@ -52,6 +52,7 @@ export default function AuthForm() {
         },
       })
       .then((response) => {
+        axios.get(`${URL}/api/auth/`);
         localStorage.setItem("id", response.data.data.id);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.data.username);

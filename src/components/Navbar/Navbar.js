@@ -6,18 +6,39 @@ import axios from "axios";
 
 export default function Navbar() {
   useEffect(() => {
+    fetchUserInfo();
+    fetchUserGoogle();
+  }, []);
+
+  const fetchUserGoogle = () => {
     axios
-      .get(`${URL}/api/auth/user`, { withCredentials: true })
+      .get(`${URL}/api/auth/user-google`, { withCredentials: true })
       .then((response) => {
         console.log(response.data.data);
-        const { email, name, picture } = response.data.data;
+        const { id, email, name, picture } = response.data.data;
+        localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
         console.log(localStorage.getItem("img"));
       })
       .catch(() => {});
-  }, []);
+  };
+
+  const fetchUserInfo = () => {
+    axios
+      .get(`${URL}/api/auth/user-info`, { withCredentials: true })
+      .then((response) => {
+        console.log(response.data.data);
+        const { id, email, name, picture } = response.data.data;
+        localStorage.setItem("id", id);
+        localStorage.setItem("email", email);
+        localStorage.setItem("username", name);
+        localStorage.setItem("img", picture);
+        console.log(localStorage.getItem("img"));
+      })
+      .catch(() => {});
+  };
 
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -38,6 +59,7 @@ export default function Navbar() {
       await axios.get(`${URL}/api/auth/logout/google`, {
         withCredentials: true,
       }); // Gửi yêu cầu logout Google
+      localStorage.removeItem("id");
       localStorage.removeItem("username");
       localStorage.removeItem("token");
       localStorage.removeItem("img");
@@ -62,38 +84,38 @@ export default function Navbar() {
 
         {/* Search Bar */}
         <div className="relative w-full max-w-md">
-      {/* Search Input */}
-      <input
-        type="text"
-        value={inputValue}
-        placeholder="Search courses..."
-        className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+          {/* Search Input */}
+          <input
+            type="text"
+            value={inputValue}
+            placeholder="Search courses..."
+            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+          <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
 
-      {/* Results - Hiện khi isFocused = true */}
-      {isFocused && (
-        <div
-          className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10"
-          onMouseDown={(e) => e.preventDefault()} // Giữ form khi click vào danh sách
-        >
-          <ul className="max-h-48 overflow-y-auto">
-            {searchResults.map((item, index) => (
-              <li
-                key={index}
-                className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer"
-                onClick={() => handleSelect(item)}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+          {/* Results - Hiện khi isFocused = true */}
+          {isFocused && (
+            <div
+              className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10"
+              onMouseDown={(e) => e.preventDefault()} // Giữ form khi click vào danh sách
+            >
+              <ul className="max-h-48 overflow-y-auto">
+                {searchResults.map((item, index) => (
+                  <li
+                    key={index}
+                    className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer"
+                    onClick={() => handleSelect(item)}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      )}
-    </div>
 
         {/* User or Login */}
         <div className="flex items-center space-x-4">

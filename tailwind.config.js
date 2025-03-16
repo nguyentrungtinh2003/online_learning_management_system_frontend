@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        fcolor: "#00AFC1", // Màu chủ đạo
+        fcolor: "#3674B5", // Màu chủ đạo
         scolor: "#5EDDEA", // Màu phụ
         tcolor: "#A1EEF5", // Màu nền khi hover
         focolor: "#F4FEFF", // Màu nền background
