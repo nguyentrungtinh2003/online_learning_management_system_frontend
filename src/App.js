@@ -172,10 +172,10 @@ function App() {
             <Route
               path="/"
               element={
-                <>
-                  <Navbar />
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
                   <HomePage />
-                </>
+                </div>
               }
             />
             <Route

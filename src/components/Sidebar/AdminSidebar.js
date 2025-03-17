@@ -7,15 +7,16 @@ import {
   MdMenu,
   MdClose,
 } from "react-icons/md";
-import { FaBuffer, FaUsers } from "react-icons/fa";
+import { FaBuffer, FaUsers, FaHome, FaUser, FaTrophy } from "react-icons/fa";
 
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeItem, setActiveItem] = useState("Dashboard");
-  const [isOpen, setIsOpen] = useState(false); // Thêm trạng thái mở/tắt Sidebar
+  const [activeItem, setActiveItem] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const menuItems = [
+  // Menu dành cho Admin
+  const adminItems = [
     {
       id: "Dashboard",
       label: "Dashboard",
@@ -48,35 +49,57 @@ export default function Sidebar() {
     },
   ];
 
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setActiveItem("Dashboard");
-      navigate("/admin/dashboard");
-      return;
-    }
+  // Menu dành cho User
+  const userItems = [
+    { id: "Home", label: "Home", icon: <FaHome size={25} />, path: "/" },
+    {
+      id: "MyCourses",
+      label: "My Courses",
+      icon: <FaBuffer size={25} />,
+      path: "/my-courses",
+    },
+    { id: "Blog", label: "Blog", icon: <MdForum size={25} />, path: "/blog" },
+    {
+      id: "Ranking",
+      label: "Ranking",
+      icon: <FaTrophy size={25} />,
+      path: "/ranking",
+    },
+    {
+      id: "Profile",
+      label: "Profile",
+      icon: <FaUser size={25} />,
+      path: "/profile",
+    },
+    {
+      id: "Settings",
+      label: "Setting",
+      icon: <MdSettingsSuggest size={25} />,
+      path: "/settings",
+    },
+  ];
 
-    if (location.pathname.startsWith("/admin/blog/")) {
-      setActiveItem("Blog");
-    } else if (location.pathname.startsWith("/admin/courses/")) {
-      setActiveItem("Courses");
-    } else if (location.pathname.startsWith("/admin/users/")) {
-      setActiveItem("Users");
-    } else {
-      const matchedItem = menuItems.find(
-        (item) => location.pathname === item.path
-      );
-      setActiveItem(matchedItem ? matchedItem.id : "Dashboard");
-    }
-  }, [location.pathname, navigate]);
+  // Xác định loại menu dựa trên đường dẫn
+  const isAdmin = location.pathname.startsWith("/admin");
+  const menuItems = isAdmin ? adminItems : userItems;
+
+  useEffect(() => {
+    const matchedItem = menuItems.find((item) =>
+      location.pathname.startsWith(item.path)
+    );
+    setActiveItem(
+      matchedItem ? matchedItem.id : isAdmin ? "Dashboard" : "Home"
+    );
+  }, [location.pathname, isAdmin]);
 
   const handleNavigate = (id, path) => {
     setActiveItem(id);
     navigate(path);
-    setIsOpen(false); // Tự động đóng Sidebar trên mobile khi chọn mục
+    setIsOpen(false); // Đóng menu trên mobile khi chọn
   };
 
   return (
-    <>
+    <div className="h-screen p-3">
       {/* Nút mở menu trên mobile */}
       <button
         className="lg:hidden fixed top-4 left-4 z-50 bg-scolor p-2 rounded-md text-white"
@@ -87,7 +110,7 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <div
-        className={`ml-2 fixed lg:relative lg:h-screen top-0 left-0 h-fit w-64 bg-white drop-shadow-lg p-4 rounded-2xl font-semibold transition-transform duration-300 z-40 
+        className={`h-full border-box top-0 left-0 h-fit bg-white drop-shadow-lg p-4 rounded-2xl font-semibold transition-transform duration-300 z-40 
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:w-64 lg:block`}
       >
@@ -119,6 +142,6 @@ export default function Sidebar() {
           onClick={() => setIsOpen(false)}
         ></div>
       )}
-    </>
+    </div>
   );
 }

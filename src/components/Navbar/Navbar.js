@@ -72,29 +72,24 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 w-full z-30 h-fit">
-      <div className="max-w-screen mx-4 flex justify-between items-center">
+    <nav className="bg-white px-2 pt-3 w-full">
+      <div className="flex justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <Link to="/" className="flex items-center">
-            <img className="h-16" src="/image2.jpg" alt="Logo" />
-          </Link>
-          <h3 className="text-xl font-semibold text-gray-800">Code Arena</h3>
-        </div>
 
         {/* Search Bar */}
-        <div className="relative w-full max-w-md">
-          {/* Search Input */}
-          <input
-            type="text"
-            value={inputValue}
-            placeholder="Search courses..."
-            className="w-full border rounded-full pl-10 pr-4 py-2 text-sm border-gray-500 focus:outline-none"
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <FaSearch className="absolute left-3 top-2.5 text-gray-500" />
+        <div className="ml-4 relative w-full max-w-md">
+          <div className="flex justify-center gap-2 items-center border p-2 rounded-xl">
+            <FaSearch className="text-gray-500 cursor-pointer" />
+            <input
+              type="text"
+              value={inputValue}
+              placeholder="Search courses..."
+              className="w-full text-sm focus:outline-none"
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+          </div>
 
           {/* Results - Hiện khi isFocused = true */}
           {isFocused && (

@@ -61,8 +61,10 @@ const SectionBlog = () => {
   ];
 
   return (
-    <div className="mt-10 p-5">
-      <h2 className="text-4xl font-bold text-center mb-8">Latest Blogs</h2>
+    <div className="p-4">
+      <h2 className="text-4xl text-fcolor font-bold text-center mb-8">
+        Tech Talks & Programming Perspectives
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {blogs.map((blog, index) => (
           <div
@@ -75,10 +77,10 @@ const SectionBlog = () => {
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-2xl font-bold text-gray-800">
                 {blog.title}
               </h3>
-              <div className="mt-2 text-sm text-gray-500 flex justify-between">
+              <div className="mt-2 text-sm text-gray-700 flex justify-between">
                 <p>{blog.views}</p>
                 <p>{blog.comments}</p>
               </div>
@@ -88,9 +90,9 @@ const SectionBlog = () => {
                   alt="User"
                   className="w-8 h-8 rounded-full mr-2"
                 />
-                <p className="text-sm text-gray-500">Posted by User</p>
+                <p className="text-sm text-gray-700">Posted by User</p>
               </div>
-              <button className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
+              <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
                 Read More
               </button>
             </div>

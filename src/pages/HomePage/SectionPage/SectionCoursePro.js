@@ -57,9 +57,9 @@ const SectionCoursePro = () => {
   ];
 
   return (
-    <div className="mt-10 p-5">
-      <h2 className="text-4xl font-bold text-center mb-8">
-        Our Premium Courses
+    <div className="px-4 py-5">
+      <h2 className="text-4xl text-rose-600 font-bold text-center mb-8">
+        Top-Tier Learning Experience
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {courses.map((course, index) => (
@@ -72,22 +72,26 @@ const SectionCoursePro = () => {
               alt={course.title}
               className="w-full h-48 object-cover"
             />
-            <div className="p-5">
-              <h3 className="text-2xl font-semibold text-gray-800">
-                {course.title}
-              </h3>
-              <p className="text-lg text-gray-600 mt-2">
-                Price: {course.price}
-              </p>
-              <p className="text-lg text-gray-600 mt-1">Coins: {course.coin}</p>
-              <p className="text-lg text-gray-600 mt-1">
-                Students: {course.students}
-              </p>
-              <p className="text-lg text-gray-600 mt-1">
-                Lessons: {course.lessons}
-              </p>
-              <button className="w-full mt-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300">
-                Buy Now
+            <div className="p-4 h-full flex-col justify-between">
+              <div className="font-bold">
+                <h3 className="text-2xl font-bold text-gray-800">
+                  {course.title}
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  Price: {course.price}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Coins: {course.coin}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Students: {course.students}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Lessons: {course.lessons}
+                </p>
+              </div>
+              <button className="w-full mt-4 py-2 bg-scolor text-xl font-semibold text-black rounded-lg hover:bg-fcolor transition-all duration-300">
+                Unlock Now
               </button>
             </div>
           </div>
