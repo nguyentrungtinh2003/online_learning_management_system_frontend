@@ -60,7 +60,7 @@ export default function BlogManagement() {
 
   return (
     <div className="flex-1 h-screen">
-      <div className="flex-1 flex flex-col h-full p-6">
+      <div className="flex-1 flex flex-col h-full py-6 px-3">
         <AdminNavbar />
         <div className="flex justify-between mb-4">
           <div className="flex gap-2">

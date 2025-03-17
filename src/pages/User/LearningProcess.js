@@ -53,7 +53,7 @@ const Progress = ({ value }) => (
 
 export default function LearningProgress() {
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <div className="min-h-screen py-6 px-3 bg-gray-100">
       {/* Navbar */}
       <nav className="bg-white shadow p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">📚 Learning Tracker</h1>

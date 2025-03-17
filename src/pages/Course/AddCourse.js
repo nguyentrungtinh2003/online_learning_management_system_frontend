@@ -11,10 +11,10 @@ const AddCourse = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    img:"",
+    img: "",
     price: "",
-    courseEnum:"FREE",
-    users:[],
+    courseEnum: "FREE",
+    users: [],
     user: { id: 1 },
     lessons: [],
   });
@@ -30,14 +30,17 @@ const AddCourse = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Ngăn chặn trang reload
-  
+
     const formData = new FormData();
-    formData.append("course", new Blob([JSON.stringify(courseData)], { type: "application/json" }));
-  
+    formData.append(
+      "course",
+      new Blob([JSON.stringify(courseData)], { type: "application/json" })
+    );
+
     if (img) {
       formData.append("img", img);
     }
-  
+
     try {
       const response = await axios.post(
         "https://codearena-backend-dev.onrender.com/api/courses/add",
@@ -53,11 +56,9 @@ const AddCourse = () => {
       alert("Lỗi khi thêm khóa học!");
     }
   };
-  
-
 
   return (
-    <div className="flex-1 flex flex-col h-fit p-6">
+    <div className="flex-1 flex flex-col h-fit py-6 px-3">
       <AdminNavbar />
       <div className="flex gap-2">
         <FaBuffer size={30} />
@@ -85,10 +86,16 @@ const AddCourse = () => {
           ))}
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Image:</label>
-            <input type="file" onChange={handleImageChange} className="flex-1 border rounded-lg px-3 py-2" />
+            <input
+              type="file"
+              onChange={handleImageChange}
+              className="flex-1 border rounded-lg px-3 py-2"
+            />
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
+            <label className="w-1/4 text-gray-700 font-medium">
+              Description:
+            </label>
             <textarea
               name="description"
               rows={3}
@@ -112,8 +119,18 @@ const AddCourse = () => {
           </div>
         </div>
         <div className="flex justify-end space-x-2 mt-6">
-          <Link to="/admin/courses" className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80">Cancel</Link>
-          <button type="submit" className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80">Submit</button>
+          <Link
+            to="/admin/courses"
+            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+          >
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>

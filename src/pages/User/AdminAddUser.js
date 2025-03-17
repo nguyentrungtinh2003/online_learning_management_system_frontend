@@ -77,7 +77,7 @@ const AdminAddUser = () => {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded-lg shadow mt-4"
+          className="bg-white py-6 px-3 rounded-lg shadow mt-4"
         >
           <div className="space-y-4">
             {[

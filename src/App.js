@@ -31,6 +31,7 @@ import AdminSettings from "./pages/Dashboard/AdminSetting";
 import AdminAddBlog from "./pages/Blog/AdminAddBlog";
 import UpdateCourse from "./pages/Course/EditCourse";
 import AdminEditBlog from "./pages/Blog/AdminEditBlog";
+import UserCourse from "./pages/Course/UserCourse";
 
 function App() {
   return (
@@ -186,7 +187,15 @@ function App() {
                 </>
               }
             />
-            <Route path="/course" element={<ManagementCourse />} />
+            <Route
+              path="/user-course"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <UserCourse />
+                </div>
+              }
+            />
             <Route path="/quiz" element={<QuizzManagement />} />
             <Route path="/lesson" element={<ManagementLesson />} />
             <Route path="/question" element={<ManagementQuestion />} />

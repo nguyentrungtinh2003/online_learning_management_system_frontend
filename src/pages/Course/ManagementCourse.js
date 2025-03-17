@@ -66,7 +66,7 @@ export default function CourseManagement() {
 
   return (
     <div className="flex-1 h-screen">
-      <div className="flex-1 flex flex-col h-full p-6">
+      <div className="flex-1 flex flex-col h-full py-6 px-3">
         <AdminNavbar />
         <div className="flex justify-between mb-4">
           <div className="flex gap-2">
@@ -140,6 +140,12 @@ export default function CourseManagement() {
                           {course.isDeleted ? "Inactive" : "Active"}
                         </td>
                         <td className="p-2 flex justify-center gap-1">
+                          <Link
+                            to={`/admin/courses/edit-course/${course.id}`}
+                            className="p-2 border rounded"
+                          >
+                            <FaEye />
+                          </Link>
                           <Link
                             to={`/admin/courses/edit-course/${course.id}`}
                             className="p-2 border rounded"

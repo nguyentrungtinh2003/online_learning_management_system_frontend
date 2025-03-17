@@ -6,7 +6,7 @@ const Dashboard = () => {
   return (
     <div className="flex-1 h-fit">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full p-6">
+      <div className="flex-1 flex flex-col h-full py-6 px-3">
         <AdminNavbar />
 
         {/* Statistics Cards */}

@@ -64,7 +64,7 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="flex-1 flex flex-col h-screen p-6">
+    <div className="flex-1 flex flex-col h-screen py-6 px-3">
       <ToastContainer />
 
       {/* Header */}
