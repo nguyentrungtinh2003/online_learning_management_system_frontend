@@ -72,13 +72,11 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white px-2 pt-3 w-full">
+    <nav className="px-4 py-3 flex-1">
       <div className="flex justify-between items-center">
-        {/* Logo */}
-
         {/* Search Bar */}
-        <div className="ml-4 relative w-full max-w-md">
-          <div className="flex justify-center gap-2 items-center border p-2 rounded-xl">
+        <div className="flex-1 justify-center w-full ml-4 relative w-full">
+          <div className="flex w-[50%] justify-center gap-2 items-center border p-2 rounded-xl">
             <FaSearch className="text-gray-500 cursor-pointer" />
             <input
               type="text"
@@ -94,14 +92,14 @@ export default function Navbar() {
           {/* Results - Hiện khi isFocused = true */}
           {isFocused && (
             <div
-              className="absolute left-0 w-full mt-2 bg-white border rounded-lg shadow-lg z-10"
+              className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg z-10"
               onMouseDown={(e) => e.preventDefault()} // Giữ form khi click vào danh sách
             >
               <ul className="max-h-48 overflow-y-auto">
                 {searchResults.map((item, index) => (
                   <li
                     key={index}
-                    className="px-4 py-2 text-gray-700 hover:bg-cyan-100 cursor-pointer"
+                    className="px-4 py-2 text-gray-700 hover:bg-focolor cursor-pointer"
                     onClick={() => handleSelect(item)}
                   >
                     {item}
@@ -138,7 +136,7 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <button className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+            <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
               <Link to="/login" className="no-underline text-white">
                 Start Learning
               </Link>

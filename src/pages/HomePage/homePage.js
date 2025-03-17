@@ -6,6 +6,7 @@ import SectionCoursePro from "./SectionPage/SectionCoursePro";
 import SectionBlog from "./SectionPage/SectionBlog";
 import SectionRewards from "./SectionPage/SectionRewards ";
 import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
 
 export default function homePage() {
   return (
@@ -17,6 +18,7 @@ export default function homePage() {
         <SectionCoursePro />
         <SectionRewards />
         <SectionBlog />
+        <Footer />
       </div>
     </div>
   );

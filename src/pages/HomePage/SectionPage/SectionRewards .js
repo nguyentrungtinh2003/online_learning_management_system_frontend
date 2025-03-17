@@ -17,8 +17,8 @@ const SectionRewards = () => {
       </h2>
 
       {/* Deposit Money and Convert to Coins */}
-      <div className="mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
-        <FaDollarSign className="text-blue-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
+      <div className="gap-4 mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
+        <FaDollarSign size={150} className="text-blue-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 mb-2">
             Deposit Money & Convert to Coins
@@ -39,8 +39,8 @@ const SectionRewards = () => {
       </div>
 
       {/* How to Earn Points and Coins */}
-      <div className="mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
-        <FaCoins className="text-green-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
+      <div className="gap-4 mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
+        <FaCoins size={150} className="text-green-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 mb-2">
             How to Earn Points & Coins
@@ -58,8 +58,8 @@ const SectionRewards = () => {
       </div>
 
       {/* Redeemable Rewards */}
-      <div className="mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
-        <FaGift className="text-red-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
+      <div className="gap-4 mb-8 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
+        <FaGift size={150} className="text-red-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 mb-2">
             Redeemable Rewards
@@ -77,8 +77,8 @@ const SectionRewards = () => {
       </div>
 
       {/* Ranking and Levels */}
-      <div className="p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
-        <GiMedal className="text-yellow-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
+      <div className="gap-4 p-6 bg-white rounded-lg shadow-lg flex items-center hover:scale-105 transition-all duration-300">
+        <GiMedal size={150} className="text-yellow-600 text-5xl mr-6 transform hover:scale-110 transition-all" />
         <div>
           <h3 className="text-2xl font-semibold text-gray-800 mb-2">
             Ranking & Levels

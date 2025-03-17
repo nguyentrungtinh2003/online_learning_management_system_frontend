@@ -92,7 +92,7 @@ const SectionBlog = () => {
                 />
                 <p className="text-sm text-gray-700">Posted by User</p>
               </div>
-              <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-blue-700 transition-all duration-300">
+              <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor transition-all duration-300">
                 Read More
               </button>
             </div>
