@@ -69,7 +69,7 @@ const SectionBlog = () => {
         {blogs.map((blog, index) => (
           <div
             key={index}
-            className="bg-white shadow-lg rounded-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl"
+            className="bg-white rounded-2xl overflow-hidden transition-all transform hover:scale-105 border hover:shadow-2xl duration-700"
           >
             <img
               src={blog.imgSrc}
@@ -77,9 +77,7 @@ const SectionBlog = () => {
               className="w-full h-48 object-cover"
             />
             <div className="p-4">
-              <h3 className="text-2xl font-bold text-gray-800">
-                {blog.title}
-              </h3>
+              <h3 className="text-2xl font-bold text-gray-800">{blog.title}</h3>
               <div className="mt-2 text-sm text-gray-700 flex justify-between">
                 <p>{blog.views}</p>
                 <p>{blog.comments}</p>
@@ -92,7 +90,7 @@ const SectionBlog = () => {
                 />
                 <p className="text-sm text-gray-700">Posted by User</p>
               </div>
-              <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor transition-all duration-300">
+              <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000">
                 Read More
               </button>
             </div>

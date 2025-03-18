@@ -74,7 +74,7 @@ export default function CourseLanding() {
           <ArrowBackIosNewIcon fontSize="small" />
         </button>
         <div
-          className="text-center text-2xl h-[300px] sm:h-[250px] md:h-[300px] w-full p-10 rounded-3xl bg-cover bg-center transition-all duration-300 transform hover:shadow-2xl"
+          className="text-center text-2xl h-[300px] sm:h-[250px] md:h-[300px] w-full p-10 rounded-3xl bg-cover bg-center hover:scale-105 hover:shadow-xl transition-all duration-300 transform"
           style={{ backgroundImage: divs[currentDivIndex].background }}
         >
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-white my-5">

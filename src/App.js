@@ -32,6 +32,7 @@ import AdminAddBlog from "./pages/Blog/AdminAddBlog";
 import UpdateCourse from "./pages/Course/EditCourse";
 import AdminEditBlog from "./pages/Blog/AdminEditBlog";
 import UserCourse from "./pages/Course/UserCourse";
+import UserViewCourse from "./pages/Course/UserViewCourse";
 
 function App() {
   return (
@@ -193,6 +194,15 @@ function App() {
                 <div className="flex bg-focolor">
                   <AdminSidebar />
                   <UserCourse />
+                </div>
+              }
+            />
+            <Route
+              path="/view-course"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <UserViewCourse/>
                 </div>
               }
             />
