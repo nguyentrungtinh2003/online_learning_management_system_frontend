@@ -1,12 +1,16 @@
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
 const EditCourse = () => {
+  const navigate = useNavigate();
+  
   const { id } = useParams();
   const [course, setCourse] = useState({
     courseName: "",
@@ -36,6 +40,8 @@ const EditCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     const formData = new FormData();
     formData.append(
       "course",
@@ -44,16 +50,32 @@ const EditCourse = () => {
     if (file) formData.append("img", file);
 
     try {
-      await axios.put(
+      const response = await axios.put(
         `https://codearena-backend-dev.onrender.com/api/courses/update/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      alert("Cập nhật khóa học thành công!");
-    } catch {
-      alert("Lỗi khi cập nhật khóa học!");
+      console.log("Thành công:",response);
+      // alert("Cập nhật khóa học thành công!");
+      toast.success("Cập nhật khóa học thành công!", {
+        position: "top-right",
+        autoClose: 3000,  // 4 giây
+      });
+      
+      setTimeout(() => {
+      navigate(-1);
+      }, 4000);    
+    } catch (error) {
+      console.error("Lỗi:", error.response?.data || error.message);
+      // alert("Lỗi khi thêm khóa học!");
+      toast.error("Không thể cập nhật khóa học!", {
+        position: "top-right",
+        autoClose: 3000, 
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,9 +84,8 @@ const EditCourse = () => {
     window.location.href = `/admin/courses/${id}/lesson`;
   };
 
-  if (loading) return <div className="text-center mt-10">Loading...</div>;
-  if (error)
-    return <div className="text-center mt-10 text-red-500">{error}</div>;
+  // if (loading) return <div className="text-center mt-10">Loading...</div>;
+  // if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">
@@ -144,7 +165,7 @@ const EditCourse = () => {
           </div>
         </div>
 
-        {/* Danh sách bài học */}
+        {/* Danh sách bài học
         <div className="mt-6">
           <h3 className="text-lg font-bold mb-2">Lessons:</h3>
           <ul className="list-disc pl-5">
@@ -161,25 +182,29 @@ const EditCourse = () => {
           >
             Add New Lesson
           </button>
-        </div>
+        </div> */}
 
         <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            to="/admin/courses"
+        <Link
+            onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
           >
             Cancel
           </Link>
           <button
             type="submit"
-            className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            disabled={loading}
           >
-            Update
+            {loading ? "Processing..." : "Submit"}
           </button>
         </div>
       </form>
+    <ToastContainer /> 
     </div>
   );
 };
 
 export default EditCourse;
+
+
