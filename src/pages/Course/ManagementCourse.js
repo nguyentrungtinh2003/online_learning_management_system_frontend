@@ -1,3 +1,5 @@
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import {
@@ -36,12 +38,46 @@ export default function CourseManagement() {
     fetchCourses();
   }, []);
 
+
   // Lọc các khóa học theo tên
   const filteredCourses = courses.filter(
     (course) =>
       course.courseName &&
       course.courseName.toLowerCase().includes(search.toLowerCase())
+      || course.description && 
+      course.description.toLowerCase().includes(search.toLowerCase())
   );
+
+
+
+  
+  // Phân trang FrontEnd
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 6;
+
+  // Tính tổng số trang
+  const totalPages = Math.ceil(filteredCourses.length/ coursesPerPage );
+
+  // Lấy danh sách khóa học thuộc trang hiện tại
+  const paginatedCourses = filteredCourses.slice(
+    (currentPage - 1)*coursesPerPage,
+    currentPage*coursesPerPage
+  );
+
+  // Xử lý chuyển trang
+  const handledNextPage = () => {
+    if(currentPage < totalPages) {
+      setCurrentPage(currentPage+1);
+    }
+  };
+
+  const handlePrePage = () => {
+    if(currentPage > 1){
+      setCurrentPage(currentPage - 1);
+    }
+  }
+
+
 
   const handleDelete = async (id, name) => {
     const isConfirmed = window.confirm(
@@ -56,13 +92,27 @@ export default function CourseManagement() {
         const updatedCourses = await getCourses();
         setCourses(updatedCourses.data);
 
-        alert("Xóa thành công!");
+        toast.success("Xóa khóa học thành công!", {
+          position: "top-right",
+          autoClose: 3000,  // 4 giây
+        });
+      
+        // alert("Xóa thành công!");
+
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
-        alert("Xóa thất bại, vui lòng thử lại.");
+        // alert("Xóa thất bại, vui lòng thử lại.");
+        toast.error("Không thể xóa khóa học!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
     }
   };
+  
+  
+  
+
 
   return (
     <div className="flex-1 h-screen">
@@ -111,8 +161,8 @@ export default function CourseManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCourses.length > 0 ? (
-                    filteredCourses.map((course) => (
+                  {paginatedCourses.length > 0 ? (
+                    paginatedCourses.map((course) => (
                       <tr key={course.id} className="text-center">
                         <td className="p-2">{course.id}</td>
                         <td className="p-2">{course.courseName || "N/A"}</td>
@@ -135,13 +185,13 @@ export default function CourseManagement() {
                           {course.date
                             ? new Date(course.date).toLocaleDateString()
                             : "N/A"}
-                        </td>
+                        </td> 
                         <td className="p-2">
                           {course.isDeleted ? "Inactive" : "Active"}
                         </td>
                         <td className="p-2 flex justify-center gap-1">
-                          <Link
-                            to={`/admin/courses/edit-course/${course.id}`}
+                          <Link 
+                            to={`/admin/courses/${course.id}/lessons`}
                             className="p-2 border rounded"
                           >
                             <FaEye />
@@ -154,7 +204,7 @@ export default function CourseManagement() {
                           </Link>
                           <button
                             className="p-2 border rounded"
-                            onClick={() => handleDelete(course.id)}
+                            onClick={() => handleDelete(course.id,course.courseName)}
                           >
                             <MdDeleteForever />
                           </button>
@@ -175,17 +225,18 @@ export default function CourseManagement() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Showing 1 of 4 pages</p>
+          <p>Page {currentPage} of {totalPages}</p>
           <div className="space-x-2">
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handlePrePage} disabled={currentPage === 1}>
               <MdNavigateBefore size={30} />
             </button>
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handledNextPage} disabled={currentPage === totalPages}>
               <MdNavigateNext size={30} />
             </button>
           </div>
         </div>
       </div>
+      <ToastContainer /> 
     </div>
   );
 }
