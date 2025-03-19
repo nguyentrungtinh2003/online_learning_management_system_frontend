@@ -1,3 +1,5 @@
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import React from "react";
 import HomePage from "./pages/HomePage/homePage";
@@ -33,12 +35,14 @@ import UpdateCourse from "./pages/Course/EditCourse";
 import AdminEditBlog from "./pages/Blog/AdminEditBlog";
 import UserCourse from "./pages/Course/UserCourse";
 import UserViewCourse from "./pages/Course/UserViewCourse";
+import EditLesson from "./pages/Lesson/EditLesson";
 
 function App() {
   return (
     <>
       <>
-        <Router>
+      <ToastContainer />        
+      <Router>
           <Routes>
             <Route path="/admin/comment" element={<CommentManagement />} />
             <Route path="/admin/payment" element={<AdminPaymentManagement />} />
@@ -125,7 +129,7 @@ function App() {
               }
             />
             <Route
-              path="/admin/courses/:id/lesson"
+              path="/admin/courses/:courseId/lessons"
               element={
                 <div className="flex bg-focolor">
                   <AdminSidebar />
@@ -134,14 +138,23 @@ function App() {
               }
             />
             <Route
-              path="/admin/courses/:id/lesson/add-lesson"
+              path="/admin/courses/:courseId/lessons/add"
               element={
                 <div className="flex bg-focolor">
                   <AdminSidebar />
                   <AddLesson />
                 </div>
               }
-            />
+            /> 
+            <Route
+            path="/admin/courses/:courseId/lessons/edit/:lessonId"
+            element={
+              <div className="flex bg-focolor">
+                <AdminSidebar />
+                <EditLesson />
+              </div>
+            }
+          />
             <Route
               path="/admin/users/edit-user/:userId"
               element={
@@ -161,6 +174,7 @@ function App() {
               }
             />
           </Routes>
+          
         </Router>
       </>
       <>

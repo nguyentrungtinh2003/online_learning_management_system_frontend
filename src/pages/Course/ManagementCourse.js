@@ -1,3 +1,5 @@
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import {
@@ -7,41 +9,64 @@ import {
 } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
-import { getCourses, deleteCourse } from "../../services/courseapi";
+import { getCourses, deleteCourse, getCoursesByPage, searchCourses } from "../../services/courseapi";
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        const data = await getCourses();
-        console.log("API Response:", data);
+ // Phân trang 
+ const [currentPage, setCurrentPage] = useState(0);
+ const [totalPages, setTotalPages] = useState(1);
+ const coursesPerPage = 6;
 
-        if (Array.isArray(data.data)) {
-          setCourses(data.data);
-        } else {
-          setCourses([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-        setCourses([]);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  const fetchCourses = async () => {
+    setLoading(true);
+    try {
+      console.log(`Fetching courses: Page=${currentPage}, PerPage=${coursesPerPage}`);
+      const data = await getCoursesByPage(currentPage, coursesPerPage);
+      console.log("API Response:", data); // Kiểm tra dữ liệu API trả về
+      if (!data || !data.data || !data.data.content) {
+        throw new Error("Invalid API Response");
       }
-    };
-    fetchCourses();
-  }, []);
+      setCourses(data.data.content);
+      setTotalPages(data.data.totalPages);
+    } catch (error) {
+      console.error("Lỗi tải khóa học:", error);
+      setCourses([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchCourses();
+}, [currentPage]);
 
-  // Lọc các khóa học theo tên
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.courseName &&
-      course.courseName.toLowerCase().includes(search.toLowerCase())
-  );
+
+
+  const handleSearch = async (e) => {
+    setSearch(e.target.value);
+    if(e.target.value.trim() === "") {
+      setCurrentPage(0); // Reset về trang đầu tiên nếu xóa từ khóa
+      return;
+    }
+    setLoading(true);
+    try {
+      const data = await searchCourses(e.target.value,currentPage,coursesPerPage);
+      setCourses(data.data.content);
+      setTotalPages(data.data.totalPages);
+      setTotalPages(data.data.totalPages);
+      setCurrentPage(0); // Đảm bảo về trang đầu tiên sau khi search
+    }
+    catch(error){
+      console.error("Lỗi tìm kiếm:",error);
+      setCourses([]);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (id, name) => {
     const isConfirmed = window.confirm(
@@ -52,17 +77,44 @@ export default function CourseManagement() {
         const response = await deleteCourse(id);
         console.log("Delete API Response:", response);
 
-        // Gọi API để lấy danh sách mới nhất
-        const updatedCourses = await getCourses();
-        setCourses(updatedCourses.data);
+        // Gọi API phân trang thay vì getCourses()
+      const data = await getCoursesByPage(currentPage, coursesPerPage);
+      setCourses(data.data.content);
+      setTotalPages(data.data.totalPages);
 
-        alert("Xóa thành công!");
+        toast.success("Xóa khóa học thành công!", {
+          position: "top-right",
+          autoClose: 3000,  // 4 giây
+        });
+      
+        // alert("Xóa thành công!");
+
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
-        alert("Xóa thất bại, vui lòng thử lại.");
+        // alert("Xóa thất bại, vui lòng thử lại.");
+        toast.error("Không thể xóa khóa học!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
       }
     }
   };
+
+  const handledNextPage = () => {
+    if(currentPage < totalPages - 1){
+      setCurrentPage(currentPage+ 1);
+    }
+  };
+
+  const handlePrePage = () => {
+    if(currentPage > 0){
+      setCurrentPage(currentPage-1);
+    }
+  };
+  
+  
+  
+
 
   return (
     <div className="flex-1 h-screen">
@@ -88,7 +140,7 @@ export default function CourseManagement() {
             placeholder="Search courses..."
             className="p-2 border rounded w-full focus:outline-none"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearch}
           />
         </div>
 
@@ -111,8 +163,8 @@ export default function CourseManagement() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCourses.length > 0 ? (
-                    filteredCourses.map((course) => (
+                  {courses.length > 0 ? (
+                    courses.map((course) => (
                       <tr key={course.id} className="text-center">
                         <td className="p-2">{course.id}</td>
                         <td className="p-2">{course.courseName || "N/A"}</td>
@@ -135,13 +187,13 @@ export default function CourseManagement() {
                           {course.date
                             ? new Date(course.date).toLocaleDateString()
                             : "N/A"}
-                        </td>
+                        </td> 
                         <td className="p-2">
                           {course.isDeleted ? "Inactive" : "Active"}
                         </td>
                         <td className="p-2 flex justify-center gap-1">
-                          <Link
-                            to={`/admin/courses/edit-course/${course.id}`}
+                          <Link 
+                            to={`/admin/courses/${course.id}/lessons`}
                             className="p-2 border rounded"
                           >
                             <FaEye />
@@ -154,7 +206,7 @@ export default function CourseManagement() {
                           </Link>
                           <button
                             className="p-2 border rounded"
-                            onClick={() => handleDelete(course.id)}
+                            onClick={() => handleDelete(course.id,course.courseName)}
                           >
                             <MdDeleteForever />
                           </button>
@@ -175,17 +227,18 @@ export default function CourseManagement() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Showing 1 of 4 pages</p>
+          <p>Page {currentPage +1} of {totalPages}</p>
           <div className="space-x-2">
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handlePrePage} disabled={currentPage === 0}>
               <MdNavigateBefore size={30} />
             </button>
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handledNextPage} disabled={currentPage === totalPages-1}>
               <MdNavigateNext size={30} />
             </button>
           </div>
         </div>
       </div>
+      <ToastContainer /> 
     </div>
   );
 }

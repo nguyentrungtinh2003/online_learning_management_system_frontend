@@ -3,16 +3,21 @@ import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import URL from "../../config/URLconfig";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const UpdateLesson = () => {
-  const { id } = useParams();
+  const navigate = useNavigate();
+  
+  const { courseId, id } = useParams();
   const [lessonData, setLessonData] = useState({
     lessonName: "",
     description: "",
-    courseId: 1, // ID của khóa học
+    courseId: courseId, // ID của khóa học
   });
   const [img, setImg] = useState(null);
   const [video, setVideo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,20 +32,20 @@ const UpdateLesson = () => {
     setVideo(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = new FormData();
-    const payload = {
-      lessonName: lessonData.lessonName,
-      description: lessonData.description,
-      course: { id: 1 }, // Gửi ID của khóa học
-      quizzes: [], // Thêm quiz nếu cần (hiện tại để trống)
-    };
+    // const payload = {
+    //   lessonName: lessonData.lessonName,
+    //   description: lessonData.description,
+    //   course: { id: 1 }, // Gửi ID của khóa học
+    //   quizzes: [], // Thêm quiz nếu cần (hiện tại để trống)
+    // };
 
     data.append(
       "lesson",
-      new Blob([JSON.stringify(payload)], { type: "application/json" })
+      new Blob([JSON.stringify(lessonData)], { type: "application/json" })
     );
     if (img) {
       data.append("img", img); // Thêm file ảnh
@@ -49,19 +54,22 @@ const UpdateLesson = () => {
       data.append("video", video); // Thêm file video
     }
 
-    axios
-      .put(`${URL}/api/lessons/update/${id}`, data, {
+    try {
+      const response =  await axios.put(`${URL}/api/lessons/update/${id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        alert("Lesson update successfully!");
-      })
-      .catch((error) => {
-        console.error("Error update lesson:", error);
-      });
-  };
+        }
+      }
+    );
+    console.log("Thành công:",response);
+    navigate(-1);
+  }
+  catch (error){
+    console.error("Lỗi:", error.response?.data || error.message);
+  } finally{
+    setLoading(false);
+  }
+};
 
   return (
     <Form onSubmit={handleSubmit}>
