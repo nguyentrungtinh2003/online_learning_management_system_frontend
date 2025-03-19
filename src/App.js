@@ -36,13 +36,14 @@ import AdminEditBlog from "./pages/Blog/AdminEditBlog";
 import UserCourse from "./pages/Course/UserCourse";
 import UserViewCourse from "./pages/Course/UserViewCourse";
 import EditLesson from "./pages/Lesson/EditLesson";
+import UserViewLesson from "./pages/Lesson/UserViewLesson";
 
 function App() {
   return (
     <>
       <>
-      <ToastContainer />        
-      <Router>
+        <ToastContainer />
+        <Router>
           <Routes>
             <Route path="/admin/comment" element={<CommentManagement />} />
             <Route path="/admin/payment" element={<AdminPaymentManagement />} />
@@ -145,16 +146,16 @@ function App() {
                   <AddLesson />
                 </div>
               }
-            /> 
+            />
             <Route
-            path="/admin/courses/:courseId/lessons/edit/:lessonId"
-            element={
-              <div className="flex bg-focolor">
-                <AdminSidebar />
-                <EditLesson />
-              </div>
-            }
-          />
+              path="/admin/courses/:courseId/lessons/edit/:lessonId"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <EditLesson />
+                </div>
+              }
+            />
             <Route
               path="/admin/users/edit-user/:userId"
               element={
@@ -174,7 +175,6 @@ function App() {
               }
             />
           </Routes>
-          
         </Router>
       </>
       <>
@@ -216,7 +216,16 @@ function App() {
               element={
                 <div className="flex bg-focolor">
                   <AdminSidebar />
-                  <UserViewCourse/>
+                  <UserViewCourse />
+                </div>
+              }
+            />
+            <Route
+              path="/view-lesson"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <UserViewLesson />
                 </div>
               }
             />
