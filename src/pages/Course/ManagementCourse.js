@@ -44,7 +44,6 @@ export default function CourseManagement() {
 }, [currentPage]);
 
 
-
   const handleSearch = async (e) => {
     setSearch(e.target.value);
     if(e.target.value.trim() === "") {
@@ -67,6 +66,7 @@ export default function CourseManagement() {
       setLoading(false);
     }
   };
+  
 
   const handleDelete = async (id, name) => {
     const isConfirmed = window.confirm(
@@ -87,8 +87,7 @@ export default function CourseManagement() {
           autoClose: 3000,  // 4 giây
         });
       
-        // alert("Xóa thành công!");
-
+        // alert("Xóa thành công!")
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
         // alert("Xóa thất bại, vui lòng thử lại.");
@@ -99,6 +98,9 @@ export default function CourseManagement() {
       }
     }
   };
+  
+  
+  
 
   const handledNextPage = () => {
     if(currentPage < totalPages - 1){
@@ -165,6 +167,7 @@ export default function CourseManagement() {
                 <tbody>
                   {courses.length > 0 ? (
                     courses.map((course) => (
+
                       <tr key={course.id} className="text-center">
                         <td className="p-2">{course.id}</td>
                         <td className="p-2">{course.courseName || "N/A"}</td>
