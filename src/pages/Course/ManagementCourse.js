@@ -78,9 +78,9 @@ export default function CourseManagement() {
         console.log("Delete API Response:", response);
 
         // Gọi API phân trang thay vì getCourses()
-      const data = await getCoursesByPage(currentPage, coursesPerPage);
-      setCourses(data.data.content);
-      setTotalPages(data.data.totalPages);
+        const data = await getCoursesByPage(currentPage, coursesPerPage);
+        setCourses(data.data.content);
+        setTotalPages(data.data.totalPages);
 
         toast.success("Xóa khóa học thành công!", {
           position: "top-right",

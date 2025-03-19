@@ -8,9 +8,9 @@ import {
   MdNavigateBefore,
 } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, data } from "react-router-dom";
 import axios from "axios";
-import { deleteLesson, getLesson } from "../../services/lessonapi";
+import { deleteLesson, getLesson, getLessonByPage, searchLessons } from "../../services/lessonapi";
 
 export default function ManagementLesson() {
   const navigate = useNavigate();
@@ -21,29 +21,58 @@ export default function ManagementLesson() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
 
+
+   // Phân trang 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const lessonsPerPage = 6;
+
+
   useEffect(() => {
-    axios.get(`https://codearena-backend-dev.onrender.com/api/courses/${courseId}`)
-    .then((response) => {
-      setLessons(response.data.data.lessons);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Error lessons:",error);
-      setError("Không thể thêm bài học");
-      setLoading(false);
-    });
-  }, [courseId]);
+    const fetchLessons = async () => { 
+      setLoading(true);
+      try {
+        console.log(`Fetching lessons: Page${currentPage}, PerPage=${lessonsPerPage}`);
+        const data = await getLessonByPage(currentPage, lessonsPerPage);
+        console.log("API Response:", data);
+        if(!data || !data.data || !data.data.content){
+          throw new Error("Invalid API Response");
+        }
+        setLessons(data.data.content);
+        setTotalPages(data.data.totalPages);
+      } catch (error) {
+        console.error("Lỗi tải bài học:", error);
+        setLessons([]);
+      } finally{
+        setLoading(false);
+      }
+    };
+    fetchLessons();
+  }, [currentPage]);
 
 
-   // Lọc các khóa học theo tên
-   const filteredLessons = lessons.filter(
-    (lesson) =>
-      lesson.lessonName &&
-    lesson.lessonName.toLowerCase().includes(search.toLowerCase())
-    || lesson.description && 
-    lesson.description.toLowerCase().includes(search.toLowerCase())
-  );
-
+     const handleSearch = async (e) => {
+       setSearch(e.target.value);
+       if(e.target.value.trim() === "") {
+         setCurrentPage(0); // Reset về trang đầu tiên nếu xóa từ khóa
+         return;
+       }
+       setLoading(true);
+       try {
+         const data = await searchLessons(e.target.value,currentPage,lessonsPerPage);
+         setLessons(data.data.content);
+         setTotalPages(data.data.totalPages);
+         setTotalPages(data.data.totalPages);
+         setCurrentPage(0); // Đảm bảo về trang đầu tiên sau khi search
+       }
+       catch(error){
+         console.error("Lỗi tìm kiếm:",error);
+         setLessons([]);
+       }
+       finally {
+         setLoading(false);
+       }
+     };
 
 
   const handleDelete = async (id, name) => {
@@ -55,11 +84,10 @@ export default function ManagementLesson() {
         const response = await deleteLesson(id);
         console.log("Delete API", response);
   
-        // Gọi lại API để lấy danh sách bài học theo courseId
-        const updatedResponse = await axios.get(
-          `https://codearena-backend-dev.onrender.com/api/courses/${courseId}`
-        );
-        setLessons(updatedResponse.data.data.lessons);
+        // Gọi API phân trang thay vì getCourses()
+        const data = await getLessonByPage(currentPage, lessonsPerPage);
+        setLessons(data.data.content);
+        setTotalPages(data.data.totalPages);
   
         toast.success("Xóa bài học thành công!", {
           position: "top-right",
@@ -74,6 +102,21 @@ export default function ManagementLesson() {
       }
     }
   };
+
+  const handledNextPage = () => {
+    if(currentPage < totalPages - 1){
+      setCurrentPage(currentPage+ 1);
+    }
+  };
+
+  const handlePrePage = () => {
+    if(currentPage > 0){
+      setCurrentPage(currentPage-1);
+    }
+  };
+  
+
+
   
 
   return (
@@ -102,7 +145,7 @@ export default function ManagementLesson() {
             placeholder="Search courses..."
             className="p-2 border rounded w-full focus:outline-none"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearch}
           />
         </div>
 
@@ -125,8 +168,8 @@ export default function ManagementLesson() {
                 </tr>
               </thead>
               <tbody>
-                {filteredLessons.length > 0 ? (
-                  filteredLessons.map((lesson) => (
+                {lessons.length > 0 ? (
+                  lessons.map((lesson) => (
                     <tr key={lesson.id} className="text-center">
                       <td className="p-2">{lesson.id}</td>
                       <td className="p-2">{lesson.lessonName || "N/A"}</td>
@@ -202,12 +245,12 @@ export default function ManagementLesson() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Showing 1 of 4 pages</p>
+          <p>Page {currentPage +1} of {totalPages}</p>
           <div className="space-x-2">
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handlePrePage} disabled={currentPage === 0}>
               <MdNavigateBefore size={30} />
             </button>
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+            <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handledNextPage} disabled={currentPage === totalPages-1}>
               <MdNavigateNext size={30} />
             </button>
           </div>
