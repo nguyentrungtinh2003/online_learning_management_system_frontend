@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const CourseCard = ({ course }) => (
   <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-all transform hover:scale-105 hover:shadow-xl">
@@ -21,9 +22,11 @@ const CourseCard = ({ course }) => (
       <p className="text-sm text-gray-600 mt-1">
         Lessons: {course.lessons?.length || "N/A"}
       </p>
-      <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
-        Unlock Now
-      </button>
+      <Link to="/view-course">
+        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+          Unlock Now
+        </button>
+      </Link>
     </div>
   </div>
 );

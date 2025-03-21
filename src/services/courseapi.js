@@ -120,3 +120,16 @@ export const deleteCourse = async (id) => {
     throw error;
   }
 };
+
+
+// API Lấy danh sách khóa học theo phân trang
+export const getCoursesByPage = async ( page = 0, size = 6) => {
+  const response = await axios.get(`${API_BASE_URL}/page?page=${page}&size=${size}`);
+  return response.data;
+};
+
+// API Tìm kiếm khóa học có phân trang
+export const searchCourses = async (keyword, page = 0 , size = 6) => {
+  const response = await axios.get(`${API_BASE_URL}/search?keyword=${keyword}&page=${page}&size=${size}`);
+  return response.data;
+}
