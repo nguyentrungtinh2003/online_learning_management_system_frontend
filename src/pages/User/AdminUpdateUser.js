@@ -130,7 +130,7 @@ const AdminUpdateUser = () => {
             </Link>
             <button
               type="submit"
-              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 bg-scolor text-wcolor rounded-lg hover:bg-opacity-80"
             >
               Submit
             </button>

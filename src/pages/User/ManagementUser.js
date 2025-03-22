@@ -77,7 +77,7 @@ export default function UserManagement() {
           <h2 className="text-lg font-bold mb-4">User Management</h2>
         </div>
         <Link
-          className="cursor-pointer hover:text-ficolor bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
+          className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
           to="/admin/users/add-user"
         >
           <FaUserPlus size={30} />
@@ -157,10 +157,10 @@ export default function UserManagement() {
       <div className="flex justify-between mt-4">
         <p>Showing 1 of 4 pages</p>
         <div className="space-x-2">
-          <button className="bg-scolor p-1 hover:scale-105 duration-500">
+          <button className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500">
             <MdNavigateBefore size={30} />
           </button>
-          <button className="bg-scolor p-1 hover:scale-105 duration-500 ">
+          <button className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500 ">
             <MdNavigateNext size={30} />
           </button>
         </div>

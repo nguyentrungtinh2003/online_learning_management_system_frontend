@@ -73,7 +73,7 @@ const AdminAddUser = () => {
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">User Management</h2>
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">Add New User</h2>
+          <h2 className="text-lg font-bold ">Add New User</h2>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -137,7 +137,7 @@ const AdminAddUser = () => {
             </Link>
             <button
               type="submit"
-              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 bg-scolor text-wcolor rounded-lg hover:bg-opacity-80"
             >
               Submit
             </button>

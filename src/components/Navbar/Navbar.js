@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const fetchUserInfo = () => {
     axios
-      .get(`${URL}/api/auth/user-info`, { withCredentials: true })
+      .get(`${URL}/api/user-info`, { withCredentials: true })
       .then((response) => {
         console.log(response.data.data);
         const { id, email, name, picture } = response.data.data;
@@ -36,6 +36,8 @@ export default function Navbar() {
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
         console.log(localStorage.getItem("img"));
+
+        console.log(localStorage.getItem("token"));
       })
       .catch(() => {});
   };
@@ -59,6 +61,23 @@ export default function Navbar() {
       await axios.get(`${URL}/api/auth/logout/google`, {
         withCredentials: true,
       }); // Gửi yêu cầu logout Google
+      localStorage.removeItem("id");
+      localStorage.removeItem("username");
+      localStorage.removeItem("token");
+      localStorage.removeItem("img");
+      localStorage.removeItem("email");
+      localStorage.removeItem("img");
+      window.location.href = "/"; // Chuyển về trang login hoặc home
+    } catch (error) {
+      console.error("Google Logout failed:", error);
+    }
+  };
+
+  const handleLogout = async (username) => {
+    try {
+      // await axios.get(`${URL}/api/logout/${username}`, {
+      //   withCredentials: true,
+      // }); // Gửi yêu cầu logout Google
       localStorage.removeItem("id");
       localStorage.removeItem("username");
       localStorage.removeItem("token");
@@ -128,7 +147,8 @@ export default function Navbar() {
               </span>
               <button
                 onClick={() => {
-                  handleGoogleLogout();
+                  // handleGoogleLogout();
+                  handleLogout(localStorage.getItem("username"));
                 }}
                 className="text-cyan-500 hover:text-cyan-700 transition duration-300"
               >

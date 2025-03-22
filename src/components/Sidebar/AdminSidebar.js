@@ -102,7 +102,7 @@ export default function Sidebar() {
     <div className="h-screen p-3">
       {/* Nút mở menu trên mobile */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 bg-scolor p-2 rounded-md text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-fcolor p-2 rounded-md text-white"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <MdClose size={25} /> : <MdMenu size={25} />}
@@ -114,22 +114,24 @@ export default function Sidebar() {
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
         lg:translate-x-0 lg:w-64 lg:block`}
       >
-        <h2 className="text-xl font-bold mb-4 text-center">Code Arena</h2>
+        <h2 className="text-xl font-bold mb-4 text-center text-fcolor">
+          Code Arena
+        </h2>
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-300 
+              className={`p-2 rounded font-bold hover:bg-fcolor cursor-pointer flex items-center gap-3 transition-all duration-300 
               ${
                 activeItem === item.id
-                  ? "bg-scolor text-ficolor scale-105"
-                  : "hover:bg-tcolor"
+                  ? "bg-fcolor text-wcolor scale-105"
+                  : "bg-white text-fcolor"
               }
               `}
               onClick={() => handleNavigate(item.id, item.path)}
             >
               {item.icon}
-              <span className="hidden sm:block">{item.label}</span>
+              <span>{item.label}</span>
             </li>
           ))}
         </ul>

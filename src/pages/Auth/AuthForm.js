@@ -46,13 +46,13 @@ export default function AuthForm() {
   const handelLogin = () => {
     console.log(fromLogin); // Kiểm tra dữ liệu gửi
     axios
-      .post(`${URL}/api/auth/login`, fromLogin, {
+      .post(`${URL}/api/login`, fromLogin, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        axios.get(`${URL}/api/auth/`);
+        axios.get(`${URL}/api/user-info`);
         localStorage.setItem("id", response.data.data.id);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.data.username);

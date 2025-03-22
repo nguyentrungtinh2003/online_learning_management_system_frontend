@@ -1,5 +1,5 @@
-import { ToastContainer,toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -15,10 +15,10 @@ const AddCourse = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    img:"",
+    img: "",
     price: "",
-    courseEnum:"FREE",
-    users:[],
+    courseEnum: "FREE",
+    users: [],
     user: { id: 1 },
     lessons: [],
   });
@@ -35,11 +35,17 @@ const AddCourse = () => {
     }
 
     axios
-      .get(`https://codearena-backend-dev.onrender.com/api/auth/user/${userIdFromStorage}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .get(
+        `https://codearena-backend-dev.onrender.com/api/auth/user/${userIdFromStorage}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
       .then((response) => {
-        setCourseData((prev) => ({ ...prev, user: { id: response.data?.id || "1" } }));
+        setCourseData((prev) => ({
+          ...prev,
+          user: { id: response.data?.id || "1" },
+        }));
       })
       .catch(() => {
         console.error("❌ Lỗi khi lấy thông tin user.");
@@ -59,12 +65,15 @@ const AddCourse = () => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("course", new Blob([JSON.stringify(courseData)], { type: "application/json" }));
-  
+    formData.append(
+      "course",
+      new Blob([JSON.stringify(courseData)], { type: "application/json" })
+    );
+
     if (img) {
       formData.append("img", img);
     }
-  
+
     try {
       const response = await axios.post(
         "https://codearena-backend-dev.onrender.com/api/courses/add",
@@ -75,30 +84,26 @@ const AddCourse = () => {
       );
       console.log("Thành công:", response.data);
       // alert("Thêm khóa học thành công!");
-      
+
       toast.success("Thêm khóa học thành công!", {
-      position: "top-right",
-      autoClose: 3000,  // 4 giây
+        position: "top-right",
+        autoClose: 3000, // 4 giây
       });
 
       setTimeout(() => {
         navigate(-1);
-        }, 4000);    
-
+      }, 4000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       // alert("Lỗi khi thêm khóa học!");
       toast.error("Không thể thêm khóa học!", {
         position: "top-right",
-        autoClose: 3000, 
+        autoClose: 3000,
       });
-    }
-    finally{
+    } finally {
       setLoading(false);
     }
   };
-  
-
 
   return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">
@@ -112,7 +117,10 @@ const AddCourse = () => {
       </div>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
-          {[{ label: "Course Title:", name: "courseName" }, { label: "Price:", name: "price", type: "number" }].map(({ label, name, type }) => (
+          {[
+            { label: "Course Title:", name: "courseName" },
+            { label: "Price:", name: "price", type: "number" },
+          ].map(({ label, name, type }) => (
             <div key={name} className="flex items-center space-x-4">
               <label className="w-1/4 text-gray-700 font-medium">{label}</label>
               <input
@@ -149,7 +157,9 @@ const AddCourse = () => {
             <select
               name="courseEnum"
               value={courseData.courseEnum}
-              onChange={(e) => setCourseData({ ...courseData, courseEnum: e.target.value })}
+              onChange={(e) =>
+                setCourseData({ ...courseData, courseEnum: e.target.value })
+              }
               className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             >
               <option value="FREE">Free</option>
@@ -166,14 +176,18 @@ const AddCourse = () => {
           </Link>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            className={`px-6 py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400"
+                : "bg-scolor text-wcolor hover:bg-opacity-80"
+            }`}
             disabled={loading}
           >
             {loading ? "Processing..." : "Submit"}
           </button>
         </div>
       </form>
-      <ToastContainer /> 
+      <ToastContainer />
     </div>
   );
 };
