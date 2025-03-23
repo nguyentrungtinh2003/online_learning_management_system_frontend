@@ -9,7 +9,7 @@ module.exports = {
         tcolor: "A1E3F9", // Màu nền khi hover
         focolor: "#f5f5f5", // Màu nền background
         wcolor: "#ffffff",
-        ficolor: "#01201B", // Màu đen chủ đạo
+        ficolor: "#01201B", // Màu đen chủ đạ o
         sicolor: "#C2C2C2", // Màu viền (border)
         gcolor: "#1EFF00", // Màu nhấn
         rcolor: "#FF0105", // Màu đen chủ đạo
