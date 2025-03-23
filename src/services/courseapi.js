@@ -1,10 +1,9 @@
 import axios from "axios";
-
-const API_BASE_URL = "https://codearena-backend-dev.onrender.com/api/";
+import URL from "../config/URLconfig";
 
 export const getCourses = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/all`);
+    const response = await axios.get(`${URL}/all`);
     // const filteredCourses = response.data.data.filter(course => !course.deleted); // Chỉ lấy khóa học chưa bị xóa
     // return { ...response.data, data: filteredCourses };
 
@@ -18,7 +17,7 @@ export const getCourses = async () => {
 // 🟢 Lấy khóa học theo ID
 export const getCourseById = async (courseId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/${courseId}`);
+    const response = await axios.get(`${URL}/${courseId}`);
     return response.data; // Dữ liệu API trả về
   } catch (error) {
     console.error("❌ Lỗi lấy khóa học:", error);
@@ -41,7 +40,7 @@ export const updateCourse = async (id, courseData, file) => {
     }
 
     // Gọi API bằng Axios (sử dụng PUT request)
-    const response = await axios.put(`${API_BASE_URL}/update/${id}`, formData, {
+    const response = await axios.put(`${URL}/update/${id}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -87,7 +86,7 @@ export const addCourse = async (courseData, imageFile) => {
       formData.append("img", imageFile);
     }
 
-    const response = await axios.post(`${API_BASE_URL}/add`, formData, {
+    const response = await axios.post(`${URL}/add`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
@@ -104,7 +103,7 @@ export const addCourse = async (courseData, imageFile) => {
 
 export const deleteCourse = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/delete/${id}`, {
+    const response = await fetch(`${URL}/delete/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -124,7 +123,7 @@ export const deleteCourse = async (id) => {
 // API Lấy danh sách khóa học theo phân trang
 export const getCoursesByPage = async (page = 0, size = 6) => {
   const response = await axios.get(
-    `${API_BASE_URL}/teacher/courses/page?page=${page}&size=${size}`,
+    `${URL}/teacher/courses/page?page=${page}&size=${size}`,
     {
       withCredentials: true,
     }
@@ -135,7 +134,10 @@ export const getCoursesByPage = async (page = 0, size = 6) => {
 // API Tìm kiếm khóa học có phân trang
 export const searchCourses = async (keyword, page = 0, size = 6) => {
   const response = await axios.get(
-    `${API_BASE_URL}/search?keyword=${keyword}&page=${page}&size=${size}`
+    `${URL}/teacher/courses/search?keyword=${keyword}&page=${page}&size=${size}`,
+    {
+      withCredentials: true,
+    }
   );
   return response.data;
 };
