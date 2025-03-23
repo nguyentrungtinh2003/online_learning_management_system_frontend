@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://codearena-backend-dev.onrender.com/api/courses";
+const API_BASE_URL = "https://codearena-backend-dev.onrender.com/api/";
 
 export const getCourses = async () => {
   try {
@@ -121,15 +121,21 @@ export const deleteCourse = async (id) => {
   }
 };
 
-
 // API Lấy danh sách khóa học theo phân trang
-export const getCoursesByPage = async ( page = 0, size = 6) => {
-  const response = await axios.get(`${API_BASE_URL}/page?page=${page}&size=${size}`);
+export const getCoursesByPage = async (page = 0, size = 6) => {
+  const response = await axios.get(
+    `${API_BASE_URL}/teacher/courses/page?page=${page}&size=${size}`,
+    {
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
 // API Tìm kiếm khóa học có phân trang
-export const searchCourses = async (keyword, page = 0 , size = 6) => {
-  const response = await axios.get(`${API_BASE_URL}/search?keyword=${keyword}&page=${page}&size=${size}`);
+export const searchCourses = async (keyword, page = 0, size = 6) => {
+  const response = await axios.get(
+    `${API_BASE_URL}/search?keyword=${keyword}&page=${page}&size=${size}`
+  );
   return response.data;
-}
+};
