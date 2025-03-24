@@ -46,13 +46,13 @@ export default function AuthForm() {
   const handelLogin = () => {
     console.log(fromLogin); // Kiểm tra dữ liệu gửi
     axios
-      .post(`${URL}/api/login`, fromLogin, {
+      .post(`${URL}/login`, fromLogin, {
         headers: {
           "Content-Type": "application/json",
         },
       })
       .then((response) => {
-        axios.get(`${URL}/api/user-info`);
+        axios.get(`${URL}/user-info`);
         localStorage.setItem("id", response.data.data.id);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.data.username);
@@ -82,7 +82,7 @@ export default function AuthForm() {
   };
 
   const handelRegister = () => {
-    axios.post(`${URL}/api/auth/user-register`, fromData).then((response) => {
+    axios.post(`${URL}/user-register`, fromData).then((response) => {
       console.log(response.data);
       console.log("Register success");
     });
@@ -108,7 +108,7 @@ export default function AuthForm() {
   //--------------------------//
   const handelSendOTP = () => {
     axios
-      .post(`${URL}/api/auth/forgot-password`, { email: emailOTP })
+      .post(`${URL}/forgot-password`, { email: emailOTP })
       .then((response) => {
         console.log("Send OTP success !", response);
       })
@@ -124,7 +124,7 @@ export default function AuthForm() {
   };
   const handelResetPassword = () => {
     axios
-      .post(`${URL}/api/auth/reset-password`, resetPassword)
+      .post(`${URL}/reset-password`, resetPassword)
       .then((response) => {
         console.log("Reset password success !", response);
       })
