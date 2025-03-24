@@ -54,9 +54,10 @@ export default function AuthForm() {
         headers: {
           "Content-Type": "application/json",
         },
+        withCredentials: true,
       })
       .then((response) => {
-        axios.get(`${URL}/user-info`);
+        axios.get(`${URL}/user-info`, { withCredentials: true });
         localStorage.setItem("id", response.data.data.id);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.data.username);
