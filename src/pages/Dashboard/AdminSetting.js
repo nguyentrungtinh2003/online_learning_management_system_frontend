@@ -35,7 +35,7 @@ const AdminSettings = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
                 activeTab === tab.key
-                  ? "font-bold bg-scolor text-ficolor"
+                  ? "font-bold bg-scolor text-white"
                   : "hover:bg-gray-100"
               }`}
             >
@@ -69,7 +69,7 @@ const AdminSettings = () => {
                   />
                 </div>
                 <div className="flex justify-end">
-                  <button className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80">
+                  <button className="text-white px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80">
                     Save
                   </button>
                 </div>

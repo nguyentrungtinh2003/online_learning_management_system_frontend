@@ -69,7 +69,7 @@ export default function BlogManagement() {
             <h2 className="text-lg font-bold mb-4">Blog Management</h2>
           </div>
           <Link
-            className="hover:text-ficolor cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
+            className="text-white hover:text-ficolor cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
             to="/admin/blog/add-blog"
           >
             <FaPlus size={30} />
@@ -130,7 +130,7 @@ export default function BlogManagement() {
             </table>
           </div>
         </div>
-        <div className="flex justify-between mt-4">
+        <div className="text-white flex justify-between mt-4">
           <p>Showing 1 of 4 pages</p>
           <div className="space-x-2">
             <button className="bg-scolor p-1 hover:scale-105 duration-500">

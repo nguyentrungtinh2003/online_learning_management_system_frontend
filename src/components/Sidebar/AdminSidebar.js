@@ -5,7 +5,7 @@ import {
   MdForum,
   MdSettingsSuggest,
   MdMenu,
-  MdClose,
+  MdOutlineKeyboardDoubleArrowLeft,
 } from "react-icons/md";
 import { FaBuffer, FaUsers, FaHome, FaUser, FaTrophy } from "react-icons/fa";
 
@@ -14,8 +14,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Menu dành cho Admin
   const adminItems = [
     {
       id: "Dashboard",
@@ -49,7 +49,6 @@ export default function Sidebar() {
     },
   ];
 
-  // Menu dành cho User
   const userItems = [
     { id: "Home", label: "Home", icon: <FaHome size={25} />, path: "/" },
     {
@@ -79,7 +78,6 @@ export default function Sidebar() {
     },
   ];
 
-  // Xác định loại menu dựa trên đường dẫn
   const isAdmin = location.pathname.startsWith("/admin");
   const menuItems = isAdmin ? adminItems : userItems;
 
@@ -95,49 +93,57 @@ export default function Sidebar() {
   const handleNavigate = (id, path) => {
     setActiveItem(id);
     navigate(path);
-    setIsOpen(false); // Đóng menu trên mobile khi chọn
+    setIsOpen(false);
   };
 
   return (
-    <div className="h-screen p-3">
-      {/* Nút mở menu trên mobile */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-50 bg-fcolor p-2 rounded-md text-white"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <MdClose size={25} /> : <MdMenu size={25} />}
-      </button>
-
-      {/* Sidebar */}
+    <div className="h-screen flex">
       <div
-        className={`h-full border-box top-0 left-0 h-fit bg-white drop-shadow-lg p-4 rounded-2xl font-semibold transition-transform duration-300 z-40 
-        ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-        lg:translate-x-0 lg:w-64 lg:block`}
+        className={`h-full bg-white drop-shadow-lg p-4 transition-all duration-300 z-40 ${
+          isCollapsed ? "w-30" : "w-64"
+        }`}
       >
-        <h2 className="text-xl font-bold mb-4 text-center text-fcolor">
-          Code Arena
-        </h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2
+            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-300 ${
+              isCollapsed ? "hidden" : "block"
+            }`}
+          >
+            Code Arena
+          </h2>
+          <button
+            className="p-2 rounded-md text-fcolor hover:bg-gray-200"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? (
+              <MdMenu size={25} />
+            ) : (
+              <MdOutlineKeyboardDoubleArrowLeft size={25} />
+            )}
+          </button>
+        </div>
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`p-2 rounded font-bold hover:bg-fcolor cursor-pointer flex items-center gap-3 transition-all duration-300 
-              ${
+              className={`p-2 rounded font-bold hover:bg-fcolor cursor-pointer flex items-center gap-3 transition-all duration-300 relative group ${
                 activeItem === item.id
                   ? "bg-fcolor text-wcolor scale-105"
                   : "bg-white text-fcolor"
-              }
-              `}
+              }`}
               onClick={() => handleNavigate(item.id, item.path)}
             >
               {item.icon}
-              <span>{item.label}</span>
+              {!isCollapsed && <span>{item.label}</span>}
+              {isCollapsed && (
+                <div className="absolute left-full ml-2 px-3 py-1 bg-scolor text-white text-xl rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {item.label}
+                </div>
+              )}
             </li>
           ))}
         </ul>
       </div>
-
-      {/* Background overlay khi mở menu trên mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black opacity-50 lg:hidden"
