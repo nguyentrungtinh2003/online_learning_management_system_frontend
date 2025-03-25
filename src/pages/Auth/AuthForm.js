@@ -49,6 +49,7 @@ export default function AuthForm() {
 
   const handelLogin = () => {
     console.log(fromLogin); // Kiểm tra dữ liệu gửi
+    console.log(document.cookie);
     axios
       .post(`${URL}/login`, fromLogin, {
         headers: {
@@ -63,6 +64,7 @@ export default function AuthForm() {
         localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("img", response.data.data.img);
         console.log(response.data.data);
+        console.log(document.cookie);
         // Dùng navigate để điều hướng mà không tải lại trang
         toast.success("Đăng nhập thành công!", {
           position: "top-right",

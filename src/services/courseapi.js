@@ -122,6 +122,7 @@ export const deleteCourse = async (id) => {
 
 // API Lấy danh sách khóa học theo phân trang
 export const getCoursesByPage = async (page = 0, size = 6) => {
+  console.log(document.cookie);
   const response = await axios.get(
     `${URL}/teacher/courses/page?page=${page}&size=${size}`,
     {
@@ -133,6 +134,7 @@ export const getCoursesByPage = async (page = 0, size = 6) => {
 
 // API Tìm kiếm khóa học có phân trang
 export const searchCourses = async (keyword, page = 0, size = 6) => {
+  console.log(document.cookie);
   const response = await axios.get(
     `${URL}/teacher/courses/search?keyword=${keyword}&page=${page}&size=${size}`,
     {
