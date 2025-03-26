@@ -20,7 +20,7 @@ export default function UserManagement() {
 
   useEffect(() => {
     axios
-      .get(`${URL}/user/all`, { withCredentials: true })
+      .get(`${URL}/admin/user/all`, { withCredentials: true })
       .then((response) => {
         setUsers(response.data.data);
         setLoading(false);
@@ -38,7 +38,7 @@ export default function UserManagement() {
   const handleDeleteUser = (id, name) => {
     if (window.confirm(`Bạn có muốn xoá người dùng ${name} không ?`)) {
       axios
-        .delete(`${URL}/user/delete/${id}`, { withCredentials: true })
+        .delete(`${URL}/admin/user/delete/${id}`, { withCredentials: true })
         .then(() => {
           toast.success("Xoá người dùng thành công!", {
             position: "top-right",
