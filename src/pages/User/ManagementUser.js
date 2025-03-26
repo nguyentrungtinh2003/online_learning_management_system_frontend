@@ -6,10 +6,7 @@ import {
   FaEdit,
   FaUserPlus,
 } from "react-icons/fa";
-import {
-  MdNavigateNext,
-  MdDeleteForever,
-} from "react-icons/md";
+import { MdNavigateNext, MdDeleteForever } from "react-icons/md";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { ToastContainer, toast, Slide } from "react-toastify";
@@ -23,7 +20,7 @@ export default function UserManagement() {
 
   useEffect(() => {
     axios
-      .get(`${"https://codearena-backend-dev.onrender.com"}/api/auth/all-user`)
+      .get(`${URL}/user/all`, { withCredentials: true })
       .then((response) => {
         setUsers(response.data.data);
         setLoading(false);
@@ -41,7 +38,7 @@ export default function UserManagement() {
   const handleDeleteUser = (id, name) => {
     if (window.confirm(`Bạn có muốn xoá người dùng ${name} không ?`)) {
       axios
-        .delete(`${URL}/api/auth/delete-user/${id}`)
+        .delete(`${URL}/user/delete/${id}`, { withCredentials: true })
         .then(() => {
           toast.success("Xoá người dùng thành công!", {
             position: "top-right",
