@@ -4,12 +4,10 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaEdit,
-  FaEye,
   FaUserPlus,
 } from "react-icons/fa";
 import {
   MdNavigateNext,
-  MdNavigateBefore,
   MdDeleteForever,
 } from "react-icons/md";
 import axios from "axios";
@@ -21,12 +19,14 @@ import { Link } from "react-router-dom";
 export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
       .get(`${"https://codearena-backend-dev.onrender.com"}/api/auth/all-user`)
       .then((response) => {
         setUsers(response.data.data);
+        setLoading(false);
       })
       .catch((error) => {
         toast.error("Lỗi khi tải dữ liệu người dùng!", {
@@ -34,6 +34,7 @@ export default function UserManagement() {
           autoClose: 3000,
           transition: Slide,
         });
+        setLoading(false);
       });
   }, []);
 
@@ -101,7 +102,19 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {loading ? (
+                [...Array(6)].map((_, index) => (
+                  <tr key={index} className="text-center animate-pulse">
+                    {Array(8)
+                      .fill(null)
+                      .map((_, i) => (
+                        <td key={i} className="p-2">
+                          <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
+                        </td>
+                      ))}
+                  </tr>
+                ))
+              ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">
                     No users found
@@ -150,19 +163,6 @@ export default function UserManagement() {
               )}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-between mt-4">
-        <p>Showing 1 of 4 pages</p>
-        <div className="space-x-2">
-          <button className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500">
-            <MdNavigateBefore size={30} />
-          </button>
-          <button className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500 ">
-            <MdNavigateNext size={30} />
-          </button>
         </div>
       </div>
     </div>

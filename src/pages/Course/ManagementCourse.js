@@ -30,11 +30,7 @@ export default function CourseManagement() {
     const fetchCourses = async () => {
       setLoading(true);
       try {
-        console.log(
-          `Fetching courses: Page=${currentPage}, PerPage=${coursesPerPage}`
-        );
         const data = await getCoursesByPage(currentPage, coursesPerPage);
-        console.log("API Response:", data); // Kiểm tra dữ liệu API trả về
         if (!data || !data.data || !data.data.content) {
           throw new Error("Invalid API Response");
         }
@@ -53,7 +49,7 @@ export default function CourseManagement() {
   const handleSearch = async (e) => {
     setSearch(e.target.value);
     if (e.target.value.trim() === "") {
-      setCurrentPage(0); // Reset về trang đầu tiên nếu xóa từ khóa
+      setCurrentPage(0);
       return;
     }
     setLoading(true);
@@ -65,8 +61,7 @@ export default function CourseManagement() {
       );
       setCourses(data.data.content);
       setTotalPages(data.data.totalPages);
-      setTotalPages(data.data.totalPages);
-      setCurrentPage(0); // Đảm bảo về trang đầu tiên sau khi search
+      setCurrentPage(0);
     } catch (error) {
       console.error("Lỗi tìm kiếm:", error);
       setCourses([]);
@@ -81,23 +76,16 @@ export default function CourseManagement() {
     );
     if (isConfirmed) {
       try {
-        const response = await deleteCourse(id);
-        console.log("Delete API Response:", response);
-
-        // Gọi API phân trang thay vì getCourses()
+        await deleteCourse(id);
         const data = await getCoursesByPage(currentPage, coursesPerPage);
         setCourses(data.data.content);
         setTotalPages(data.data.totalPages);
-
         toast.success("Xóa khóa học thành công!", {
           position: "top-right",
-          autoClose: 3000, // 4 giây
+          autoClose: 3000,
         });
-
-        // alert("Xóa thành công!")
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
-        // alert("Xóa thất bại, vui lòng thử lại.");
         toast.error("Không thể xóa khóa học!", {
           position: "top-right",
           autoClose: 3000,
@@ -148,85 +136,93 @@ export default function CourseManagement() {
 
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-white p-4 rounded-2xl">
-            {loading ? (
-              <p className="text-center">Loading courses...</p>
-            ) : (
-              <table className="w-full">
-                <thead>
-                  <tr className="text-center font-bold">
-                    <th className="p-2">ID</th>
-                    <th className="p-2">Course Name</th>
-                    <th className="p-2">Description</th>
-                    <th className="p-2">Image</th>
-                    <th className="p-2">Price</th>
-                    <th className="p-2">Created Date</th>
-                    <th className="p-2">Status</th>
-                    <th className="p-2">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {courses.length > 0 ? (
-                    courses.map((course) => (
-                      <tr key={course.id} className="text-center">
-                        <td className="p-2">{course.id}</td>
-                        <td className="p-2">{course.courseName || "N/A"}</td>
-                        <td className="p-2">
-                          {course.description || "No description"}
-                        </td>
-                        <td className="p-2">
-                          {course.img ? (
-                            <img
-                              src={course.img}
-                              alt="course"
-                              className="w-8 h-8 rounded mx-auto"
-                            />
-                          ) : (
-                            "No image"
-                          )}
-                        </td>
-                        <td className="p-2">{course.price || "Free"}</td>
-                        <td className="p-2">
-                          {course.date
-                            ? new Date(course.date).toLocaleDateString()
-                            : "N/A"}
-                        </td>
-                        <td className="p-2">
-                          {course.isDeleted ? "Inactive" : "Active"}
-                        </td>
-                        <td className="p-2 flex justify-center gap-1">
-                          <Link
-                            to={`/admin/courses/${course.id}/lessons`}
-                            className="p-2 border rounded"
-                          >
-                            <FaEye />
-                          </Link>
-                          <Link
-                            to={`/admin/courses/edit-course/${course.id}`}
-                            className="p-2 border rounded"
-                          >
-                            <FaEdit />
-                          </Link>
-                          <button
-                            className="p-2 border rounded"
-                            onClick={() =>
-                              handleDelete(course.id, course.courseName)
-                            }
-                          >
-                            <MdDeleteForever />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="text-center p-4">
-                        No courses found.
+            <table className="w-full">
+              <thead>
+                <tr className="text-center font-bold">
+                  <th className="p-2">ID</th>
+                  <th className="p-2">Course Name</th>
+                  <th className="p-2">Description</th>
+                  <th className="p-2">Image</th>
+                  <th className="p-2">Price</th>
+                  <th className="p-2">Created Date</th>
+                  <th className="p-2">Status</th>
+                  <th className="p-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  [...Array(6)].map((_, index) => (
+                    <tr key={index} className="text-center animate-pulse">
+                      {Array(8)
+                        .fill(null)
+                        .map((_, i) => (
+                          <td key={i} className="p-2">
+                            <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
+                          </td>
+                        ))}
+                    </tr>
+                  ))
+                ) : courses.length > 0 ? (
+                  courses.map((course) => (
+                    <tr key={course.id} className="text-center">
+                      <td className="p-2">{course.id}</td>
+                      <td className="p-2">{course.courseName || "N/A"}</td>
+                      <td className="p-2">
+                        {course.description || "No description"}
+                      </td>
+                      <td className="p-2">
+                        {course.img ? (
+                          <img
+                            src={course.img}
+                            alt="course"
+                            className="w-8 h-8 rounded mx-auto"
+                          />
+                        ) : (
+                          "No image"
+                        )}
+                      </td>
+                      <td className="p-2">{course.price || "Free"}</td>
+                      <td className="p-2">
+                        {course.date
+                          ? new Date(course.date).toLocaleDateString()
+                          : "N/A"}
+                      </td>
+                      <td className="p-2">
+                        {course.isDeleted ? "Inactive" : "Active"}
+                      </td>
+                      <td className="p-2 flex justify-center gap-1">
+                        <Link
+                          to={`/admin/courses/${course.id}/lessons`}
+                          className="p-2 border rounded"
+                        >
+                          <FaEye />
+                        </Link>
+                        <Link
+                          to={`/admin/courses/edit-course/${course.id}`}
+                          className="p-2 border rounded"
+                        >
+                          <FaEdit />
+                        </Link>
+                        <button
+                          className="p-2 border rounded"
+                          onClick={() =>
+                            handleDelete(course.id, course.courseName)
+                          }
+                        >
+                          <MdDeleteForever />
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4 text-gray-500">
+                      No courses found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 

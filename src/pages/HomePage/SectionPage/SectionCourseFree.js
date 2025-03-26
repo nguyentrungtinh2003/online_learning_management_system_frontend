@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import SkeletonLoading from "../../../components/SkeletonLoading";
+import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
 
 const CourseCard = ({ course }) => (
   <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">

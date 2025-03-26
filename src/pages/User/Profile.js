@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import RankLevel from "../../components/RankLevel/RankLevel";
 import Button from "@mui/material/Button";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import { FaCoins } from "react-icons/fa";
-import axios from "axios";
-import URL from "../../config/URLconfig";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -49,11 +45,11 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile-container mx-20 mt-10 mb-10">
+    <div className="h-screen overflow-y-auto shadow flex-1">
       {/* Header Section */}
-      <div className="header-section relative">
-        <div className="cover-image bg-gradient-to-b from-cyan-300 to-blue-500 h-60 rounded-2xl m-2"></div>
-        <div className="profile-info absolute top-40 left-10 z-1 flex items-center">
+      <div className="relative h-[50%]">
+        <div className="bg-gradient-to-b from-cyan-300 to-blue-500 h-60 rounded-2xl m-2"></div>
+        <div className="absolute top-40 left-10 z-1 flex items-center">
           <img
             className="profile-avatar bg-white border-8 border-slate-50 w-48 rounded-full h-48 shadow-lg"
             src={
@@ -64,27 +60,16 @@ const Profile = () => {
           />
           <div className="mt-20">
             <div className="flex items-center space-x-4">
-              <h2 className="text-3xl font-semibold text-gray-800">
-                {user.username || `Nguyen trung Tinh`}
+              <h2 className="text-3xl ml-4 font-semibold text-gray-800">
+                {user.username || `Nguyen Trung Tinh`}
               </h2>
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              {user.email || "admin@gmail.com"}
-            </p>
-
-            {/* Coins */}
-            <div className="flex items-center mt-2 space-x-3">
-              <FaCoins className="text-yellow-500 text-xl" />
-              <span className="text-gray-700 font-medium text-lg">
-                {user.coin || 1900000}
-              </span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="tabs flex justify-center mt-8">
+      <div className="tabs flex justify-center">
         {[
           { label: "Introduce", key: "introduce" },
           { label: "Rank", key: "rank" },

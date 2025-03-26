@@ -6,12 +6,12 @@ module.exports = {
       colors: {
         fcolor: "#3674B5", // Màu chủ đạo
         scolor: "#578FCA", // Màu phụ
-        tcolor: "A1E3F9", // Màu nền khi hover
-        focolor: "#f5f5f5", // Màu nền background
+        tcolor: "#A1E3F9", // Màu nền khi hover
+        focolor: "#f9f9f9", // Màu nền background
         wcolor: "#ffffff",
         ficolor: "#01201B", // Màu đen chủ đạ o
         sicolor: "#C2C2C2", // Màu viền (border)
-        gcolor: "#1EFF00", // Màu nhấn
+        gcolor: "#00BCD4", // Màu nhấn
         rcolor: "#FF0105", // Màu đen chủ đạo
         ycolor: "#FFFF00", // Màu nền chính
       },
@@ -28,6 +28,7 @@ module.exports = {
           "2px 2px 2px #f9f9f9, -2px -2px 2px rgb(185, 185, 201)",
       },
       animation: {
+        firework: "firework 0.8s ease-out forwards",
         "fade-in": "fadeIn 1s ease-in-out",
         "fade-in-from-bottom": "fadeInFromBottom 1s ease-in-out",
         "slide-in-from-right": "slideInFromRight 1s ease-in-out",
@@ -35,6 +36,10 @@ module.exports = {
         pulse: "pulse 1s",
       },
       keyframes: {
+        firework: {
+          "0%": { transform: "scale(0.5)", opacity: "1" },
+          "100%": { transform: "scale(2)", opacity: "0" },
+        },
         fadeIn: {
           "0%": { transform: "translateY(-100%)", opacity: 0 },
           "100%": { transform: "translateY(0)", opacity: 1 },
