@@ -71,9 +71,9 @@ export default function AuthForm() {
           autoClose: 3000,
           transition: Slide,
         });
-        // setTimeout(() => {
-        //   window.location.replace("/");
-        // }, 3000);
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
       })
       .catch((error) => {
         console.error(
