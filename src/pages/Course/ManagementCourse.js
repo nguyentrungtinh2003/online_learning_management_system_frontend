@@ -152,7 +152,7 @@ export default function CourseManagement() {
               <tbody>
                 {loading ? (
                   [...Array(6)].map((_, index) => (
-                    <tr key={index} className="text-center animate-pulse">
+                    <tr key={index} className="text-center">
                       {Array(8)
                         .fill(null)
                         .map((_, i) => (
@@ -215,11 +215,17 @@ export default function CourseManagement() {
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4 text-gray-500">
-                      No courses found
-                    </td>
-                  </tr>
+                  [...Array(6)].map((_, index) => (
+                    <tr key={index} className="text-center">
+                      {Array(8)
+                        .fill(null)
+                        .map((_, i) => (
+                          <td key={i} className="p-2">
+                            <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
+                          </td>
+                        ))}
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
