@@ -12,7 +12,7 @@ export default function Navbar() {
 
   const fetchUserGoogle = () => {
     axios
-      .get(`${URL}/api/auth/user-google`, { withCredentials: true })
+      .get(`${URL}/user-google`, { withCredentials: true })
       .then((response) => {
         console.log(response.data.data);
         const { id, email, name, picture } = response.data.data;
@@ -27,7 +27,7 @@ export default function Navbar() {
 
   const fetchUserInfo = () => {
     axios
-      .get(`${URL}/api/user-info`, { withCredentials: true })
+      .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
         console.log(response.data.data);
         const { id, email, name, picture } = response.data.data;
@@ -58,7 +58,7 @@ export default function Navbar() {
 
   const handleGoogleLogout = async () => {
     try {
-      await axios.get(`${URL}/api/auth/logout/google`, {
+      await axios.get(`${URL}/logout/google`, {
         withCredentials: true,
       }); // Gửi yêu cầu logout Google
       localStorage.removeItem("id");
