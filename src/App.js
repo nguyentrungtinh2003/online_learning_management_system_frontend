@@ -40,6 +40,7 @@ import UserViewLesson from "./pages/Lesson/UserViewLesson";
 import UserViewBlog from "./pages/Blog/UserViewBlog";
 import UpLevelEffect from "./components/Effect/UpLevelEffect";
 
+
 function App() {
   return (
     <>

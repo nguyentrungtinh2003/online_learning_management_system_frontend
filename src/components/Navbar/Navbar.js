@@ -38,11 +38,11 @@ export default function Navbar() {
     axios
       .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
-        const { id, email, name, picture } = response.data.data;
+        const { id, email, username, img } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
-        localStorage.setItem("username", name);
-        localStorage.setItem("img", picture);
+        localStorage.setItem("username", username);
+        localStorage.setItem("img", img);
       })
       .catch(() => {});
   };
