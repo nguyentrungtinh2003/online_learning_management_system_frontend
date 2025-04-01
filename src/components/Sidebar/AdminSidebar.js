@@ -55,7 +55,7 @@ export default function Sidebar() {
       id: "MyCourses",
       label: "My Courses",
       icon: <FaBuffer size={25} />,
-      path: "/my-courses",
+      path: "/user-course",
     },
     { id: "Blog", label: "Blog", icon: <MdForum size={25} />, path: "/blog" },
     {
