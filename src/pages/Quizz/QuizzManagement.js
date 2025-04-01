@@ -1,249 +1,114 @@
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import React, { useEffect, useState } from "react";
-// import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-// import {
-//   MdNavigateNext,
-//   MdDeleteForever,
-//   MdNavigateBefore,
-// } from "react-icons/md";
-// import axios from "axios";
-// import AdminNavbar from "../../components/Navbar/AdminNavbar";
-// import { Link, useNavigate, useParams } from "react-router-dom";
-// import { Table, Form, Button } from "react-bootstrap";
-// import URL from "../../config/URLconfig";
-// import { getQuizzesByPage,searchQuiz,deleteQuiz } from "../../services/quizapi";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Table, Form, Button } from "react-bootstrap";
+import URL from "../../config/URLconfig";
 
+const QuizzManagement = () => {
+  const [lessons, setLessons] = useState([]);
+  const [selectedLessonId, setSelectedLessonId] = useState("");
+  const [quizzes, setQuizzes] = useState([]);
 
-// export default function QuizzManagement() {
-//   const navigate = useNavigate();
+  useEffect(() => {
+    axios
+      .get(`${URL}/api/lessons`)
+      .then((response) => {
+        setLessons(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching lessons:", error);
+      });
+  }, []);
 
-//   const { lessonId } = useParams();
-//   const [quizzes, setQuizzes] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [search, setSearch] = useState("");
+  const handleLessonChange = (e) => {
+    const lessonId = e.target.value;
+    setSelectedLessonId(lessonId);
+    if (lessonId) {
+      axios
+        .get(`${URL}/api/quizzes/lesson/${lessonId}`)
+        .then((response) => {
+          setQuizzes(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching quizzes:", error);
+        });
+    } else {
+      setQuizzes([]);
+    }
+  };
 
-//   // Phân trang
-//   const [currentPage, setCurrentPage] = useState(0);
-//   const [totalPages, setTotalPages] = useState(1);
-//   const quizzesPerPage = 6;
+  const handleViewDetail = (quizId) => {
+    alert(`Viewing details for quiz ID: ${quizId}`);
+  };
 
-//    useEffect(() => {
-//      const fetchQuizzes = async () => { 
-//        setLoading(true);
-//        try {
-//          console.log(`Fetching quizzes: Page${currentPage}, PerPage=${quizzesPerPage}`);
-//          const data = await getQuizzesByPage(currentPage, quizzesPerPage);
-//          console.log("API Response:", data);
-//          if(!data || !data.data || !data.data.content){
-//            throw new Error("Invalid API Response");
-//          }
-//          setQuizzes(data.data.content);
-//          setTotalPages(data.data.totalPages);
-//        } catch (error) {
-//          console.error("Lỗi tải bài học:", error);
-//          setQuizzes([]);
-//        } finally{
-//          setLoading(false);
-//        }
-//      };
-//      fetchQuizzes();
-//    }, [currentPage]);
+  const handleEdit = (quizId) => {
+    alert(`Editing quiz ID: ${quizId}`);
+  };
 
-//       const handleSearch = async (e) => {
-//           setSearch(e.target.value);
-//           if(e.target.value.trim() === "") {
-//             setCurrentPage(0); // Reset về trang đầu tiên nếu xóa từ khóa
-//             return;
-//           }
-//           setLoading(true);
-//           try {
-//             const data = await searchQuiz(e.target.value,currentPage,quizzesPerPage);
-//             setQuizzes(data.data.content);
-//             setTotalPages(data.data.totalPages);
-//             setTotalPages(data.data.totalPages);
-//             setCurrentPage(0); // Đảm bảo về trang đầu tiên sau khi search
-//           }
-//           catch(error){
-//             console.error("Lỗi tìm kiếm:",error);
-//             setQuizzes([]);
-//           }
-//           finally {
-//             setLoading(false);
-//           }
-//         };
+  const handleDelete = (quizId) => {
+    if (window.confirm("Are you sure you want to delete this quiz?")) {
+      axios
+        .delete(`${URL}/api/quizzes/delete/${quizId}`)
+        .then(() => {
+          alert("Quiz deleted successfully!");
+          setQuizzes(quizzes.filter((quiz) => quiz.quizId !== quizId));
+        })
+        .catch((error) => {
+          console.error("Error deleting quiz:", error);
+        });
+    }
+  };
 
+  return (
+    <div className="mt-4">
+      <h2>Quiz Management</h2>
+      <Form.Group controlId="formLessonSelect">
+        <Form.Label>Select Lesson</Form.Label>
+        <Form.Control as="select" value={selectedLessonId} onChange={handleLessonChange}>
+          <option value="">-- Select a Lesson --</option>
+          {lessons.map((lesson) => (
+            <option key={lesson.id} value={lesson.id}>{lesson.lessonName}</option>
+          ))}
+        </Form.Control>
+      </Form.Group>
 
-//           const handleDelete = async (id, name) => {
-//             const isConfirmed = window.confirm(
-//               `Bạn có chắc muốn xóa quiz "${name}" không?`
-//             );
-//             if (isConfirmed) {
-//               try {
-//                 const response = await deleteQuiz(id);
-//                 console.log("Delete API", response);
-          
-//                 // Gọi API phân trang thay vì getCourses()
-//                 const data = await getQuizzesByPage(currentPage, quizzesPerPage);
-//                 setQuizzes(data.data.content);
-//                 setTotalPages(data.data.totalPages);
-          
-//                 toast.success("Xóa quiz thành công!", {
-//                   position: "top-right",
-//                   autoClose: 3000,
-//                 });
-//               } catch (error) {
-//                 console.error("Lỗi khi xóa quiz:", error);
-//                 toast.error("Không thể xóa quiz", {
-//                   position: "top-right",
-//                   autoClose: 3000,
-//                 });
-//               }
-//             }
-//           };
+      {quizzes.length > 0 ? (
+        <Table striped bordered hover className="mt-3">
+          <thead>
+            <tr>
+              <th>Quiz ID</th>
+              <th>Quiz Name</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Image</th>
+              <th>Deleted</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {quizzes.map((quiz) => (
+              <tr key={quiz.quizId}>
+                <td>{quiz.quizId}</td>
+                <td>{quiz.quizName}</td>
+                <td>{quiz.description}</td>
+                <td>{quiz.date}</td>
+                <td>
+                  {quiz.img && <img src={`${URL}/uploads/${quiz.img}`} alt="Quiz" style={{ width: "50px" }} />}
+                </td>
+                <td>{quiz.isDeleted ? "Yes" : "No"}</td>
+                <td>
+                  <Button variant="info" size="sm" onClick={() => handleViewDetail(quiz.quizId)}>View Detail</Button>{' '}
+                  <Button variant="warning" size="sm" onClick={() => handleEdit(quiz.quizId)}>Edit</Button>{' '}
+                  <Button variant="danger" size="sm" onClick={() => handleDelete(quiz.quizId)}>Delete</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      ) : (
+        <p className="mt-3">No quizzes available for this lesson.</p>
+      )}
+    </div>
+  );
+};
 
-//           const handledNextPage = () => {
-//             if(currentPage < totalPages - 1){
-//               setCurrentPage(currentPage+ 1);
-//             }
-//           };
-        
-//           const handlePrePage = () => {
-//             if(currentPage > 0){
-//               setCurrentPage(currentPage-1);
-//             }
-//           };
-//            return (
-//               <div className="flex-1 h-screen">
-//                 <div className="flex-1 flex flex-col h-full py-6 px-3">
-//                   <AdminNavbar />
-//                   <div className="flex justify-between mb-4">
-//                     <Link className="flex gap-2" onClick={() => navigate(-1)}>
-//                       <MdNavigateBefore size={30} />
-//                       <h2 className="text-lg font-bold mb-4">Back</h2>
-//                     </Link>
-//                     <Link
-//                       className="hover:text-ficolor"
-//                       to={`/admin/courses/${courseId}/lessons/add`}
-//                       >
-//                       <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-//                         <FaPlus size={30} />
-//                       </button>
-//                     </Link>
-//                   </div>
-          
-//                      {/* Ô tìm kiếm */}
-//                      <div className="mb-4">
-//                     <input
-//                       type="text"
-//                       placeholder="Search courses..."
-//                       className="p-2 border rounded w-full focus:outline-none"
-//                       value={search}
-//                       onChange={handleSearch}
-//                     />
-//                   </div>
-          
-          
-//                   <div className="flex-1 drop-shadow-lg">
-//                     <div className="bg-white p-4 rounded-2xl">
-//                       {loading ? ( 
-//                         <p className="text-center">Loading quizzes...</p>
-//                       ) : (
-//                       <table className="w-full">
-//                         <thead>
-//                           <tr className="text-center font-bold">
-//                             <th className="p-2">ID</th>
-//                             <th className="p-2">Quiz Name</th>
-//                             <th className="p-2">Description</th>
-//                             <th className="p-2">Image</th>
-//                             <th className="p-2">Created Date</th>
-//                             <th className="p-2">Deleted</th>
-//                             <th className="p-2">Action</th>
-//                           </tr>
-//                         </thead>
-//                         <tbody>
-//                           {quizzes.length > 0 ? (
-//                             quizzes.map((quizzes) => (
-//                               <tr key={quiz.id} className="text-center">
-//                                 <td className="p-2">{quiz.id}</td>
-//                                 <td className="p-2">{quiz.quizName || "N/A"}</td>
-//                                 <td className="p-2">
-//                                   {quiz.description || "No description"}
-//                                 </td>
-//                                 <td className="p-2">
-//                                   {quiz.img ? (
-//                                     <img
-//                                       src={quiz.img}
-//                                       alt="quiz"
-//                                       className="w-8 h-8 rounded mx-auto"
-//                                     />
-//                                   ) : (
-//                                     "No image"
-//                                   )}
-//                                 </td>
-//                                 <td className="p-2">
-//                                   {quiz.date
-//                                     ? new Date(quiz.date).toLocaleDateString()
-//                                     : "N/A"}
-//                                 </td>
-//                                 <td className="p-2">
-//                                   {quiz.isDeleted ? "Active" : "Inactive"}
-//                                 </td>
-//                                 <td className="p-2 flex justify-center gap-1">
-//                                   <Link
-//                                     to={`/admin/courses/${courseId}/lesson`}
-//                                     className="p-2 border rounded"
-//                                   >
-//                                     <FaEye />
-//                                   </Link>
-//                                   <Link
-//                                     to={`/admin/courses/${courseId}/lessons/edit/${lesson.id}`}
-//                                     className="p-2 border rounded"
-//                                   >
-//                                     <FaEdit />
-//                                   </Link>
-//                                   <button
-//                                     className="p-2 border rounded"
-//                                     onClick={() =>
-//                                       handleDelete(lesson.id, lesson.lessonName)
-//                                     }
-//                                   >
-//                                     <MdDeleteForever />
-//                                   </button>
-//                                 </td>
-//                               </tr>
-//                             ))
-                          
-//                           ) : (
-//                             <tr>
-//                               <td colSpan="7" className="text-center p-4">
-//                                 No quizzes found.
-//                               </td>
-//                             </tr>
-//                           )}
-//                         </tbody>
-//                       </table>
-//                       )}
-//                     </div>
-//                   </div>
-          
-//                   <div className="flex justify-between mt-4">
-//                     <p>Page {currentPage +1} of {totalPages}</p>
-//                     <div className="space-x-2">
-//                       <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handlePrePage} disabled={currentPage === 0}>
-//                         <MdNavigateBefore size={30} />
-//                       </button>
-//                       <button className="bg-scolor p-1 hover:scale-105 duration-500" onClick={handledNextPage} disabled={currentPage === totalPages-1}>
-//                         <MdNavigateNext size={30} />
-//                       </button>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <ToastContainer /> 
-          
-//               </div>
-//             );
-//           }
-    
-
+export default QuizzManagement;
