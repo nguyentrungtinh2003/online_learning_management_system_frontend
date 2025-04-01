@@ -97,15 +97,15 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex p-2">
       <div
-        className={`h-full bg-white drop-shadow-lg p-4 transition-all duration-300 z-40 ${
-          isCollapsed ? "w-30" : "w-64"
+        className={`h-full rounded-2xl bg-white drop-shadow-lg p-4 transition-all duration-700 z-40 ${
+          isCollapsed ? "w-[90px]" : "w-64"
         }`}
       >
         <div className="flex justify-between items-center mb-4">
           <h2
-            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-300 ${
+            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-1000 ${
               isCollapsed ? "hidden" : "block"
             }`}
           >
@@ -116,7 +116,12 @@ export default function Sidebar() {
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
             {isCollapsed ? (
-              <MdMenu size={25} />
+              <MdMenu
+                size={25}
+                className={`transition-transform duration-500 ${
+                  isCollapsed ? "rotate-180" : "rotate-0"
+                }`}
+              />
             ) : (
               <MdOutlineKeyboardDoubleArrowLeft size={25} />
             )}
@@ -126,17 +131,21 @@ export default function Sidebar() {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`p-2 rounded font-bold hover:bg-fcolor cursor-pointer flex items-center gap-3 transition-all duration-300 relative group ${
+              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative group ${
                 activeItem === item.id
-                  ? "bg-fcolor text-wcolor scale-105"
-                  : "bg-white text-fcolor"
+                  ? "bg-fcolor hover:bg-fcolor text-wcolor scale-105"
+                  : "hover:bg-tcolor text-fcolor"
               }`}
               onClick={() => handleNavigate(item.id, item.path)}
             >
               {item.icon}
               {!isCollapsed && <span>{item.label}</span>}
               {isCollapsed && (
-                <div className="absolute left-full ml-2 px-3 py-1 bg-scolor text-white text-xl rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div
+                  className="absolute left-full ml-2 whitespace-nowrap 
+    bg-scolor text-white text-sm rounded-md py-1 px-2 opacity-0 scale-90 
+    group-hover:opacity-100 group-hover:scale-100 transition-all duration-1000"
+                >
                   {item.label}
                 </div>
               )}

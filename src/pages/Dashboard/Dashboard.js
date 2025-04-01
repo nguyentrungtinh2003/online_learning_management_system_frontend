@@ -39,7 +39,7 @@ const Dashboard = () => {
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-bold text-lg sm:text-xl">{item.title}</p>
+                  <p className="font-bold text-gcolor text-lg sm:text-xl">{item.title}</p>
                   <p className="text-left text-sm sm:text-xs">Last 30 days</p>
                 </div>
                 <div className="text-2xl sm:text-2xl">{item.icon}</div>

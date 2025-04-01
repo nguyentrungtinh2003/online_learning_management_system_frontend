@@ -1,92 +1,113 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaSearch, FaCoins } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 
 export default function Navbar() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
+
   useEffect(() => {
     fetchUserInfo();
     fetchUserGoogle();
+    fetchNotifications();
   }, []);
 
   const fetchUserGoogle = () => {
     axios
-      .get(`${URL}/api/auth/user-google`, { withCredentials: true })
+      .get(`${URL}/user-google`, { withCredentials: true })
       .then((response) => {
-        console.log(response.data.data);
         const { id, email, name, picture } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-        console.log(localStorage.getItem("img"));
       })
       .catch(() => {});
   };
 
   const fetchUserInfo = () => {
     axios
-      .get(`${URL}/api/user-info`, { withCredentials: true })
+      .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
-        console.log(response.data.data);
         const { id, email, name, picture } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-        console.log(localStorage.getItem("img"));
-
-        console.log(localStorage.getItem("token"));
       })
       .catch(() => {});
   };
 
-  const [isFocused, setIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-
-  const searchResults = [
-    "Khoá học Java backend cho người mới",
-    "Khoá học JavaScript cho người mới",
-    "Làm chủ Axios trong React",
-  ];
-
-  const handleSelect = (value) => {
-    setInputValue(value); // Cập nhật giá trị input
-    setIsFocused(false); // Ẩn form kết quả
+  // Lấy danh sách thông báo
+  const fetchNotifications = () => {
+    axios
+      .get(`${URL}/notifications`, { withCredentials: true })
+      .then((response) => {
+        setNotifications(response.data.notifications);
+        // Đếm số lượng thông báo chưa đọc
+        const unread = response.data.notifications.filter(
+          (n) => !n.read
+        ).length;
+        setUnreadCount(unread);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch notifications:", error);
+      });
   };
 
-  const handleGoogleLogout = async () => {
-    try {
-      await axios.get(`${URL}/api/auth/logout/google`, {
-        withCredentials: true,
-      }); // Gửi yêu cầu logout Google
-      localStorage.removeItem("id");
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-      localStorage.removeItem("img");
-      localStorage.removeItem("email");
-      localStorage.removeItem("img");
-      window.location.href = "/"; // Chuyển về trang login hoặc home
-    } catch (error) {
-      console.error("Google Logout failed:", error);
+  // Toggle dropdown user
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+    setIsNotificationOpen(false); // Đóng dropdown thông báo nếu đang mở
+  };
+
+  // Toggle dropdown thông báo
+  const toggleNotificationDropdown = () => {
+    setIsNotificationOpen(!isNotificationOpen);
+    setIsDropdownOpen(false); // Đóng dropdown user nếu đang mở
+    if (!isNotificationOpen) {
+      setUnreadCount(0); // Đánh dấu tất cả thông báo đã đọc khi mở dropdown
     }
   };
 
-  const handleLogout = async (username) => {
+  // Xử lý click ngoài dropdown để đóng
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+        setIsNotificationOpen(false);
+      }
+    };
+
+    if (isDropdownOpen || isNotificationOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen, isNotificationOpen]);
+
+  const handleLogout = async () => {
     try {
-      // await axios.get(`${URL}/api/logout/${username}`, {
-      //   withCredentials: true,
-      // }); // Gửi yêu cầu logout Google
-      localStorage.removeItem("id");
-      localStorage.removeItem("username");
-      localStorage.removeItem("token");
-      localStorage.removeItem("img");
-      localStorage.removeItem("email");
-      localStorage.removeItem("img");
-      window.location.href = "/"; // Chuyển về trang login hoặc home
+      await axios.get(`${URL}/logout/google`, { withCredentials: true });
+      localStorage.clear();
+      window.location.href = "/";
     } catch (error) {
-      console.error("Google Logout failed:", error);
+      console.error("Logout failed:", error);
     }
   };
 
@@ -94,74 +115,101 @@ export default function Navbar() {
     <nav className="px-4 py-3 flex-1">
       <div className="flex justify-between items-center">
         {/* Search Bar */}
-        <div className="flex-1 justify-center w-full ml-4 relative w-full">
+        <div className="flex-1 flex justify-center w-full ml-4 relative">
           <div className="flex w-[50%] justify-center gap-2 items-center border p-2 rounded-xl">
             <FaSearch className="text-gray-500 cursor-pointer" />
             <input
               type="text"
-              value={inputValue}
               placeholder="Search courses..."
               className="w-full text-sm focus:outline-none"
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Tránh mất focus ngay khi click vào danh sách
-              onChange={(e) => setInputValue(e.target.value)}
             />
           </div>
-
-          {/* Results - Hiện khi isFocused = true */}
-          {isFocused && (
-            <div
-              className="absolute left-0 mt-2 bg-white border rounded-lg shadow-lg z-10"
-              onMouseDown={(e) => e.preventDefault()} // Giữ form khi click vào danh sách
-            >
-              <ul className="max-h-48 overflow-y-auto">
-                {searchResults.map((item, index) => (
-                  <li
-                    key={index}
-                    className="px-4 py-2 text-gray-700 hover:bg-focolor cursor-pointer"
-                    onClick={() => handleSelect(item)}
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
 
-        {/* User or Login */}
-        <div className="flex items-center space-x-4">
-          {localStorage.getItem("username") ? (
-            <>
-              <img
-                src={
-                  localStorage.getItem("token")
-                    ? localStorage.getItem("img")
-                    : "http://pngimg.com/uploads/google/google_PNG19635.png"
-                }
-                alt="User"
-                className="w-10 h-10 rounded-full object-cover"
+        {/* User & Notifications */}
+        <div className="relative flex items-center gap-4">
+          {/* Notifications */}
+          <div ref={notificationRef} className="relative">
+            <div
+              className="relative cursor-pointer"
+              onClick={toggleNotificationDropdown}
+            >
+              <PiBellRinging
+                size={38}
+                className="hover:bg-focolor p-1 rounded-xl"
               />
-              <span className="text-gray-600">
-                {localStorage.getItem("username")}
-              </span>
-              <button
-                onClick={() => {
-                  // handleGoogleLogout();
-                  handleLogout(localStorage.getItem("username"));
-                }}
-                className="text-cyan-500 hover:text-cyan-700 transition duration-300"
+              {unreadCount > 0 && (
+                <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </div>
+
+            {/* Dropdown Thông Báo */}
+            {isNotificationOpen && (
+              <div className="absolute right-0 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
+                <h3 className="text-lg w-full text-center font-semibold border-b pb-2">
+                  Thông báo
+                </h3>
+                <ul className="py-2 h-[40%] overflow-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notification, index) => (
+                      <li
+                        key={index}
+                        className={`hover:bg-focolor px-4 py-2 cursor-pointer break-words ${
+                          !notification.read
+                            ? "font-bold text-black"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {notification.message}
+                      </li>
+                    ))
+                  ) : (
+                    <div>
+                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                        Bạn được tặng 2 điểm sau khi hoàn thành khóa học.
+                      </li>
+                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                        Van Tan đã gửi cho bạn tin nhắn.
+                      </li>
+                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                        Đăng kí khóa học JavaScript thành công.
+                      </li>
+                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                        Chúc mừng bạn vừa thăng cấp thành công.
+                      </li>
+                    </div>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* User Dropdown */}
+          <div ref={dropdownRef} className="relative">
+            {localStorage.getItem("username") ? (
+              <div
+                className="flex items-center space-x-2 cursor-pointer"
+                onClick={toggleDropdown}
               >
-                Logout
+                <img
+                  src={localStorage.getItem("img")}
+                  alt="User"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <span className="text-gray-600">
+                  {localStorage.getItem("username")}
+                </span>
+              </div>
+            ) : (
+              <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+                <Link to="/login" className="no-underline text-white">
+                  Start Learning
+                </Link>
               </button>
-            </>
-          ) : (
-            <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-              <Link to="/login" className="no-underline text-white">
-                Start Learning
-              </Link>
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </nav>

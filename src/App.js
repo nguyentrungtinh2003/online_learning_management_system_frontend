@@ -37,6 +37,8 @@ import UserCourse from "./pages/Course/UserCourse";
 import UserViewCourse from "./pages/Course/UserViewCourse";
 import EditLesson from "./pages/Lesson/EditLesson";
 import UserViewLesson from "./pages/Lesson/UserViewLesson";
+import UserViewBlog from "./pages/Blog/UserViewBlog";
+import UpLevelEffect from "./components/Effect/UpLevelEffect";
 
 
 function App() {
@@ -236,12 +238,31 @@ function App() {
             <Route
               path="/profile"
               element={
-                <>
-                  <Navbar />
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
                   <Profile />
-                </>
+                </div>
               }
             />
+            <Route
+              path="/blog"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <UserViewBlog />
+                </div>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <HomePage />
+                </div>
+              }
+            />
+            <Route path="effect" element={<UpLevelEffect />} />
           </Routes>
         </Router>
       </>

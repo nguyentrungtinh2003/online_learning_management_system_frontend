@@ -3,7 +3,9 @@ import URL from "../config/URLconfig";
 
 export const getCourses = async () => {
   try {
-    const response = await axios.get(`${URL}/all`);
+    const response = await axios.get(`${URL}/courses/all`, {
+      withCredentials: true,
+    });
     // const filteredCourses = response.data.data.filter(course => !course.deleted); // Chỉ lấy khóa học chưa bị xóa
     // return { ...response.data, data: filteredCourses };
 
@@ -17,7 +19,9 @@ export const getCourses = async () => {
 // 🟢 Lấy khóa học theo ID
 export const getCourseById = async (courseId) => {
   try {
-    const response = await axios.get(`${URL}/${courseId}`);
+    const response = await axios.get(`${URL}/courses/${courseId}`, {
+      withCredentials: true,
+    });
     return response.data; // Dữ liệu API trả về
   } catch (error) {
     console.error("❌ Lỗi lấy khóa học:", error);
@@ -40,11 +44,18 @@ export const updateCourse = async (id, courseData, file) => {
     }
 
     // Gọi API bằng Axios (sử dụng PUT request)
-    const response = await axios.put(`${URL}/update/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const response = await axios.put(
+      `${URL}/teacher/courses/update/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+      {
+        withCredentials: true,
+      }
+    );
 
     console.log("Cập nhật thành công:", response.data);
     return response.data;
@@ -86,9 +97,16 @@ export const addCourse = async (courseData, imageFile) => {
       formData.append("img", imageFile);
     }
 
-    const response = await axios.post(`${URL}/add`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await axios.post(
+      `${URL}/teacher/courses/add`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      },
+      {
+        withCredentials: true,
+      }
+    );
 
     console.log("Course added successfully:", response.data);
     return response.data;
@@ -103,12 +121,18 @@ export const addCourse = async (courseData, imageFile) => {
 
 export const deleteCourse = async (id) => {
   try {
-    const response = await fetch(`${URL}/delete/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${URL}/teacher/courses/delete/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
+      {
+        withCredentials: true,
+      }
+    );
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to delete course");
@@ -122,6 +146,7 @@ export const deleteCourse = async (id) => {
 
 // API Lấy danh sách khóa học theo phân trang
 export const getCoursesByPage = async (page = 0, size = 6) => {
+  console.log(document.cookie);
   const response = await axios.get(
     `${URL}/teacher/courses/page?page=${page}&size=${size}`,
     {
@@ -133,6 +158,7 @@ export const getCoursesByPage = async (page = 0, size = 6) => {
 
 // API Tìm kiếm khóa học có phân trang
 export const searchCourses = async (keyword, page = 0, size = 6) => {
+  console.log(document.cookie);
   const response = await axios.get(
     `${URL}/teacher/courses/search?keyword=${keyword}&page=${page}&size=${size}`,
     {
