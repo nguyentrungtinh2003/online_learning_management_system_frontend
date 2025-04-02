@@ -76,10 +76,13 @@ const AddCourse = () => {
 
     try {
       const response = await axios.post(
-        "https://codearena-backend-dev.onrender.com/api/courses/add",
+        "https://codearena-backend-dev.onrender.com/api/teacher/courses/add",
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Nếu API yêu cầu token
+          },        
         }
       );
       console.log("Thành công:", response.data);

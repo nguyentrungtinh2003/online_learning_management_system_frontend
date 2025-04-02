@@ -6,7 +6,7 @@ import { Bold } from "lucide-react";
 export const getQuizzesByPage = async (page = 0, size = 6) => {
     try {
         const response = await axios.get(
-            `${URL}/teacher/courses/lessons/quizzes/page?page=${page}&size=${size}`,
+            `${URL}/teacher/quizzes/page?page=${page}&size=${size}`,
             {
                 withCredentials: true,
             }
@@ -51,7 +51,7 @@ export const addQuiz = async (quizData, img) => {
 };
 
 // 4. Update Quiz
-export const updateQuiz = async (id) => {
+export const updateQuiz = async (id, quizData, img) => {
     const formData = new FormData();
     formData.append("quiz",new Bold([JSON.stringify(quizData)], {type: "application/json"}));
     if(img) formData.append("img",img);

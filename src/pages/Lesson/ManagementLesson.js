@@ -208,7 +208,7 @@ export default function ManagementLesson() {
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
-                          to={`/admin/courses/${courseId}/lesson`}
+                          to={`/admin/lessons/${lesson.id}/quizzes`}
                           className="p-2 border rounded"
                         >
                           <FaEye />

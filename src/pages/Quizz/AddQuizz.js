@@ -1,17 +1,29 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { MdNavigateNext } from "react-icons/md";
+import { FaBuffer } from "react-icons/fa";
+
 import URL from "../../config/URLconfig";
 
 const AddQuizz = () => {
+  const navigate = useNavigate();
+  const { lessonId } = useParams();
+
   const [quizData, setQuizData] = useState({
-    quizId: "",
     quizName: "",
     description: "",
     date: "",
+    price: "",
+    img: "",
     isDeleted: false,
-    lessonId: "", // Liên kết với bài học
+    lessonId: { id: lessonId },
   });
+
+  const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
 
   const handleChange = (e) => {
@@ -23,119 +35,113 @@ const AddQuizz = () => {
     setImg(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const data = new FormData();
-    const payload = {
-      quizId: quizData.quizId,
-      quizName: quizData.quizName,
-      description: quizData.description,
-      date: quizData.date,
-      isDeleted: quizData.isDeleted,
-      lesson: { id: quizData.lessonId }, // Gửi ID của bài học
-    };
-
     data.append(
       "quiz",
-      new Blob([JSON.stringify(payload)], { type: "application/json" })
+      new Blob([JSON.stringify(quizData)], { type: "application/json" })
     );
-    if (img) {
-      data.append("img", img); // Thêm file ảnh
-    }
+    if (img) data.append("img", img);
 
-    axios
-      .post(`${URL}/api/quizs/add`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        alert("Quizz added successfully!");
-      })
-      .catch((error) => {
-        console.error("Error adding quizz:", error);
+    try {
+      const response = await axios.post(
+        `${URL}/teacher/quizzes/add`,
+        data,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      console.log("Thành công:", response.data);
+      toast.success("Thêm quiz thành công!", {
+        position: "top-right",
+        autoClose: 3000,
       });
+
+      setTimeout(() => {
+        navigate(-1);
+      }, 3000);
+    } catch (error) {
+      console.error("Lỗi:", error.response?.data || error.message);
+      toast.error("Không thể thêm quiz!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group className="mt-3" controlId="formQuizId">
-        <Form.Label>Quiz ID</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter quiz ID"
-          name="quizId"
-          value={quizData.quizId}
-          onChange={handleChange}
-        />
-      </Form.Group>
+    <div className="flex flex-col h-fit py-6 px-3">
+      <AdminNavbar />
+      <div className="flex items-center gap-2 mb-4">
+        <FaBuffer size={30} />
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold">Quiz Management</h2>
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold">Add New Quiz</h2>
+      </div>
 
-      <Form.Group className="mb-3" controlId="formQuizName">
-        <Form.Label>Quiz Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter quiz name"
-          name="quizName"
-          value={quizData.quizName}
-          onChange={handleChange}
-        />
-      </Form.Group>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <div className="space-y-4">
+          {[
+            {label: "Quiz Name:", name : "quizName"},
+            { label: "Price", name: "price", type:"number"},
+          ].map(({label,name,type}) => (
+            <div key={name} className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">{label}</label>
+            <input
+              type={type || "text"}
+              name={name}
+              value={quizData[name]}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          ))}
+         
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+            <input type="file" onChange={handleImageChange} className="flex-1 border rounded-lg px-3 py-2" />
+          </div>
 
-      <Form.Group className="mb-3" controlId="formDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          placeholder="Enter quiz description"
-          name="description"
-          value={quizData.description}
-          onChange={handleChange}
-        />
-      </Form.Group>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
+            <textarea
+              name="description"
+              rows={3}
+              value={quizData.description}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+          </div>
+        </div>
 
-      <Form.Group className="mb-3" controlId="formDate">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="datetime-local"
-          name="date"
-          value={quizData.date}
-          onChange={handleChange}
-        />
-      </Form.Group>
+        <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-wcolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : "Submit"}
+            </button>
+          </div>
+      </form>
 
-      <Form.Group className="mb-3" controlId="formLessonId">
-        <Form.Label>Lesson ID</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter lesson ID"
-          name="lessonId"
-          value={quizData.lessonId}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formIsDeleted">
-        <Form.Check
-          type="checkbox"
-          label="Is Deleted"
-          name="isDeleted"
-          checked={quizData.isDeleted}
-          onChange={(e) =>
-            setQuizData({ ...quizData, isDeleted: e.target.checked })
-          }
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="formImage">
-        <Form.Label>Image</Form.Label>
-        <Form.Control type="file" name="img" onChange={handleImageChange} />
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Add Quizz
-      </Button>
-    </Form>
+      <ToastContainer />
+    </div>
   );
 };
 

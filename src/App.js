@@ -39,6 +39,7 @@ import EditLesson from "./pages/Lesson/EditLesson";
 import UserViewLesson from "./pages/Lesson/UserViewLesson";
 import UserViewBlog from "./pages/Blog/UserViewBlog";
 import UpLevelEffect from "./components/Effect/UpLevelEffect";
+import AddQuizz from "./pages/Quizz/AddQuizz";
 
 
 function App() {
@@ -156,6 +157,24 @@ function App() {
                 <div className="flex bg-focolor">
                   <AdminSidebar />
                   <EditLesson />
+                </div>
+              }
+            />
+            <Route
+              path="/admin/lessons/:lessonId/quizzes"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <QuizzManagement />
+                </div>
+              }
+            />
+              <Route
+              path="/admin/lessons/:lessonId/quizzes/add"
+              element={
+                <div className="flex bg-focolor">
+                  <AdminSidebar />
+                  <AddQuizz />
                 </div>
               }
             />
