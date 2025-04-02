@@ -19,7 +19,7 @@ const AddCourse = () => {
     price: "",
     courseEnum: "FREE",
     users: [],
-    user: { id: 1 },
+    user: { id: localStorage.getItem("id") },
     lessons: [],
   });
   const [img, setImg] = useState(null);
@@ -81,10 +81,10 @@ const AddCourse = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Nếu API yêu cầu token
-          },        
+          },
+          withCredentials: true, // Cho phép gửi cookies, session
         }
-      );
+      );      
       console.log("Thành công:", response.data);
       // alert("Thêm khóa học thành công!");
 

@@ -25,7 +25,9 @@ const EditCourse = () => {
 
   useEffect(() => {
     axios
-      .get(`https://codearena-backend-dev.onrender.com/api/courses/${id}`)
+      .get(`https://codearena-backend-dev.onrender.com/api/teacher/courses/${id}`, {
+        withCredentials: true, // Cho phép gửi cookies hoặc xác thực từ trình duyệt
+      })
       .then(({ data }) => {
         setCourse(data.data);
         setLessons(data.data.lessons || []);
@@ -33,7 +35,7 @@ const EditCourse = () => {
       .catch(() => setError("Không thể tải dữ liệu khóa học"))
       .finally(() => setLoading(false));
   }, [id]);
-
+  
   const handleChange = (e) =>
     setCourse({ ...course, [e.target.name]: e.target.value });
   const handleFileChange = (e) => setFile(e.target.files[0]);
@@ -51,10 +53,13 @@ const EditCourse = () => {
 
     try {
       const response = await axios.put(
-        `https://codearena-backend-dev.onrender.com/api/courses/update/${id}`,
+        `https://codearena-backend-dev.onrender.com/api/teacher/courses/update/${id}`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // Cho phép gửi cookies, session
         }
       );
       console.log("Thành công:",response);
