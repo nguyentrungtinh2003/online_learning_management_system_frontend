@@ -14,8 +14,7 @@ import { Table, Form, Button } from "react-bootstrap";
 import URL from "../../config/URLconfig";
 import { getQuizzesByPage,searchQuiz,deleteQuiz } from "../../services/quizapi";
 
-
-export default function QuizzManagement() {
+const QuizzManagement = () => {
   const navigate = useNavigate();
 
   const {lessonId } = useParams();
@@ -247,5 +246,6 @@ export default function QuizzManagement() {
               </div>
             );
           }
-    
+        
 
+export default QuizzManagement;

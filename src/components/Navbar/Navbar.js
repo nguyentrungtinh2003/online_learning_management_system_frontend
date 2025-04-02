@@ -20,6 +20,7 @@ export default function Navbar() {
     fetchNotifications();
   }, []);
 
+  // Fetch user data
   const fetchUserGoogle = () => {
     axios
       .get(`${URL}/user-google`, { withCredentials: true })
@@ -37,48 +38,42 @@ export default function Navbar() {
     axios
       .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
-        const { id, email, name, picture } = response.data.data;
+        const { id, email, username, img } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
-        localStorage.setItem("username", name);
-        localStorage.setItem("img", picture);
+        localStorage.setItem("username", username);
+        localStorage.setItem("img", img);
       })
       .catch(() => {});
   };
 
-  // Lấy danh sách thông báo
   const fetchNotifications = () => {
     axios
       .get(`${URL}/notifications`, { withCredentials: true })
       .then((response) => {
         setNotifications(response.data.notifications);
-        // Đếm số lượng thông báo chưa đọc
         const unread = response.data.notifications.filter(
           (n) => !n.read
         ).length;
         setUnreadCount(unread);
       })
-      .catch((error) => {
-        console.error("Failed to fetch notifications:", error);
-      });
+      .catch((error) => console.error("Failed to fetch notifications:", error));
   };
 
-  // Toggle dropdown user
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
-    setIsNotificationOpen(false); // Đóng dropdown thông báo nếu đang mở
+    setIsNotificationOpen(false);
   };
 
-  // Toggle dropdown thông báo
   const toggleNotificationDropdown = () => {
     setIsNotificationOpen(!isNotificationOpen);
-    setIsDropdownOpen(false); // Đóng dropdown user nếu đang mở
+    setIsDropdownOpen(false);
     if (!isNotificationOpen) {
-      setUnreadCount(0); // Đánh dấu tất cả thông báo đã đọc khi mở dropdown
+      setUnreadCount(0);
     }
   };
 
-  // Xử lý click ngoài dropdown để đóng
+  // Đóng form khi click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -95,7 +90,6 @@ export default function Navbar() {
     if (isDropdownOpen || isNotificationOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -128,7 +122,7 @@ export default function Navbar() {
 
         {/* User & Notifications */}
         <div className="relative flex items-center gap-4">
-          {/* Notifications */}
+          {/* Dropdown Thông Báo */}
           <div ref={notificationRef} className="relative">
             <div
               className="relative cursor-pointer"
@@ -144,10 +138,8 @@ export default function Navbar() {
                 </span>
               )}
             </div>
-
-            {/* Dropdown Thông Báo */}
             {isNotificationOpen && (
-              <div className="absolute right-0 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
+              <div className="absolute right-0 top-10 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
                 <h3 className="text-lg w-full text-center font-semibold border-b pb-2">
                   Thông báo
                 </h3>
@@ -166,41 +158,32 @@ export default function Navbar() {
                       </li>
                     ))
                   ) : (
-                    <div>
-                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
-                        Bạn được tặng 2 điểm sau khi hoàn thành khóa học.
-                      </li>
-                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
-                        Van Tan đã gửi cho bạn tin nhắn.
-                      </li>
-                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
-                        Đăng kí khóa học JavaScript thành công.
-                      </li>
-                      <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
-                        Chúc mừng bạn vừa thăng cấp thành công.
-                      </li>
-                    </div>
+                    <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                      Không có thông báo nào.
+                    </li>
                   )}
                 </ul>
               </div>
             )}
           </div>
 
-          {/* User Dropdown */}
+          {/* Dropdown User */}
           <div ref={dropdownRef} className="relative">
             {localStorage.getItem("username") ? (
-              <div
-                className="flex items-center space-x-2 cursor-pointer"
-                onClick={toggleDropdown}
-              >
-                <img
-                  src={localStorage.getItem("img")}
-                  alt="User"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-                <span className="text-gray-600">
-                  {localStorage.getItem("username")}
-                </span>
+              <div className="flex items-center gap-2">
+                <div
+                  className="flex items-center space-x-2 cursor-pointer"
+                  onClick={toggleDropdown}
+                >
+                  <img
+                    src={localStorage.getItem("img")}
+                    alt="User"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <span className="text-gray-600">
+                    {localStorage.getItem("username")}
+                  </span>
+                </div>
               </div>
             ) : (
               <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
@@ -208,6 +191,21 @@ export default function Navbar() {
                   Start Learning
                 </Link>
               </button>
+            )}
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-10 mt-2 bg-white border rounded-lg shadow-lg z-20">
+                <ul className="py-2 whitespace-nowrap">
+                  <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer">
+                    <Link to="/profile">Thông tin tài khoản</Link>
+                  </li>
+                  <li
+                    className="px-4 py-2 text-red-600 hover:bg-gray-200 cursor-pointer"
+                    onClick={handleLogout}
+                  >
+                    Đăng xuất
+                  </li>
+                </ul>
+              </div>
             )}
           </div>
         </div>
