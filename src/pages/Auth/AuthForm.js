@@ -63,6 +63,7 @@ export default function AuthForm() {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("img", response.data.data.img);
+        localStorage.setItem("role", response.data.data.roleEnum);
         console.log(response.data.data);
         console.log(document.cookie);
         // Dùng navigate để điều hướng mà không tải lại trang
@@ -85,7 +86,7 @@ export default function AuthForm() {
 
   //--- login google ----
   const handleGoogleLogin = () => {
-    window.location.href = `${URL}/oauth2/authorization/google`;
+    window.location.href = `https://codearena-backend-dev.onrender.com/oauth2/authorization/google`;
   };
 
   const handelRegister = () => {
