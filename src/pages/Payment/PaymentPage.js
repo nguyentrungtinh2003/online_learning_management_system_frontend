@@ -24,7 +24,7 @@ export default function PaymentPage() {
         console.log("Payment success" + response.data);
       })
       .catch((error) => {
-        console.log("Payment error" + response.data);
+        console.log("Payment error" + error);
       });
   };
 
