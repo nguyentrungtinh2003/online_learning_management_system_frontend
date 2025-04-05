@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
+import axios from "axios";
+import URL from "../../config/URLconfig";
 
 const paymentMethods = ["PayPal", "VNPay", "Momo", "Coins"];
 
@@ -9,6 +11,22 @@ export default function PaymentPage() {
     name: "JavaScript Pro",
     price: "$99.99",
   });
+
+  const paymentData = {
+    userId: 1,
+    amount: 50.0,
+  };
+
+  const submitPayment = () => {
+    axios
+      .post(`${URL}/payments/add`, paymentData)
+      .then((response) => {
+        console.log("Payment success");
+      })
+      .catch((error) => {
+        console.log("Payment error");
+      });
+  };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -43,7 +61,10 @@ export default function PaymentPage() {
         ))}
       </div>
 
-      <button className="mt-6 px-6 py-2 bg-green-500 text-white rounded">
+      <button
+        onClick={() => submitPayment()}
+        className="mt-6 px-6 py-2 bg-green-500 text-white rounded"
+      >
         Proceed to Payment
       </button>
     </div>
