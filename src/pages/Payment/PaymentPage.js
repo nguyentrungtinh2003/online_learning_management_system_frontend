@@ -27,7 +27,7 @@ export default function PaymentPage() {
       })
       .then((response) => {
         console.log("Payment success" + response.data);
-        const approvalUrl = res.data.data;
+        const approvalUrl = response.data.data;
         if (approvalUrl) {
           window.location.href = approvalUrl; // Redirect đến PayPal
         }
