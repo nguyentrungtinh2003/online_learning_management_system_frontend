@@ -14,21 +14,31 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     const executePayment = async () => {
+      // Kiểm tra sự tồn tại của các tham số đầu vào
       if (!paymentId || !payerId || !userId) {
         setError("Thiếu thông tin thanh toán. Vui lòng kiểm tra lại.");
+        return;
+      }
+
+      // Chuyển userId từ string thành số
+      const userIdLong = parseInt(userId, 10);
+
+      // Kiểm tra xem userIdLong có phải là một số hợp lệ không
+      if (isNaN(userIdLong)) {
+        setError("UserId không hợp lệ. Vui lòng kiểm tra lại.");
         return;
       }
 
       console.log(
         "paymentId : " + paymentId,
         "payerId : " + payerId,
-        "userId : " + userId
+        "userId : " + userIdLong
       );
 
       setLoading(true);
       try {
         const res = await axios.get(`${URL}/payments/execute`, {
-          params: { paymentId, payerId, userId },
+          params: { paymentId, payerId, userId: userIdLong },
         });
         if (res.data.success) {
           alert("Thanh toán thành công!");
