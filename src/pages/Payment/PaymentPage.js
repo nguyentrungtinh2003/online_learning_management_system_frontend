@@ -19,12 +19,17 @@ export default function PaymentPage() {
 
   const submitPayment = () => {
     axios
-      .post(`${URL}/payments/add`, paymentData, { withCredentials: true })
+      .post(`${URL}/payments/add`, paymentData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
       .then((response) => {
         console.log("Payment success" + response.data);
       })
       .catch((error) => {
-        console.log("Payment error" + error);
+        console.log("Payment error" + error.message);
       });
   };
 
