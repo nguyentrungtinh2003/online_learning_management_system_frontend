@@ -40,7 +40,7 @@ import UserViewLesson from "./pages/Lesson/UserViewLesson";
 import UserViewBlog from "./pages/Blog/UserViewBlog";
 import UpLevelEffect from "./components/Effect/UpLevelEffect";
 import AddQuizz from "./pages/Quizz/AddQuizz";
-
+import PaymentSuccess from "./pages/Payment/PaymentSuccess ";
 
 function App() {
   return (
@@ -169,7 +169,7 @@ function App() {
                 </div>
               }
             />
-              <Route
+            <Route
               path="/admin/lessons/:lessonId/quizzes/add"
               element={
                 <div className="flex bg-focolor">
@@ -206,6 +206,7 @@ function App() {
             <Route path="/user/process" element={<LearningProgress />} />
             <Route path="/user/payment" element={<PaymentPage />} />
             <Route path="/user/payment/history" element={<PaymentHistory />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route
               path="/"
               element={

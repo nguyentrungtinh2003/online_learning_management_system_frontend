@@ -19,7 +19,7 @@ export default function PaymentPage() {
 
   const submitPayment = () => {
     axios
-      .post(`${URL}/payments/add`, paymentData, {
+      .post(`${URL}/payments/create`, paymentData, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -27,6 +27,10 @@ export default function PaymentPage() {
       })
       .then((response) => {
         console.log("Payment success" + response.data);
+        const approvalUrl = res.data.data;
+        if (approvalUrl) {
+          window.location.href = approvalUrl; // Redirect đến PayPal
+        }
       })
       .catch((error) => {
         console.log("Payment error" + error.message);
