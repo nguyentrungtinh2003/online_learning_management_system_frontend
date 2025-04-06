@@ -120,94 +120,88 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* User & Notifications */}
-        <div className="relative flex items-center gap-4">
-          {/* Dropdown Thông Báo */}
-          <div ref={notificationRef} className="relative">
-            <div
-              className="relative cursor-pointer"
-              onClick={toggleNotificationDropdown}
-            >
-              <PiBellRinging
-                size={38}
-                className="hover:bg-focolor p-1 rounded-xl"
-              />
-              {unreadCount > 0 && (
-                <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
-                  {unreadCount}
-                </span>
-              )}
-            </div>
-            {isNotificationOpen && (
-              <div className="absolute right-0 top-10 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
-                <h3 className="text-lg w-full text-center font-semibold border-b pb-2">
-                  Thông báo
-                </h3>
-                <ul className="py-2 h-[40%] overflow-auto">
-                  {notifications.length > 0 ? (
-                    notifications.map((notification, index) => (
-                      <li
-                        key={index}
-                        className={`hover:bg-focolor px-4 py-2 cursor-pointer break-words ${
-                          !notification.read
-                            ? "font-bold text-black"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        {notification.message}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
-                      Không có thông báo nào.
-                    </li>
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Dropdown User */}
-          <div ref={dropdownRef} className="relative">
-            {localStorage.getItem("username") ? (
-              <div className="flex items-center gap-2">
+        <div ref={dropdownRef} className="relative items-center gap-2">
+          {localStorage.getItem("username") ? (
+            <div className="flex items-center gap-2">
+              <div ref={notificationRef} className="relative">
                 <div
-                  className="flex items-center space-x-2 cursor-pointer"
-                  onClick={toggleDropdown}
+                  className="relative cursor-pointer"
+                  onClick={toggleNotificationDropdown}
                 >
-                  <img
-                    src={localStorage.getItem("img")}
-                    alt="User"
-                    className="w-10 h-10 rounded-full object-cover"
+                  <PiBellRinging
+                    size={38}
+                    className="hover:bg-focolor p-1 rounded-xl"
                   />
-                  <span className="text-gray-600">
-                    {localStorage.getItem("username")}
-                  </span>
+                  {unreadCount >= 0 && (
+                    <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
               </div>
-            ) : (
-              <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-                <Link to="/login" className="no-underline text-white">
-                  Start Learning
-                </Link>
-              </button>
-            )}
-            {isDropdownOpen && (
-              <div className="absolute right-0 top-10 mt-2 bg-white border rounded-lg shadow-lg z-20">
-                <ul className="py-2 whitespace-nowrap">
-                  <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer">
-                    <Link to="/profile">Thông tin tài khoản</Link>
-                  </li>
-                  <li
-                    className="px-4 py-2 text-red-600 hover:bg-gray-200 cursor-pointer"
-                    onClick={handleLogout}
-                  >
-                    Đăng xuất
-                  </li>
-                </ul>
+              <div
+                className="flex items-center space-x-2 cursor-pointer"
+                onClick={toggleDropdown}
+              >
+                <img
+                  src={localStorage.getItem("img")}
+                  alt="User"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <span className="text-gray-600">
+                  {localStorage.getItem("username")}
+                </span>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+              <Link to="/login" className="no-underline text-white">
+                Start Learning
+              </Link>
+            </button>
+          )}
+          {isDropdownOpen && (
+            <div className="absolute right-0 top-10 mt-2 bg-white border rounded-lg shadow-lg z-20">
+              <ul className="py-2 whitespace-nowrap">
+                <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer">
+                  <Link to="/profile">Thông tin tài khoản</Link>
+                </li>
+                <li
+                  className="px-4 py-2 text-red-600 hover:bg-gray-200 cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </li>
+              </ul>
+            </div>
+          )}
+          {isNotificationOpen && (
+            <div className="absolute right-0 top-10 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
+              <h3 className="text-lg w-full text-center font-semibold border-b pb-2">
+                Thông báo
+              </h3>
+              <ul className="py-2 h-[40%] overflow-auto">
+                {notifications.length > 0 ? (
+                  notifications.map((notification, index) => (
+                    <li
+                      key={index}
+                      className={`hover:bg-focolor px-4 py-2 cursor-pointer break-words ${
+                        !notification.read
+                          ? "font-bold text-black"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      {notification.message}
+                    </li>
+                  ))
+                ) : (
+                  <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                    Không có thông báo nào.
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
       </div>
     </nav>

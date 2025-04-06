@@ -99,13 +99,13 @@ export default function Sidebar() {
   return (
     <div className="h-screen flex p-2">
       <div
-        className={`h-full rounded-2xl bg-white drop-shadow-lg p-4 transition-all duration-700 z-40 ${
+        className={`h-full rounded-2xl bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
           isCollapsed ? "w-[90px]" : "w-64"
         }`}
       >
         <div className="flex justify-between items-center mb-4">
           <h2
-            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-1000 ${
+            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-1000 duration-1000 ${
               isCollapsed ? "hidden" : "block"
             }`}
           >
@@ -139,12 +139,12 @@ export default function Sidebar() {
               onClick={() => handleNavigate(item.id, item.path)}
             >
               {item.icon}
-              {!isCollapsed && <span>{item.label}</span>}
+              {!isCollapsed && <span className="duration-1000">{item.label}</span>}
               {isCollapsed && (
                 <div
                   className="absolute left-full ml-2 whitespace-nowrap 
     bg-scolor text-white text-sm rounded-md py-1 px-2 opacity-0 scale-90 
-    group-hover:opacity-100 group-hover:scale-100 transition-all duration-1000"
+    group-hover:opacity-100 group-hover:scale-100 transition-all duration-600"
                 >
                   {item.label}
                 </div>
