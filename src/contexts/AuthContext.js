@@ -6,16 +6,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedRole = localStorage.getItem("roleEnum");
-    if (storedRole) {
-      setUser(storedRole); // Không cần JSON.parse nếu chỉ lưu string
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // parse lại nếu dữ liệu lưu dưới dạng JSON
     }
   }, []);
 
-  // Optional: đồng bộ lại localStorage nếu setUser thay đổi role
   useEffect(() => {
     if (user) {
-      localStorage.setItem("roleEnum", user);
+      localStorage.setItem("user", JSON.stringify(user)); // Lưu toàn bộ thông tin user dưới dạng JSON
     }
   }, [user]);
 

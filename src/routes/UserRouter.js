@@ -17,10 +17,14 @@ import ManagementLesson from "../pages/Lesson/ManagementLesson";
 import ManagementQuestion from "../pages/Question/QuestionManagement";
 import Profile from "../pages/User/Profile";
 import UpLevelEffect from "../components/Effect/UpLevelEffect";
+import ProtectedRouter from "./ProtectedRouter";
+import NotFound from "../pages/NotFound/NotFound";
+import UserRanking from "../pages/Ranking/UserRanking";
 
 const UserRouter = () => {
   return (
     <Routes>
+      <Route path="*" element={<NotFound />} />
       <Route
         path="/"
         element={
@@ -42,56 +46,68 @@ const UserRouter = () => {
       <Route
         path="/user/process"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <LearningProgress />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <LearningProgress />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route
         path="/user/payment"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <PaymentPage />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <PaymentPage />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route
         path="/user/payment/history"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <PaymentHistory />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <PaymentHistory />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route
         path="/user-course"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <UserCourse />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <UserCourse />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route
         path="/view-course"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <UserViewCourse />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <UserViewCourse />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route
         path="/view-lesson"
         element={
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <UserViewLesson />
-          </div>
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <UserViewLesson />
+            </div>
+          </ProtectedRouter>
         }
       />
       <Route
@@ -133,9 +149,20 @@ const UserRouter = () => {
       <Route
         path="/profile"
         element={
+          <ProtectedRouter requiredRole="USER">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <Profile />
+            </div>
+          </ProtectedRouter>
+        }
+      />
+      <Route
+        path="/ranking"
+        element={
           <div className="flex bg-focolor">
             <AdminSidebar />
-            <Profile />
+            <UserRanking />
           </div>
         }
       />

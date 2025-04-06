@@ -14,7 +14,6 @@ function App() {
         <Routes>
           <Route path="/admin/*" element={<AdminRouter />} />
           <Route path="/*" element={<UserRouter />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="/404" element={<NotFound />} />
         </Routes>
       </Router>

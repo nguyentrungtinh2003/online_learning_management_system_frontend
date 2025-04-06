@@ -15,6 +15,7 @@ export default function Sidebar() {
   const [activeItem, setActiveItem] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false); // New state to handle animation
 
   const adminItems = [
     {
@@ -96,6 +97,16 @@ export default function Sidebar() {
     setIsOpen(false);
   };
 
+  const handleCollapseToggle = () => {
+    setIsAnimating(true); // Set isAnimating to true when starting animation
+    setIsCollapsed(!isCollapsed);
+
+    // Set a timeout to reset the animation state once animation finishes (e.g., after 300ms)
+    setTimeout(() => {
+      setIsAnimating(false); // Reset animation state
+    }, 100); // Adjust timing to match the duration of your sidebar's animation
+  };
+
   return (
     <div className="h-screen flex p-2">
       <div
@@ -104,16 +115,15 @@ export default function Sidebar() {
         }`}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2
-            className={`flex-1 text-center text-xl font-bold text-fcolor transition-all duration-1000 duration-1000 ${
-              isCollapsed ? "hidden" : "block"
-            }`}
-          >
-            Code Arena
-          </h2>
+          {/* Only show the "Code Arena" title when sidebar is expanded and not animating */}
+          {!isCollapsed && !isAnimating && (
+            <h2 className="flex-1 text-center text-xl font-bold text-fcolor">
+              Code Arena
+            </h2>
+          )}
           <button
             className="p-2 rounded-md text-fcolor hover:bg-gray-200"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={handleCollapseToggle}
           >
             {isCollapsed ? (
               <MdMenu
@@ -133,18 +143,20 @@ export default function Sidebar() {
               key={item.id}
               className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative group ${
                 activeItem === item.id
-                  ? "bg-fcolor hover:bg-fcolor text-wcolor scale-105"
+                  ? "bg-fcolor hover:bg-fcolor text-wcolor"
                   : "hover:bg-tcolor text-fcolor"
               }`}
               onClick={() => handleNavigate(item.id, item.path)}
             >
               {item.icon}
-              {!isCollapsed && <span className="duration-1000">{item.label}</span>}
+              {!isCollapsed && !isAnimating && (
+                <span className="duration-1000">{item.label}</span>
+              )}
               {isCollapsed && (
                 <div
                   className="absolute left-full ml-2 whitespace-nowrap 
-    bg-scolor text-white text-sm rounded-md py-1 px-2 opacity-0 scale-90 
-    group-hover:opacity-100 group-hover:scale-100 transition-all duration-600"
+                    bg-scolor text-white text-sm rounded-md py-1 px-2 opacity-0 scale-90 
+                    group-hover:opacity-100 group-hover:scale-100 transition-all duration-600"
                 >
                   {item.label}
                 </div>
