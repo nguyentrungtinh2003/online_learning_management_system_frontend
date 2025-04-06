@@ -7,7 +7,7 @@ const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
 
   const paymentId = searchParams.get("paymentId");
-  const payerId = searchParams.get("PayerID");
+  const payerId = searchParams.get("PayerID") || searchParams.get("payerId");
   const userId = searchParams.get("userId");
 
   useEffect(() => {
