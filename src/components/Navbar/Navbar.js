@@ -46,7 +46,7 @@ export default function Navbar() {
         localStorage.setItem("img", picture);
         localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
         setUser({ id, email, name, picture, roleEnum }); // Cập nhật user vào context
-        console.log(response.data.data);
+        console.log(setUser);
       })
       .catch(() => {});
   };
@@ -62,7 +62,7 @@ export default function Navbar() {
         localStorage.setItem("img", img);
         localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
         setUser({ id, email, username, img, roleEnum }); // Cập nhật user vào context
-        console.log(response.data.data);
+        console.log(setUser);
       })
       .catch(() => {});
   };
