@@ -46,7 +46,7 @@ const UserRouter = () => {
       <Route
         path="/user/process"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <LearningProgress />
@@ -57,7 +57,7 @@ const UserRouter = () => {
       <Route
         path="/user/payment"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <PaymentPage />
@@ -68,7 +68,7 @@ const UserRouter = () => {
       <Route
         path="/user/payment/history"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <PaymentHistory />
@@ -80,7 +80,7 @@ const UserRouter = () => {
       <Route
         path="/user-course"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <UserCourse />
@@ -91,7 +91,7 @@ const UserRouter = () => {
       <Route
         path="/view-course"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <UserViewCourse />
@@ -102,7 +102,7 @@ const UserRouter = () => {
       <Route
         path="/view-lesson"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <UserViewLesson />
@@ -149,7 +149,7 @@ const UserRouter = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRouter requiredRole="USER">
+          <ProtectedRouter requiredRole="STUDENT">
             <div className="flex bg-focolor">
               <AdminSidebar />
               <Profile />

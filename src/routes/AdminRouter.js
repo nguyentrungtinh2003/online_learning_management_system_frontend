@@ -27,7 +27,7 @@ const AdminRoutes = () => {
   return (
     <Routes>
       <Route
-        path="/admin"
+        path="/"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -39,7 +39,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/settings"
+        path="/settings"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -51,7 +51,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/users"
+        path="/users"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -63,7 +63,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/users/add-user"
+        path="/users/add-user"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -75,7 +75,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/users/edit-user/:userId"
+        path="/users/edit-user/:userId"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -87,7 +87,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/comment"
+        path="/comment"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -99,7 +99,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/blog"
+        path="/blog"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -111,7 +111,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/blog/add-blog"
+        path="/blog/add-blog"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex h-screen bg-focolor">
@@ -123,7 +123,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/blog/edit-blog"
+        path="/blog/edit-blog"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -135,7 +135,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/payment"
+        path="/payment"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -147,7 +147,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses"
+        path="/courses"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex h-fit bg-focolor">
@@ -159,7 +159,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses/add-course"
+        path="/courses/add-course"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex h-fit bg-focolor">
@@ -171,7 +171,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses/edit-course/:id"
+        path="/courses/edit-course/:id"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -183,7 +183,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses/:courseId/lessons"
+        path="/courses/:courseId/lessons"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -195,7 +195,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses/:courseId/lessons/add"
+        path="/courses/:courseId/lessons/add"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -207,7 +207,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/courses/:courseId/lessons/edit/:lessonId"
+        path="/courses/:courseId/lessons/edit/:lessonId"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -219,7 +219,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/lessons/:lessonId/quizzes"
+        path="/lessons/:lessonId/quizzes"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
@@ -231,7 +231,7 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/admin/lessons/:lessonId/quizzes/add"
+        path="/lessons/:lessonId/quizzes/add"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">

@@ -1,14 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "./contexts/AuthContext";
 import AdminRouter from "./routes/AdminRouter";
 import UserRouter from "./routes/UserRouter";
 import NotFound from "./pages/NotFound/NotFound";
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <ToastContainer />
       <Router>
         <Routes>
@@ -17,7 +16,7 @@ function App() {
           <Route path="/404" element={<NotFound />} />
         </Routes>
       </Router>
-    </AuthProvider>
+    </>
   );
 }
 

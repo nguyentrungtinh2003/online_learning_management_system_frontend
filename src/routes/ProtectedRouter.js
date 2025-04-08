@@ -1,12 +1,21 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
 
 const ProtectedRouter = ({ children, requiredRole }) => {
-  const { user } = useAuth();
+  const storedUser = localStorage.getItem("role");
 
-  if (!user) return <Navigate to="/login" />;
+  if (!storedUser) return <Navigate to="/login" />;
 
-  if (requiredRole && user.role !== requiredRole) {
+  let role;
+
+  try {
+    const parsed = JSON.parse(storedUser);
+    role = typeof parsed === "object" ? parsed.role : parsed;
+  } catch (err) {
+    // Nếu không parse được thì dùng luôn chuỗi (trong trường hợp user chỉ là "USER")
+    role = storedUser;
+  }
+
+  if (requiredRole && role !== requiredRole) {
     return <Navigate to="/404" />;
   }
 

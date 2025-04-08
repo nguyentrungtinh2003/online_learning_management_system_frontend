@@ -4,10 +4,8 @@ import { FaSearch } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { useAuth } from "../../contexts/AuthContext"; // Import useAuth
 
 export default function Navbar() {
-  const { setUser } = useAuth(); // Lấy setUser từ context
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -39,13 +37,11 @@ export default function Navbar() {
     axios
       .get(`${URL}/user-google`, { withCredentials: true })
       .then((response) => {
-        const { id, email, name, picture, roleEnum } = response.data.data;
+        const { id, email, name, picture } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-        localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
-        setUser({ id, email, name, picture, roleEnum }); // Cập nhật user vào context
       })
       .catch(() => {});
   };
@@ -59,8 +55,7 @@ export default function Navbar() {
         localStorage.setItem("email", email);
         localStorage.setItem("username", username);
         localStorage.setItem("img", img);
-        localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
-        setUser({ id, email, username, img, roleEnum }); // Cập nhật user vào context
+        localStorage.setItem("role", roleEnum);
       })
       .catch(() => {});
   };
