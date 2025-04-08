@@ -1,22 +1,21 @@
 import { Navigate } from "react-router-dom";
 
 const ProtectedRouter = ({ children, requiredRole }) => {
-  const storedUser = localStorage.getItem("role");
+  const stored = localStorage.getItem("role");
 
-  if (!storedUser) return <Navigate to="/login" />;
+  if (!stored) return <Navigate to="/login" />;
 
   let role;
 
   try {
-    const parsed = JSON.parse(storedUser);
+    const parsed = JSON.parse(stored);
     role = typeof parsed === "object" ? parsed.role : parsed;
-  } catch (err) {
-    // Nếu không parse được thì dùng luôn chuỗi (trong trường hợp user chỉ là "USER")
-    role = storedUser;
+  } catch (error) {
+    role = stored; // nếu không parse được thì là string
   }
 
   if (requiredRole && role !== requiredRole) {
-    return <Navigate to="/404" />;
+    return <Navigate to="/403" />;
   }
 
   return children;

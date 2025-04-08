@@ -42,8 +42,6 @@ export default function Navbar() {
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-        localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
-        setUser({ id, email, name, picture, roleEnum }); // Cập nhật user vào context
       })
       .catch(() => {});
   };
@@ -52,13 +50,11 @@ export default function Navbar() {
     axios
       .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
-        const { id, email, username, img, roleEnum } = response.data.data;
+        const { id, email, username, img } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", username);
         localStorage.setItem("img", img);
-        localStorage.setItem("role", roleEnum); // Lưu roleEnum vào localStorage
-        setUser({ id, email, username, img, roleEnum }); // Cập nhật user vào context
       })
       .catch(() => {});
   };
