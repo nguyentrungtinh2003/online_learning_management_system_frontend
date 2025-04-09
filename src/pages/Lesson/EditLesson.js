@@ -12,6 +12,7 @@ const EditLesson = () => {
   const navigate = useNavigate();
 
   const { courseId, lessonId } = useParams(); // Lấy cả courseId từ URL
+  
   const [lessons, setLesson] = useState({
     lessonName: "",
     description: "",

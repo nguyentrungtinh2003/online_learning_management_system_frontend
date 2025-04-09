@@ -39,6 +39,7 @@ const EditCourse = () => {
   
   const handleChange = (e) =>
     setCourse({ ...course, [e.target.name]: e.target.value });
+  
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async (e) => {

@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import React, { useState,useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { MdNavigateNext } from "react-icons/md";
+import { FaBuffer } from "react-icons/fa";
+
 import URL from "../../config/URLconfig";
 
 const UpdateQuizz = () => {
-  const { quizId } = useParams();
+  const { lessonId, quizId } = useParams();
   const navigate = useNavigate();
 
   const [quiz, setQuiz] = useState({
@@ -13,35 +18,38 @@ const UpdateQuizz = () => {
     description: "",
     price: "",
     img: "",
-    date:"",
-    quizEnum: "FREE",
-    isDeleted: false,
     lesson: { id: lessonId },
   });
 
-  const [img, setImg] = useState(null);
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
     axios
-      .get(`${URL}/teacher/quizzes/${quizId}`,
+      .get(`${URL}/quizzes/${quizId}`,
          { withCredentials: true, }
       )
       .then(({data}) => {
-        setQuiz(data.data);
-      })
+        console.log("Dữ liệu nhận từ API:", data);
+        setQuiz({
+          ...data.data,
+          lesson: { id: data.data.lesson?.id ?? lessonId },
+        });      })
       .catch(() => setError("Không thể tải dữ liệu trắc nghiệm"))
       .finally(() => setLoading(false));
   }, [quizId]);
 
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuiz({ ...quizData, [name]: value });
+    setQuiz({ ...quiz, [name]: value });
   };
 
   const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +66,7 @@ const UpdateQuizz = () => {
 
     try {
       const response = await axios.put(
-        `${URL}/api/teacher/quizzes/update/${quizId}`,
+        `${URL}/teacher/quizzes/update/${quizId}`,
         formData,
         {
           headers: {
@@ -125,7 +133,7 @@ const UpdateQuizz = () => {
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Image:</label>
             <div className="flex-1">
-              {course.img && (
+              {quiz.img && (
                 <img
                   src={quiz.img}
                   alt="Quiz"
@@ -134,7 +142,7 @@ const UpdateQuizz = () => {
               )}
               <input
                 type="file"
-                onChange={handleFileChange}
+                onChange={handleImageChange}
                 className="border rounded-lg px-3 py-2 w-full"
               />
             </div>
@@ -154,8 +162,8 @@ const UpdateQuizz = () => {
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Type:</label>
             <select
-              name="courseEnum"
-              value={quiz.courseEnum}
+              name="quizEnum"
+              value={quiz.quizEnum}
               onChange={handleChange}
               className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             >

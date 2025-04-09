@@ -22,7 +22,8 @@ import AddLesson from "../pages/Lesson/AddLesson";
 import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import AddQuizz from "../pages/Quizz/AddQuizz";
-import { updateQuiz } from "../services/quizapi";
+import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
+
 const AdminRoutes = () => {
   return (
     <Routes>
@@ -243,12 +244,12 @@ const AdminRoutes = () => {
       />
 
       <Route
-        path="/lessons/:lessonId/quizzes/edit/:quizid"
+        path="/lessons/:lessonId/quizzes/edit/:quizId"
         element={
           <ProtectedRouter requiredRole="ADMIN">
             <div className="flex bg-focolor">
               <AdminSidebar />
-              <updateQuiz />
+              <UpdateQuizz/>
             </div>
           </ProtectedRouter>
         }

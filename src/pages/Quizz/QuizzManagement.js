@@ -204,14 +204,14 @@ const QuizzManagement = () => {
                                   >
                                     <FaEdit />
                                   </Link>
-                                  {/* <button
+                                  <button
                                     className="p-2 border rounded"
                                     onClick={() =>
-                                      handleDelete(lesson.id, lesson.lessonName)
+                                      handleDelete(quiz.id, quiz.quizName)
                                     }
                                   >
                                     <MdDeleteForever />
-                                  </button> */}
+                                  </button>
                                 </td>
                               </tr>
                             ))
