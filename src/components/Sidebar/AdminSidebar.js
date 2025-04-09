@@ -22,7 +22,7 @@ export default function Sidebar() {
       id: "Dashboard",
       label: "Dashboard",
       icon: <MdDashboardCustomize size={25} />,
-      path: "/admin/dashboard",
+      path: "/admin/",
     },
     {
       id: "Courses",
@@ -83,12 +83,11 @@ export default function Sidebar() {
   const menuItems = isAdmin ? adminItems : userItems;
 
   useEffect(() => {
-    const matchedItem = menuItems.find((item) =>
-      location.pathname.startsWith(item.path)
-    );
-    setActiveItem(
-      matchedItem ? matchedItem.id : isAdmin ? "Dashboard" : "Home"
-    );
+    const matchedItem = menuItems
+      .filter((item) => location.pathname.startsWith(item.path))
+      .sort((a, b) => b.path.length - a.path.length)[0];
+
+    setActiveItem(matchedItem ? matchedItem.id : "");
   }, [location.pathname, isAdmin]);
 
   const handleNavigate = (id, path) => {
