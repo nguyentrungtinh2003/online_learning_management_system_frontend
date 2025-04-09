@@ -199,7 +199,7 @@ const QuizzManagement = () => {
                                     <FaEye />
                                   </Link>
                                   <Link
-                                    // to={`/admin/courses/${courseId}/lessons/edit/${lesson.id}`}
+                                    to={`/admin/lessons/${lessonId}/quizzes/edit/${quiz.id}`}
                                     className="p-2 border rounded"
                                   >
                                     <FaEdit />

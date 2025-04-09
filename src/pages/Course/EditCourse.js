@@ -18,6 +18,7 @@ const EditCourse = () => {
     price: "",
     img: "",
   });
+
   const [lessons, setLessons] = useState([]);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -169,25 +170,6 @@ const EditCourse = () => {
             </select>
           </div>
         </div>
-
-        {/* Danh sách bài học
-        <div className="mt-6">
-          <h3 className="text-lg font-bold mb-2">Lessons:</h3>
-          <ul className="list-disc pl-5">
-            {lessons.map((lesson, index) => (
-              <li key={index} className="mb-1">
-                {lesson.title}
-              </li>
-            ))}
-          </ul>
-          <button
-            type="button"
-            onClick={handleAddLesson}
-            className="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-          >
-            Add New Lesson
-          </button>
-        </div> */}
 
         <div className="flex justify-end space-x-2 mt-6">
         <Link

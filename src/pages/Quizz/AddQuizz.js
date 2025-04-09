@@ -16,11 +16,12 @@ const AddQuizz = () => {
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",
-    date: "",
     price: "",
     img: "",
+    date:"",
+    quizEnum: "FREE",
     isDeleted: false,
-    lessonId: { id: lessonId },
+    lesson: { id: lessonId },
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,8 +51,13 @@ const AddQuizz = () => {
       const response = await axios.post(
         `${URL}/teacher/quizzes/add`,
         data,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // Cho phép gửi cookies, session
+        }
+      );      
 
       console.log("Thành công:", response.data);
       toast.success("Thêm quiz thành công!", {
@@ -116,6 +122,20 @@ const AddQuizz = () => {
               onChange={handleChange}
               className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             ></textarea>
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
+            <select
+              name="quizEnum"
+              value={quizData.quizEnum}
+              onChange={(e) =>
+                setQuizData({ ...quizData, quizEnum: e.target.value })
+              }
+              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="FREE">Free</option>
+              <option value="PAID">Paid</option>
+            </select>
           </div>
         </div>
 

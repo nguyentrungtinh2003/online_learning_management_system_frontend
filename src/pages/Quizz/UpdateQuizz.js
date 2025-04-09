@@ -7,143 +7,183 @@ import URL from "../../config/URLconfig";
 const UpdateQuizz = () => {
   const { quizId } = useParams();
   const navigate = useNavigate();
-  const [quizData, setQuizData] = useState({
+
+  const [quiz, setQuiz] = useState({
     quizName: "",
     description: "",
-    date: "",
+    price: "",
+    img: "",
+    date:"",
+    quizEnum: "FREE",
     isDeleted: false,
-    lessonId: "",
+    lesson: { id: lessonId },
   });
+
   const [img, setImg] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/quizzes/${quizId}`)
-      .then((response) => {
-        setQuizData(response.data);
+      .get(`${URL}/teacher/quizzes/${quizId}`,
+         { withCredentials: true, }
+      )
+      .then(({data}) => {
+        setQuiz(data.data);
       })
-      .catch((error) => {
-        console.error("Error fetching quiz details:", error);
-      });
+      .catch(() => setError("Không thể tải dữ liệu trắc nghiệm"))
+      .finally(() => setLoading(false));
   }, [quizId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuizData({ ...quizData, [name]: value });
+    setQuiz({ ...quizData, [name]: value });
   };
 
   const handleImageChange = (e) => {
     setImg(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    const data = new FormData();
-    const payload = {
-      quizName: quizData.quizName,
-      description: quizData.description,
-      date: quizData.date,
-      isDeleted: quizData.isDeleted,
-      lesson: { id: quizData.lessonId },
-    };
 
-    data.append(
+    const formData = new FormData();
+    formData.append(
       "quiz",
-      new Blob([JSON.stringify(payload)], { type: "application/json" })
+      new Blob([JSON.stringify(quiz)], { type: "application/json" })
     );
-    if (img) {
-      data.append("img", img);
-    }
+    if (file) formData.append("img", file);
 
-    axios
-      .put(`${URL}/api/quizzes/update/${quizId}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then(() => {
-        alert("Quiz updated successfully!");
-        navigate("/quizzes");
-      })
-      .catch((error) => {
-        console.error("Error updating quiz:", error);
+    try {
+      const response = await axios.put(
+        `${URL}/api/teacher/quizzes/update/${quizId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // Cho phép gửi cookies, session
+        }
+      );
+      console.log("Thành công:",response);
+      // alert("Cập nhật khóa học thành công!");
+      toast.success("Cập nhật trắc nghiệm thành công!", {
+        position: "top-right",
+        autoClose: 3000,  // 4 giây
       });
+      
+      setTimeout(() => {
+      navigate(-1);
+      }, 4000);    
+    } catch (error) {
+      console.error("Lỗi:", error.response?.data || error.message);
+      // alert("Lỗi khi thêm khóa học!");
+      toast.error("Không thể cập nhật trắc nghiệm!", {
+        position: "top-right",
+        autoClose: 3000, 
+      });
+    } finally {
+      setLoading(false);
+    }
   };
-
-  return (
-    <Form onSubmit={handleSubmit} className="container mt-4">
-      <h2 className="mb-4">Edit Quiz</h2>
-      <Form.Group controlId="formQuizName">
-        <Form.Label>Quiz Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="quizName"
-          value={quizData.quizName}
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formDescription">
-        <Form.Label>Description</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          name="description"
-          value={quizData.description}
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formDate">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="datetime-local"
-          name="date"
-          value={quizData.date}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formLessonId">
-        <Form.Label>Lesson ID</Form.Label>
-        <Form.Control
-          type="text"
-          name="lessonId"
-          value={quizData.lessonId}
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formIsDeleted">
-        <Form.Check
-          type="checkbox"
-          label="Is Deleted"
-          name="isDeleted"
-          checked={quizData.isDeleted}
-          onChange={(e) =>
-            setQuizData({ ...quizData, isDeleted: e.target.checked })
-          }
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formImage">
-        <Form.Label>Image</Form.Label>
-        <Form.Control type="file" name="img" onChange={handleImageChange} />
-      </Form.Group>
-
-      <div className="d-flex justify-content-between mt-4">
-        <Button variant="secondary" onClick={() => navigate(-1)}>
-          Cancel
-        </Button>
-        <Button variant="primary" type="submit">
-          Save Changes
-        </Button>
+ return (
+    <div className="flex-1 flex flex-col h-fit py-6 px-3">
+      <AdminNavbar />
+      <div className="flex gap-2">
+        <FaBuffer size={30} />
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold mb-4">Quiz Management</h2>
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold mb-4">Edit Quiz</h2>
       </div>
-    </Form>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">
+              Quiz Title:
+            </label>
+            <input
+              type="text"
+              name="quizName"
+              value={quiz.quizName}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Price:</label>
+            <input
+              type="number"
+              name="price"
+              value={quiz.price}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+            <div className="flex-1">
+              {course.img && (
+                <img
+                  src={quiz.img}
+                  alt="Quiz"
+                  className="w-40 h-40 object-cover rounded-md mb-2"
+                />
+              )}
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="border rounded-lg px-3 py-2 w-full"
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">
+              Description:
+            </label>
+            <textarea
+              name="description"
+              rows={3}
+              value={quiz.description}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            ></textarea>
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
+            <select
+              name="courseEnum"
+              value={quiz.courseEnum}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            >
+              <option>Select Type</option>
+              <option value="FREE">Free</option>
+              <option value="PAID">Paid</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-2 mt-6">
+        <Link
+            onClick={() => navigate(-1)}
+            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+          >
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Submit"}
+          </button>
+        </div>
+      </form>
+    <ToastContainer /> 
+    </div>
   );
 };
 

@@ -10,7 +10,7 @@ import {
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useParams, useNavigate, data } from "react-router-dom";
 import axios from "axios";
-import { deleteLesson, getLesson, getLessonByPage, searchLessons } from "../../services/lessonapi";
+import { deleteLesson, getLesson, getLessonByPage,getLessonByCourseIdAndPage, searchLessons } from "../../services/lessonapi";
 
 export default function ManagementLesson() {
   const navigate = useNavigate();
@@ -29,26 +29,32 @@ export default function ManagementLesson() {
 
 
   useEffect(() => {
-    const fetchLessons = async () => { 
+    const fetchLessons = async () => {
       setLoading(true);
       try {
-        console.log(`Fetching lessons: Page${currentPage}, PerPage=${lessonsPerPage}`);
-        const data = await getLessonByPage(currentPage, lessonsPerPage);
+        console.log(`Fetching lessons for courseId=${courseId}, Page=${currentPage}, PerPage=${lessonsPerPage}`);
+        const data = await getLessonByCourseIdAndPage(courseId, currentPage, lessonsPerPage);
         console.log("API Response:", data);
-        if(!data || !data.data || !data.data.content){
+  
+        if (!data || !data.data || !data.data.content) {
           throw new Error("Invalid API Response");
         }
+  
         setLessons(data.data.content);
         setTotalPages(data.data.totalPages);
       } catch (error) {
         console.error("Lỗi tải bài học:", error);
         setLessons([]);
-      } finally{
+      } finally {
         setLoading(false);
       }
     };
-    fetchLessons();
-  }, [currentPage]);
+  
+    if (courseId) {
+      fetchLessons();
+    }
+  }, [courseId, currentPage]);
+  
 
 
      const handleSearch = async (e) => {

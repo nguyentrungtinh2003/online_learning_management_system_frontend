@@ -163,9 +163,9 @@ export default function CourseManagement() {
                     </tr>
                   ))
                 ) : courses.length > 0 ? (
-                  courses.map((course) => (
+                  courses.map((course, index) => (
                     <tr key={course.id} className="text-center">
-                      <td className="p-2">{course.id}</td>
+                      <td className="p-2">{index + 1 + currentPage * coursesPerPage}</td>
                       <td className="p-2">{course.courseName || "N/A"}</td>
                       <td className="p-2">
                         {course.description || "No description"}

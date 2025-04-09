@@ -50,10 +50,15 @@ const AddLesson = () => {
 
     try {
       const response = await axios.post(
-        "https://codearena-backend-dev.onrender.com/api/lessons/add",
+        "https://codearena-backend-dev.onrender.com/api/teacher/lessons/add",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // Cho phép gửi cookies, session
+        }
+      );      
       console.log("Thành công:", response.data);
       // alert("Thêm bài học thành công!");
       toast.success("Thêm bài học thành công!", {
