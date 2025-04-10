@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-const ProtectedRouter = ({ children, requiredRole }) => {
+const ProtectedRouter = ({ children, requiredRole, requiredRoles }) => {
   const stored = localStorage.getItem("role");
 
   if (!stored) return <Navigate to="/login" />;
@@ -11,10 +11,13 @@ const ProtectedRouter = ({ children, requiredRole }) => {
     const parsed = JSON.parse(stored);
     role = typeof parsed === "object" ? parsed.role : parsed;
   } catch (error) {
-    role = stored; // nếu không parse được thì là string
+    role = stored;
   }
 
-  if (requiredRole && role !== requiredRole) {
+  // Xử lý trường hợp truyền vào 1 role (cũ) hoặc nhiều role (mới)
+  const allowedRoles = requiredRoles || (requiredRole ? [requiredRole] : []);
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
     return <Navigate to="/403" />;
   }
 
