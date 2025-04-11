@@ -9,7 +9,7 @@ const PaymentSuccess = () => {
   const [error, setError] = useState(null);
 
   const paymentId = searchParams.get("paymentId");
-  const payerId = searchParams.get("PayerID") || searchParams.get("payerId");
+  const payerId = searchParams.get("PayerID");
   const userId = searchParams.get("userId");
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const PaymentSuccess = () => {
         const res = await axios.get(`${URL}/payments/execute`, {
           params: { paymentId, payerId, userId: userIdLong },
         });
-        if (res.data.success) {
+        if (res.data.statusCode === 200) {
           alert("Thanh toán thành công!");
         } else {
           setError("Thanh toán không thành công. Vui lòng thử lại.");
