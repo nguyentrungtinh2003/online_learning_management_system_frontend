@@ -48,7 +48,7 @@ export default function AuthForm() {
   };
 
   const handelLogin = () => {
-    console.log(fromLogin); // Kiểm tra dữ liệu gửi
+    console.log(fromLogin);
     console.log(document.cookie);
     axios
       .post(`${URL}/login`, fromLogin, {
@@ -58,20 +58,33 @@ export default function AuthForm() {
         withCredentials: true,
       })
       .then((response) => {
-        axios.get(`${URL}/user-info`, { withCredentials: true });
-        localStorage.setItem("id", response.data.data.id);
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("username", response.data.data.username);
-        localStorage.setItem("img", response.data.data.img);
-        localStorage.setItem("role", response.data.data.roleEnum);
-        console.log(response.data.data);
+        const userData = response.data?.data;
+        const token = response.data?.token;
+
+        if (!userData || !userData.id) {
+          console.error("Lỗi dữ liệu trả về:", response.data);
+          toast.error("Đăng nhập thất bại: Sai định dạng dữ liệu!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          return;
+        }
+
+        localStorage.setItem("id", userData.id);
+        localStorage.setItem("token", token);
+        localStorage.setItem("username", userData.username);
+        localStorage.setItem("img", userData.img);
+        localStorage.setItem("role", userData.roleEnum);
+        console.log(userData);
         console.log(document.cookie);
-        // Dùng navigate để điều hướng mà không tải lại trang
+
         toast.success("Đăng nhập thành công!", {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
         });
+
         setTimeout(() => {
           window.location.replace("/");
         }, 3000);
@@ -81,6 +94,11 @@ export default function AuthForm() {
           "Error login:",
           error.response ? error.response.data : error.message
         );
+        toast.error("Đăng nhập thất bại!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Slide,
+        });
       });
   };
 
