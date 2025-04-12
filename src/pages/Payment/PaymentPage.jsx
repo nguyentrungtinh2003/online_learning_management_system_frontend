@@ -14,7 +14,7 @@ export default function PaymentPage() {
 
   const paymentData = {
     userId: 1,
-    amount: 50.0,
+    amount: 10.0,
   };
 
   const submitPayment = () => {
