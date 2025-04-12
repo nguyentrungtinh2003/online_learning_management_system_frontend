@@ -1,81 +1,102 @@
 import { useState } from "react";
-import { Edit, Trash2 } from "lucide-react";
+import { Container, Card, Form, Button, Spinner, Alert } from "react-bootstrap";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 
-const paymentMethods = ["PayPal", "VNPay", "Momo", "Coins"];
-
 export default function PaymentPage() {
-  const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
-  const [product, setProduct] = useState({
-    name: "JavaScript Pro",
-    price: "$99.99",
-  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState(1); // số tiền mặc định
 
-  const paymentData = {
-    userId: 1,
-    amount: 10.0,
-  };
+  const submitPayment = async (e) => {
+    e.preventDefault(); // Ngăn submit reload trang
+    setLoading(true);
+    setError("");
 
-  const submitPayment = () => {
-    axios
-      .post(`${URL}/payments/create`, paymentData, {
+    const paymentData = {
+      userId: 1, // bạn có thể thay bằng userId từ context hoặc props
+      amount: amount,
+    };
+
+    try {
+      const response = await axios.post(`${URL}/payments/create`, paymentData, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
         },
-      })
-      .then((response) => {
-        console.log("Payment success" + response.data);
-        const approvalUrl = response.data.data;
-        if (approvalUrl) {
-          window.location.href = approvalUrl; // Redirect đến PayPal
-        }
-      })
-      .catch((error) => {
-        console.log("Payment error" + error.message);
       });
+
+      const approvalUrl = response.data.data;
+      if (approvalUrl) {
+        window.location.href = approvalUrl; // Redirect đến PayPal
+      } else {
+        setError("Không nhận được link thanh toán từ hệ thống.");
+      }
+    } catch (err) {
+      setError("Lỗi khi thực hiện thanh toán: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Payment Methods</h1>
-
-      {/* Product Information */}
-      <div className="p-4 mb-4 border rounded bg-gray-100">
-        <h2 className="text-lg font-semibold">Product: {product.name}</h2>
-        <p className="text-gray-700">Price: {product.price}</p>
-      </div>
-
-      <div className="space-y-4">
-        {paymentMethods.map((method) => (
-          <label
-            key={method}
-            className={`block p-4 border rounded cursor-pointer flex justify-between items-center ${
-              selectedMethod === method
-                ? "border-blue-500 bg-blue-100"
-                : "border-gray-300"
-            }`}
-          >
-            <input
-              type="radio"
-              name="payment"
-              value={method}
-              checked={selectedMethod === method}
-              onChange={() => setSelectedMethod(method)}
-              className="hidden"
-            />
-            <span className="text-lg">{method}</span>
-          </label>
-        ))}
-      </div>
-
-      <button
-        onClick={() => submitPayment()}
-        className="mt-6 px-6 py-2 bg-green-500 text-white rounded"
+    <Container
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "90vh" }}
+    >
+      <Card
+        style={{ width: "100%", maxWidth: "500px" }}
+        className="p-4 shadow-lg rounded-4 border-0"
       >
-        Proceed to Payment
-      </button>
-    </div>
+        <h3 className="text-center mb-4 text-primary fw-bold">
+          💰 Nạp tiền vào hệ thống
+        </h3>
+
+        {error && <Alert variant="danger">{error}</Alert>}
+
+        <Form onSubmit={submitPayment}>
+          <Form.Group className="mb-3" controlId="formAmount">
+            <Form.Label>Số tiền muốn nạp (USD):</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Nhập số tiền (ví dụ: 5)"
+              value={amount}
+              onChange={(e) => setAmount(parseFloat(e.target.value))}
+              min="1"
+              step="0.1"
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label>Bạn sẽ nhận được:</Form.Label>
+            <Form.Control
+              type="text"
+              value={`${amount * 10} Coin`}
+              readOnly
+              className="bg-light"
+            />
+          </Form.Group>
+
+          <div className="d-grid">
+            <Button
+              type="submit"
+              variant="success"
+              size="lg"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Đang xử lý...
+                </>
+              ) : (
+                "Thanh toán bằng PayPal"
+              )}
+            </Button>
+          </div>
+        </Form>
+      </Card>
+    </Container>
   );
 }

@@ -226,6 +226,9 @@ export default function Navbar() {
                   alt="User"
                   className="w-10 h-10 rounded-full object-cover"
                 />
+                <span className="text-gray-600 mr-2">
+                  {localStorage.getItem("coin")}
+                </span>
                 <span className="text-gray-600">
                   {localStorage.getItem("username")}
                 </span>

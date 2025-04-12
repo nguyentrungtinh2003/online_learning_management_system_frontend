@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -41,7 +42,15 @@ const PaymentSuccess = () => {
           params: { paymentId, payerId, userId: userIdLong },
         });
         if (res.data.statusCode === 200) {
-          alert("Thanh toán thành công!");
+          toast.success("Thanh toán thành công !", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+
+          setTimeout(() => {
+            window.location.replace("/");
+          }, 3000);
         } else {
           setError("Thanh toán không thành công. Vui lòng thử lại.");
         }
@@ -57,11 +66,35 @@ const PaymentSuccess = () => {
   }, [paymentId, payerId, userId]);
 
   if (loading) {
-    return <div>Đang xử lý thanh toán...</div>;
+    return (
+      <>
+        <ToastContainer />
+        <Container
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "100vh" }}
+        >
+          <div className="text-center">
+            <Spinner animation="border" role="status" />
+            <p className="mt-3">
+              🔄 Đang xử lý thanh toán... Vui lòng đợi giây lát.
+            </p>
+          </div>
+        </Container>
+      </>
+    );
   }
 
   if (error) {
-    return <div style={{ color: "red" }}>{error}</div>;
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Alert variant="danger" className="text-center">
+          ❌ <strong>Lỗi:</strong> {error}
+        </Alert>
+      </Container>
+    );
   }
 
   return null;
