@@ -14,7 +14,7 @@ export default function PaymentPage() {
     setError("");
 
     const paymentData = {
-      userId: 1, // bạn có thể thay bằng userId từ context hoặc props
+      userId: localStorage.getItem("id"), // bạn có thể thay bằng userId từ context hoặc props
       amount: amount,
     };
 
