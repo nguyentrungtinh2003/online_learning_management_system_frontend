@@ -4,3 +4,7 @@
 .mt-100 {
   margin-top: 100px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
