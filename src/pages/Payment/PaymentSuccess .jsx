@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import { Container, Spinner, Alert } from "react-bootstrap";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
