@@ -6,6 +6,7 @@ import URL from "../../config/URLconfig";
 export default function PaymentPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState("");
   const [amount, setAmount] = useState(1); // số tiền mặc định
 
   const submitPayment = async (e) => {
@@ -16,6 +17,7 @@ export default function PaymentPage() {
     const paymentData = {
       userId: localStorage.getItem("id"), // bạn có thể thay bằng userId từ context hoặc props
       amount: amount,
+      method: method,
     };
 
     try {
@@ -76,6 +78,18 @@ export default function PaymentPage() {
               readOnly
               className="bg-light"
             />
+          </Form.Group>
+
+          <Form.Group className="mb-4">
+            <Form.Label>Chọn phương thức thanh toán:</Form.Label>
+            <Form.Select
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              className="bg-light"
+            >
+              <option value="VNPay">VNPay</option>
+              <option value="PayPal">PayPal</option>
+            </Form.Select>
           </Form.Group>
 
           <div className="d-grid">
