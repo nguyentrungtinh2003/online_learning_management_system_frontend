@@ -105,7 +105,7 @@ export default function PaymentPage() {
                   Đang xử lý...
                 </>
               ) : (
-                "Thanh toán bằng PayPal"
+                `Thanh toán bằng ${method}`
               )}
             </Button>
           </div>
