@@ -3,42 +3,6 @@ import URL from "../../../config/URLconfig";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
-import { buyCourse } from "../../../services/courseapi";
-import { ToastContainer, toast, Slide } from "react-toastify";
-
-const CourseCard = ({ course }) => (
-  <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
-    <img
-      src={course.img || ""}
-      alt={course.courseName}
-      className="w-full h-48 object-cover"
-    />
-    <div className="p-6 font-bold">
-      <h3 className="text-2xl font-bold text-gray-800">
-        {course.courseName || "Java Backend"}
-      </h3>
-      <p className="text-sm text-gray-600 mt-2">
-        {course.description || "Khoá học Java Springboot API cho người mới."}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        {course.lessons?.length || 60} lessons
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        Lecturer:{" "}
-        <span className="text-fcolor">
-          {course.user?.username || "Nguyen Trung Tinh"}
-        </span>
-      </p>
-
-      <button
-        onClick={() => buyCourse(course.id)}
-        className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000"
-      >
-        Enroll Now
-      </button>
-    </div>
-  </div>
-);
 
 export default function SectionCourseFree() {
   const [courses, setCourses] = useState([]);
@@ -48,7 +12,7 @@ export default function SectionCourseFree() {
     axios
       .get(`${URL}/courses/all`)
       .then((response) => {
-        const freeCourses = response.data.data.filter(
+        const freeCourses = response?.data?.data?.filter(
           (course) => course.price === 0
         );
         setCourses(freeCourses);
@@ -59,7 +23,50 @@ export default function SectionCourseFree() {
         setLoading(false);
       });
   }, []);
+  const buyCourse = (courseId) => {
+    axios
+      .post(`${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log("Error " + error.message);
+      });
+  };
 
+  const CourseCard = ({ course }) => (
+    <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
+      <img
+        src={course.img || ""}
+        alt={course.courseName}
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-6 font-bold">
+        <h3 className="text-2xl font-bold text-gray-800">
+          {course.courseName || "Java Backend"}
+        </h3>
+        <p className="text-sm text-gray-600 mt-2">
+          {course.description || "Khoá học Java Springboot API cho người mới."}
+        </p>
+        <p className="text-sm text-gray-600 mt-1">
+          {course?.lessons?.length || 60} lessons
+        </p>
+        <p className="text-sm text-gray-600 mt-1">
+          Lecturer:{" "}
+          <span className="text-fcolor">
+            {course.user?.username || "Nguyen Trung Tinh"}
+          </span>
+        </p>
+
+        <button
+          onClick={() => buyCourse(course.id)}
+          className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000"
+        >
+          Enroll Now
+        </button>
+      </div>
+    </div>
+  );
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">

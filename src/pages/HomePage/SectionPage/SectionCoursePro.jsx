@@ -3,8 +3,6 @@ import URL from "../../../config/URLconfig";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
-import { buyCourse } from "../../../services/courseapi";
-import { ToastContainer, toast, Slide } from "react-toastify";
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
@@ -14,7 +12,7 @@ export default function SectionCoursePro() {
     axios
       .get(`${URL}/courses/all`)
       .then((response) => {
-        const paidCourses = response.data.data.filter(
+        const paidCourses = response?.data?.data?.filter(
           (course) => course.price > 0
         );
         setCourses(paidCourses);
@@ -25,6 +23,17 @@ export default function SectionCoursePro() {
         setLoading(false);
       });
   }, []);
+
+  const buyCourse = (courseId) => {
+    axios
+      .post(`${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log("Error " + error.message);
+      });
+  };
 
   const CourseCard = ({ course }) => (
     <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl border">
@@ -45,7 +54,7 @@ export default function SectionCoursePro() {
           Students: {course.students || "N/A"}
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          Lessons: {course.lessons?.length || "N/A"}
+          Lessons: {course?.lessons?.length || "N/A"}
         </p>
 
         <button
@@ -60,7 +69,6 @@ export default function SectionCoursePro() {
 
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
-      <ToastContainer />
       <h2 className="text-4xl text-rose-600 font-bold text-center mb-8">
         Top-Tier Learning Experience
       </h2>
