@@ -3,6 +3,8 @@ import URL from "../../../config/URLconfig";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
+import { buyCourse } from "../../../services/courseapi";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 const CourseCard = ({ course }) => (
   <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
@@ -27,11 +29,13 @@ const CourseCard = ({ course }) => (
           {course.user?.username || "Nguyen Trung Tinh"}
         </span>
       </p>
-      <Link to="/view-course">
-        <button className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000">
-          Enroll Now
-        </button>
-      </Link>
+
+      <button
+        onClick={() => buyCourse(course.id)}
+        className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000"
+      >
+        Enroll Now
+      </button>
     </div>
   </div>
 );
@@ -42,7 +46,7 @@ export default function SectionCourseFree() {
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/courses/all`)
+      .get(`${URL}/courses/all`)
       .then((response) => {
         const freeCourses = response.data.data.filter(
           (course) => course.price === 0

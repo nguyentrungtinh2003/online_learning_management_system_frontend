@@ -3,34 +3,8 @@ import URL from "../../../config/URLconfig";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
-
-const CourseCard = ({ course }) => (
-  <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl border">
-    <img
-      src={course.img || "https://via.placeholder.com/300"}
-      alt={course.courseName}
-      className="w-full h-48 object-cover"
-    />
-    <div className="p-6 font-bold">
-      <h3 className="text-2xl font-bold text-gray-800">{course.courseName}</h3>
-      <p className="text-sm text-gray-600 mt-2">Price: {course.price} USD</p>
-      <p className="text-sm text-gray-600 mt-1">
-        Coins: {course.coin || "N/A"}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        Students: {course.students || "N/A"}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        Lessons: {course.lessons?.length || "N/A"}
-      </p>
-      <Link to="/view-course">
-        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
-          Unlock Now
-        </button>
-      </Link>
-    </div>
-  </div>
-);
+import { buyCourse } from "../../../services/courseapi";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
@@ -38,7 +12,7 @@ export default function SectionCoursePro() {
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/courses/all`)
+      .get(`${URL}/courses/all`)
       .then((response) => {
         const paidCourses = response.data.data.filter(
           (course) => course.price > 0
@@ -52,8 +26,41 @@ export default function SectionCoursePro() {
       });
   }, []);
 
+  const CourseCard = ({ course }) => (
+    <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl border">
+      <img
+        src={course.img || "https://via.placeholder.com/300"}
+        alt={course.courseName}
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-6 font-bold">
+        <h3 className="text-2xl font-bold text-gray-800">
+          {course.courseName}
+        </h3>
+        <p className="text-sm text-gray-600 mt-2">Price: {course.price} USD</p>
+        <p className="text-sm text-gray-600 mt-1">
+          Coins: {course.coin || "N/A"}
+        </p>
+        <p className="text-sm text-gray-600 mt-1">
+          Students: {course.students || "N/A"}
+        </p>
+        <p className="text-sm text-gray-600 mt-1">
+          Lessons: {course.lessons?.length || "N/A"}
+        </p>
+
+        <button
+          onClick={() => buyCourse(course.id)}
+          className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300"
+        >
+          Unlock Now
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <ToastContainer />
       <h2 className="text-4xl text-rose-600 font-bold text-center mb-8">
         Top-Tier Learning Experience
       </h2>

@@ -1,5 +1,6 @@
 import axios from "axios";
 import URL from "../config/URLconfig";
+import { ToastContainer, toast, Slide } from "react-toastify";
 
 export const getCourses = async () => {
   try {
@@ -22,6 +23,28 @@ export const getCourseById = async (courseId) => {
     const response = await axios.get(`${URL}/courses/${courseId}`, {
       withCredentials: true,
     });
+    return response.data; // Dữ liệu API trả về
+  } catch (error) {
+    console.error("❌ Lỗi lấy khóa học:", error);
+    return null;
+  }
+};
+// buy course
+export const buyCourse = async (courseId) => {
+  try {
+    const response = await axios.post(
+      `${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`,
+      {
+        withCredentials: true,
+      }
+    );
+    if (response.data.status == 200) {
+      toast.success("Mua khoá học thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Slide,
+      });
+    }
     return response.data; // Dữ liệu API trả về
   } catch (error) {
     console.error("❌ Lỗi lấy khóa học:", error);
