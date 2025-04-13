@@ -7,7 +7,8 @@ import HomePage from "../pages/HomePage/homePage";
 import LearningProgress from "../pages/User/LearningProcess";
 import PaymentPage from "../pages/Payment/PaymentPage";
 import PaymentHistory from "../pages/Payment/PaymentHistory";
-import PaymentSuccess from "../pages/Payment/PaymentSuccess ";
+import PaymentSuccessPayPal from "../pages/Payment/PaymentSuccessPayPal ";
+import VNPaySuccess from "../pages/Payment/PaymentSuccessVNPay";
 import UserCourse from "../pages/Course/UserCourse";
 import UserViewCourse from "../pages/Course/UserViewCourse";
 import UserViewLesson from "../pages/Lesson/UserViewLesson";
@@ -76,7 +77,8 @@ const UserRouter = () => {
           </ProtectedRouter>
         }
       />
-      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-success" element={<PaymentSuccessPayPal />} />
+      <Route path="/vnpay-return" element={<VNPaySuccess />} />
       <Route
         path="/user-course"
         element={
