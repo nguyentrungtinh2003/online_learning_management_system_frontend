@@ -50,11 +50,12 @@ export default function Navbar() {
     axios
       .get(`${URL}/user-info`, { withCredentials: true })
       .then((response) => {
-        const { id, email, username, img } = response.data.data;
+        const { id, email, username, img, coin } = response.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", username);
         localStorage.setItem("img", img);
+        localStorage.setItem("coin", coin);
       })
       .catch(() => {});
   };
