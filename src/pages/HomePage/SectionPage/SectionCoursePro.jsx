@@ -15,11 +15,12 @@ export default function SectionCoursePro() {
         const paidCourses = response?.data?.data?.filter(
           (course) => course.price > 0
         );
-        setCourses(paidCourses);
+        setCourses(paidCourses || []);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching courses:", error);
+        setCourses([]); // đảm bảo không undefined
         setLoading(false);
       });
   }, []);
@@ -54,7 +55,7 @@ export default function SectionCoursePro() {
           Students: {course.students || "N/A"}
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          Lessons: {course?.lessons?.length || "N/A"}
+          Lessons: {Array.isArray(course?.lessons) ? course.lessons.length : "N/A"}
         </p>
 
         <button

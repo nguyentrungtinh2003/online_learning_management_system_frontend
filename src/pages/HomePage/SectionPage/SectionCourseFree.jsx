@@ -12,9 +12,8 @@ export default function SectionCourseFree() {
     axios
       .get(`${URL}/courses/all`)
       .then((response) => {
-        const freeCourses = response?.data?.data?.filter(
-          (course) => course.price === 0
-        );
+        const allCourses = response?.data?.data || [];
+        const freeCourses = allCourses.filter((course) => course.price === 0);
         setCourses(freeCourses);
         setLoading(false);
       })
@@ -23,9 +22,16 @@ export default function SectionCourseFree() {
         setLoading(false);
       });
   }, []);
+
   const buyCourse = (courseId) => {
+    const userId = localStorage.getItem("id");
+    if (!userId) {
+      alert("Bạn cần đăng nhập để mua khóa học!");
+      return;
+    }
+
     axios
-      .post(`${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`)
+      .post(`${URL}/courses/buy/${userId}/${courseId}`)
       .then((response) => {
         console.log(response.data);
       })
@@ -37,7 +43,7 @@ export default function SectionCourseFree() {
   const CourseCard = ({ course }) => (
     <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
       <img
-        src={course.img || ""}
+        src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
         className="w-full h-48 object-cover"
       />
@@ -49,7 +55,7 @@ export default function SectionCourseFree() {
           {course.description || "Khoá học Java Springboot API cho người mới."}
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          {course?.lessons?.length || 60} lessons
+          {Array.isArray(course?.lessons) ? course.lessons.length : 60} lessons
         </p>
         <p className="text-sm text-gray-600 mt-1">
           Lecturer:{" "}
@@ -67,6 +73,7 @@ export default function SectionCourseFree() {
       </div>
     </div>
   );
+
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
@@ -82,8 +89,8 @@ export default function SectionCourseFree() {
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
-          <div className="col-span-full">
-            <SkeletonLoading />
+          <div className="col-span-full text-center text-gray-500">
+            No free courses available at the moment.
           </div>
         )}
       </div>
