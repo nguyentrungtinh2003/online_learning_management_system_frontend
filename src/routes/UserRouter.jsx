@@ -91,7 +91,7 @@ const UserRouter = () => {
         }
       />
       <Route
-        path="/view-course"
+        path="/view-course/:id"
         element={
           <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
             <div className="flex bg-focolor">

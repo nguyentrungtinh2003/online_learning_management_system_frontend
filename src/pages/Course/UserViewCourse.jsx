@@ -1,7 +1,22 @@
 import React from "react";
 import Navbar from "../../components/Navbar/Navbar";
+import { useParams } from "react-router-dom";
 
 export default function UserViewCourse() {
+  const { id } = useParams();
+
+  // Viết hàm get course by id de hien thi thong tin chi tiet khoa hoc
+
+  const buyCourse = (courseId) => {
+    axios
+      .post(`${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log("Error " + error.message);
+      });
+  };
   return (
     <div className="flex-1 h-screen py-3 ">
       <div className="bg-white h-full overflow-y-auto shadow rounded-2xl">
@@ -87,10 +102,17 @@ export default function UserViewCourse() {
               <h1 className="text-3xl text-fcolor font-bold">
                 Pricing & Enrollment
               </h1>
-              <h1 className="font-bold text-2xl flex gap-2">Price: <p className="text-rose-400">Free</p></h1>
+              <h1 className="font-bold text-2xl flex gap-2">
+                Price: <p className="text-rose-400">Free</p>
+              </h1>
             </div>
             <div className="flex-col flex-1 flex">
-              <button className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end">Enroll Now</button>
+              <button
+                onClick={() => buyCourse(id)}
+                className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end"
+              >
+                Enroll Now
+              </button>
             </div>
           </div>
         </div>

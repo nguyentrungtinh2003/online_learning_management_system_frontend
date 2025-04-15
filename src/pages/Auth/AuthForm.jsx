@@ -5,6 +5,7 @@ import axios from "axios";
 import URL from "../../config/URLconfig";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import Spinner from "react-bootstrap/Spinner";
 
 export default function AuthForm() {
   const [fromLogin, setFromLogin] = useState({
@@ -26,7 +27,7 @@ export default function AuthForm() {
 
   const [otpResetPassword, setOtpResetPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
+  const [loginLoading, setLoginLoading] = useState(false);
   const handleInputChangeLogin = (event) => {
     const { name, value } = event.target;
     setFromLogin((prevFromLogin) => ({
@@ -48,6 +49,9 @@ export default function AuthForm() {
   };
 
   const handelLogin = () => {
+    setLoginLoading(true);
+    console.log(loginLoading);
+
     console.log(fromLogin);
     console.log(document.cookie);
     axios
@@ -58,6 +62,7 @@ export default function AuthForm() {
         withCredentials: true,
       })
       .then((response) => {
+        setLoginLoading(false);
         const userData = response.data?.data;
         const token = response.data?.token;
 
@@ -91,6 +96,7 @@ export default function AuthForm() {
         }, 3000);
       })
       .catch((error) => {
+        setLoginLoading(false);
         console.error(
           "Error login:",
           error.response ? error.response.data : error.message
@@ -379,11 +385,18 @@ export default function AuthForm() {
             >
               Forget your Password? Click here!
             </a>
+            <Spinner animation="grow" variant="primary" size="sm" />
             <button
               onClick={() => handelLogin()}
+              disabled={loginLoading}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
-              Sign In
+              {console.log("Rendering with loginLoading:", loginLoading)}
+              {loginLoading ? (
+                <Spinner animation="grow" variant="primary" size="sm" />
+              ) : (
+                "Sign In"
+              )}
             </button>
             <p className="text-center text-lg m-2">Or</p>
             <button className="border-2 flex items-center justify-center rounded-2xl py-2 w-full hover:bg-cyan-300">

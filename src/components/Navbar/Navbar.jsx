@@ -133,10 +133,11 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
-      localStorage.clear();
-      window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
+    } finally {
+      localStorage.clear();
+      window.location.href = "/";
     }
   };
 
