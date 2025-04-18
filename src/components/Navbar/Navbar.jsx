@@ -27,37 +27,37 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
-  useEffect(() => {
-    fetchUserInfo();
-    fetchUserGoogle();
-    fetchNotifications();
-  }, []);
-
-  const fetchUserGoogle = () => {
-    axios
-      .get(`${URL}/user-google`, { withCredentials: true })
-      .then((response) => {
-        const { id, email, name, picture } = response.data.data;
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${URL}/user-info`, {
+        withCredentials: true,
+      });
+      const { id, email, username, img, coin } = response.data.data;
+      localStorage.setItem("id", id);
+      localStorage.setItem("email", email);
+      localStorage.setItem("username", username);
+      localStorage.setItem("img", img);
+      localStorage.setItem("coin", coin);
+    } catch (err1) {
+      try {
+        const googleResponse = await axios.get(`${URL}/user-google`, {
+          withCredentials: true,
+        });
+        const { id, email, name, picture } = googleResponse.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-      })
-      .catch(() => {});
+      } catch (err2) {
+        console.log("Không tìm thấy user đăng nhập");
+      }
+    }
   };
 
-  const fetchUserInfo = () => {
-    axios
-      .get(`${URL}/user-info`, { withCredentials: true })
-      .then((response) => {
-        const { id, email, username, img } = response.data.data;
-        localStorage.setItem("id", id);
-        localStorage.setItem("email", email);
-        localStorage.setItem("username", username);
-        localStorage.setItem("img", img);
-      })
-      .catch(() => {});
-  };
+  useEffect(() => {
+    fetchUserData();
+    fetchNotifications();
+  }, []);
 
   const fetchNotifications = () => {
     axios
@@ -133,10 +133,11 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
-      localStorage.clear();
-      window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
+    } finally {
+      localStorage.clear();
+      window.location.href = "/";
     }
   };
 

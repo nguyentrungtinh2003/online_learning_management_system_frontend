@@ -24,17 +24,6 @@ export default function SectionCoursePro() {
       });
   }, []);
 
-  const buyCourse = (courseId) => {
-    axios
-      .post(`${URL}/courses/buy/${localStorage.getItem("id")}/${courseId}`)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log("Error " + error.message);
-      });
-  };
-
   const CourseCard = ({ course }) => (
     <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl border">
       <img
@@ -54,14 +43,12 @@ export default function SectionCoursePro() {
           Students: {course.students || "N/A"}
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          Lessons: {Array.isArray(course?.lessons) ? course.lessons.length : "N/A"}
+          Lessons:{" "}
+          {Array.isArray(course?.lessons) ? course.lessons.length : "N/A"}
         </p>
 
-        <button
-          onClick={() => buyCourse(course.id)}
-          className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300"
-        >
-          Unlock Now
+        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+          <a href={`/view-course/${course.id}`}>View Course</a>
         </button>
       </div>
     </div>

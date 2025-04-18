@@ -1,7 +1,78 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
+import { useParams } from "react-router-dom";
+import URL from "../../config/URLconfig"; // Đảm bảo URL được cấu hình đúng
+import { getCourseById } from "../../services/courseapi"; // Import service
+import axios from "axios"; // Import axios để thực hiện HTTP request
 
 export default function UserViewCourse() {
+  const { id } = useParams();
+  const [course, setCourse] = useState(null); // Khởi tạo state là null
+  const [loading, setLoading] = useState(true); // Thêm state loading
+  const [error, setError] = useState(null); // Thêm state error
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      // Sử dụng async/await
+      setLoading(true); // Bắt đầu loading
+      setError(null);
+      try {
+        const courseData = await getCourseById(id); // Gọi service để lấy dữ liệu
+        setCourse(courseData.data);
+      } catch (error) {
+        setError(error); // Lưu lỗi vào state
+      } finally {
+        setLoading(false); // Kết thúc loading
+      }
+    };
+    fetchCourse();
+  }, [id]);
+
+  const buyCourse = async (courseId) => {
+    try {
+      const userId = localStorage.getItem("id");
+      if (!userId) {
+        // Handle trường hợp không có user id, ví dụ: chuyển hướng đăng nhập
+        console.error("User ID not found. Please log in.");
+        return; // Dừng việc mua khóa học
+      }
+      const response = await axios.post(
+        `${URL}/courses/buy/${userId}/${courseId}`
+      );
+      console.log(response.data);
+      // Có thể thêm xử lý thành công, ví dụ: hiển thị thông báo, chuyển hướng
+      alert("Course purchased successfully!"); // đơn giản là hiển thị thông báo
+    } catch (error) {
+      console.error("Error buying course:", error);
+      // Thêm xử lý lỗi, ví dụ: hiển thị thông báo lỗi thân thiện
+      alert("Failed to purchase course. Please try again.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex-1 h-screen py-3 flex items-center justify-center">
+        <p>Loading course details...</p> {/* Hiển thị thông báo loading */}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex-1 h-screen py-3 flex items-center justify-center">
+        <p>Error: {error.message}</p> {/* Hiển thị thông báo lỗi */}
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="flex-1 h-screen py-3 flex items-center justify-center">
+        <p>Course not found.</p> {/* Xử lý trường hợp không có dữ liệu */}
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 h-screen py-3 ">
       <div className="bg-white h-full overflow-y-auto shadow rounded-2xl">
@@ -12,16 +83,9 @@ export default function UserViewCourse() {
               <h1 className="text-3xl text-fcolor font-bold">
                 Course Introduction
               </h1>
-              <p className="text-2xl font-bold">Basic JavaScript</p>
-              <p>
-                This course is designed for beginners who want to learn the
-                fundamentals of JavaScript, one of the most popular programming
-                languages for web development. You will explore key concepts
-                such as variables, data types, functions, loops, and events. By
-                the end of the course, you will be able to write simple
-                JavaScript programs and interact with web pages dynamically. No
-                prior programming experience is required!
-              </p>
+              <p className="text-2xl font-bold">{course?.name}</p>{" "}
+              {/* Sử dụng optional chaining */}
+              <p>{course?.description}</p> {/* Sử dụng optional chaining */}
             </div>
             <div className="space-y-2">
               <h1 className="text-3xl text-fcolor font-bold">
@@ -36,9 +100,7 @@ export default function UserViewCourse() {
               </ul>
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                What You Will Learn?
-              </h1>
+              <h1 className="text-3xl text-fcolor font-bold">Course Content</h1>
               <ul>
                 <li>Module 1: Introduction to JavaScript & Setup</li>
                 <li>Module 2: Variables, Data Types & Operators</li>
@@ -87,10 +149,17 @@ export default function UserViewCourse() {
               <h1 className="text-3xl text-fcolor font-bold">
                 Pricing & Enrollment
               </h1>
-              <h1 className="font-bold text-2xl flex gap-2">Price: <p className="text-rose-400">Free</p></h1>
+              <h1 className="font-bold text-2xl flex gap-2">
+                Price: <p className="text-rose-400">Free</p>
+              </h1>
             </div>
             <div className="flex-col flex-1 flex">
-              <button className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end">Enroll Now</button>
+              <button
+                onClick={() => buyCourse(id)}
+                className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end"
+              >
+                Buy Now
+              </button>
             </div>
           </div>
         </div>

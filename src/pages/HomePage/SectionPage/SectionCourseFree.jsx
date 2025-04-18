@@ -63,11 +63,8 @@ export default function SectionCourseFree() {
           </span>
         </p>
 
-        <button
-          onClick={() => buyCourse(course.id)}
-          className="w-full mt-4 py-2 bg-scolor text-xl text-black font-semibold rounded-lg hover:bg-fcolor hover:text-white transition-all duration-1000"
-        >
-          Enroll Now
+        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+          <a href={`/view-course/${course.id}`}>View Course</a>
         </button>
       </div>
     </div>
