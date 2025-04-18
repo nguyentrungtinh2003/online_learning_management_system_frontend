@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
 
 export default function SectionCoursePro() {
