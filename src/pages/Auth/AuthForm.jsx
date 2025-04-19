@@ -28,6 +28,9 @@ export default function AuthForm() {
   const [otpResetPassword, setOtpResetPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [changePassLoading, setChangePassLoading] = useState(false);
   const handleInputChangeLogin = (event) => {
     const { name, value } = event.target;
     setFromLogin((prevFromLogin) => ({
@@ -115,6 +118,7 @@ export default function AuthForm() {
   };
 
   const handelRegister = () => {
+    setRegisterLoading(true);
     axios.post(`${URL}/user-register`, fromData).then((response) => {
       console.log(response.data);
       console.log("Register success");
@@ -140,6 +144,7 @@ export default function AuthForm() {
 
   //--------------------------//
   const handelSendOTP = () => {
+    setOtpLoading(true);
     axios
       .post(`${URL}/forgot-password`, { email: emailOTP })
       .then((response) => {
@@ -156,6 +161,7 @@ export default function AuthForm() {
     password: newPassword,
   };
   const handelResetPassword = () => {
+    setChangePassLoading(true);
     axios
       .post(`${URL}/reset-password`, resetPassword)
       .then((response) => {
@@ -262,7 +268,11 @@ export default function AuthForm() {
                 disabled={isCounting}
                 onClick={() => handleClick()}
               >
-                {isCounting ? `${count}s` : "Send OTP"}
+                {otpLoading ? (
+                  <Spinner animation="border" variant="white" />
+                ) : (
+                  "OTP"
+                )}
               </button>
             </div>
             {/* <input
@@ -344,7 +354,11 @@ export default function AuthForm() {
               onClick={() => handelResetPassword()}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
-              Create New Password
+              {changePassLoading ? (
+                <Spinner animation="border" variant="white" />
+              ) : (
+                "Change"
+              )}
             </button>
           </div>
         ) : isLogin ? (
@@ -385,7 +399,7 @@ export default function AuthForm() {
             >
               Forget your Password? Click here!
             </a>
-            <Spinner animation="grow" variant="primary" size="sm" />
+
             <button
               onClick={() => handelLogin()}
               disabled={loginLoading}
@@ -393,7 +407,7 @@ export default function AuthForm() {
             >
               {console.log("Rendering with loginLoading:", loginLoading)}
               {loginLoading ? (
-                <Spinner animation="grow" variant="primary" size="sm" />
+                <Spinner animation="border" variant="white" />
               ) : (
                 "Sign In"
               )}
@@ -482,7 +496,11 @@ export default function AuthForm() {
               }}
               className="bg-cyan-500 text-white rounded-xl h-12 text-xl font-semibold hover:bg-cyan-400"
             >
-              Sign Up
+              {registerLoading ? (
+                <Spinner animation="border" variant="white" />
+              ) : (
+                "Sign Up"
+              )}
             </button>
             <p className="text-rose-600 text-sm text-center">
               You already have an account?{" "}

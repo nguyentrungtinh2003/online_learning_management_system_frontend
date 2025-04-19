@@ -3,6 +3,9 @@ import RankLevel from "../../components/RankLevel/RankLevel";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
+import URL from "../../config/URLconfig";
+import axios from "axios";
+import { FaCoins } from "react-icons/fa";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -22,11 +25,11 @@ const Profile = () => {
 
   const userId = localStorage.getItem("id");
 
-  // useEffect(() => {
-  //   axios.get(`${URL}/api/auth/user/${userId}`).then((response) => {
-  //     setUser(response.data.data);
-  //   });
-  // }, [userId]);
+  const fetchUserInfo = () => {
+    axios.get(`${URL}/user/${userId}`).then((response) => {
+      setUser(response.data.data);
+    });
+  };
 
   useEffect(() => {
     const formContainer = formContainerRef.current;
@@ -34,6 +37,8 @@ const Profile = () => {
     setTimeout(() => {
       formContainer?.classList.remove("animate");
     }, 1000);
+
+    fetchUserInfo();
   }, [tab]);
 
   const handleImageChange = (event) => {
@@ -63,6 +68,10 @@ const Profile = () => {
               <h2 className="text-3xl ml-4 font-semibold text-gray-800">
                 {user.username || `Nguyen Trung Tinh`}
               </h2>
+              <h3 className="text-3xl ml-4 font-semibold text-gray-800">
+                {user.coin || `0`}{" "}
+              </h3>
+              <FaCoins style={{ color: "gold" }} size={30} />
             </div>
           </div>
         </div>
@@ -130,15 +139,10 @@ const Profile = () => {
                 />
                 <label className="mt-2">Role</label>
                 <TextField
-                  select
                   className="mt-2 w-full"
                   required
-                  SelectProps={{ native: true }}
                   value={user.roleEnum}
-                >
-                  <option value="STUDENT">STUDENT</option>
-                  <option value="TEACHER">TEACHER</option>
-                </TextField>
+                />
               </div>
               <div className="col-span-2 flex justify-end">
                 <Button variant="contained" color="primary">

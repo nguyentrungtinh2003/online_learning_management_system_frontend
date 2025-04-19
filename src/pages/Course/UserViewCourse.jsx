@@ -4,11 +4,13 @@ import { useParams } from "react-router-dom";
 import URL from "../../config/URLconfig"; // Đảm bảo URL được cấu hình đúng
 import { getCourseById } from "../../services/courseapi"; // Import service
 import axios from "axios"; // Import axios để thực hiện HTTP request
+import Spinner from "react-bootstrap/Spinner";
 
 export default function UserViewCourse() {
   const { id } = useParams();
   const [course, setCourse] = useState(null); // Khởi tạo state là null
   const [loading, setLoading] = useState(true); // Thêm state loading
+  const [buyLoading, setBuyLoading] = useState(false);
   const [error, setError] = useState(null); // Thêm state error
 
   useEffect(() => {
@@ -28,31 +30,25 @@ export default function UserViewCourse() {
     fetchCourse();
   }, [id]);
 
-  const buyCourse = async (courseId) => {
-    try {
-      const userId = localStorage.getItem("id");
-      if (!userId) {
-        // Handle trường hợp không có user id, ví dụ: chuyển hướng đăng nhập
-        console.error("User ID not found. Please log in.");
-        return; // Dừng việc mua khóa học
-      }
-      const response = await axios.post(
-        `${URL}/courses/buy/${userId}/${courseId}`
-      );
+  const buyCourse = async (id) => {
+    setBuyLoading(true);
+    const userId = localStorage.getItem("id");
+    if (!userId) {
+      // Handle trường hợp không có user id, ví dụ: chuyển hướng đăng nhập
+      console.error("User ID not found. Please log in.");
+      return; // Dừng việc mua khóa học
+    }
+    const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
+    if (response) {
       console.log(response.data);
-      // Có thể thêm xử lý thành công, ví dụ: hiển thị thông báo, chuyển hướng
-      alert("Course purchased successfully!"); // đơn giản là hiển thị thông báo
-    } catch (error) {
-      console.error("Error buying course:", error);
-      // Thêm xử lý lỗi, ví dụ: hiển thị thông báo lỗi thân thiện
-      alert("Failed to purchase course. Please try again.");
+      setBuyLoading(false);
     }
   };
 
   if (loading) {
     return (
       <div className="flex-1 h-screen py-3 flex items-center justify-center">
-        <p>Loading course details...</p> {/* Hiển thị thông báo loading */}
+        <Spinner animation="border" variant="primary" />
       </div>
     );
   }
@@ -158,7 +154,11 @@ export default function UserViewCourse() {
                 onClick={() => buyCourse(id)}
                 className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end"
               >
-                Buy Now
+                {buyLoading ? (
+                  <Spinner animation="border" variant="white" />
+                ) : (
+                  "Buy Now"
+                )}
               </button>
             </div>
           </div>

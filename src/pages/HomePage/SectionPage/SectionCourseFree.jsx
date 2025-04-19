@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
+import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 
 export default function SectionCourseFree() {
   const [courses, setCourses] = useState([]);
@@ -64,9 +63,11 @@ export default function SectionCourseFree() {
           </span>
         </p>
 
-        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
-          <a href={`/view-course/${course.id}`}>View Course</a>
-        </button>
+        <a href={`/view-course/${course.id}`}>
+          <button className="mt-4 w-full bg-scolor text-white text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+            View Course
+          </button>
+        </a>
       </div>
     </div>
   );
@@ -79,15 +80,15 @@ export default function SectionCourseFree() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {loading ? (
           <div className="col-span-full">
-            <SkeletonLoading />
+            <SkeletonSection />
           </div>
         ) : courses.length > 0 ? (
           courses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
-          <div className="col-span-full text-center text-gray-500">
-            No free courses available at the moment.
+          <div className="col-span-full">
+            <SkeletonSection />
           </div>
         )}
       </div>

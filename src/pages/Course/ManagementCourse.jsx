@@ -16,6 +16,7 @@ import {
   searchCourses,
 } from "../../services/courseapi";
 
+import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
@@ -165,7 +166,9 @@ export default function CourseManagement() {
                 ) : courses.length > 0 ? (
                   courses.map((course, index) => (
                     <tr key={course.id} className="text-center">
-                      <td className="p-2">{index + 1 + currentPage * coursesPerPage}</td>
+                      <td className="p-2">
+                        {index + 1 + currentPage * coursesPerPage}
+                      </td>
                       <td className="p-2">{course.courseName || "N/A"}</td>
                       <td className="p-2">
                         {course.description || "No description"}
@@ -215,17 +218,11 @@ export default function CourseManagement() {
                     </tr>
                   ))
                 ) : (
-                  [...Array(6)].map((_, index) => (
-                    <tr key={index} className="text-center">
-                      {Array(8)
-                        .fill(null)
-                        .map((_, i) => (
-                          <td key={i} className="p-2">
-                            <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
-                          </td>
-                        ))}
-                    </tr>
-                  ))
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      Không có khóa học nào.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>

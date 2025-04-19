@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
+import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
@@ -26,50 +25,54 @@ export default function SectionCoursePro() {
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="bg-white font-semibold shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl border">
+    <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
       <img
-        src={course.img || "https://via.placeholder.com/300"}
+        src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
         className="w-full h-48 object-cover"
       />
       <div className="p-6 font-bold">
         <h3 className="text-2xl font-bold text-gray-800">
-          {course.courseName}
+          {course.courseName || "Java Backend"}
         </h3>
-        <p className="text-sm text-gray-600 mt-2">Price: {course.price} USD</p>
-        <p className="text-sm text-gray-600 mt-1">
-          Coins: {course.coin || "N/A"}
+        <p className="text-sm text-gray-600 mt-2">
+          {course.description || "Khoá học Java Springboot API cho người mới."}
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          Students: {course.students || "N/A"}
+          {Array.isArray(course?.lessons) ? course.lessons.length : 60} lessons
         </p>
         <p className="text-sm text-gray-600 mt-1">
-          Lessons:{" "}
-          {Array.isArray(course?.lessons) ? course.lessons.length : "N/A"}
+          Lecturer:{" "}
+          <span className="text-fcolor">
+            {course.user?.username || "Nguyen Trung Tinh"}
+          </span>
         </p>
-
-        <button className="mt-4 w-full bg-scolor text-black text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
-          <a href={`/view-course/${course.id}`}>View Course</a>
-        </button>
+        <a href={`/view-course/${course.id}`}>
+          <button className="mt-4 w-full bg-scolor text-white text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+            View Course
+          </button>
+        </a>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
-      <h2 className="text-4xl text-rose-600 font-bold text-center mb-8">
-        Top-Tier Learning Experience
+    <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
+        Top Courses – No Payment Needed!
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {loading ? (
-          <SkeletonLoading />
+          <div className="col-span-full">
+            <SkeletonSection />
+          </div>
         ) : courses.length > 0 ? (
           courses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
           <div className="col-span-full">
-            <SkeletonLoading />
+            <SkeletonSection />
           </div>
         )}
       </div>

@@ -6,6 +6,7 @@ import UserRouter from "./routes/UserRouter";
 import NotFound from "./pages/NotFound/NotFound";
 import Forbidden from "./pages/NotFound/Forbidden";
 import ServerError from "./pages/NotFound/ServerError";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
