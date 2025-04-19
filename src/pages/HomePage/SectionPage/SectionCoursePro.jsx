@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
+<<<<<<< HEAD
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
+=======
+import SkeletonLoading from "../../../components/SkeletonLoading/SkeletonLoading";
+>>>>>>> c9c8c4889049948fa4dd1886a0a8a2f142058762
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
