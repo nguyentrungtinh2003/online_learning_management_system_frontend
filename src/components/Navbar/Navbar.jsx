@@ -4,6 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import { FaCoins } from "react-icons/fa";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -222,17 +223,22 @@ export default function Navbar() {
                 className="flex items-center space-x-2 cursor-pointer"
                 onClick={toggleDropdown}
               >
-                <img
-                  src={localStorage.getItem("img")}
-                  alt="User"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
                 <span className="text-gray-600 mr-2">
                   {localStorage.getItem("coin")}
                 </span>
-                <span className="text-gray-600">
+                <FaCoins style={{ color: "gold" }} size={30} />
+                <img
+                  src={
+                    localStorage.getItem("img").trim() !== ""
+                      ? localStorage.getItem("img")
+                      : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                  }
+                  alt="User"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                {/* <span className="text-gray-600">
                   {localStorage.getItem("username")}
-                </span>
+                </span> */}
               </div>
             </div>
           ) : (

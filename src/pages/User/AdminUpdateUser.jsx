@@ -5,6 +5,7 @@ import URL from "../../config/URLconfig";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
+import { Spinner } from "react-bootstrap";
 
 const AdminUpdateUser = () => {
   const { userId } = useParams();
@@ -14,9 +15,9 @@ const AdminUpdateUser = () => {
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/users/${userId}`)
+      .get(`${URL}/user/${userId}`)
       .then((response) => {
-        setUserData(response.data);
+        setUserData(response.data.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -46,7 +47,7 @@ const AdminUpdateUser = () => {
     }
 
     try {
-      await axios.put(`${URL}/api/users/update/${userId}`, formData, {
+      await axios.put(`${URL}/users/update/${userId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("User updated successfully!");
@@ -55,7 +56,12 @@ const AdminUpdateUser = () => {
     }
   };
 
-  if (loading) return <div className="p-6">Loading user data...</div>;
+  if (loading)
+    return (
+      <div className="container text-center my-5">
+        <Spinner animation="border" variant="primary" />;
+      </div>
+    );
   if (!userData) return <div className="p-6 text-red-500">User not found!</div>;
 
   return (
@@ -110,7 +116,7 @@ const AdminUpdateUser = () => {
               <label className="w-1/4 text-gray-700 font-medium">Rank:</label>
               <select
                 name="rank"
-                value={userData.rank}
+                value={userData.rankEnum}
                 onChange={handleChange}
                 className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               >

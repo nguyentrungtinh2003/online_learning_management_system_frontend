@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 import { FaCoins } from "react-icons/fa";
+import { Spinner } from "react-bootstrap";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -22,12 +23,22 @@ const Profile = () => {
   const [user, setUser] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const formContainerRef = useRef(null);
+  const [enroll, SetEnroll] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const userId = localStorage.getItem("id");
 
   const fetchUserInfo = () => {
     axios.get(`${URL}/user/${userId}`).then((response) => {
       setUser(response.data.data);
+      setLoading(false);
+    });
+  };
+
+  const fetchUserEnroll = () => {
+    axios.get(`${URL}/enroll/${userId}`).then((response) => {
+      SetEnroll(response.data.data);
+      setLoading(false);
     });
   };
 
@@ -39,6 +50,7 @@ const Profile = () => {
     }, 1000);
 
     fetchUserInfo();
+    fetchUserEnroll();
   }, [tab]);
 
   const handleImageChange = (event) => {
@@ -66,10 +78,14 @@ const Profile = () => {
           <div className="mt-20">
             <div className="flex items-center space-x-4">
               <h2 className="text-3xl ml-4 font-semibold text-gray-800">
-                {user.username || `Nguyen Trung Tinh`}
+                {user.username}
               </h2>
               <h3 className="text-3xl ml-4 font-semibold text-gray-800">
-                {user.coin || `0`}{" "}
+                {loading ? (
+                  <Spinner animation="border" variant="primary" />
+                ) : (
+                  user.coin || `0`
+                )}
               </h3>
               <FaCoins style={{ color: "gold" }} size={30} />
             </div>
@@ -179,25 +195,29 @@ const Profile = () => {
         {tab === "courses" && (
           <div className="courses-section p-6 py-2 bg-white rounded-lg shadow-lg">
             <p className="text-2xl font-bold text-slate-500 mb-4 text-center">
-              Courses
+              {loading ? (
+                <Spinner animation="border" variant="primary" />
+              ) : (
+                "Courses"
+              )}
             </p>
             <div className="course-list border p-4 rounded-lg max-h-[500px] overflow-y-auto">
-              {[...Array(3)].map((_, index) => (
+              {enroll.map((en, index) => (
                 <div
                   key={index}
                   className="course-item border-b-2 pb-4 flex justify-center mb-4"
                 >
                   <div className="flex items-center">
-                    <div className="course-thumbnail h-36 bg-cyan-300 w-80 rounded-2xl"></div>
+                    <img
+                      src={en.course.img}
+                      alt="Course Thumbnail"
+                      className="course-thumbnail h-36 w-80 rounded-2xl object-cover"
+                    />
+
                     <div className="ml-10 text-xl text-slate-500">
-                      <p className="text-2xl font-bold">
-                        Xây Dựng Website với ReactJS
-                      </p>
-                      <p>
-                        Khóa học ReactJS từ cơ bản tới nâng cao, kết quả của
-                        khóa học này là bạn có thể làm hầu hết các dự án thường
-                        gặp với ReactJS.
-                      </p>
+                      <p className="text-2xl font-bold">{en.course.name}</p>
+                      <p>{en.course.description}</p>
+                      <p>{en.enrolledDate}</p>
                     </div>
                   </div>
                 </div>
