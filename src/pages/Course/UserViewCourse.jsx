@@ -79,7 +79,7 @@ export default function UserViewCourse() {
               <h1 className="text-3xl text-fcolor font-bold">
                 Course Introduction
               </h1>
-              <p className="text-2xl font-bold">{course?.name}</p>{" "}
+              <p className="text-2xl font-bold">{course?.courseName}</p>{" "}
               {/* Sử dụng optional chaining */}
               <p>{course?.description}</p> {/* Sử dụng optional chaining */}
             </div>

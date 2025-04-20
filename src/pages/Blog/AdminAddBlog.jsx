@@ -42,7 +42,7 @@ const AdminAddBlog = () => {
     }
 
     await axios
-      .post(`${URL}/api/blogs/create`, data)
+      .post(`${URL}/blogs/create`, data)
       .then(() => {
         toast.success("Blog added successfully!", {
           position: "top-right",
