@@ -64,23 +64,20 @@ export const AddLesson = async (lessonData, imgFile, videoFile) => {
 
 export const deleteLesson = async (id) => {
   try {
-    const response = await fetch(
-      `${URL}/teacher/lessons/delete/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`${URL}/teacher/lessons/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        withCredentials: true,
-      }
-    );
+      credentials: "include", // đúng cách để gửi cookie session
+    });
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to delete lesson");
     }
-    return response.json();
+
+    return await response.json();
   } catch (error) {
     console.error("Error deleting lesson:", error);
     throw error;

@@ -144,23 +144,20 @@ export const addCourse = async (courseData, imageFile) => {
 
 export const deleteCourse = async (id) => {
   try {
-    const response = await fetch(
-      `${URL}/teacher/courses/delete/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await fetch(`${URL}/teacher/courses/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        withCredentials: true,
-      }
-    );
+      credentials: "include", // đúng cách để gửi cookie session
+    });
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to delete course");
     }
-    return response.json();
+
+    return await response.json();
   } catch (error) {
     console.error("Error deleting course:", error);
     throw error;

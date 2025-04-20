@@ -11,8 +11,8 @@ import URL from "../../config/URLconfig";
 
 const AddQuizz = () => {
   const navigate = useNavigate();
-  const { lessonId } = useParams();
 
+  const { lessonId } = useParams();
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",

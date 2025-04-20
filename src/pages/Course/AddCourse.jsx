@@ -90,12 +90,12 @@ const AddCourse = () => {
 
       toast.success("Thêm khóa học thành công!", {
         position: "top-right",
-        autoClose: 3000, // 4 giây
+        autoClose: 2000, // 4 giây
       });
 
       setTimeout(() => {
         navigate(-1);
-      }, 4000);
+      }, 3000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       // alert("Lỗi khi thêm khóa học!");

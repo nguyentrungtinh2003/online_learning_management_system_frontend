@@ -164,66 +164,78 @@ const QuizzManagement = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {quizzes.length > 0 ? (
-                            quizzes.map((quiz) => (
-                              <tr key={quiz.id} className="text-center">
-                                <td className="p-2">{quiz.id}</td>
-                                <td className="p-2">{quiz.quizName || "N/A"}</td>
-                                <td className="p-2">
-                                  {quiz.description || "No description"}
-                                </td>
-                                <td className="p-2">
-                                  {quiz.img ? (
-                                    <img
-                                      src={quiz.img}
-                                      alt="quiz"
-                                      className="w-8 h-8 rounded mx-auto"
-                                    />
-                                  ) : (
-                                    "No image"
-                                  )}
-                                </td>
-                                <td className="p-2">
-                                  {quiz.date
-                                    ? new Date(quiz.date).toLocaleDateString()
-                                    : "N/A"}
-                                </td>
-                                <td className="p-2">
-                                  {quiz.isDeleted ? "Active" : "Inactive"}
-                                </td>
-                                <td className="p-2 flex justify-center gap-1">
-                                  <Link
-                                    // to={`/admin/courses/${courseId}/lesson`}
-                                    className="p-2 border rounded"
-                                  >
-                                    <FaEye />
-                                  </Link>
-                                  <Link
-                                    to={`/admin/lessons/${lessonId}/quizzes/edit/${quiz.id}`}
-                                    className="p-2 border rounded"
-                                  >
-                                    <FaEdit />
-                                  </Link>
-                                  <button
-                                    className="p-2 border rounded"
-                                    onClick={() =>
-                                      handleDelete(quiz.id, quiz.quizName)
-                                    }
-                                  >
-                                    <MdDeleteForever />
-                                  </button>
+                            {loading ? (
+                              [...Array(6)].map((_, index) => (
+                                <tr key={index} className="text-center">
+                                  {Array(8)
+                                    .fill(null)
+                                    .map((_, i) => (
+                                      <td key={i} className="p-2">
+                                        <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
+                                      </td>
+                                    ))}
+                                </tr>
+                              ))
+                            ) : quizzes.length > 0 ? (
+                              quizzes.map((quiz, index) => (
+                                <tr key={quiz.id} className="text-center">
+                                  <td className="p-2">
+                                    {index + 1 + currentPage * quizzesPerPage}
+                                  </td>
+                                  <td className="p-2">{quiz.quizName}</td>
+                                  <td className="p-2">
+                                    {quiz.description || "No description"}
+                                  </td>
+                                  <td className="p-2">
+                                    {quiz.img ? (
+                                      <img
+                                        src={quiz.img}
+                                        alt="quiz"
+                                        className="w-8 h-8 rounded mx-auto"
+                                      />
+                                    ) : (
+                                      "No image"
+                                    )}
+                                  </td>
+                                  <td className="p-2">
+                                    {quiz.date
+                                      ? new Date(quiz.date).toLocaleDateString()
+                                      : "N/A"}
+                                  </td>
+                                  <td className="p-2">
+                                    {quiz.isDeleted ? "Active" : "Inactive"}
+                                  </td>
+                                  <td className="p-2 flex justify-center gap-1">
+                                    <Link 
+                                      to={`/admin/quizzes/${quiz.id}/questions`}
+                                      className="p-2 border rounded">
+                                      <FaEye />
+                                    </Link>
+                                    <Link
+                                      to={`/admin/lessons/${lessonId}/quizzes/edit/${quiz.id}`}
+                                      className="p-2 border rounded"
+                                    >
+                                      <FaEdit />
+                                    </Link>
+                                    <button
+                                      className="p-2 border rounded"
+                                      onClick={() =>
+                                        handleDelete(quiz.id, quiz.quizName)
+                                      }
+                                    >
+                                      <MdDeleteForever />
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan="7" className="text-center p-4">
+                                  No quizzes found.
                                 </td>
                               </tr>
-                            ))
-                          
-                          ) : (
-                            <tr>
-                              <td colSpan="7" className="text-center p-4">
-                                No quizzes found.
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
+                            )}
+                          </tbody>
                       </table>
                       )}
                     </div>
