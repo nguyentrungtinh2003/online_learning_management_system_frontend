@@ -33,6 +33,7 @@ export default function Blog() {
   const [newPostImage, setNewPostImage] = useState(null);
   const [newPostVideo, setNewPostVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     handleGetPosts();
@@ -43,6 +44,7 @@ export default function Blog() {
       .get(`${URL}/blogs/all`, { withCredentials: true })
       .then((response) => {
         setData(response.data.data);
+        setDataLoading(false);
       })
       .catch((error) => {
         console.log("error get blogs :" + error.message);
@@ -135,6 +137,14 @@ export default function Blog() {
     alert("Bài viết đã được báo cáo.");
     setMenuOpenPost(null); // Đóng menu sau khi báo cáo
   };
+
+  if (dataLoading) {
+    return (
+      <div className="container my-5">
+        <Spinner animation="border" variant="blue" />
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen overflow-y-auto flex-1 mx-auto p-4 space-y-2 bg-white">
@@ -253,145 +263,143 @@ export default function Blog() {
 
       {Array.isArray(data) &&
         data.map((post) => (
-          <Link to={`/blog/${post.id}`}>
-            <div key={post.id}>
-              {!hiddenPosts.includes(post.id) ? (
-                <div className="pt-4 px-4 pb-2 border rounded-2xl border border-gray-200">
-                  <div className="flex justify-between">
-                    <div className="flex items-center mb-2">
-                      <div className="w-10 h-10 bg-gray-300 rounded-full" />
+          <div key={post.id}>
+            {!hiddenPosts.includes(post.id) ? (
+              <div className="pt-4 px-4 pb-2 border rounded-2xl border border-gray-200">
+                <div className="flex justify-between">
+                  <div className="flex items-center mb-2">
+                    <div className="w-10 h-10 bg-gray-300 rounded-full" />
+                    <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
                         <h4 className="font-bold">{post.user.username}</h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() =>
-                          setMenuOpenPost(
-                            menuOpenPost === post.id ? null : post.id
-                          )
-                        }
-                      >
-                        <PiDotsThreeBold size={25} />
-                      </button>
-                      {menuOpenPost === post.id && (
-                        <div className="absolute right-40 mt-2 bg-white border shadow-md rounded-lg p-2">
-                          <button
-                            className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 rounded-md"
-                            onClick={() => reportPost(post.id)}
-                          >
-                            Báo cáo bài viết
-                          </button>
-                        </div>
-                      )}
-                      <button onClick={() => hidePost(post.id)}>
-                        <PiBackspace size={25} />
-                      </button>
-                    </div>
+                    </Link>
                   </div>
-                  <h2 className="mb-2">{post.blogName}</h2>
-                  <p className="mb-2">{post.description}</p>
-                  {post.img && (
-                    <img
-                      src={post.img}
-                      alt="Post"
-                      className="w-full h-60 object-cover rounded-lg mb-2"
-                    />
-                  )}
-                  <div className="flex justify-between text-gray-600 text-sm border-t-2 pt-2">
+                  <div className="flex items-center gap-2">
                     <button
-                      className="flex items-center gap-2"
-                      onClick={() => toggleLike(post.id)}
-                    >
-                      <PiHeartFill
-                        size={25}
-                        color={likedPosts.includes(post.id) ? "red" : "gray"}
-                      />
-                      <span>{post.views ? post.views : 0}</span>
-                    </button>
-                    <button
-                      className="flex items-center space-x-1"
                       onClick={() =>
-                        setSelectedPost(
-                          post.id === selectedPost ? null : post.id
+                        setMenuOpenPost(
+                          menuOpenPost === post.id ? null : post.id
                         )
                       }
                     >
-                      <PiChatCircle size={25} />
-                      <span>{post.blogComments ? post.blogComments : 0}</span>
+                      <PiDotsThreeBold size={25} />
                     </button>
-                    <button className="flex items-center space-x-1">
-                      <PiShareFatLight size={25} />
-                      {/* <span>{post.shares.toLocaleString()}</span> */}
+                    {menuOpenPost === post.id && (
+                      <div className="absolute right-40 mt-2 bg-white border shadow-md rounded-lg p-2">
+                        <button
+                          className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 rounded-md"
+                          onClick={() => reportPost(post.id)}
+                        >
+                          Báo cáo bài viết
+                        </button>
+                      </div>
+                    )}
+                    <button onClick={() => hidePost(post.id)}>
+                      <PiBackspace size={25} />
                     </button>
                   </div>
-
-                  {/* Hiển thị bình luận khi bấm vào comment */}
-                  {selectedPost === post.id && (
-                    <div className="mt-2 p-2 border-t">
-                      <div className="max-h-60 overflow-y-auto">
-                        {post.blogComments
-                          .slice(0, visibleComments)
-                          .map((comment) => (
-                            <div
-                              key={comment.id}
-                              className="flex items-center mb-2"
-                            >
-                              <div className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
-                              <div className="bg-gray-100 p-2 rounded-lg">
-                                <p className="text-sm font-semibold">
-                                  {comment.user.username}
-                                </p>
-                                <img
-                                  src={comment.user.img}
-                                  alt="Post"
-                                  className="w-full h-60 object-cover rounded-lg mb-2"
-                                />
-                                <p className="text-sm">{comment.content}</p>
-                              </div>
-                            </div>
-                          ))}
-                        {visibleComments < post.blogComments.length && (
-                          <button
-                            onClick={() =>
-                              setVisibleComments(visibleComments + 3)
-                            }
-                            className="text-blue-500 text-sm mt-2"
-                          >
-                            Xem thêm bình luận
-                          </button>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-2 border-t pt-2">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full" />
-                        <input
-                          type="text"
-                          placeholder="Viết bình luận..."
-                          className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
-                        />
-                        <PiPaperPlaneRightFill className="" size={25} />
-                      </div>
-                    </div>
-                  )}
                 </div>
-              ) : (
-                <div className="px-4 py-3 border flex justify-between items-center rounded-xl">
-                  <span className="flex items-center gap-2">
-                    <PiEyeClosed size={25} />
-                    Bài viết đã được ẩn
-                  </span>
+                <h2 className="mb-2">{post.blogName}</h2>
+                <p className="mb-2">{post.description}</p>
+                {post.img && (
+                  <img
+                    src={post.img}
+                    alt="Post"
+                    className="w-full h-60 object-cover rounded-lg mb-2"
+                  />
+                )}
+                <div className="flex justify-between text-gray-600 text-sm border-t-2 pt-2">
                   <button
-                    onClick={() => restorePost(post.id)}
-                    className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
+                    className="flex items-center gap-2"
+                    onClick={() => toggleLike(post.id)}
                   >
-                    <PiArrowsClockwise size={25} />
-                    Hoàn tác
+                    <PiHeartFill
+                      size={25}
+                      color={likedPosts.includes(post.id) ? "red" : "gray"}
+                    />
+                    <span>{post.views ? post.views : 0}</span>
+                  </button>
+                  <button
+                    className="flex items-center space-x-1"
+                    onClick={() =>
+                      setSelectedPost(post.id === selectedPost ? null : post.id)
+                    }
+                  >
+                    <PiChatCircle size={25} />
+                    <span>{post.blogComments ? post.blogComments : 0}</span>
+                  </button>
+                  <button className="flex items-center space-x-1">
+                    <PiShareFatLight size={25} />
+                    {/* <span>{post.shares.toLocaleString()}</span> */}
                   </button>
                 </div>
-              )}
-            </div>
-          </Link>
+
+                {/* Hiển thị bình luận khi bấm vào comment */}
+                {selectedPost === post.id && (
+                  <div className="mt-2 p-2 border-t">
+                    <div className="max-h-60 overflow-y-auto">
+                      {post.blogComments
+                        .slice(0, visibleComments)
+                        .map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="flex items-center mb-2"
+                          >
+                            <div className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
+                            <div className="bg-gray-100 p-2 rounded-lg">
+                              <p className="text-sm font-semibold">
+                                {comment.user.username}
+                              </p>
+                              <img
+                                src={comment.user.img}
+                                alt="Post"
+                                className="w-full h-60 object-cover rounded-lg mb-2"
+                              />
+                              <p className="text-sm">{comment.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                      {visibleComments < post.blogComments.length && (
+                        <button
+                          onClick={() =>
+                            setVisibleComments(visibleComments + 3)
+                          }
+                          className="text-blue-500 text-sm mt-2"
+                        >
+                          Xem thêm bình luận
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mt-2 border-t pt-2">
+                      <div className="w-8 h-8 bg-gray-300 rounded-full" />
+                      <input
+                        type="text"
+                        placeholder="Viết bình luận..."
+                        className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
+                      />
+                      <PiPaperPlaneRightFill className="" size={25} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="px-4 py-3 border flex justify-between items-center rounded-xl">
+                <span className="flex items-center gap-2">
+                  <PiEyeClosed size={25} />
+                  Bài viết đã được ẩn
+                </span>
+                <button
+                  onClick={() => restorePost(post.id)}
+                  className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
+                >
+                  <PiArrowsClockwise size={25} />
+                  Hoàn tác
+                </button>
+              </div>
+            )}
+          </div>
         ))}
     </div>
   );
