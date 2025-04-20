@@ -73,27 +73,27 @@ export default function Navbar() {
       .catch((error) => console.error("Failed to fetch notifications:", error));
   };
 
+  // Fetch search suggestions
+  const fetchSearchSuggestions = (value) => {
+    axios
+      .get(`${URL}/searchAll/search?keyword=${value}`)
+      .then((response) => {
+        setSuggestions(response.data.data.courses);
+      })
+      .catch((error) => {
+        console.error("Error fetching search suggestions:", error);
+      });
+  };
+
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    if (e.target.value.length > 2) {
+    if (e.target.value.length >= 2) {
       // Fetch search suggestions if input length > 2
       fetchSearchSuggestions(e.target.value);
     } else {
       setSuggestions([]); // Clear suggestions if input is less than 3 characters
     }
-  };
-
-  // Fetch search suggestions
-  const fetchSearchSuggestions = (query) => {
-    axios
-      .get(`${URL}/search-courses?query=${query}`)
-      .then((response) => {
-        setSuggestions(response.data.suggestions);
-      })
-      .catch((error) => {
-        console.error("Error fetching search suggestions:", error);
-      });
   };
 
   const toggleDropdown = () => {
@@ -142,15 +142,15 @@ export default function Navbar() {
     }
   };
 
-  // Hàm để hiển thị các gợi ý (có thể là mặc định hoặc từ API)
-  const displaySuggestions = () => {
-    if (searchQuery.length === 0) {
-      // Nếu người dùng chưa nhập gì, hiển thị gợi ý mặc định
-      return defaultSuggestions;
-    }
-    // Nếu người dùng đã nhập, hiển thị các gợi ý từ API
-    return suggestions;
-  };
+  // // Hàm để hiển thị các gợi ý (có thể là mặc định hoặc từ API)
+  // const displaySuggestions = () => {
+  //   if (searchQuery.length === 0) {
+  //     // Nếu người dùng chưa nhập gì, hiển thị gợi ý mặc định
+  //     return defaultSuggestions;
+  //   }
+  //   // Nếu người dùng đã nhập, hiển thị các gợi ý từ API
+  //   return suggestions;
+  // };
 
   const handleFocus = () => {
     // Khi người dùng focus vào ô input, hiển thị các gợi ý mặc định
@@ -181,16 +181,32 @@ export default function Navbar() {
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
                 <ul className="max-h-60 overflow-auto">
-                  {displaySuggestions().map((suggestion, index) => (
+                  {suggestions.map((suggestion, id) => (
                     <li
-                      key={index}
-                      className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                      key={suggestion.id}
+                      className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
                     >
                       <Link
-                        to={`/course/${suggestion.id}`}
-                        className="text-black"
+                        to={`/view-course/${suggestion.id}`}
+                        className="flex items-center gap-4"
                       >
-                        {suggestion.name}
+                        <img
+                          src={
+                            suggestion.img
+                              ? suggestion.img
+                              : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                          }
+                          alt="Course"
+                          className="w-12 h-12 rounded object-cover"
+                        />
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-800">
+                            {suggestion.courseName}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            {suggestion.price} Coin
+                          </span>
+                        </div>
                       </Link>
                     </li>
                   ))}
@@ -229,7 +245,7 @@ export default function Navbar() {
                 <FaCoins style={{ color: "gold" }} size={30} />
                 <img
                   src={
-                    localStorage.getItem("img").trim() !== ""
+                    localStorage.getItem("img") !== "null"
                       ? localStorage.getItem("img")
                       : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
                   }
