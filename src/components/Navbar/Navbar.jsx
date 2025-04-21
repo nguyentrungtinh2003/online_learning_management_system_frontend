@@ -218,11 +218,13 @@ export default function Navbar() {
 
         <div ref={dropdownRef} className="relative items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-2">
               <span className="text-gray-600">
                   {localStorage.getItem("coin")}
                 </span>
                 <FaCoins style={{ color: "gold" }} size={25} />
+              </div>
               <div ref={notificationRef} className="relative">
                 <div
                   className="relative cursor-pointer"
@@ -252,9 +254,9 @@ export default function Navbar() {
                   alt="User"
                   className="w-8 h-8 rounded-full object-cover"
                 />
-                {/* <span className="text-gray-600">
+                <span className="text-gray-600 text-lg w-34 overflow:hidden">
                   {localStorage.getItem("username")}
-                </span> */}
+                </span>
               </div>
             </div>
           ) : (
