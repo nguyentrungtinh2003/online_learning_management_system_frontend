@@ -45,11 +45,23 @@ export default function ManagementLesson() {
 
   // Tìm kiếm bài học
   const handleSearch = async (e) => {
-    const value = e.target.value;
+    const value = e.target.value; // Lưu giá trị trước khi setState
     setSearch(value);
 
+    // Nếu người dùng xóa hết -> reset lại danh sách gốc
     if (value.trim() === "") {
       setCurrentPage(0);
+      setLoading(true);
+      try {
+        const data = await getCoursesByPage(0, lessonsPerPage); // hoặc gọi API ban đầu
+        setLessons(data.data.content);
+        setTotalPages(data.data.totalPages);
+      } catch (error) {
+        console.error("Lỗi tải lại danh sách:", error);
+        setLessons([]);
+      } finally {
+        setLoading(false);
+      }
       return;
     }
 

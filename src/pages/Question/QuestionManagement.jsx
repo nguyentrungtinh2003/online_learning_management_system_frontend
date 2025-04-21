@@ -159,7 +159,7 @@ const QuestionManagement = () => {
                              <th className="p-2">Question B</th>
                              <th className="p-2">Question C</th>
                              <th className="p-2">Question D</th>
-                             <th className="p-2">Correct Question</th>
+                             <th className="p-2">Correct Answer</th>
                              <th className="p-2">Image</th>
                              <th className="p-2">Delete</th>
                              <th className="p-2">Action</th>
