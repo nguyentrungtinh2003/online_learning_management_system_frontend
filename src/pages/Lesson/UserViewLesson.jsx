@@ -1,38 +1,66 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiQuestion } from "react-icons/pi";
+import { getCourseById } from "../../services/courseapi";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function UserViewLesson() {
   const navigate = useNavigate();
   const [showCommentForm, setShowCommentForm] = useState(false);
+  const [course, setCourse] = useState({});
 
   const { courseId } = useParams();
   const [lessons, setLessons] = useState([]);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
-  // const lessons = [
-  //   { title: "Khái niệm cần biết", duration: "11:35" },
-  //   { title: "Cấu trúc cơ bản", duration: "09:20" },
-  //   { title: "Biến và kiểu dữ liệu", duration: "12:45" },
-  // ];
-  const [videoDuration, setVideoDuration] = useState(null);
-  const videoRef = useRef(null);
+  const [videoDurations, setVideoDurations] = useState({});
+  const videoRefs = useRef([]);
+  const hiddenVideoRef = useRef(null);
 
-  const handleLoadedMetadata = () => {
-    // Lấy thời gian video tính bằng giây
-    if (videoRef.current) {
-      setVideoDuration(videoRef.current.duration);
+  useEffect(() => {
+    if (!lessons || lessons.length === 0) return;
+
+    const loadDurations = async () => {
+      const durations = {};
+      for (let i = 0; i < lessons.length; i++) {
+        const video = hiddenVideoRef.current;
+        if (video) {
+          video.src = lessons[i].videoURL;
+          await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+              durations[i] = video.duration;
+              resolve();
+            };
+            video.onerror = () => {
+              durations[i] = 0; // set 0 if video metadata can't be loaded
+              resolve();
+            };
+          });
+        }
+      }
+      setVideoDurations(durations);
+    };
+
+    loadDurations();
+  }, [lessons]);
+
+  const handleLoadedMetadata = (index) => {
+    const videoElement = videoRefs.current[index];
+    if (videoElement && videoElement.duration) {
+      setVideoDurations((prev) => ({
+        ...prev,
+        [index]: videoElement.duration,
+      }));
     }
   };
-
-
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
         const response = await getCourseById(courseId);
         if (response && response.statusCode === 200) {
-          setLessons(response.data.lessons); // Cập nhật state `lesson`
+          setLessons(response.data.lessons);
         } else {
           console.error("Lỗi khi tải dữ liệu khóa học", response);
         }
@@ -40,11 +68,21 @@ export default function UserViewLesson() {
         console.error("Lỗi gọi API", error);
       }
     };
-  
+
     fetchCourse();
   }, [courseId]);
 
-  
+  const formatDuration = (duration) => {
+    if (!duration || isNaN(duration)) return "Đang tải...";
+    const minutes = Math.floor(duration / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = Math.floor(duration % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
   const [comments, setComments] = useState([
     {
       id: 1,
@@ -133,7 +171,6 @@ export default function UserViewLesson() {
         </div>
       )}
 
-
       {/* Main Layout */}
       <div className="h-full flex-1 overflow-y-auto bg-white flex-row p-4 z-0">
         <div className="flex gap-4">
@@ -145,16 +182,22 @@ export default function UserViewLesson() {
               <PiQuestion size={20} />
               <p>Hỏi Đáp</p>
             </button>
-                  <video
-              ref={videoRef}
-              className="h-[70%] w-full bg-gray-400 rounded-lg"
-              src={lessons[currentLessonIndex]?.videoURL}
-              controls
-              onLoadedMetadata={handleLoadedMetadata}
-            />
+            {/* Check if video is available before rendering */}
+            {lessons[currentLessonIndex]?.videoURL ? (
+              <video
+                ref={(el) => (videoRefs.current[currentLessonIndex] = el)}
+                className="w-full h-[400px] bg-black rounded-lg"
+                src={lessons[currentLessonIndex]?.videoURL}
+                controls
+                onLoadedMetadata={() => handleLoadedMetadata(currentLessonIndex)}
+              />
+            ) : (
+              <p>Không thể tải video, vui lòng thử lại sau.</p>
+            )}
+
             <div className="space-y-2">
               <div className="flex w-full justify-between my-4">
-              <h1 className="text-xl font-bold">{lessons[currentLessonIndex]?.lessonName}</h1>
+                <h1 className="text-xl font-bold">{lessons[currentLessonIndex]?.lessonName}</h1>
                 <button className="bg-scolor border py-2 px-10 hover:shadow duration-700 rounded-xl">
                   Thêm ghi chú tại 00:00:00
                 </button>
@@ -174,10 +217,10 @@ export default function UserViewLesson() {
         </div>
         <div className="flex-1 flex items-center">
           <div className="font-bold flex gap-4 w-full justify-center">
-          <button
-            disabled={currentLessonIndex === 0}
-            onClick={() => setCurrentLessonIndex((prev) => prev - 1)}
-                      >
+            <button
+              disabled={currentLessonIndex === 0}
+              onClick={() => setCurrentLessonIndex((prev) => prev - 1)}
+            >
               Bài trước
             </button>
             <button
@@ -196,9 +239,11 @@ export default function UserViewLesson() {
           <p className="text-2xl">Nội dung khóa học</p>
           {lessons.map((lesson, index) => (
             <div key={index}>
-              <h1>{lesson.title}</h1>
+              <h1>{lesson.lessonName || "Không có tiêu đề"}</h1>
               <p className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {lesson.duration}
+                {videoDurations[index]
+                  ? formatDuration(videoDurations[index])
+                  : "Đang tải..."}
               </p>
             </div>
           ))}
@@ -210,3 +255,4 @@ export default function UserViewLesson() {
     </div>
   );
 }
+  
