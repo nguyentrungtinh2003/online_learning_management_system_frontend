@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
+import { PiArrowFatLinesDown } from "react-icons/pi";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCourses, setVisibleCourses] = useState(4);
 
   useEffect(() => {
     axios
@@ -19,13 +21,13 @@ export default function SectionCoursePro() {
       })
       .catch((error) => {
         console.error("Error fetching courses:", error);
-        setCourses([]); // đảm bảo không undefined
+        setCourses([]);
         setLoading(false);
       });
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-700">
+    <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
@@ -56,6 +58,10 @@ export default function SectionCoursePro() {
     </div>
   );
 
+  const handleShowMore = () => {
+    setVisibleCourses((prev) => prev + 4);
+  };
+
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
@@ -67,7 +73,7 @@ export default function SectionCoursePro() {
             <SkeletonSection />
           </div>
         ) : courses.length > 0 ? (
-          courses.map((course) => (
+          courses.slice(0, visibleCourses).map((course) => (
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
@@ -76,6 +82,19 @@ export default function SectionCoursePro() {
           </div>
         )}
       </div>
+
+      {/* Nút xem thêm */}
+      {!loading && visibleCourses < courses.length && (
+        <div className="w-full justify-center items-center mt-12 flex">
+          <button
+            onClick={handleShowMore}
+            className="font-semibold text-gray-500 flex flex-col items-center hover:text-fcolor transition duration-300"
+          >
+            <PiArrowFatLinesDown size={25} />
+            <p>Xem thêm khoá học</p>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
