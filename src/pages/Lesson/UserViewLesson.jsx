@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiQuestion } from "react-icons/pi";
-import { getCourseById } from "../../services/courseapi";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
-import { useParams, useNavigate } from "react-router-dom";
 
 export default function UserViewLesson() {
   const navigate = useNavigate();
@@ -198,11 +195,13 @@ export default function UserViewLesson() {
         <div className="space-y-4">
           <p className="text-2xl">Nội dung khóa học</p>
           {lessons.map((lesson, index) => (
-          <div key={index}>
-            <h1>{lesson.lessonName || "Không có tiêu đề"}</h1> {/* 👈 kiểm tra fallback */}
-            {videoDuration ? `${Math.floor(videoDuration / 60)}:${Math.floor(videoDuration % 60)}` : "Không có thời lượng"}
+            <div key={index}>
+              <h1>{lesson.title}</h1>
+              <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+                {lesson.duration}
+              </p>
             </div>
-        ))}
+          ))}
         </div>
         <p className="flex-end w-fit whitespace-nowrap">
           1.Khái niệm kỹ thuật cần biết
