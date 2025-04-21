@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
-import { PiQuestion } from "react-icons/pi";
+import { PiQuestion, PiYoutubeLogo } from "react-icons/pi";
 
 export default function UserViewLesson() {
   const [showCommentForm, setShowCommentForm] = useState(false);
@@ -148,22 +148,22 @@ export default function UserViewLesson() {
       </div>
 
       {/* Sidebar */}
-      <div className="shadow h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
-        <div className="space-y-4">
-          <p className="text-2xl">Nội dung khóa học</p>
-          {lessons.map((lesson, index) => (
-            <div key={index}>
-              <h1>{lesson.title}</h1>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {lesson.duration}
-              </p>
-            </div>
-          ))}
-        </div>
-        <p className="flex-end w-fit whitespace-nowrap">
-          1.Khái niệm kỹ thuật cần biết
-        </p>
-      </div>
+      <div className="shadow h-full p-4 pb-2 space-y-4 mx-2 justify-between flex flex-col rounded-xl w-[250px]">
+          <div className="space-y-4">
+              <p className="text-2xl font-bold">Nội dung khóa học</p>
+              {lessons.map((lesson, index) => (
+              <div className="cursor-pointer" key={index}>
+                <h1 className="text-lg">{lesson.title}</h1>
+                <div className="flex items-center gap-1">
+                  <PiYoutubeLogo size={18}/>
+                  <p className="whitespace-nowrap overflow-hidden text-ellipsis text-sm text-gray-600">
+                    {lesson.duration}
+                  </p>
+                </div>
+              </div>))}
+          </div>
+            <p className="flex-end w-fit text-lg">1. Khái niệm kỹ thuật cần biết</p>
+          </div>
     </div>
   );
 }
