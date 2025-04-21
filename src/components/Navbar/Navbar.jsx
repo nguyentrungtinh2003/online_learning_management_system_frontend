@@ -216,9 +216,13 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div ref={dropdownRef} className="relative items-center gap-2">
+        <div ref={dropdownRef} className="relative items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-600">
+                  {localStorage.getItem("coin")}
+                </span>
+                <FaCoins style={{ color: "gold" }} size={25} />
               <div ref={notificationRef} className="relative">
                 <div
                   className="relative cursor-pointer"
@@ -239,10 +243,6 @@ export default function Navbar() {
                 className="flex items-center space-x-2 cursor-pointer"
                 onClick={toggleDropdown}
               >
-                <span className="text-gray-600 mr-2">
-                  {localStorage.getItem("coin")}
-                </span>
-                <FaCoins style={{ color: "gold" }} size={30} />
                 <img
                   src={
                     localStorage.getItem("img") !== "null"
@@ -250,7 +250,7 @@ export default function Navbar() {
                       : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
                   }
                   alt="User"
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover"
                 />
                 {/* <span className="text-gray-600">
                   {localStorage.getItem("username")}
