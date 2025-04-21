@@ -25,7 +25,7 @@ import AddQuizz from "../pages/Quizz/AddQuizz";
 import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestion from "../pages/Question/AddQuestion";
-
+import UserQuizz from "../pages/Quizz/UserQuizz";
 
 
 const AdminRoutes = () => {
@@ -255,6 +255,18 @@ const AdminRoutes = () => {
               <AdminSidebar />
               <UpdateQuizz/>
             </div>
+          </ProtectedRouter>
+        }
+      />
+
+        <Route
+        path="/quiz-test/:quizId"
+        element={
+          <ProtectedRouter requiredRole="ADMIN">
+          <div className="flex bg-focolor">
+            <AdminSidebar />
+            <UserQuizz />
+          </div>
           </ProtectedRouter>
         }
       />

@@ -88,3 +88,24 @@ export const deleteQuiz = async (id) => {
       throw error;
   }
 };
+
+// 6. Quiz by Id
+export const getQuizById = async (id) => {
+    try {
+        const response = await fetch(`${URL}/quizzes/${id}`, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include", // đúng cách để gửi cookie session
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to delete quiz");
+      }
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting quiz:", error);
+        throw error;
+    }
+  };
+  
