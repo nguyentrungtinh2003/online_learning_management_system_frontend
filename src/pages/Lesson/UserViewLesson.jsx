@@ -238,15 +238,24 @@ export default function UserViewLesson() {
         <div className="space-y-4">
           <p className="text-2xl">Nội dung khóa học</p>
           {lessons.map((lesson, index) => (
-            <div key={index}>
-              <h1>{lesson.lessonName || "Không có tiêu đề"}</h1>
-              <p className="whitespace-nowrap overflow-hidden text-ellipsis">
-                {videoDurations[index]
-                  ? formatDuration(videoDurations[index])
-                  : "Đang tải..."}
-              </p>
-            </div>
-          ))}
+          <div
+            key={index}
+            onClick={() => setCurrentLessonIndex(index)}
+            className={`cursor-pointer p-3 rounded-xl transition-all duration-300
+              ${currentLessonIndex === index
+                ? "bg-scolor text-white"
+                : "hover:bg-gray-100"
+              }`}
+          >
+            <h1 className="truncate">{lesson.lessonName || "Không có tiêu đề"}</h1>
+            <p className="text-sm opacity-80">
+              {videoDurations[index]
+                ? formatDuration(videoDurations[index])
+                : "Đang tải..."}
+            </p>
+          </div>
+        ))}
+
         </div>
         <p className="flex-end w-fit whitespace-nowrap">
           1.Khái niệm kỹ thuật cần biết
