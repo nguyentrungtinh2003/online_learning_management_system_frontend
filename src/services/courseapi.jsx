@@ -187,3 +187,26 @@ export const searchCourses = async (keyword, page = 0, size = 6) => {
   );
   return response.data;
 };
+
+// API Hiển thị course theo user
+export const userEnroll = async (id) => {
+  try {
+    const response = await fetch(`${URL}/enroll/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // đúng cách để gửi cookie session
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to get course");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error get course:", error);
+    throw error;
+  }
+};
