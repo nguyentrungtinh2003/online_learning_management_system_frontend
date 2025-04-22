@@ -35,6 +35,8 @@ export default function Blog() {
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
 
+  const userId = parseInt(localStorage.getItem("id"));
+
   useEffect(() => {
     handleGetPosts();
   }, []);
@@ -115,12 +117,48 @@ export default function Blog() {
     setNewPostVideo(e.target.files[0]);
   };
 
-  const toggleLike = (postId) => {
-    setLikedPosts((prevLikedPosts) =>
-      prevLikedPosts.includes(postId)
-        ? prevLikedPosts.filter((id) => id !== postId)
-        : [...prevLikedPosts, postId]
-    );
+  const postLike = (blogId) => {
+    axios
+      .post(
+        `${URL}/blogs/like/${blogId}/${userId}`, // Sử dụng backtick đúng
+        {}, // Kiểm tra lại body nếu cần truyền thêm dữ liệu
+        {
+          withCredentials: true, // Cung cấp cookie nếu cần thiết
+        }
+      )
+      .then((response) => {
+        setLikedPosts(response.data.data);
+        console.log("Like success !" + response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error " + error.message);
+      });
+  };
+
+  const postUnLike = (blogId) => {
+    axios
+      .post(
+        `${URL}/blogs/unlike/${blogId}/${userId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        setLikedPosts(response.data.data);
+        console.log("Un Like success !");
+      })
+      .catch((error) => {
+        console.log("Error " + error.message);
+      });
+  };
+
+  const handleLike = (postId) => {
+    if (likedPosts.includes(postId)) {
+      postUnLike(postId); // nếu đã like → thì unlike
+    } else {
+      postLike(postId); // nếu chưa like → thì like
+    }
   };
 
   const hidePost = (postId) => {
@@ -313,13 +351,17 @@ export default function Blog() {
                 <div className="flex justify-between text-gray-600 text-sm border-t-2 pt-2">
                   <button
                     className="flex items-center gap-2"
-                    onClick={() => toggleLike(post.id)}
+                    onClick={() => handleLike(post.id)}
                   >
                     <PiHeartFill
                       size={25}
-                      color={likedPosts.includes(post.id) ? "red" : "gray"}
+                      color={
+                        post.likedUsers.some((user) => user.id === userId)
+                          ? "red"
+                          : "gray"
+                      }
                     />
-                    <span>{post.views ? post.views : 0}</span>
+                    <span>{post.likeCount ? post.likeCount : 0}</span>
                   </button>
                   <button
                     className="flex items-center space-x-1"

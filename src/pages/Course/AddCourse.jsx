@@ -15,12 +15,9 @@ const AddCourse = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    img: "",
-    price: "",
+    price: 0,
     courseEnum: "FREE",
-    users: [],
     user: { id: localStorage.getItem("id") },
-    lessons: [],
   });
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -36,7 +33,7 @@ const AddCourse = () => {
 
     axios
       .get(
-        `https://codearena-backend-dev.onrender.com/api/auth/user/${userIdFromStorage}`,
+        `https://codearena-backend-dev.onrender.com/api/user/${userIdFromStorage}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -84,7 +81,7 @@ const AddCourse = () => {
           },
           withCredentials: true, // Cho phép gửi cookies, session
         }
-      );      
+      );
       console.log("Thành công:", response.data);
       // alert("Thêm khóa học thành công!");
 
