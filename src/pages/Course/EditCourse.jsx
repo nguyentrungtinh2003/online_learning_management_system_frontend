@@ -17,6 +17,8 @@ const EditCourse = () => {
     description: "",
     price: "",
     img: "",
+    users: [],
+    user : {id: localStorage.getItem("id")}
   });
 
   const [lessons, setLessons] = useState([]);
@@ -26,7 +28,7 @@ const EditCourse = () => {
 
   useEffect(() => {
     axios
-      .get(`https://codearena-backend-dev.onrender.com/api/teacher/courses/${id}`, {
+      .get(`https://codearena-backend-dev.onrender.com/api/courses/${id}`, {
         withCredentials: true, // Cho phép gửi cookies hoặc xác thực từ trình duyệt
       })
       .then(({ data }) => {
@@ -46,6 +48,10 @@ const EditCourse = () => {
     e.preventDefault();
     setLoading(true);
 
+    if (!course.user || !course.user.id) {
+      course.user = { id: localStorage.getItem("id") };
+    }
+  
     const formData = new FormData();
     formData.append(
       "course",

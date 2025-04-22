@@ -1,4 +1,7 @@
 import React from "react";
+import ytblogo from "../../assets/youtube.svg";
+import fblogo from "../../assets/facebook-ico.svg";
+import logoCode from "../../assets/logoCode.png";
 
 export default function Footer() {
   return (
@@ -7,7 +10,7 @@ export default function Footer() {
         <div className="p-16 flex justify-between items-top">
           <div className="space-y-4">
             <div className="flex text-2xl font-bold items-center">
-              <img className="h-14 mr-4 rounded-full" src="image2.jpg" />
+              <img className="h-14 mr-4" style={{ filter: 'invert(1)' }} src={logoCode} alt="Logo"/>
               <h3 className="text-xl font-bold text-white-800">
                 Code Arena
               </h3>
@@ -31,11 +34,11 @@ export default function Footer() {
             <p className="font-bold text-2xl">Follow Us</p>
             <ul className="">
               <li className="flex items-center">
-                <img className="h-10 mr-2" src="youtube.svg" />
+                <img className="h-10 mr-2" src={ytblogo} alt="Youtube" />
                 Youtube
               </li>
               <li className="flex items-center">
-                <img className="h-10 mr-2" src="facebook-ico.svg" />
+                <img className="h-10 mr-2" src={fblogo} alt="Facebook" />
                 Facebook
               </li>
             </ul>

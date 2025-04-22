@@ -1,11 +1,21 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
+import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import { MdNavigateNext } from "react-icons/md";
+import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
 
 const AddQuestion = () => {
+  const navigate = useNavigate();
+
+  const { quizId } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [img, setImg] = useState(null);
+
   const [questionData, setQuestionData] = useState({
-    questionId: "",
     questionName: "",
     answerA: "",
     answerB: "",
@@ -13,7 +23,7 @@ const AddQuestion = () => {
     answerD: "",
     answerCorrect: "",
     isDeleted: false,
-    quizId: "", // Liên kết với quiz
+    quiz: {id:quizId}
   });
 
   const handleChange = (e) => {
@@ -21,103 +31,120 @@ const AddQuestion = () => {
     setQuestionData({ ...questionData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleImageChange = (e) => {
+    setImg(e.target.files[0]);
+  };
 
-    axios
-      .post(`${URL}/api/questions/add`, questionData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then(() => {
-        alert("Question added successfully!");
-      })
-      .catch((error) => {
-        console.error("Error adding question:", error);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const data = new FormData();
+    data.append(
+      "question",
+      new Blob([JSON.stringify(questionData)], { type: "application/json" })
+    );
+    if (img) data.append("img", img);
+
+    try {
+      const response = await axios.post(
+        `${URL}/teacher/questions/add`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      toast.success("Thêm câu hỏi thành công!", {
+        position: "top-right",
+        autoClose: 3000,
       });
+
+      setTimeout(() => {
+        navigate(-1);
+      }, 3000);
+    } catch (error) {
+      console.error("Lỗi:", error.response?.data || error.message);
+      toast.error("Không thể thêm câu hỏi!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="formQuestionId">
-        <Form.Label>Question ID</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter question ID"
-          name="questionId"
-          value={questionData.questionId}
-          onChange={handleChange}
-        />
-      </Form.Group>
+    <div className="flex flex-col h-fit py-6 px-3">
+      <AdminNavbar />
+      <div className="flex items-center gap-2 mb-4">
+        <FaBuffer size={30} />
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold">Question Management</h2>
+        <MdNavigateNext size={30} />
+        <h2 className="text-lg font-bold">Add New Question</h2>
+      </div>
 
-      <Form.Group controlId="formQuestionName">
-        <Form.Label>Question Name</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter question"
-          name="questionName"
-          value={questionData.questionName}
-          onChange={handleChange}
-        />
-      </Form.Group>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <div className="space-y-4">
+          {[
+            { label: "Question Name", name: "questionName" },
+            { label: "Answer A", name: "answerA" },
+            { label: "Answer B", name: "answerB" },
+            { label: "Answer C", name: "answerC" },
+            { label: "Answer D", name: "answerD" },
+            { label: "Correct Answer (A/B/C/D)", name: "answerCorrect" },
+          ].map(({ label, name }) => (
+            <div key={name} className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">{label}:</label>
+              <input
+                type="text"
+                name={name}
+                value={questionData[name]}
+                onChange={handleChange}
+                required
+                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          ))}
 
-      {["A", "B", "C", "D"].map((option) => (
-        <Form.Group key={option} controlId={`formAnswer${option}`}>
-          <Form.Label>Answer {option}</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder={`Enter answer ${option}`}
-            name={`answer${option}`}
-            value={questionData[`answer${option}`]}
-            onChange={handleChange}
-          />
-        </Form.Group>
-      ))}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Image (optional):</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="flex-1 border rounded-lg px-3 py-2"
+            />
+          </div>
+        </div>
 
-      <Form.Group controlId="formAnswerCorrect">
-        <Form.Label>Correct Answer</Form.Label>
-        <Form.Control
-          as="select"
-          name="answerCorrect"
-          value={questionData.answerCorrect}
-          onChange={handleChange}
-        >
-          <option value="">Select Correct Answer</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-        </Form.Control>
-      </Form.Group>
+        <div className="flex justify-end space-x-2 mt-6">
+          <Link
+            onClick={() => navigate(-1)}
+            className="px-6 py-2 border-2 border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100"
+          >
+            Cancel
+          </Link>
+          <button
+            type="submit"
+            className={`px-6 py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Processing..." : "Submit"}
+          </button>
+        </div>
+      </form>
 
-      <Form.Group controlId="formQuizId">
-        <Form.Label>Quiz ID</Form.Label>
-        <Form.Control
-          type="text"
-          placeholder="Enter quiz ID"
-          name="quizId"
-          value={questionData.quizId}
-          onChange={handleChange}
-        />
-      </Form.Group>
-
-      <Form.Group controlId="formIsDeleted">
-        <Form.Check
-          type="checkbox"
-          label="Is Deleted"
-          name="isDeleted"
-          checked={questionData.isDeleted}
-          onChange={(e) =>
-            setQuestionData({ ...questionData, isDeleted: e.target.checked })
-          }
-        />
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Add Question
-      </Button>
-    </Form>
+      <ToastContainer />
+    </div>
   );
 };
 

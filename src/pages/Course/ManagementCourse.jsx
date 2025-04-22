@@ -48,18 +48,30 @@ export default function CourseManagement() {
   }, [currentPage]);
 
   const handleSearch = async (e) => {
-    setSearch(e.target.value);
-    if (e.target.value.trim() === "") {
+    const value = e.target.value; // Lưu giá trị trước khi setState
+    setSearch(value);
+
+    // Nếu người dùng xóa hết -> reset lại danh sách gốc
+    if (value.trim() === "") {
       setCurrentPage(0);
+      setLoading(true);
+      try {
+        const data = await getCoursesByPage(0, coursesPerPage); // hoặc gọi API ban đầu
+        setCourses(data.data.content);
+        setTotalPages(data.data.totalPages);
+      } catch (error) {
+        console.error("Lỗi tải lại danh sách:", error);
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
       return;
     }
+
+    // Nếu có từ khóa tìm kiếm -> gọi search API
     setLoading(true);
     try {
-      const data = await searchCourses(
-        e.target.value,
-        currentPage,
-        coursesPerPage
-      );
+      const data = await searchCourses(value, 0, coursesPerPage);
       setCourses(data.data.content);
       setTotalPages(data.data.totalPages);
       setCurrentPage(0);
@@ -163,7 +175,7 @@ export default function CourseManagement() {
                         ))}
                     </tr>
                   ))
-                ) : courses.length > 0 ? (
+                ) : courses?.length > 0 ? (
                   courses.map((course, index) => (
                     <tr key={course.id} className="text-center">
                       <td className="p-2">

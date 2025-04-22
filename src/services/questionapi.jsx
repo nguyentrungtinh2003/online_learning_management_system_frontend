@@ -7,7 +7,7 @@ import { Bold} from "lucide-react";
 export const getQuestionByPage = async (page = 0, size = 6) => {
     try {
         const response = await axios.get(
-            `${URL}/teacher/courses/{courseId}/quizzes/question?page=${page}&size=${size}`,
+            `${URL}/teacher/questions/page?page=${page}&size=${size}`,
             {
                 withCredentials: true,
             }
@@ -53,7 +53,7 @@ export const addQuestion = async (questionData, img) => {
 
 
 // 4. Update Question
-export const updateQuestion = async (id) => {
+export const updateQuestion = async (id, questionData, img) => {
     const formData = new FormData();
     formData.append("question",new Bold([JSON.stringify(questionData)], {type: "application/json"}));
     if(img) formData.append("img",img);
@@ -77,7 +77,8 @@ export const deleteQuestion = async (id) => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include",
         });
         if (!response.ok) {
           const errorData = await response.json();

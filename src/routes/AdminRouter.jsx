@@ -23,6 +23,10 @@ import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import AddQuizz from "../pages/Quizz/AddQuizz";
 import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
+import QuestionManagement from "../pages/Question/QuestionManagement";
+import AddQuestion from "../pages/Question/AddQuestion";
+import UserQuizz from "../pages/Quizz/UserQuizz";
+
 
 const AdminRoutes = () => {
   return (
@@ -250,6 +254,42 @@ const AdminRoutes = () => {
             <div className="flex bg-focolor">
               <AdminSidebar />
               <UpdateQuizz/>
+            </div>
+          </ProtectedRouter>
+        }
+      />
+
+        <Route
+        path="/quiz-test/:quizId"
+        element={
+          <ProtectedRouter requiredRole="ADMIN">
+          <div className="flex bg-focolor">
+            <AdminSidebar />
+            <UserQuizz />
+          </div>
+          </ProtectedRouter>
+        }
+      />
+
+    <Route
+        path="/quizzes/:quizId/questions"
+        element={
+          <ProtectedRouter requiredRole="ADMIN">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <QuestionManagement/>
+            </div>
+          </ProtectedRouter>
+        }
+      />
+
+    <Route
+        path="/quizzes/:quizId/questions/add"
+        element={
+          <ProtectedRouter requiredRole="ADMIN">
+            <div className="flex bg-focolor">
+              <AdminSidebar />
+              <AddQuestion/>
             </div>
           </ProtectedRouter>
         }

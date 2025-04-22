@@ -70,7 +70,6 @@ const EditLesson = () => {
     formData.append("lesson", new Blob([JSON.stringify(lessons)], { type: "application/json" }));
     if (file) formData.append("img", file);
     if (video) formData.append("video", video);
-  
 
     // Kiểm tra nếu course.id bị null
     if (!lessons.course?.id) {
@@ -82,9 +81,13 @@ const EditLesson = () => {
   
     try {
       const response = await axios.put(
-        `https://codearena-backend-dev.onrender.com/api/lessons/update/${lessonId}`,
+        `https://codearena-backend-dev.onrender.com/api/teacher/lessons/update/${lessonId}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { 
+          headers: { "Content-Type": "multipart/form-data",
+           },
+           withCredentials: true, // Cho phép gửi cookies, session
+        }
       );
       console.log("Phản hồi từ server:", response.data);
       // alert("Cập nhật bài học thành công!");

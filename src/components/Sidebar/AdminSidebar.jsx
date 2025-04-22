@@ -110,7 +110,7 @@ export default function Sidebar() {
     <div className="h-screen flex p-2">
       <div
         className={`h-full rounded-2xl bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
-          isCollapsed ? "w-[90px]" : "w-64"
+          isCollapsed ? "w-[90px]" : "w-56"
         }`}
       >
         <div className="flex justify-between items-center mb-4">

@@ -21,6 +21,8 @@ import UpLevelEffect from "../components/Effect/UpLevelEffect";
 import ProtectedRouter from "./ProtectedRouter";
 import NotFound from "../pages/NotFound/NotFound";
 import UserRanking from "../pages/Ranking/UserRanking";
+// import UserQuizz from "../pages/Quizz/UserQuizz";
+
 
 const UserRouter = () => {
   return (
@@ -102,7 +104,7 @@ const UserRouter = () => {
         }
       />
       <Route
-        path="/view-lesson"
+        path="/view-lesson/:courseId"
         element={
           <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
             <div className="flex bg-focolor">
@@ -130,6 +132,15 @@ const UserRouter = () => {
           </div>
         }
       />
+        {/* <Route
+        path="/quiz-test/:quizId"
+        element={
+          <div className="flex bg-focolor">
+            <AdminSidebar />
+            <UserQuizz />
+          </div>
+        }
+      /> */}
       <Route
         path="/lesson"
         element={

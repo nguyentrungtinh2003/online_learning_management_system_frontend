@@ -71,19 +71,41 @@ export const updateQuiz = async (id, quizData, img) => {
 // 5. Delete Quiz
 export const deleteQuiz = async (id) => {
   try {
-      const response = await fetch(`${URL}/quizzes/delete/${id}`, {
+      const response = await fetch(`${URL}/teacher/quizzes/delete/${id}`, {
           method: "DELETE",
           headers: {
               "Content-Type": "application/json"
-          }
+          },
+          credentials: "include", // đúng cách để gửi cookie session
       });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to delete quiz");
     }
-      return response.json();
+      return await response.json();
   } catch (error) {
       console.error("Error deleting quiz:", error);
       throw error;
   }
 };
+
+// 6. Quiz by Id
+export const getQuizById = async (id) => {
+    try {
+        const response = await fetch(`${URL}/quizzes/${id}`, {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include", // đúng cách để gửi cookie session
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to delete quiz");
+      }
+        return await response.json();
+    } catch (error) {
+        console.error("Error deleting quiz:", error);
+        throw error;
+    }
+  };
+  
