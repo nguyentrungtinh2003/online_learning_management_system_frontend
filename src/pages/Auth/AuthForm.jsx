@@ -6,6 +6,7 @@ import URL from "../../config/URLconfig";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
+import gglogo from "../../assets/google-color.svg";
 
 export default function AuthForm() {
   const [fromLogin, setFromLogin] = useState({
@@ -202,7 +203,7 @@ export default function AuthForm() {
     <div className="h-screen flex justify-center items-center bg-gray-100">
       <ToastContainer />
       <div
-        className="h-auto shadow-lg rounded-lg w-full sm:w-96 md:w-1/3 lg:w-1/4 p-8 bg-white"
+        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-1/4 p-8 bg-white"
         ref={formContainerRef}
       >
         {isForgotPassword || isCreatePassword ? (
@@ -416,7 +417,7 @@ export default function AuthForm() {
             <button className="border-2 flex items-center justify-center rounded-2xl py-2 w-full hover:bg-cyan-300">
               <img
                 className="ml-3 w-6"
-                src="google-color.svg"
+                src={gglogo}
                 alt="Google logo"
               />
               <p className="ml-4" onClick={() => handleGoogleLogin()}>
