@@ -20,30 +20,28 @@ export default function UserViewLesson() {
 
   useEffect(() => {
     if (!lessons || lessons.length === 0) return;
-
+  
     const loadDurations = async () => {
+      const videoElements = lessons.map((lesson, i) => {
+        const video = document.createElement("video");
+        video.src = lesson.videoURL;
+        return new Promise((resolve) => {
+          video.onloadedmetadata = () => resolve({ index: i, duration: video.duration });
+          video.onerror = () => resolve({ index: i, duration: 0 });
+        });
+      });
+  
+      const results = await Promise.all(videoElements);
       const durations = {};
-      for (let i = 0; i < lessons.length; i++) {
-        const video = hiddenVideoRef.current;
-        if (video) {
-          video.src = lessons[i].videoURL;
-          await new Promise((resolve) => {
-            video.onloadedmetadata = () => {
-              durations[i] = video.duration;
-              resolve();
-            };
-            video.onerror = () => {
-              durations[i] = 0; // set 0 if video metadata can't be loaded
-              resolve();
-            };
-          });
-        }
-      }
+      results.forEach(({ index, duration }) => {
+        durations[index] = duration;
+      });
       setVideoDurations(durations);
     };
-
+  
     loadDurations();
   }, [lessons]);
+  
 
   const handleLoadedMetadata = (index) => {
     const videoElement = videoRefs.current[index];
