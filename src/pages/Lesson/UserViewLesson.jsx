@@ -215,7 +215,7 @@ export default function UserViewLesson() {
             </div>
           </div>
         </div>
-        <div className="flex-1 flex items-center">
+        <div className="w-full flex-1 flex items-center">
           <div className="font-bold flex gap-4 w-full justify-center">
             <button
               disabled={currentLessonIndex === 0}
