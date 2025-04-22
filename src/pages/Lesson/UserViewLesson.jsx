@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiQuestion } from "react-icons/pi";
 import { getCourseById } from "../../services/courseapi";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import SkeletonVideo from "../../components/SkeletonLoading/SkeletonVideo"
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function UserViewLesson() {
@@ -52,6 +52,12 @@ export default function UserViewLesson() {
       }));
     }
   };
+  const [loadingVideo, setLoadingVideo] = useState(true); // Thêm state loading
+
+  useEffect(() => {
+    // Khi currentLessonIndex thay đổi, đặt lại loadingVideo = true
+    setLoadingVideo(true);
+  }, [currentLessonIndex]);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -182,16 +188,22 @@ export default function UserViewLesson() {
             </button>
             {/* Check if video is available before rendering */}
             {lessons[currentLessonIndex]?.videoURL ? (
+            <>
+              {loadingVideo && <SkeletonVideo />}
               <video
                 ref={(el) => (videoRefs.current[currentLessonIndex] = el)}
-                className="w-full h-[400px] bg-black rounded-lg"
+                className={`w-full h-[70%] bg-black rounded-lg ${loadingVideo ? "hidden" : "block"}`}
                 src={lessons[currentLessonIndex]?.videoURL}
                 controls
-                onLoadedMetadata={() => handleLoadedMetadata(currentLessonIndex)}
+                onLoadedMetadata={() => {
+                  handleLoadedMetadata(currentLessonIndex);
+                  setLoadingVideo(false);
+                }}
               />
-            ) : (
-              <p>Không thể tải video, vui lòng thử lại sau.</p>
-            )}
+            </>
+          ) : (
+            <SkeletonVideo />
+          )}
 
             <div className="space-y-2">
               <div className="flex w-full justify-between my-4">
@@ -213,22 +225,26 @@ export default function UserViewLesson() {
             </div>
           </div>
         </div>
-        <div className="flex-1 flex items-center">
-          <div className="font-bold flex gap-4 w-full justify-center">
-            <button
-              disabled={currentLessonIndex === 0}
-              onClick={() => setCurrentLessonIndex((prev) => prev - 1)}
-            >
-              Bài trước
-            </button>
-            <button
-              disabled={currentLessonIndex === lessons.length - 1}
-              onClick={() => setCurrentLessonIndex((prev) => prev + 1)}
-            >
-              Bài sau
-            </button>
-          </div>
-        </div>
+        <div className="flex justify-center gap-4 mt-6">
+        <button
+          onClick={() => setCurrentLessonIndex((prev) => Math.max(0, prev - 1))}
+          disabled={currentLessonIndex === 0}
+          className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+        >
+          <MdNavigateBefore /> Bài trước
+        </button>
+        <button
+          onClick={() =>
+            setCurrentLessonIndex((prev) =>
+              Math.min(lessons.length - 1, prev + 1)
+            )
+          }
+          disabled={currentLessonIndex === lessons.length - 1}
+          className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+        >
+          Bài sau <MdNavigateNext />
+        </button>
+      </div>
       </div>
 
       {/* Sidebar */}

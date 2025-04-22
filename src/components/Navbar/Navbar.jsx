@@ -260,7 +260,7 @@ export default function Navbar() {
               </div>
             </div>
           ) : (
-            <button className="bg-fcolor hover:bg-scolor text-lg text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+            <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
               <Link to="/login" className="no-underline text-white">
                 Start Learning
               </Link>
