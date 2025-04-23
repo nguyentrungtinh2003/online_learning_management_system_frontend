@@ -140,14 +140,14 @@ export default function Blog() {
 
   if (dataLoading) {
     return (
-      <div className="container my-5">
+      <div className="flex h-full w-full place-items-center justify-center">
         <Spinner animation="border" variant="blue" />
       </div>
     );
   }
 
   return (
-    <div className="h-screen overflow-y-auto flex-1 mx-auto p-4 space-y-2 bg-white">
+    <div className="h-full overflow-y-auto flex-1 px-2 space-y-2 bg-white">
       <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (

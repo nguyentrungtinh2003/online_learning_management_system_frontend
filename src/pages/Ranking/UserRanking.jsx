@@ -60,7 +60,7 @@ export default function UserRanking() {
   };
 
   return (
-    <div className="w-screen dark:bg-black h-screen bg-white p-4 flex flex-col">
+    <div className="w-full dark:bg-black h-full bg-white p-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-2xl font-bold">Xếp Hạng Điểm</p>
