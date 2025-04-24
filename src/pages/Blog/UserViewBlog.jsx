@@ -39,6 +39,7 @@ export default function Blog() {
 
   useEffect(() => {
     handleGetPosts();
+    getBlogByUserLiked();
   }, []);
 
   const handleGetPosts = () => {
@@ -118,6 +119,7 @@ export default function Blog() {
   };
 
   const postLike = (blogId) => {
+    console.log("BlogId : " + blogId + " UserId " + userId);
     axios
       .post(
         `${URL}/blogs/like/${blogId}/${userId}`, // Sử dụng backtick đúng
@@ -131,7 +133,9 @@ export default function Blog() {
         console.log("Like success !" + response.data.data);
       })
       .catch((error) => {
-        console.log("Error " + error.message);
+        if (error.response) {
+          console.log("Lỗi:", error.response.data); // Hiển thị lỗi cụ thể từ backend
+        }
       });
   };
 
@@ -149,12 +153,25 @@ export default function Blog() {
         console.log("Un Like success !");
       })
       .catch((error) => {
-        console.log("Error " + error.message);
+        if (error.response) {
+          console.log("Lỗi:", error.response.data); // Hiển thị lỗi cụ thể từ backend
+        }
+      });
+  };
+
+  const getBlogByUserLiked = () => {
+    axios
+      .get(`${URL}/blogs/userLiked/${userId}`, { withCredentials: true })
+      .then((response) => {
+        setLikedPosts(response.data.data);
+      })
+      .catch((error) => {
+        console.log("error get blogs user liked :" + error.message);
       });
   };
 
   const handleLike = (postId) => {
-    if (likedPosts.includes(postId)) {
+    if (likedPosts.some((likedPost) => likedPost.id === post)) {
       postUnLike(postId); // nếu đã like → thì unlike
     } else {
       postLike(postId); // nếu chưa like → thì like
@@ -356,7 +373,7 @@ export default function Blog() {
                     <PiHeartFill
                       size={25}
                       color={
-                        post.likedUsers.some((user) => user.id === userId)
+                        likedPosts.some((likedPost) => likedPost.id === post.id)
                           ? "red"
                           : "gray"
                       }

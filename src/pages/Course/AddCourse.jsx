@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
-
+import URL from "../../config/URLconfig";
 const AddCourse = () => {
   const navigate = useNavigate();
 
@@ -15,40 +15,13 @@ const AddCourse = () => {
     courseName: "",
     description: "",
     img: "",
-    price: "",
+    price: 0.0,
     courseEnum: "FREE",
     user: { id: localStorage.getItem("id") },
   });
 
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const userId = localStorage.getItem("id");
-    const token = localStorage.getItem("token");
-
-    if (!token || !userId) {
-      console.warn("⚠️ Token hoặc userId không tồn tại.");
-      return;
-    }
-
-    axios
-      .get(
-        `https://codearena-backend-dev.onrender.com/api/auth/user/${userIdFromStorage}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .then((response) => {
-        setCourseData((prev) => ({
-          ...prev,
-          user: { id: res.data?.id || "1" },
-        }));
-      })
-      .catch((err) => {
-        console.error("❌ Lỗi lấy thông tin người dùng:", err);
-      });
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +31,7 @@ const AddCourse = () => {
       setCourseData((prev) => ({
         ...prev,
         price: value,
-        courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
+        courseEnum: parsedPrice === 0.0 ? "FREE" : "PAID",
       }));
     } else {
       setCourseData((prev) => ({
@@ -116,8 +89,9 @@ const AddCourse = () => {
     }
 
     try {
+      console.log("Data course " + formData);
       const response = await axios.post(
-        "https://codearena-backend-dev.onrender.com/api/teacher/courses/add",
+        `${URL}/teacher/courses/add`,
         formData,
         {
           headers: {
