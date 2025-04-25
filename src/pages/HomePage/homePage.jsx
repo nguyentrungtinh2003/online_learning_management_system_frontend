@@ -5,21 +5,17 @@ import SectionCourseFree from "./SectionPage/SectionCourseFree";
 import SectionCoursePro from "./SectionPage/SectionCoursePro";
 import SectionBlog from "./SectionPage/SectionBlog";
 import SectionRewards from "./SectionPage/SectionRewards ";
-import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 
 export default function homePage() {
   return (
-    <div className="h-screen pt-3 pr-3">
-      <div className="flex-1 rounded-xl bg-white shadow overflow-y-auto h-full 2xl:text-2xl">
-        <Navbar />
+    <div className="h-fit flex-1 rounded-xl bg-white shadow 2xl:text-2xl">
         <CourseLanding />
         <SectionCourseFree />
         <SectionCoursePro />
         <SectionRewards />
         <SectionBlog />
         <Footer />
-      </div>
     </div>
   );
 }

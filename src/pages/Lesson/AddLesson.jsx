@@ -1,5 +1,5 @@
-import { ToastContainer,toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -11,12 +11,12 @@ const AddLesson = () => {
   // State lưu dữ liệu từ form nhập vào
   const navigate = useNavigate();
 
-  const {courseId, id} = useParams();
+  const { courseId, id } = useParams();
   const [lessonData, setLessonData] = useState({
     lessonName: "",
     description: "",
     date: "",
-    course : {id : courseId} , // ID của khóa học
+    courseId: courseId, // ID của khóa học
     isDeleted: false,
   });
   const [loading, setLoading] = useState(false); // Trạng thái loading
@@ -58,26 +58,25 @@ const AddLesson = () => {
           },
           withCredentials: true, // Cho phép gửi cookies, session
         }
-      );      
+      );
       console.log("Thành công:", response.data);
       // alert("Thêm bài học thành công!");
       toast.success("Thêm bài học thành công!", {
-      position: "top-right",
-      autoClose: 3000,  // 4 giây
+        position: "top-right",
+        autoClose: 3000, // 4 giây
       });
 
       setTimeout(() => {
         navigate(-1);
-        }, 4000);    
+      }, 4000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       // alert("Lỗi khi thêm bài học!");
-       toast.error("Không thể thêm bài học!", {
-              position: "top-right",
-              autoClose: 3000, 
-            });
-    }
-    finally {
+      toast.error("Không thể thêm bài học!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
       setLoading(false);
     }
   };
@@ -148,15 +147,18 @@ const AddLesson = () => {
           </button>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            className={`px-6 py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400"
+                : "bg-scolor text-ficolor hover:bg-opacity-80"
+            }`}
             disabled={loading}
           >
             {loading ? "Processing..." : "Submit"}
           </button>
         </div>
       </form>
-            <ToastContainer /> 
-      
+      <ToastContainer />
     </div>
   );
 };

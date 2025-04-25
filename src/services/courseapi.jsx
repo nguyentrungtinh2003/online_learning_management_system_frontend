@@ -191,22 +191,23 @@ export const searchCourses = async (keyword, page = 0, size = 6) => {
 // API Hiển thị course theo user
 export const userEnroll = async (id) => {
   try {
-    const response = await fetch(`${URL}/enroll/${id}`, {
-      method: "GET",
+    const response = await axios.get(`${URL}/enroll/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // đúng cách để gửi cookie session
+      withCredentials: true,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to get course");
-    }
-
-    return await response.json();
+    // axios tự động ném lỗi nếu status không phải 2xx, nên không cần kiểm tra response.ok
+    return response.data;
   } catch (error) {
     console.error("Error get course:", error);
-    throw error;
+
+    // Gửi lại lỗi chi tiết nếu có response từ server
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("Failed to get course");
+    }
   }
 };

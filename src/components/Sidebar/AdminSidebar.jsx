@@ -107,7 +107,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="h-screen flex p-2">
+    <div className="flex">
       <div
         className={`h-full rounded-2xl bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
           isCollapsed ? "w-[90px]" : "w-56"

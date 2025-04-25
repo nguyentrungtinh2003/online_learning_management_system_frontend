@@ -203,7 +203,7 @@ export default function AuthForm() {
     <div className="h-screen flex justify-center items-center bg-gray-100">
       <ToastContainer />
       <div
-        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-1/4 p-8 bg-white"
+        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-[35%] p-8 bg-white"
         ref={formContainerRef}
       >
         {isForgotPassword || isCreatePassword ? (

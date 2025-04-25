@@ -163,7 +163,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 flex-1">
+    <nav className="px-4 py-3">
       <div className="flex justify-between items-center">
         {/* Search Bar */}
         <div className="flex-1 flex justify-center w-full ml-4">
