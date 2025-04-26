@@ -5,9 +5,12 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import FormData from 'form-data';
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
+
+import URL from "../../config/URLconfig";
 
 const AddCourse = () => {
   const navigate = useNavigate();
@@ -15,12 +18,11 @@ const AddCourse = () => {
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    img: "",
-    price: "0",
+    img:"",
+    price: "",
     courseEnum: "FREE",
-    users: [],
+    isDeleted:false,
     user: { id: localStorage.getItem("id") },
-    lessons: [],
   });
 
   const [img, setImg] = useState(null);
@@ -53,20 +55,21 @@ const AddCourse = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setCourseData({ ...courseData, [name]: value });
 
-    if (name === "price") {
-      const parsedPrice = parseFloat(value);
-      setCourseData((prev) => ({
-        ...prev,
-        price: value,
-        courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
-      }));
-    } else {
-      setCourseData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    // if (name === "price") {
+    //   const parsedPrice = parseFloat(value);
+    //   setCourseData((prev) => ({
+    //     ...prev,
+    //     price: value,
+    //     courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
+    //   }));
+    // } else {
+    //   setCourseData((prev) => ({
+    //     ...prev,
+    //     [name]: value,
+    //   }));
+    // }
   };
 
   const handleEnumChange = (e) => {
@@ -90,48 +93,49 @@ const AddCourse = () => {
   };
   
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImg(file);
+    setImg(e.target.files[0]);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
+      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 3000 });
+      return;
+    }
+  
+    setLoading(true);
 
-  if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-    toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 3000 });
-    return;
-  }
+    const formData = new FormData();
 
-  setLoading(true);
-
-  const formData = new FormData();
-  formData.append("course", new Blob([JSON.stringify(courseData)], { type: "application/json" }));
-
-  if (img) {
-    formData.append("img", img);
-  }
-
-  try {
-    const res = await axios.post(
-      "https://codearena-backend-dev.onrender.com/api/teacher/courses/add",
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
+    if (img) {
+      formData.append("img", img);
+    }
+  
+    // Thêm thông tin course dưới dạng JSON Blob
+    const courseJson = new Blob([JSON.stringify(courseData)], { type: "application/json" });
+    formData.append("course", courseJson);   
+    
+    console.log("courseData JSON:", JSON.stringify(courseData, null, 2));
+    try {
+      const res = await axios.post(`${URL}/teacher/courses/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         withCredentials: true,
-      }
-    );
-
-    toast.success("🎉 Thêm khóa học thành công!", { autoClose: 2000 });
-    setTimeout(() => navigate(-1), 3000);
-  } catch (error) {
-    const errorMsg = error.response?.data?.message || "Đã có lỗi xảy ra khi thêm khóa học.";
-    toast.error(`❌ ${errorMsg}`, { autoClose: 3000 });
-    console.error("Lỗi submit:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      });
+  
+      toast.success("🎉 Thêm khóa học thành công!", { autoClose: 2000 });
+      setTimeout(() => navigate(-1), 3000);
+    } catch (error) {
+      console.error("Submit Error:", error);
+      const message = error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
+      toast.error(`❌ ${message}`, { autoClose: 3000 });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">
@@ -200,7 +204,7 @@ const handleSubmit = async (e) => {
           <select
             name="courseEnum"
             value={courseData.courseEnum}
-            onChange={handleEnumChange}
+            onChange={handleChange}
             className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="FREE">Free</option>
