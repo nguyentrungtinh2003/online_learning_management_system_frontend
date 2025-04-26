@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ql-container {
+    border: none !important; /* Xóa viền ngoài */
+  }
+  
+  .ql-editor {
+    outline: none !important; /* Xóa outline khi focus */
+}

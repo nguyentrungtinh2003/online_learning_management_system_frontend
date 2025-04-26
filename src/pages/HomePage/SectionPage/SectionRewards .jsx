@@ -11,7 +11,7 @@ import { GiMedal } from "react-icons/gi";
 
 const SectionRewards = () => {
   return (
-    <div className="mt-10 p-6 rounded-lg">
+    <div className="p-6 rounded-lg">
       <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
         Rewards & Points System
       </h2>
