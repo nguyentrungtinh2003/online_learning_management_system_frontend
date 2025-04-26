@@ -15,6 +15,8 @@ module.exports = {
         gcolor: "#00BCD4", // Màu nhấn
         rcolor: "#FF0105", // Màu đen chủ đạo
         ycolor: "#FFFF00", // Màu nền chính
+        darkBackground: "#181818",
+        darkText: "#F1F1F1",
       },
       details: {
         "no-marker": {
