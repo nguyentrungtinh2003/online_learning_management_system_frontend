@@ -35,6 +35,8 @@ export default function Blog() {
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
 
+  const userId = parseInt(localStorage.getItem("id"));
+
   useEffect(() => {
     handleGetPosts();
   }, []);
@@ -46,8 +48,13 @@ export default function Blog() {
         setData(response.data.data);
         setDataLoading(false);
       })
-      .catch((error) => {
-        console.log("error get blogs :" + error.message);
+      .catch((err) => {
+        if (err.response) {
+          console.log("Status code:", err.response?.status);
+          console.log("Response data:", err.response?.data);
+          console.log("Full error:", err);
+        }
+        console.log("error get blogs :" + err.message);
       });
   };
 
@@ -115,12 +122,53 @@ export default function Blog() {
     setNewPostVideo(e.target.files[0]);
   };
 
-  const toggleLike = (postId) => {
-    setLikedPosts((prevLikedPosts) =>
-      prevLikedPosts.includes(postId)
-        ? prevLikedPosts.filter((id) => id !== postId)
-        : [...prevLikedPosts, postId]
-    );
+  const postLike = (blogId) => {
+    console.log("BlogId : " + blogId + " UserId " + userId);
+    axios
+      .post(
+        `${URL}/blogs/like/${blogId}/${userId}`, // Sử dụng backtick đúng
+        {}, // Kiểm tra lại body nếu cần truyền thêm dữ liệu
+        {
+          withCredentials: true, // Cung cấp cookie nếu cần thiết
+        }
+      )
+      .then((response) => {
+        setLikedPosts(response.data.data);
+        console.log("Like success !" + response.data.data);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("Lỗi:", error.response.data); // Hiển thị lỗi cụ thể từ backend
+        }
+      });
+  };
+
+  const postUnLike = (blogId) => {
+    axios
+      .post(
+        `${URL}/blogs/unlike/${blogId}/${userId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        setLikedPosts(response.data.data);
+        console.log("Un Like success !");
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log("Lỗi:", error.response.data); // Hiển thị lỗi cụ thể từ backend
+        }
+      });
+  };
+
+  const handleLike = (postId, post) => {
+    if (post.likedUsers.includes(parseInt(localStorage.getItem("id")))) {
+      postUnLike(postId); // nếu đã like → thì unlike
+    } else {
+      postLike(postId); // nếu chưa like → thì like
+    }
   };
 
   const hidePost = (postId) => {
@@ -140,14 +188,14 @@ export default function Blog() {
 
   if (dataLoading) {
     return (
-      <div className="container my-5">
+      <div className="flex h-full w-full place-items-center justify-center">
         <Spinner animation="border" variant="blue" />
       </div>
     );
   }
 
   return (
-    <div className="h-screen overflow-y-auto flex-1 mx-auto p-4 space-y-2 bg-white">
+    <div className="h-full overflow-y-auto flex-1 px-2 space-y-2 bg-white">
       <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (
@@ -313,13 +361,19 @@ export default function Blog() {
                 <div className="flex justify-between text-gray-600 text-sm border-t-2 pt-2">
                   <button
                     className="flex items-center gap-2"
-                    onClick={() => toggleLike(post.id)}
+                    onClick={() => handleLike(post.id, post)}
                   >
                     <PiHeartFill
                       size={25}
-                      color={likedPosts.includes(post.id) ? "red" : "gray"}
+                      color={
+                        post?.likedUsers?.includes(
+                          parseInt(localStorage.getItem("id"))
+                        )
+                          ? "red"
+                          : "gray"
+                      }
                     />
-                    <span>{post.views ? post.views : 0}</span>
+                    <span>{post?.likedUsers?.length || 0}</span>
                   </button>
                   <button
                     className="flex items-center space-x-1"

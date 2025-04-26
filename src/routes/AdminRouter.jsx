@@ -26,7 +26,7 @@ import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
-
+import AdminLayout from "../components/Layout/AdminLayout";
 
 const AdminRoutes = () => {
   return (
@@ -35,266 +35,34 @@ const AdminRoutes = () => {
         path="/"
         element={
           <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <Dashboard />
-            </div>
+            <AdminLayout/>
           </ProtectedRouter>
         }
-      />
-
-      <Route
-        path="/settings"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminSettings />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/users"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <ManagementUser />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/users/add-user"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminAddUser />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/users/edit-user/:userId"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminUpdateUser />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/comment"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <CommentManagement />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/blog"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminBlogManagement />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/blog/add-blog"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex h-screen bg-focolor">
-              <AdminSidebar />
-              <AdminAddBlog />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/blog/edit-blog"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminEditBlog />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/payment"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AdminPaymentManagement />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex h-fit bg-focolor">
-              <AdminSidebar />
-              <ManagementCourse />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses/add-course"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex h-fit bg-focolor">
-              <AdminSidebar />
-              <AddCourse />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses/edit-course/:id"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <UpdateCourse />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses/:courseId/lessons"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <ManagementLesson />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses/:courseId/lessons/add"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AddLesson />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/courses/:courseId/lessons/edit/:lessonId"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <EditLesson />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/lessons/:lessonId/quizzes"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <QuizzManagement />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/lessons/:lessonId/quizzes/add"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AddQuizz />
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-      <Route
-        path="/lessons/:lessonId/quizzes/edit/:quizId"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <UpdateQuizz/>
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-        <Route
-        path="/quiz-test/:quizId"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-          <div className="flex bg-focolor">
-            <AdminSidebar />
-            <UserQuizz />
-          </div>
-          </ProtectedRouter>
-        }
-      />
-
-    <Route
-        path="/quizzes/:quizId/questions"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <QuestionManagement/>
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
-    <Route
-        path="/quizzes/:quizId/questions/add"
-        element={
-          <ProtectedRouter requiredRole="ADMIN">
-            <div className="flex bg-focolor">
-              <AdminSidebar />
-              <AddQuestion/>
-            </div>
-          </ProtectedRouter>
-        }
-      />
-
+      >
+        {/* Các route con dùng chung layout */}
+        <Route index element={<Dashboard />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="users" element={<ManagementUser />} />
+        <Route path="users/add-user" element={<AdminAddUser />} />
+        <Route path="users/edit-user/:userId" element={<AdminUpdateUser />} />
+        <Route path="comment" element={<CommentManagement />} />
+        <Route path="blog" element={<AdminBlogManagement />} />
+        <Route path="blog/add-blog" element={<AdminAddBlog />} />
+        <Route path="blog/edit-blog" element={<AdminEditBlog />} />
+        <Route path="payment" element={<AdminPaymentManagement />} />
+        <Route path="courses" element={<ManagementCourse />} />
+        <Route path="courses/add-course" element={<AddCourse />} />
+        <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
+        <Route path="courses/:courseId/lessons" element={<ManagementLesson />} />
+        <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
+        <Route path="courses/:courseId/lessons/edit/:lessonId" element={<EditLesson />} />
+        <Route path="lessons/:lessonId/quizzes" element={<QuizzManagement />} />
+        <Route path="lessons/:lessonId/quizzes/add" element={<AddQuizz />} />
+        <Route path="lessons/:lessonId/quizzes/edit/:quizId" element={<UpdateQuizz />} />
+        <Route path="quiz-test/:quizId" element={<UserQuizz />} />
+        <Route path="quizzes/:quizId/questions" element={<QuestionManagement />} />
+        <Route path="quizzes/:quizId/questions/add" element={<AddQuestion />} />
+      </Route>
     </Routes>
   );
 };

@@ -1,9 +1,7 @@
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 import FormData from 'form-data';
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
@@ -22,7 +20,7 @@ const AddCourse = () => {
     price: "",
     courseEnum: "FREE",
     isDeleted:false,
-    user: { id: localStorage.getItem("id") },
+    userId: { id: localStorage.getItem("id") },
   });
 
   const [img, setImg] = useState(null);
@@ -38,11 +36,13 @@ const AddCourse = () => {
   //   }
 
   //   axios
-  //     .get(`https://codearena-backend-dev.onrender.com/api/auth/user/${userId}`, {
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //       withCredentials: true,
-  //     })
-  //     .then((res) => {  
+  //     .get(
+  //       `https://codearena-backend-dev.onrender.com/api/auth/user/${userId}`,
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     )
+  //     .then((res) => {
   //       setCourseData((prev) => ({
   //         ...prev,
   //         user: { id: res.data?.id || "1" },
@@ -74,16 +74,16 @@ const AddCourse = () => {
 
   const handleEnumChange = (e) => {
     const selectedType = e.target.value;
-  
+
     setCourseData((prev) => {
       let newPrice = prev.price;
-  
+
       if (selectedType === "FREE") {
         newPrice = "0";
       } else if (parseFloat(prev.price) <= 0) {
         newPrice = "1"; // Đặt mặc định 1 nếu là PAID nhưng price <= 0
       }
-  
+
       return {
         ...prev,
         courseEnum: selectedType,
@@ -91,7 +91,7 @@ const AddCourse = () => {
       };
     });
   };
-  
+
   const handleImageChange = (e) => {
     setImg(e.target.files[0]);
   };
@@ -148,10 +148,15 @@ const AddCourse = () => {
         <h2 className="text-lg font-bold">Add New Course</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow space-y-4"
+      >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">Course Title:</label>
+          <label className="w-1/4 text-gray-700 font-medium">
+            Course Title:
+          </label>
           <input
             type="text"
             name="courseName"
@@ -187,7 +192,9 @@ const AddCourse = () => {
 
         {/* Description */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">Description:</label>
+          <label className="w-1/4 text-gray-700 font-medium">
+            Description:
+          </label>
           <textarea
             name="description"
             rows={3}
