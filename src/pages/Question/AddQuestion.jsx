@@ -23,7 +23,7 @@ const AddQuestion = () => {
     answerD: "",
     answerCorrect: "",
     isDeleted: false,
-    quiz: {id:quizId}
+    quiz: quizId,
   });
 
   const handleChange = (e) => {
@@ -47,16 +47,12 @@ const AddQuestion = () => {
     if (img) data.append("img", img);
 
     try {
-      const response = await axios.post(
-        `${URL}/teacher/questions/add`,
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(`${URL}/teacher/questions/add`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
 
       toast.success("Thêm câu hỏi thành công!", {
         position: "top-right",
@@ -88,7 +84,10 @@ const AddQuestion = () => {
         <h2 className="text-lg font-bold">Add New Question</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-md"
+      >
         <div className="space-y-4">
           {[
             { label: "Question Name", name: "questionName" },
@@ -99,7 +98,9 @@ const AddQuestion = () => {
             { label: "Correct Answer (A/B/C/D)", name: "answerCorrect" },
           ].map(({ label, name }) => (
             <div key={name} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">{label}:</label>
+              <label className="w-1/4 text-gray-700 font-medium">
+                {label}:
+              </label>
               <input
                 type="text"
                 name={name}
@@ -112,7 +113,9 @@ const AddQuestion = () => {
           ))}
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image (optional):</label>
+            <label className="w-1/4 text-gray-700 font-medium">
+              Image (optional):
+            </label>
             <input
               type="file"
               accept="image/*"

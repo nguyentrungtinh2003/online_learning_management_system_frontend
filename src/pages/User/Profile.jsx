@@ -69,10 +69,7 @@ const Profile = () => {
         <div className="absolute top-40 left-10 z-1 flex items-center">
           <img
             className="profile-avatar bg-white border-8 border-slate-50 w-48 rounded-full h-48 shadow-lg"
-            src={
-              selectedImage ||
-              "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes-thumbnail.png"
-            }
+            src={selectedImage || "/user.png"}
             alt="Profile"
           />
           <div className="mt-20">

@@ -99,7 +99,7 @@ export default function UserRanking() {
           {/* Second */}
           {users[1] && (
             <div className="flex flex-col items-center">
-              <div className="h-24 w-24 bg-gray-300 rounded-full mb-2" />
+              <img src="/user.png" alt="" className="w-20 h-20" />
               <p className="font-semibold">{users[1].name}</p>
               <div className="w-24 h-24 bg-blue-300 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
                 {users[1].rank}
@@ -114,6 +114,7 @@ export default function UserRanking() {
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-yellow-400 text-2xl">
                   👑
                 </div>
+                <img src="/user.png" alt="" className="w-20 h-20" />
               </div>
               <p className="font-semibold">{users[0].name}</p>
               <div className="w-24 h-40 bg-yellow-400 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
@@ -125,7 +126,7 @@ export default function UserRanking() {
           {/* Third */}
           {users[2] && (
             <div className="flex flex-col items-center">
-              <div className="h-24 w-24 bg-gray-300 rounded-full mb-2" />
+              <img src="/user.png" alt="" className="w-20 h-20" />
               <p className="font-semibold">{users[2].name}</p>
               <div className="w-24 h-20 bg-orange-400 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
                 {users[2].rank}
@@ -162,7 +163,7 @@ export default function UserRanking() {
                   >
                     <td className="p-2 px-4 font-medium">{user.rank}</td>
                     <td className="p-2">
-                      <div className="w-8 h-8 bg-gray-400 rounded-full" />
+                      <img src="/user.png" alt="" className="w-8 h-8" />
                     </td>
                     <td className="p-2">{user.name}</td>
                     <td className="p-2">{user.points}</td>
@@ -176,9 +177,11 @@ export default function UserRanking() {
           <div className="absolute bottom-0 left-0 right-0 bg-green-100 border-t border-green-300 shadow-inner">
             <div className="relative grid grid-cols-[60px_48px_1fr_auto] items-center gap-4 py-2 px-4">
               <span className="font-semibold">{currentUser.rank}</span>
-              <div className="ml-6 w-8 h-8 bg-gray-400 rounded-full" />
-              <span className="ml-[42px]">{currentUser.name}</span>
-              <span className="font-semibold mr-[67px]">{currentUser.points}</span>
+              <img src="/user.png" alt="" className="w-8 h-8" />
+              <span className="ml-10">{currentUser.name}</span>
+              <span className="font-semibold mr-[67px]">
+                {currentUser.points}
+              </span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">

@@ -77,7 +77,7 @@ const PaymentSuccess = () => {
           <div className="text-center">
             <Spinner animation="border" role="status" />
             <p className="mt-3">
-              🔄 Đang xử lý thanh toán... Vui lòng đợi giây lát.
+              <Spinner animation="border" variant="white" className="me-2" />
             </p>
           </div>
         </Container>

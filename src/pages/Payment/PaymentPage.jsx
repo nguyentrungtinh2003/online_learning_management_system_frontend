@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Container, Card, Form, Button, Spinner, Alert } from "react-bootstrap";
 import axios from "axios";
 import URL from "../../config/URLconfig";
+import { FaCoins } from "react-icons/fa";
 
 export default function PaymentPage() {
   const [error, setError] = useState("");
@@ -47,12 +48,13 @@ export default function PaymentPage() {
       style={{ minHeight: "90vh" }}
     >
       <Card
-        style={{ width: "100%", maxWidth: "500px" }}
+        style={{ width: "100%", maxWidth: "800px" }}
         className="p-4 shadow-lg rounded-4 border-0"
       >
-        <h3 className="text-center mb-4 text-primary fw-bold">
-          💰 Nạp tiền vào hệ thống
-        </h3>
+        <FaCoins style={{ color: "gold" }} size={30} />
+        <h1 className="text-center mb-8 text-primary fw-bold">
+          Nạp tiền vào hệ thống
+        </h1>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -95,14 +97,17 @@ export default function PaymentPage() {
           <div className="d-grid">
             <Button
               type="submit"
-              variant="success"
+              variant="primary"
               size="lg"
               disabled={loading}
             >
               {loading ? (
                 <>
-                  <Spinner animation="border" size="sm" className="me-2" />
-                  Đang xử lý...
+                  <Spinner
+                    animation="border"
+                    variant="white"
+                    className="me-2"
+                  />
                 </>
               ) : (
                 `Thanh toán bằng ${method}`

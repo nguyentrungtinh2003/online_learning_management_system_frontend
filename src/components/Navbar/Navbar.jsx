@@ -163,8 +163,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3">
+    <nav className="px-4 py-3 shadow-lg mb-2">
       <div className="flex justify-between items-center">
+        <img
+          src="/logo.png"
+          className="rounded-full object-cover"
+          width={60}
+          height={60}
+        ></img>
         {/* Search Bar */}
         <div className="flex-1 flex justify-center w-full ml-4">
           <div className="flex w-[50%] justify-center gap-2 items-center border p-2 rounded-xl relative">
@@ -220,10 +226,10 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-              <span className="text-gray-600">
+                <span className="text-gray-800">
                   {localStorage.getItem("coin")}
                 </span>
-                <FaCoins style={{ color: "gold" }} size={25} />
+                <FaCoins style={{ color: "gold" }} size={30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -231,7 +237,7 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={38}
+                    size={40}
                     className="hover:bg-focolor p-1 rounded-xl"
                   />
                   {unreadCount >= 0 && (
@@ -249,10 +255,10 @@ export default function Navbar() {
                   src={
                     localStorage.getItem("img") !== "null"
                       ? localStorage.getItem("img")
-                      : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                      : "/user.png"
                   }
                   alt="User"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <span className="text-gray-600 text-lg w-34 overflow:hidden">
                   {localStorage.getItem("username")}
