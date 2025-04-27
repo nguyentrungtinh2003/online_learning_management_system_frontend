@@ -34,11 +34,7 @@ export default function PaymentPage() {
 
       const approvalUrl = response.data.data;
       if (approvalUrl) {
-        if (method == "PayPal") {
-          window.location.href = approvalUrl; // Redirect đến PayPal
-        } else {
-          window.location.href = "/vnpay-return";
-        }
+        window.location.href = approvalUrl; // Redirect đến PayPal
       } else {
         setError("Không nhận được link thanh toán từ hệ thống.");
       }
