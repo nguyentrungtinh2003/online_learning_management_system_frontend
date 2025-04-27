@@ -20,7 +20,7 @@ const AddCourse = () => {
     price: "",
     courseEnum: "FREE",
     isDeleted:false,
-    userId: { id: localStorage.getItem("id") },
+    userId: localStorage.getItem("id"),
   });
 
   const [img, setImg] = useState(null);
@@ -57,19 +57,19 @@ const AddCourse = () => {
     const { name, value } = e.target;
     setCourseData({ ...courseData, [name]: value });
 
-    // if (name === "price") {
-    //   const parsedPrice = parseFloat(value);
-    //   setCourseData((prev) => ({
-    //     ...prev,
-    //     price: value,
-    //     courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
-    //   }));
-    // } else {
-    //   setCourseData((prev) => ({
-    //     ...prev,
-    //     [name]: value,
-    //   }));
-    // }
+    if (name === "price") {
+      const parsedPrice = parseFloat(value);
+      setCourseData((prev) => ({
+        ...prev,
+        price: value,
+        courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
+      }));
+    } else {
+      setCourseData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleEnumChange = (e) => {
@@ -100,7 +100,7 @@ const AddCourse = () => {
     e.preventDefault();
   
     if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 3000 });
+      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 1000 });
       return;
     }
   
@@ -125,12 +125,12 @@ const AddCourse = () => {
         withCredentials: true,
       });
   
-      toast.success("🎉 Thêm khóa học thành công!", { autoClose: 2000 });
-      setTimeout(() => navigate(-1), 3000);
+      toast.success("🎉 Thêm khóa học thành công!", { autoClose: 1000 });
+      setTimeout(() => navigate(-1), 2000);
     } catch (error) {
       console.error("Submit Error:", error);
       const message = error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
-      toast.error(`❌ ${message}`, { autoClose: 3000 });
+      toast.error(`❌ ${message}`, { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
@@ -211,7 +211,7 @@ const AddCourse = () => {
           <select
             name="courseEnum"
             value={courseData.courseEnum}
-            onChange={handleChange}
+            onChange={handleEnumChange}
             className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="FREE">Free</option>

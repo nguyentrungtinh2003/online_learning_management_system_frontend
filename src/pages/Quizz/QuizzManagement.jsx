@@ -32,13 +32,13 @@ const QuizzManagement = () => {
      const fetchQuizzes = async () => { 
        setLoading(true);
        try {
-         console.log(`Fetching quizzes: Page${currentPage}, PerPage=${quizzesPerPage}`);
+        //  console.log(`Fetching quizzes: Page${currentPage}, PerPage=${quizzesPerPage}`);
          const data = await getQuizzesByPage(currentPage, quizzesPerPage);
-         console.log("API Response:", data);
+        //  console.log("API Response:", data);
          if(!data || !data.data || !data.data.content){
            throw new Error("Invalid API Response");
          }
-         setQuizzes(data.data.content);
+         setQuizzes(data.data.content.filter((quiz) => !quiz.isDeleted));
          setTotalPages(data.data.totalPages);
        } catch (error) {
          console.error("Lỗi tải bài học:", error);
@@ -83,20 +83,18 @@ const QuizzManagement = () => {
                 const response = await deleteQuiz(id);
                 console.log("Delete API", response);
           
-                // Gọi API phân trang thay vì getCourses()
-                const data = await getQuizzesByPage(currentPage, quizzesPerPage);
-                setQuizzes(data.data.content);
-                setTotalPages(data.data.totalPages);
+                // Xóa khỏi state hiện tại thay vì gọi lại API
+                setQuizzes((prevQuizzes) => prevQuizzes.filter((quiz) => quiz.id !== id));
           
                 toast.success("Xóa quiz thành công!", {
                   position: "top-right",
-                  autoClose: 3000,
+                  autoClose: 1000,
                 });
               } catch (error) {
                 console.error("Lỗi khi xóa quiz:", error);
                 toast.error("Không thể xóa quiz", {
                   position: "top-right",
-                  autoClose: 3000,
+                  autoClose: 1000,
                 });
               }
             }
@@ -177,7 +175,8 @@ const QuizzManagement = () => {
                                 </tr>
                               ))
                             ) : quizzes.length > 0 ? (
-                              quizzes.map((quiz, index) => (
+                              quizzes.filter((quiz) => !quiz.isDeleted)
+                              .map((quiz, index) => (
                                 <tr key={quiz.id} className="text-center">
                                   <td className="p-2">
                                     {index + 1 + currentPage * quizzesPerPage}

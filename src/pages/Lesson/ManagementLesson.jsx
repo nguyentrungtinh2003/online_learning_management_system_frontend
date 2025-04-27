@@ -170,10 +170,16 @@ export default function ManagementLesson() {
                           )}
                         </td>
                         <td className="p-2">
-                          {lesson.date
-                            ? new Date(lesson.date).toLocaleDateString()
-                            : "N/A"}
-                        </td>
+                        {lesson.date ? new Date(
+                            lesson.date[0], 
+                            lesson.date[1] - 1, 
+                            lesson.date[2], 
+                            lesson.date[3], 
+                            lesson.date[4], 
+                            lesson.date[5]
+                          ).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+                          : "N/A"}
+                      </td>
                         <td className="p-2">
                           {lesson.videoURL ? (
                             <a

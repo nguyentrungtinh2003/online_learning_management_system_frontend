@@ -35,7 +35,8 @@ export default function CourseManagement() {
         if (!data || !data.data || !data.data.content) {
           throw new Error("Invalid API Response");
         }
-        setCourses(data.data.content);
+        const sortedCourses = data.data.content.sort((a, b) => b.id - a.id);
+        setCourses(sortedCourses);
         setTotalPages(data.data.totalPages);
       } catch (error) {
         console.error("Lỗi tải khóa học:", error);
@@ -57,7 +58,8 @@ export default function CourseManagement() {
       setLoading(true);
       try {
         const data = await getCoursesByPage(0, coursesPerPage); // hoặc gọi API ban đầu
-        setCourses(data.data.content);
+        const sortedCourses = data.data.content.sort((a, b) => b.id - a.id); // Thêm sort ở đây
+        setCourses(sortedCourses);
         setTotalPages(data.data.totalPages);
       } catch (error) {
         console.error("Lỗi tải lại danh sách:", error);
@@ -72,7 +74,8 @@ export default function CourseManagement() {
     setLoading(true);
     try {
       const data = await searchCourses(value, 0, coursesPerPage);
-      setCourses(data.data.content);
+      const sortedCourses = data.data.content.sort((a, b) => b.id - a.id); // Thêm sort ở đây
+      setCourses(sortedCourses);
       setTotalPages(data.data.totalPages);
       setCurrentPage(0);
     } catch (error) {
@@ -95,13 +98,13 @@ export default function CourseManagement() {
         setTotalPages(data.data.totalPages);
         toast.success("Xóa khóa học thành công!", {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
         });
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
         toast.error("Không thể xóa khóa học!", {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 1000,
         });
       }
     }
@@ -198,8 +201,14 @@ export default function CourseManagement() {
                       </td>
                       <td className="p-2">{course.price || "Free"}</td>
                       <td className="p-2">
-                        {course.date
-                          ? new Date(course.date).toLocaleDateString()
+                        {course.date ? new Date(
+                            course.date[0], 
+                            course.date[1] - 1, 
+                            course.date[2], 
+                            course.date[3], 
+                            course.date[4], 
+                            course.date[5]
+                          ).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
                           : "N/A"}
                       </td>
                       <td className="p-2">

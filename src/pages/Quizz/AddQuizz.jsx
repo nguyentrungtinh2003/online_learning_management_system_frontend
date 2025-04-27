@@ -62,17 +62,17 @@ const AddQuizz = () => {
       console.log("Thành công:", response.data);
       toast.success("Thêm quiz thành công!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
       });
 
       setTimeout(() => {
         navigate(-1);
-      }, 3000);
+      }, 2000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       toast.error("Không thể thêm quiz!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
       });
     } finally {
       setLoading(false);
