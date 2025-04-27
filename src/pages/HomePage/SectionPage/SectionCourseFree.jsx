@@ -46,10 +46,10 @@ export default function SectionCourseFree() {
         className="w-full h-48 object-cover"
       />
       <div className="p-6 font-bold">
-        <h3 className="text-2xl font-bold text-gray-800">
+        <h3 className="text-2xl w-full font-bold text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
           {course.courseName || "Java Backend"}
         </h3>
-        <p className="text-sm text-gray-600 mt-2">
+        <p className="text-sm text-gray-600 mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
           {course.description || "Khoá học Java Springboot API cho người mới."}
         </p>
         <p className="text-sm text-gray-600 mt-1">

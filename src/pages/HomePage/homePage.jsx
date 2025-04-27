@@ -9,7 +9,7 @@ import Footer from "../../components/Footer/Footer";
 
 export default function homePage() {
   return (
-    <div className="h-fit flex-1 rounded-xl bg-white shadow 2xl:text-2xl">
+    <div className="h-fit flex-1 gap-4 rounded-xl dark:bg-darkBackground shadow 2xl:text-2xl">
         <CourseLanding />
         <SectionCourseFree />
         <SectionCoursePro />

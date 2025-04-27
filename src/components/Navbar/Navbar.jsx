@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { FaCoins } from "react-icons/fa";
+import { FaCoins, FaMoon, FaSun } from "react-icons/fa";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,6 +15,28 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState(""); // Lưu trữ giá trị nhập vào của search
   const [suggestions, setSuggestions] = useState([]); // Lưu trữ các gợi ý khóa học
   const [showSuggestions, setShowSuggestions] = useState(false); // Kiểm tra xem có nên hiển thị gợi ý hay không
+  const [isDarkMode, setIsDarkMode] = useState(false); // State cho dark mode
+
+  // Lấy giá trị dark mode từ localStorage khi component load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("darkMode");
+    if (savedTheme === "true") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark");
+    }
+  }, []);
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+    if (isDarkMode) {
+      document.body.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+    } else {
+      document.body.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    }
+  };
 
   // Các gợi ý mặc định khi người dùng chưa nhập gì
   const defaultSuggestions = [
@@ -163,8 +185,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3">
+    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-gray-100">
       <div className="flex justify-between items-center">
+        <img
+          src="/logo.png"
+          className="rounded-full object-cover"
+          width={60}
+          height={60}
+        ></img>
         {/* Search Bar */}
         <div className="flex-1 flex justify-center w-full ml-4">
           <div className="flex w-[50%] justify-center gap-2 items-center border p-2 rounded-xl relative">
@@ -174,9 +202,9 @@ export default function Navbar() {
               placeholder="Search courses..."
               value={searchQuery}
               onChange={handleSearchChange}
-              onFocus={handleFocus} // Khi focus vào input
-              onBlur={handleBlur} // Khi blur khỏi input
-              className="w-full text-sm focus:outline-none"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              className="w-full text-sm dark:bg-darkBackground focus:outline-none"
             />
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
@@ -220,10 +248,10 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-              <span className="text-gray-600">
+                <span className="">
                   {localStorage.getItem("coin")}
                 </span>
-                <FaCoins style={{ color: "gold" }} size={25} />
+                <FaCoins style={{ color: "gold" }} size={30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -231,7 +259,7 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={38}
+                    size={40}
                     className="hover:bg-focolor p-1 rounded-xl"
                   />
                   {unreadCount >= 0 && (
@@ -249,15 +277,23 @@ export default function Navbar() {
                   src={
                     localStorage.getItem("img") !== "null"
                       ? localStorage.getItem("img")
-                      : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                      : "/user.png"
                   }
                   alt="User"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="text-gray-600 text-lg w-34 overflow:hidden">
+                <span className="text-lg w-34 overflow:hidden">
                   {localStorage.getItem("username")}
                 </span>
               </div>
+
+              {/* Dark Mode Button with Icon */}
+              <button
+                onClick={toggleDarkMode}
+                className="text-gray-600 dark:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+              </button>
             </div>
           ) : (
             <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">

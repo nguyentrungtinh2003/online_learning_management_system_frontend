@@ -1,6 +1,6 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
@@ -18,30 +18,26 @@ const UpdateQuizz = () => {
     description: "",
     price: "",
     img: "",
-    lesson: { id: lessonId },
+    lessonId: lessonId,
   });
 
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
     axios
-      .get(`${URL}/quizzes/${quizId}`,
-         { withCredentials: true, }
-      )
-      .then(({data}) => {
+      .get(`${URL}/quizzes/${quizId}`, { withCredentials: true })
+      .then(({ data }) => {
         console.log("Dữ liệu nhận từ API:", data);
         setQuiz({
           ...data.data,
           lesson: { id: data.data.lesson?.id ?? lessonId },
-        });      })
+        });
+      })
       .catch(() => setError("Không thể tải dữ liệu trắc nghiệm"))
       .finally(() => setLoading(false));
   }, [quizId]);
-
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +51,6 @@ const UpdateQuizz = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
 
     const formData = new FormData();
     formData.append(
@@ -75,28 +70,28 @@ const UpdateQuizz = () => {
           withCredentials: true, // Cho phép gửi cookies, session
         }
       );
-      console.log("Thành công:",response);
+      console.log("Thành công:", response);
       // alert("Cập nhật khóa học thành công!");
       toast.success("Cập nhật trắc nghiệm thành công!", {
         position: "top-right",
-        autoClose: 3000,  // 4 giây
+        autoClose: 3000, // 4 giây
       });
-      
+
       setTimeout(() => {
-      navigate(-1);
-      }, 4000);    
+        navigate(-1);
+      }, 4000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       // alert("Lỗi khi thêm khóa học!");
       toast.error("Không thể cập nhật trắc nghiệm!", {
         position: "top-right",
-        autoClose: 3000, 
+        autoClose: 3000,
       });
     } finally {
       setLoading(false);
     }
   };
- return (
+  return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">
       <AdminNavbar />
       <div className="flex gap-2">
@@ -175,7 +170,7 @@ const UpdateQuizz = () => {
         </div>
 
         <div className="flex justify-end space-x-2 mt-6">
-        <Link
+          <Link
             onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
           >
@@ -183,14 +178,18 @@ const UpdateQuizz = () => {
           </Link>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            className={`px-6 py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400"
+                : "bg-scolor text-ficolor hover:bg-opacity-80"
+            }`}
             disabled={loading}
           >
             {loading ? "Processing..." : "Submit"}
           </button>
         </div>
       </form>
-    <ToastContainer /> 
+      <ToastContainer />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import logoCode from "../../assets/logoCode.png";
 export default function Footer() {
   return (
     <div>
-      <div className="bg-slate-900 text-lg font-bold text-slate-300 h-fit">
+      <div className="bg-slate-900 dark:border-t dark:border-gray-700 dark:bg-darkBackground text-lg font-bold text-slate-300 h-fit">
         <div className="p-16 flex justify-between items-top">
           <div className="space-y-4">
             <div className="flex text-2xl font-bold items-center">
