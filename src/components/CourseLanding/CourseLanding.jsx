@@ -66,9 +66,9 @@ export default function CourseLanding() {
 
   return (
     <div className="h-fit my-4 mx-2 flex flex-col items-center">
-      <div className="flex w-full justify-between items-center space-x-2">
+      <div className="flex w-full dark:text-gray-300 justify-between items-center space-x-2">
         <button
-          className="hover:bg-scolor hover:scale-105 duration-500 p-2 rounded-xl border"
+          className="hover:bg-scolor hover:scale-105 duration-500 p-2 rounded-xl"
           onClick={handlePrevClick}
         >
           <ArrowBackIosNewIcon fontSize="small" />
@@ -85,7 +85,7 @@ export default function CourseLanding() {
           </p>
         </div>
         <button
-          className="hover:bg-scolor hover:scale-105 duration-500 p-2 rounded-xl border"
+          className="hover:bg-scolor hover:scale-105 duration-500 p-2 rounded-xl"
           onClick={handleNextClick}
         >
           <ArrowForwardIosIcon fontSize="small" />

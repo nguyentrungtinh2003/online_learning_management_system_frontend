@@ -27,23 +27,24 @@ export default function SectionCoursePro() {
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="bg-white font-semibold rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border hover:shadow-2xl duration-300">
+    <div className="font-semibold dark:border-gray-700 border-gray-300 border-1 text-gray-600 dark:text-gray-200 dark:text-gray-300 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
         className="w-full h-48 object-cover"
       />
       <div className="p-6 font-bold">
-        <h3 className="text-2xl font-bold text-gray-800">
-          {course.courseName || "Java Backend"}
-        </h3>
-        <p className="text-sm text-gray-600 mt-2">
-          {course.description || "Khoá học Java Springboot API cho người mới."}
-        </p>
-        <p className="text-sm text-gray-600 mt-1">
+      <h3 className="text-2xl w-full font-bold text-gray-800 dark:text-gray-100 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
+        {course.courseName || "Java Backend"}
+      </h3>
+      <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
+        {course.description || "Khoá học Java Springboot API cho người mới."}
+      </p>
+
+        <p className="text-sm mt-1">
           {Array.isArray(course?.lessons) ? course.lessons.length : 60} lessons
         </p>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm mt-1">
           Lecturer:{" "}
           <span className="text-fcolor">
             {course.user?.username || "Nguyen Trung Tinh"}

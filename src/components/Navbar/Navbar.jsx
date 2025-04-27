@@ -185,7 +185,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 dark:bg-black">
+    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-gray-100">
       <div className="flex justify-between items-center">
         <img
           src="/logo.png"
@@ -204,7 +204,7 @@ export default function Navbar() {
               onChange={handleSearchChange}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              className="w-full text-sm focus:outline-none"
+              className="w-full text-sm dark:bg-darkBackground focus:outline-none"
             />
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
@@ -248,7 +248,7 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span className="text-gray-600">
+                <span className="">
                   {localStorage.getItem("coin")}
                 </span>
                 <FaCoins style={{ color: "gold" }} size={30} />
@@ -282,7 +282,7 @@ export default function Navbar() {
                   alt="User"
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="text-gray-600 text-lg w-34 overflow:hidden">
+                <span className="text-lg w-34 overflow:hidden">
                   {localStorage.getItem("username")}
                 </span>
               </div>
