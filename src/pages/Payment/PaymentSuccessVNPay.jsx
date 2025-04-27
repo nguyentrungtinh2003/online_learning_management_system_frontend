@@ -20,7 +20,7 @@ const PaymentSuccessVNPay = () => {
       try {
         setLoading(true);
         // Call the backend API to execute the payment
-        const res = await axios.post(`${URL}/payments/execute`, null, {
+        const res = await axios.post(`${URL}/payments/execute/vnpay`, null, {
           params: { responseCode, userId, amount },
         });
 
