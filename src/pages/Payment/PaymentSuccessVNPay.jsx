@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom"; // React Router hook
+import URL from "../../config/URLconfig";
 
 const PaymentSuccessVNPay = () => {
   const [loading, setLoading] = useState(true);
