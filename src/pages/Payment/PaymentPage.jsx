@@ -7,19 +7,22 @@ import { FaCoins } from "react-icons/fa";
 export default function PaymentPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [method, setMethod] = useState("");
+  const [method, setMethod] = useState("VNPay");
   const [amount, setAmount] = useState(1); // số tiền mặc định
 
   const submitPayment = async (e) => {
     e.preventDefault(); // Ngăn submit reload trang
+    console.log("Phuong thuc payment : " + method);
     setLoading(true);
     setError("");
 
     const paymentData = {
-      userId: localStorage.getItem("id"), // bạn có thể thay bằng userId từ context hoặc props
+      userId: parseInt(localStorage.getItem("id")), // bạn có thể thay bằng userId từ context hoặc props
       amount: amount,
       method: method,
     };
+
+    console.log("Payload payment : " + paymentData);
 
     try {
       const response = await axios.post(`${URL}/payments/create`, paymentData, {
@@ -31,7 +34,11 @@ export default function PaymentPage() {
 
       const approvalUrl = response.data.data;
       if (approvalUrl) {
-        window.location.href = approvalUrl; // Redirect đến PayPal
+        if (method == "PayPal") {
+          window.location.href = approvalUrl; // Redirect đến PayPal
+        } else {
+          window.location.href = "/vnpay-return";
+        }
       } else {
         setError("Không nhận được link thanh toán từ hệ thống.");
       }

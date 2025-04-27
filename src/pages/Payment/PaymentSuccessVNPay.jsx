@@ -1,79 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-import URL from "../../config/URLconfig";
-import { ToastContainer, toast, Slide } from "react-toastify";
-import { Container, Spinner, Alert } from "react-bootstrap";
+import { useLocation } from "react-router-dom"; // React Router hook
 
-const VNPaySuccess = () => {
+const PaymentSuccessVNPay = () => {
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
   const [error, setError] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
-    const executeVNPay = async () => {
-      const queryString = window.location.search;
+    // Extract query parameters from the URL
+    const params = new URLSearchParams(location.search);
+    const responseCode = params.get("vnp_ResponseCode");
+    const userId = params.get("userId");
+    const amount = params.get("vnp_Amount");
 
+    const executePayment = async () => {
       try {
-        const res = await axios.get(
-          `${URL}/payments/execute/vnpay${queryString}`
-        );
-        console.log("✅ VNPay payment success:", res.data);
-        toast.success("Thanh toán thành công !", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Slide,
+        setLoading(true);
+        // Call the backend API to execute the payment
+        const res = await axios.post(`${URL}/payments/execute`, null, {
+          params: { responseCode, userId, amount },
         });
 
-        setTimeout(() => {
-          window.location.replace("/");
-        }, 3000);
+        if (res.data.statusCode === 200) {
+          setMessage("Thanh toán thành công!");
+        } else {
+          setMessage("Thanh toán thất bại!");
+        }
       } catch (err) {
-        console.error("❌ VNPay payment failed:", err);
-        setError("Thanh toán không thành công. Vui lòng thử lại sau.");
+        console.error("Error executing payment", err);
+        setError("Đã có lỗi xảy ra. Vui lòng thử lại.");
       } finally {
         setLoading(false);
       }
     };
 
-    executeVNPay();
-  }, []);
+    executePayment();
+  }, [location.search]);
 
-  if (loading) {
-    return (
-      <>
-        <ToastContainer />
-        <Container
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "100vh" }}
-        >
-          <div className="text-center">
-            <Spinner animation="border" role="status" />
-            <p className="mt-3">
-              🔄 Đang xử lý thanh toán... Vui lòng đợi giây lát.
-            </p>
-          </div>
-        </Container>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <ToastContainer />
-        <Container
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "100vh" }}
-        >
-          <Alert variant="danger" className="text-center">
-            ❌ <strong>Lỗi:</strong> {error}
-          </Alert>
-        </Container>
-      </>
-    );
-  }
-
-  return null;
+  return (
+    <div>
+      <h2>Thanh toán VNPay</h2>
+      {loading ? <p>Đang xử lý...</p> : <p>{message}</p>}
+      {error && <div className="error-message">{error}</div>}
+    </div>
+  );
 };
 
-export default VNPaySuccess;
+export default PaymentSuccessVNPay;
