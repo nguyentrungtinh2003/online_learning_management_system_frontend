@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { FaCoins } from "react-icons/fa";
+import { FaCoins, FaMoon, FaSun } from "react-icons/fa";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,6 +15,28 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState(""); // Lưu trữ giá trị nhập vào của search
   const [suggestions, setSuggestions] = useState([]); // Lưu trữ các gợi ý khóa học
   const [showSuggestions, setShowSuggestions] = useState(false); // Kiểm tra xem có nên hiển thị gợi ý hay không
+  const [isDarkMode, setIsDarkMode] = useState(false); // State cho dark mode
+
+  // Lấy giá trị dark mode từ localStorage khi component load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("darkMode");
+    if (savedTheme === "true") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark");
+    }
+  }, []);
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+    if (isDarkMode) {
+      document.body.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+    } else {
+      document.body.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    }
+  };
 
   // Các gợi ý mặc định khi người dùng chưa nhập gì
   const defaultSuggestions = [
@@ -163,7 +185,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 shadow-lg mb-2">
+    <nav className="px-4 py-3 dark:bg-black">
       <div className="flex justify-between items-center">
         <img
           src="/logo.png"
@@ -180,8 +202,8 @@ export default function Navbar() {
               placeholder="Search courses..."
               value={searchQuery}
               onChange={handleSearchChange}
-              onFocus={handleFocus} // Khi focus vào input
-              onBlur={handleBlur} // Khi blur khỏi input
+              onFocus={handleFocus}
+              onBlur={handleBlur}
               className="w-full text-sm focus:outline-none"
             />
             {(showSuggestions || searchQuery.length > 0) && (
@@ -226,7 +248,7 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span className="text-gray-800">
+                <span className="text-gray-600">
                   {localStorage.getItem("coin")}
                 </span>
                 <FaCoins style={{ color: "gold" }} size={30} />
@@ -264,6 +286,14 @@ export default function Navbar() {
                   {localStorage.getItem("username")}
                 </span>
               </div>
+
+              {/* Dark Mode Button with Icon */}
+              <button
+                onClick={toggleDarkMode}
+                className="text-gray-600 dark:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+              </button>
             </div>
           ) : (
             <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">

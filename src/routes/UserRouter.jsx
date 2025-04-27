@@ -22,6 +22,7 @@ import ManagementQuestion from "../pages/Question/QuestionManagement";
 import Profile from "../pages/User/Profile";
 import UserRanking from "../pages/Ranking/UserRanking";
 import UserLayout from "../components/Layout/UserLayout";
+import UserSetting from "../pages/User/UserSetting";
 
 const UserRouter = () => {
   return (
@@ -55,6 +56,7 @@ const UserRouter = () => {
         <Route path="question" element={<ManagementQuestion />} />
         <Route path="profile" element={<Profile />} />
         <Route path="ranking" element={<UserRanking />} />
+        <Route path="settings" element={<UserSetting/>} />
       </Route>
     </Routes>
   );

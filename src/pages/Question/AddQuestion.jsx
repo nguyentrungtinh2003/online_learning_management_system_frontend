@@ -23,7 +23,7 @@ const AddQuestion = () => {
     answerD: "",
     answerCorrect: "",
     isDeleted: false,
-    quiz: quizId,
+    quizId: quizId,
   });
 
   const handleChange = (e) => {

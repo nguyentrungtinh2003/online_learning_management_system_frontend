@@ -63,7 +63,7 @@ export default function SectionCoursePro() {
   };
 
   return (
-    <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full mx-auto px-4 pt-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
         Top Courses – No Payment Needed!
       </h2>

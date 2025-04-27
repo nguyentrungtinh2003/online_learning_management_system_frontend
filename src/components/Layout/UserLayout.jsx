@@ -4,7 +4,7 @@ import Navbar from "../Navbar/Navbar";
 
 export default function UserLayout() {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen dark:bg-darkBackground">
       <div className="flex flex-col flex-1">
       <Navbar/>
       <div className="flex flex-1 h-full overflow-y-auto">

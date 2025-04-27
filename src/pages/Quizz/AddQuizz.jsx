@@ -21,7 +21,7 @@ const AddQuizz = () => {
     date: "",
     quizEnum: "FREE",
     isDeleted: false,
-    lesson: lessonId,
+    lessonId: lessonId,
   });
 
   const [loading, setLoading] = useState(false);
