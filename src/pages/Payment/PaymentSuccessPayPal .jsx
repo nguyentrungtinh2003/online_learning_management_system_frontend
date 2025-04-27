@@ -75,7 +75,6 @@ const PaymentSuccess = () => {
           style={{ height: "100vh" }}
         >
           <div className="text-center">
-            <Spinner animation="border" role="status" />
             <p className="mt-3">
               <Spinner animation="border" variant="white" className="me-2" />
             </p>
