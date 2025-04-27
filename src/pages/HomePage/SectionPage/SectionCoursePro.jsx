@@ -27,14 +27,14 @@ export default function SectionCoursePro() {
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="font-semibold dark:border-gray-700 border-gray-300 border-1 text-gray-600 dark:text-gray-200 dark:text-gray-300 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
+    <div className="font-semibold dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
         className="w-full h-48 object-cover"
-      />
+      /> 
       <div className="p-6 font-bold">
-      <h3 className="text-2xl w-full font-bold text-gray-800 dark:text-gray-100 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
+      <h3 className="text-2xl w-full font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
         {course.courseName || "Java Backend"}
       </h3>
       <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
@@ -66,7 +66,7 @@ export default function SectionCoursePro() {
   return (
     <div className="w-full mx-auto px-4 pt-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
-        Top Courses – No Payment Needed!
+        Advance Your Skills – Premium Access
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {loading ? (

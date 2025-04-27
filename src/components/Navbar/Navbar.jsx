@@ -185,18 +185,17 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-gray-100">
+    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
         <img
           src="/logo.png"
-          className="rounded-full object-cover"
-          width={60}
-          height={60}
+          className="rounded-full cursor-pointer object-cover h-10 mx-2"
+          alt="logo"
         ></img>
         {/* Search Bar */}
         <div className="flex-1 flex justify-center w-full ml-4">
-          <div className="flex w-[50%] justify-center gap-2 items-center border p-2 rounded-xl relative">
-            <FaSearch className="text-gray-500 cursor-pointer" />
+          <div className="flex w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+            <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
               placeholder="Search courses..."
@@ -204,7 +203,7 @@ export default function Navbar() {
               onChange={handleSearchChange}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              className="w-full text-sm dark:bg-darkBackground focus:outline-none"
+              className="w-full text-sm dark:bg-darkBackground dark:text-darkSubtext focus:outline-none"
             />
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
@@ -303,13 +302,13 @@ export default function Navbar() {
             </button>
           )}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-10 mt-2 bg-white border rounded-lg shadow-lg z-20">
+            <div className="absolute right-10 top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
               <ul className="py-2 whitespace-nowrap">
-                <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 cursor-pointer">
+                <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
                   <Link to="/profile">Thông tin tài khoản</Link>
                 </li>
                 <li
-                  className="px-4 py-2 text-red-600 hover:bg-gray-200 cursor-pointer"
+                  className="px-4 py-2  dark:hover:bg-gray-800 text-red-600 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleLogout()}
                 >
                   Đăng xuất
@@ -318,8 +317,8 @@ export default function Navbar() {
             </div>
           )}
           {isNotificationOpen && (
-            <div className="absolute right-0 top-10 w-[600px] p-2 mt-2 bg-white border rounded-xl shadow-lg z-20">
-              <h3 className="text-lg w-full text-center font-semibold border-b pb-2">
+            <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
+              <h3 className="text-lg w-full text-center font-semibold border-b dark:border-darkBorder pb-2">
                 Thông báo
               </h3>
               <ul className="py-2 h-[40%] overflow-auto">
@@ -327,17 +326,17 @@ export default function Navbar() {
                   notifications.map((notification, index) => (
                     <li
                       key={index}
-                      className={`hover:bg-focolor px-4 py-2 cursor-pointer break-words ${
+                      className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
                         !notification.read
-                          ? "font-bold text-black"
-                          : "text-gray-700"
+                          ? "font-bold text-black dark:text-darkText"
+                          : "text-gray-700 dark:text-darkSubtext"
                       }`}
                     >
                       {notification.message}
                     </li>
                   ))
                 ) : (
-                  <li className="hover:bg-focolor px-4 py-2 text-gray-500 break-words">
+                  <li className="hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 text-gray-500 dark:text-darkText break-words">
                     Không có thông báo nào.
                   </li>
                 )}

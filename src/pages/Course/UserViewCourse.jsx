@@ -70,10 +70,9 @@ export default function UserViewCourse() {
   }
 
   return (
-    <div className="flex-1 h-screen py-3 ">
-      <div className="bg-white h-full overflow-y-auto shadow rounded-2xl">
-        <Navbar />
-        <div className="flex w-full h-fit px-10 gap-12">
+    <div className="flex-1 h-full drop-shadow-lg shadow">
+      <div className="bg-white h-full overflow-y-auto rounded-2xl">
+        <div className="flex w-full h-fit px-4 py-2 gap-12">
           <div className=" space-y-4 text-gray-700 w-[50%] text-lg font-semibold">
             <div className="space-y-2">
               <h1 className="text-3xl text-fcolor font-bold">

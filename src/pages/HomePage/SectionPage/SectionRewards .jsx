@@ -70,11 +70,11 @@ const SectionRewards = () => {
       {rewardsData.map((reward, index) => (
         <div
           key={index}
-          className="gap-4 mb-8 p-6 text-gray-700 dark:text-gray-400 dark:border dark:border-gray-700 rounded-lg shadow-lg flex items-center hover:scale-[1.02] transition-all duration-300"
+          className="gap-4 mb-8 p-6 text-gray-700 dark:text-darkSubtext font-semibold dark:border dark:border-darkBorder rounded-lg shadow-lg flex items-center hover:scale-[1.02] transition-all duration-300"
         >
           {reward.icon}
           <div>
-            <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+            <h3 className="text-2xl font-semibold text-gray-800 dark:text-darkText mb-2">
               {reward.title}
             </h3>
             {reward.description && (

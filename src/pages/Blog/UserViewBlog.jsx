@@ -189,19 +189,19 @@ export default function Blog() {
   if (dataLoading) {
     return (
       <div className="flex h-full w-full place-items-center justify-center">
-        <Spinner animation="border" variant="blue" />
+        <Spinner animation="border" variant="white" />
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto flex-1 px-2 space-y-2 bg-white">
+    <div className="h-full dark:text-darkSubtext overflow-y-auto flex-1 flex flex-col gap-2">
       <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-xl w-[40%] shadow-lg">
-            <h2 className="text-lg border-b font-semibold w-full text-center pb-2">
+          <div className="bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder dark:text-darkText p-4 rounded-xl w-[40%] shadow-lg">
+            <h2 className="text-lg border-b dark:border-darkBorder font-semibold w-full text-center pb-2">
               Tạo bài viết
             </h2>
             <div className="flex items-center gap-2 py-2">
@@ -218,46 +218,52 @@ export default function Blog() {
                 <p className="font-semibold">
                   {localStorage.getItem("username")}
                 </p>
-                <div className="flex items-center gap-1 text-sm text-gray-500">
+                <div className="flex items-center gap-1 text-sm dark:text-darkText text-gray-500">
                   <PiGlobeThin /> <span>Công khai</span>
                 </div>
               </div>
             </div>
 
-            <input
-              className="w-full border-none focus:outline-none"
-              name="blogName"
-              type="text"
-              placeholder="Nhập tên blog ?"
-              value={newPostContent.blogName}
-              onChange={handleChange}
-            ></input>
-            <textarea
-              type="text"
-              name="description"
-              className="w-full border-none focus:outline-none"
-              placeholder="Văn Tấn ơi, bạn đang nghĩ gì thế?"
-              value={newPostContent.description}
-              onChange={handleChange}
-            ></textarea>
-            <div className="w-full border p-4 rounded-lg flex flex-col justify-center items-center mt-2">
-              <PiImageDuotone size={25} />
-              <lable>Img</lable>
+            <div className="border-1 p-2 rounded-lg dark:border-darkBorder">
               <input
-                name="img"
-                type="file"
-                onChange={handleImageChange}
+                className="w-full border-none focus:outline-none bg-transparent"
+                name="blogName"
+                type="text"
+                placeholder="Nhập tiêu đề bài viết ?"
+                value={newPostContent.blogName}
+                onChange={handleChange}
               ></input>
-              <lable>Video</lable>
-              <input
-                name="video"
-                type="file"
-                onChange={handleVideoChange}
-              ></input>
+              <textarea
+                type="text"
+                name="description"
+                className="w-full border-none focus:outline-none bg-transparent"
+                placeholder="Văn Tấn ơi, bạn đang nghĩ gì thế?"
+                value={newPostContent.description}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="w-full border-1 dark:border-darkBorder p-4 rounded-lg flex items-center mt-2">
+              <div className="flex flex-col items-center w-fit">
+                <PiImageDuotone size={25} />
+                <lable>Img</lable>
+                <input
+                  name="img"
+                  type="file"
+                  onChange={handleImageChange}
+                ></input>
+              </div>
+              <div className="flex flex-col items-center w-fit">
+                <lable>Video</lable>
+                <input
+                  name="video"
+                  type="file"
+                  onChange={handleVideoChange}
+                ></input>
+              </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
               <button
-                className="px-4 py-2 bg-gray-300 rounded-lg"
+                className="px-4 py-2 bg-gray-300 dark:bg-darkSubbackground rounded-lg"
                 onClick={() => setIsCreatingPost(false)}
               >
                 Hủy
@@ -276,7 +282,7 @@ export default function Blog() {
           </div>
         </div>
       )}
-      <div className="flex p-4 rounded-xl space-y-4 bg-white border flex-col">
+      <div className="flex p-4 rounded-xl space-y-4 border-1 dark:border-darkBorder flex-col">
         <div className="flex gap-2">
           <img
             src={
@@ -288,24 +294,24 @@ export default function Blog() {
             className="w-10 h-10 rounded-full"
           />
           <input
-            className="focus:outline-none flex-1 px-4 bg-focolor rounded-2xl"
+            className="focus:outline-none placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder="Bạn đang nghĩ gì thế?"
             onClick={() => setIsCreatingPost(true)}
           />
         </div>
-        <div className="flex gap-2">
-          <p
-            className="cursor-pointer hover:bg-focolor border px-4 py-2 rounded-2xl"
+        <div className="flex gap-2 dark:text-darkText">
+          <button
+            className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
             Ảnh / Video
-          </p>
-          <p
-            className="cursor-pointer hover:bg-focolor border px-4 py-2 rounded-2xl"
+          </button>
+          <button
+            className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
             Cảm xúc / Hoạt động
-          </p>
+          </button>
         </div>
       </div>
 
@@ -313,18 +319,18 @@ export default function Blog() {
         data.map((post) => (
           <div key={post.id}>
             {!hiddenPosts.includes(post.id) ? (
-              <div className="pt-4 px-4 pb-2 border rounded-2xl border border-gray-200">
-                <div className="flex justify-between">
+              <div className="pt-4 px-4 pb-2 border-1 dark:border-darkBorder rounded-2xl">
+                <div className="flex justify-between dark:text-darkText">
                   <div className="flex items-center mb-2">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full" />
+                    <img src="./logo.png" alt="avatar" className="w-10 h-10 rounded-full" />
                     <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
-                        <h4 className="font-bold">{post.user.username}</h4>
+                        <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">{post.user.username}</h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
                     </Link>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 relative">
                     <button
                       onClick={() =>
                         setMenuOpenPost(
@@ -335,9 +341,9 @@ export default function Blog() {
                       <PiDotsThreeBold size={25} />
                     </button>
                     {menuOpenPost === post.id && (
-                      <div className="absolute right-40 mt-2 bg-white border shadow-md rounded-lg p-2">
+                      <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
                         <button
-                          className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 rounded-md"
+                          className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
                           onClick={() => reportPost(post.id)}
                         >
                           Báo cáo bài viết
@@ -358,7 +364,7 @@ export default function Blog() {
                     className="w-full h-60 object-cover rounded-lg mb-2"
                   />
                 )}
-                <div className="flex justify-between text-gray-600 text-sm border-t-2 pt-2">
+                <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
                   <button
                     className="flex items-center gap-2"
                     onClick={() => handleLike(post.id, post)}
@@ -392,7 +398,7 @@ export default function Blog() {
 
                 {/* Hiển thị bình luận khi bấm vào comment */}
                 {selectedPost === post.id && (
-                  <div className="mt-2 p-2 border-t">
+                  <div className="mt-2 p-2 border-t dark:border-darkBorder dark:text-darkText">
                     <div className="max-h-60 overflow-y-auto">
                       {post.blogComments
                         .slice(0, visibleComments)
@@ -401,7 +407,7 @@ export default function Blog() {
                             key={comment.id}
                             className="flex items-center mb-2"
                           >
-                            <div className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
+                            <img src="./logo.png" alt="avatar" className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
                             <div className="bg-gray-100 p-2 rounded-lg">
                               <p className="text-sm font-semibold">
                                 {comment.user.username}
@@ -439,7 +445,7 @@ export default function Blog() {
                 )}
               </div>
             ) : (
-              <div className="px-4 py-3 border flex justify-between items-center rounded-xl">
+              <div className="px-4 py-3 border-1 dark:border-darkBorder dark:text-darkText flex justify-between items-center rounded-xl">
                 <span className="flex items-center gap-2">
                   <PiEyeClosed size={25} />
                   Bài viết đã được ẩn

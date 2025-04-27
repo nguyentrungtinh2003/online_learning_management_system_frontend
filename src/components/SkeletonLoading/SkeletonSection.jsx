@@ -9,7 +9,7 @@ const SkeletonSection = () => {
           key={index}
           className="w-full rounded-2xl overflow-hidden border-1 dark:border-gray-700 p-6 min-w-0"
         >
-          <div className="bg-gray-200 w-full dark:bg-gray-800 rounded-md overflow-hidden">
+          <div className="bg-gray-200 w-full dark:bg-darkSubbackground rounded-md overflow-hidden">
             <Skeleton
               animation="wave"
               variant="rectangular"
@@ -19,7 +19,7 @@ const SkeletonSection = () => {
             />
           </div>
 
-          <div className="bg-gray-200 w-[80%] dark:bg-gray-800 rounded-md mt-4">
+          <div className="bg-gray-200 w-[80%] dark:bg-darkSubbackground rounded-md mt-4">
             <Skeleton
               animation="wave"
               variant="text"
@@ -29,7 +29,7 @@ const SkeletonSection = () => {
             />
           </div>
 
-          <div className="bg-gray-200 w-[90%] dark:bg-gray-800 rounded-md mt-2">
+          <div className="bg-gray-200 w-[90%] dark:bg-darkSubbackground rounded-md mt-2">
             <Skeleton
               animation="wave"
               variant="text"
@@ -39,7 +39,7 @@ const SkeletonSection = () => {
             />
           </div>
 
-          <div className="bg-gray-200 w-[60%] dark:bg-gray-800 rounded-md mt-2">
+          <div className="bg-gray-200 w-[60%] dark:bg-darkSubbackground rounded-md mt-2">
             <Skeleton
               animation="wave"
               variant="text"
@@ -49,7 +49,7 @@ const SkeletonSection = () => {
             />
           </div>
 
-          <div className="bg-gray-200 w-[50%] dark:bg-gray-800 rounded-md mt-2">
+          <div className="bg-gray-200 w-[50%] dark:bg-darkSubbackground rounded-md mt-2">
             <Skeleton
               animation="wave"
               variant="text"
@@ -59,7 +59,7 @@ const SkeletonSection = () => {
             />
           </div>
 
-          <div className="bg-gray-200 w-full dark:bg-gray-800 rounded-md mt-4 overflow-hidden">
+          <div className="bg-gray-200 w-full dark:bg-darkSubbackground rounded-md mt-4 overflow-hidden">
             <Skeleton
               animation="wave"
               variant="rectangular"

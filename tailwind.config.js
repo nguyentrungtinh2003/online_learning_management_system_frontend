@@ -16,7 +16,10 @@ module.exports = {
         rcolor: "#FF0105", // Màu đen chủ đạo
         ycolor: "#FFFF00", // Màu nền chính
         darkBackground: "#181818",
-        darkText: "#F1F1F1",
+        darkSubbackground: "#1e293b",
+        darkText: "#e2e8f0",
+        darkSubtext: "#94a3b8",
+        darkBorder: "#334155",
       },
       details: {
         "no-marker": {
