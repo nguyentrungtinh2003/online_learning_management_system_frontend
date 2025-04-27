@@ -3,19 +3,23 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
+import FormData from 'form-data';
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
+
 import URL from "../../config/URLconfig";
+
 const AddCourse = () => {
   const navigate = useNavigate();
 
   const [courseData, setCourseData] = useState({
     courseName: "",
     description: "",
-    img: "",
+    img:"",
     price: "",
     courseEnum: "FREE",
+    isDeleted:false,
     userId: localStorage.getItem("id"),
   });
 
@@ -51,13 +55,14 @@ const AddCourse = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setCourseData({ ...courseData, [name]: value });
 
     if (name === "price") {
       const parsedPrice = parseFloat(value);
       setCourseData((prev) => ({
         ...prev,
         price: value,
-        courseEnum: parsedPrice === 0.0 ? "FREE" : "PAID",
+        courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
       }));
     } else {
       setCourseData((prev) => ({
@@ -88,66 +93,49 @@ const AddCourse = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImg(file);
+    setImg(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", {
-        autoClose: 3000,
-      });
+      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 1000 });
       return;
     }
-
+  
     setLoading(true);
 
     const formData = new FormData();
-    formData.append(
-      "course",
-      new Blob([JSON.stringify(courseData)], { type: "application/json" })
-    );
 
     if (img) {
       formData.append("img", img);
     }
-
+  
+    // Thêm thông tin course dưới dạng JSON Blob
+    const courseJson = new Blob([JSON.stringify(courseData)], { type: "application/json" });
+    formData.append("course", courseJson);   
+    
+    console.log("courseData JSON:", JSON.stringify(courseData, null, 2));
     try {
-      console.log("Data course " + formData);
-      const response = await axios.post(
-        `${URL}/teacher/courses/add`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true, // Cho phép gửi cookies, session
-        }
-      );
-      console.log("Thành công:", response.data);
-      // alert("Thêm khóa học thành công!");
-
-      toast.success("Thêm khóa học thành công!", {
-        position: "top-right",
-        autoClose: 3000, // 4 giây
+      const res = await axios.post(`${URL}/teacher/courses/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
       });
-
-      setTimeout(() => {
-        navigate(-1);
-      }, 4000);
+  
+      toast.success("🎉 Thêm khóa học thành công!", { autoClose: 1000 });
+      setTimeout(() => navigate(-1), 2000);
     } catch (error) {
-      console.error("Lỗi:", error.response?.data || error.message);
-      // alert("Lỗi khi thêm khóa học!");
-      toast.error("Không thể thêm khóa học!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      console.error("Submit Error:", error);
+      const message = error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
+      toast.error(`❌ ${message}`, { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">

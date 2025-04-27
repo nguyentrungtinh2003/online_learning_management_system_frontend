@@ -63,18 +63,18 @@ const AddLesson = () => {
       // alert("Thêm bài học thành công!");
       toast.success("Thêm bài học thành công!", {
         position: "top-right",
-        autoClose: 3000, // 4 giây
+        autoClose: 1000, // 4 giây
       });
 
       setTimeout(() => {
         navigate(-1);
-      }, 4000);
+      }, 2000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       // alert("Lỗi khi thêm bài học!");
       toast.error("Không thể thêm bài học!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
       });
     } finally {
       setLoading(false);

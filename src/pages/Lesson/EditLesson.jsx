@@ -1,5 +1,5 @@
-import { ToastContainer,toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
@@ -10,48 +10,43 @@ import { MdNavigateNext } from "react-icons/md";
 
 const EditLesson = () => {
   const navigate = useNavigate();
-
   const { courseId, lessonId } = useParams(); // Lấy cả courseId từ URL
-  
+
   const [lessons, setLesson] = useState({
     lessonName: "",
     description: "",
+    date: "",
+    courseId: courseId, // ID của khóa học
+    isDeleted: false,
     img: "",
-    videoURL: "",
-    course : {id : courseId},
+    videoURL: ""
   });
 
-  useEffect(() => {
-    console.log("Lesson ID:", lessonId);
-    console.log("Course ID:", lessons.courseId);
-  }, [lessonId, lessons.courseId]);
-  
   const [file, setFile] = useState(null);
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("Course ID:", courseId); // Kiểm tra xem có lấy được không
-
   useEffect(() => {
     axios
       .get(`https://codearena-backend-dev.onrender.com/api/lessons/${lessonId}`)
       .then(({ data }) => {
-        console.log("Dữ liệu nhận từ API:", data);
         setLesson({
-          ...data.data,
-          course: { id: data.data.course?.id ?? courseId },
+          lessonName: data.data.lessonName || "",
+          description: data.data.description || "",
+          date: data.data.date || "",
+          img: data.data.img || "", // Handle image URL
+          videoURL: data.data.videoURL || "", // Handle video URL
+          courseId: data.data.course?.id || courseId,
+          isDeleted: data.data.isDeleted || false,
         });
-        console.log("Dữ liệu gửi đi:", lessons);
-        console.log("courseId trước khi gửi:", lessons.courseId);
-
       })
       .catch((err) => {
         console.error("Lỗi khi tải dữ liệu bài học:", err);
         setError("Không thể tải dữ liệu bài học");
       })
       .finally(() => setLoading(false));
-  }, [lessonId]);
+  }, [lessonId, courseId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,58 +58,39 @@ const EditLesson = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     const formData = new FormData();
-  
     formData.append("lesson", new Blob([JSON.stringify(lessons)], { type: "application/json" }));
     if (file) formData.append("img", file);
     if (video) formData.append("video", video);
 
-    // Kiểm tra nếu course.id bị null
-    if (!lessons.course?.id) {
-    alert("Lỗi: Course ID bị null!");
-    return;
-    }
-
-    console.log("Dữ liệu gửi đi:", [...formData.entries()]);
-  
     try {
       const response = await axios.put(
         `https://codearena-backend-dev.onrender.com/api/teacher/lessons/update/${lessonId}`,
         formData,
-        { 
-          headers: { "Content-Type": "multipart/form-data",
-           },
-           withCredentials: true, // Cho phép gửi cookies, session
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
         }
       );
-      console.log("Phản hồi từ server:", response.data);
-      // alert("Cập nhật bài học thành công!");
-        toast.success("Cập nhật bài học thành công!", {
-            position: "top-right",
-            autoClose: 3000,  // 4 giây
-            });
-      
-            setTimeout(() => {
-              navigate(-1);
-              }, 4000);  
+      toast.success("Cập nhật bài học thành công!", {
+        position: "top-right",
+        autoClose: 1000,
+      });
+
+      setTimeout(() => {
+        navigate(-1);
+      }, 2000);
     } catch (err) {
       console.error("Lỗi khi cập nhật bài học:", err.response?.data || err.message);
-      // alert("Lỗi khi cập nhật bài học! Xem console để biết chi tiết.");
-        toast.error("Không thể cập nhật bài học!", {
-              position: "top-right",
-              autoClose: 3000, 
-            });
-    }
-    finally{
+      toast.error("Không thể cập nhật bài học!", {
+        position: "top-right",
+        autoClose: 1000,
+      });
+    } finally {
       setLoading(false);
     }
   };
-  
-
-  // if (loading) return <div className="text-center mt-10">Loading...</div>;
-  // if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 flex flex-col h-fit p-6">
@@ -140,7 +116,9 @@ const EditLesson = () => {
         {/* Hiển thị ảnh cũ nếu có */}
         <Form.Group className="mb-3" controlId="formImage">
           <Form.Label>Lesson Image</Form.Label>
-          {lessons.img && <img src={lessons.img} alt="Lesson" className="w-40 h-40 object-cover rounded-md mb-2" />}
+          {lessons.img && (
+            <img src={lessons.img} alt="Lesson" className="w-40 h-40 object-cover rounded-md mb-2" />
+          )}
           <Form.Control type="file" onChange={handleImageChange} />
         </Form.Group>
 
@@ -157,7 +135,7 @@ const EditLesson = () => {
         </Form.Group>
 
         <div className="flex justify-end space-x-2 mt-6">
-        <Link
+          <Link
             onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
           >
@@ -169,10 +147,10 @@ const EditLesson = () => {
             disabled={loading}
           >
             {loading ? "Processing..." : "Submit"}
-          </button>        </div>
+          </button>
+        </div>
       </Form>
-            <ToastContainer /> 
-      
+      <ToastContainer />
     </div>
   );
 };
