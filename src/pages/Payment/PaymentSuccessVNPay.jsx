@@ -20,11 +20,10 @@ const PaymentSuccessVNPay = () => {
       try {
         setLoading(true);
         // Call the backend API to execute the payment
-        const res = await axios.post(`${URL}/payments/execute/vnpay`, {
-          responseCode,
-          userId,
-          amount,
-        });
+        const res = await axios.get(
+          `${URL}/payments/execute/vnpay?vnp_ResponseCode=${responseCode}&userId=${userId}&vnp_Amount=${amount}`,
+          { withCredentials: true }
+        );
 
         if (res.data.statusCode === 200) {
           setMessage("Thanh toán thành công!");
