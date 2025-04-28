@@ -209,7 +209,7 @@ export default function Blog() {
                 src={
                   localStorage.getItem("img") !== "null"
                     ? localStorage.getItem("img")
-                    : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                    : "/user.png"
                 }
                 alt="Avatar"
                 className="w-10 h-10 rounded-full"
@@ -237,7 +237,9 @@ export default function Blog() {
                 type="text"
                 name="description"
                 className="w-full border-none focus:outline-none bg-transparent"
-                placeholder="Văn Tấn ơi, bạn đang nghĩ gì thế?"
+                placeholder={`${localStorage.getItem(
+                  "username"
+                )} ơi, bạn đang nghĩ gì thế ?`}
                 value={newPostContent.description}
                 onChange={handleChange}
               />
@@ -288,14 +290,16 @@ export default function Blog() {
             src={
               localStorage.getItem("img") !== "null"
                 ? localStorage.getItem("img")
-                : "https://cdn-icons-png.flaticon.com/512/219/219970.png"
+                : "/user.png"
             }
             alt="Avatar"
             className="w-10 h-10 rounded-full"
           />
           <input
             className="focus:outline-none placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
-            placeholder="Bạn đang nghĩ gì thế?"
+            placeholder={`${localStorage.getItem(
+              "username"
+            )} đang nghĩ gì thế ?`}
             onClick={() => setIsCreatingPost(true)}
           />
         </div>
@@ -322,10 +326,16 @@ export default function Blog() {
               <div className="pt-4 px-4 pb-2 border-1 dark:border-darkBorder rounded-2xl">
                 <div className="flex justify-between dark:text-darkText">
                   <div className="flex items-center mb-2">
-                    <img src="./logo.png" alt="avatar" className="w-10 h-10 rounded-full" />
+                    <img
+                      src={post?.user?.img ? post?.user?.img : "/user.png"}
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full"
+                    />
                     <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
-                        <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">{post.user.username}</h4>
+                        <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
+                          {post.user.username}
+                        </h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
                     </Link>
@@ -407,7 +417,11 @@ export default function Blog() {
                             key={comment.id}
                             className="flex items-center mb-2"
                           >
-                            <img src="./logo.png" alt="avatar" className="w-8 h-8 bg-gray-300 rounded-full mr-2" />
+                            <img
+                              src="./logo.png"
+                              alt="avatar"
+                              className="w-8 h-8 bg-gray-300 rounded-full mr-2"
+                            />
                             <div className="bg-gray-100 p-2 rounded-lg">
                               <p className="text-sm font-semibold">
                                 {comment.user.username}

@@ -127,14 +127,14 @@ export default function UserViewCourse() {
         {/* Left content */}
         <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">
           {/* Course Title */}
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
-            <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">{course.courseName}</h1>
+          <div className="bg-wcolor dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
+            <h1 className="text-4xl font-semibold text-gray-800 dark:darkText">{course.courseName}</h1>
             <p className="text-lg">{course.description}</p>
           </div>
 
           {/* Instructor */}
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-darkText">Instructor</h2>
+          <div className="bg-wcolor dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800">Instructor</h2>
             <div className="flex items-center gap-4">
               {/* Instructor Image */}
               <img
@@ -143,18 +143,18 @@ export default function UserViewCourse() {
                 className="w-16 h-16 rounded-full object-cover"
               />
               <div>
-                <p className="font-semibold dark:text-darkText">Nguyen Trung Tinh</p>
-                <p className="text-sm text-gray-600 dark:text-darkSubtext">
+                <p className="font-semibold">Nguyen Trung Tinh</p>
+                <p className="text-sm text-gray-600">
                   Experienced instructor with over 10 years of teaching in the field of web development and software engineering.
                 </p>
-                <p className="text-sm text-gray-500 dark:text-darkSubtext">Courses taught: 120+</p>
+                <p className="text-sm text-gray-500">Courses taught: 120+</p>
               </div>
             </div>
           </div>
 
           {/* Course Content */}
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
-            <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">Course Content</h2>
+          <div className="bg-wcolor dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Course Content</h2>
             {lessonsToDisplay.length === 0 ? (
               <p>No lessons available.</p>
             ) : (
@@ -188,7 +188,7 @@ export default function UserViewCourse() {
         {/* Right Sidebar */}
         <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
           {/* Course Details */}
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
+          <div className="bg-wcolor dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
             {/* Course Image */}
             <div>
               <div className="relative w-auto h-32 mb-6">

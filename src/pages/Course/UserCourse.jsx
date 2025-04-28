@@ -46,41 +46,57 @@ export default function UserCourse() {
             <p className="text-gray-600 text-center">No courses enrolled.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {courses.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
-                >
-                  <img
-                    src={item.courseImg || "/default.jpg"}
-                    alt={item.courseName}
-                    className="h-48 w-full object-cover"
-                  />
-                  <div className="p-4 flex flex-col flex-1">
-                    <h2 className="text-xl font-semibold text-blue-800 truncate">
-                      {item.courseName}
-                    </h2>
-                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-                      {item.courseDescription || "No description"}
-                    </p>
-                    <p className="mt-2 text-xs text-gray-500">
-                      <span className="font-medium">Enrolled:</span>{" "}
-                      <span className="text-blue-600">
-                        {new Date(item.enrolledDate).toLocaleDateString(
-                          "vi-VN"
-                        )}
-                      </span>
-                    </p>
+              {courses.map((item, index) => {
+                // Lấy mảng enrolledDate từ mỗi item
+                const enrolledDateArray = item.enrolledDate;
 
-                    <button
-                      onClick={() => navigate(`/view-lesson/${item.courseId}`)}
-                      className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition duration-300 hover:scale-105 shadow-lg"
-                    >
-                      🚀 Continue Learning
-                    </button>
+                // Tạo đối tượng Date từ mảng
+                const date = new Date(
+                  enrolledDateArray[0], // Năm
+                  enrolledDateArray[1] - 1, // Tháng (trừ 1 vì JavaScript bắt đầu từ tháng 0)
+                  enrolledDateArray[2], // Ngày
+                  enrolledDateArray[3], // Giờ
+                  enrolledDateArray[4], // Phút
+                  enrolledDateArray[5], // Giây
+                  enrolledDateArray[6] // Millisecond
+                );
+
+                // Chuyển đối tượng Date thành chuỗi ngày tháng theo định dạng vi-VN
+                const formattedDate = date.toLocaleDateString("vi-VN");
+                return (
+                  <div
+                    key={index}
+                    className="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
+                  >
+                    <img
+                      src={item.img || "/default.jpg"}
+                      alt={item.courseName}
+                      className="h-48 w-full object-cover"
+                    />
+                    <div className="p-4 flex flex-col flex-1">
+                      <h2 className="text-xl font-semibold text-blue-800 truncate">
+                        {item.courseName}
+                      </h2>
+                      <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+                        {item.description || "No description"}
+                      </p>
+                      <p className="mt-2 text-xs text-gray-500">
+                        <span className="font-medium">Enrolled:</span>{" "}
+                        <span className="text-blue-600">{formattedDate}</span>
+                      </p>
+
+                      <button
+                        onClick={() =>
+                          navigate(`/view-lesson/${item.courseId}`)
+                        }
+                        className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition duration-300 hover:scale-105 shadow-lg"
+                      >
+                        🚀 Continue Learning
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
