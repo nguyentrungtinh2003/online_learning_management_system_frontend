@@ -70,23 +70,34 @@ export default function UserViewCourse() {
   }
 
   return (
-    <div className="flex-1 h-full drop-shadow-lg shadow">
+    <div className="flex-1 h-full drop-shadow-lg shadow-lg">
       <div className="bg-white h-full overflow-y-auto rounded-2xl">
-        <div className="flex w-full h-fit px-4 py-2 gap-12">
-          <div className=" space-y-4 text-gray-700 w-[50%] text-lg font-semibold">
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
+        <div className="flex w-full h-fit px-8 py-6 gap-12">
+          {/* Left Side: Course Info */}
+          <div className="space-y-6 text-gray-700 w-[60%] text-lg font-semibold">
+            <div className="space-y-4">
+              <h1 className="text-4xl text-fcolor font-bold">
                 Course Introduction
               </h1>
-              <p className="text-2xl font-bold">{course?.courseName}</p>{" "}
-              {/* Sử dụng optional chaining */}
-              <p>{course?.description}</p> {/* Sử dụng optional chaining */}
+              <div className="flex items-center gap-4">
+                <img
+                  src={course?.img || "/default-course.jpg"}
+                  alt={course?.courseName}
+                  className="h-48 w-48 object-cover rounded-lg shadow-lg"
+                />
+                <div>
+                  <p className="text-2xl font-bold">{course?.courseName}</p>
+                  <p className="text-xl">{course?.description}</p>
+                </div>
+              </div>
             </div>
-            <div className="space-y-2">
+
+            {/* Learning Objectives */}
+            <div className="space-y-4">
               <h1 className="text-3xl text-fcolor font-bold">
                 What You Will Learn?
               </h1>
-              <ul>
+              <ul className="list-disc pl-6">
                 <li>Understanding JavaScript syntax and basic operations</li>
                 <li>Working with variables, data types, and functions</li>
                 <li>Implementing loops and conditional statements</li>
@@ -94,9 +105,11 @@ export default function UserViewCourse() {
                 <li>Manipulating the DOM to dynamically update web pages</li>
               </ul>
             </div>
-            <div className="space-y-2">
+
+            {/* Course Content */}
+            <div className="space-y-4">
               <h1 className="text-3xl text-fcolor font-bold">Course Content</h1>
-              <ul>
+              <ul className="list-disc pl-6">
                 <li>Module 1: Introduction to JavaScript & Setup</li>
                 <li>Module 2: Variables, Data Types & Operators</li>
                 <li>Module 3: Functions & Scope</li>
@@ -105,53 +118,70 @@ export default function UserViewCourse() {
               </ul>
             </div>
           </div>
-          <div className="w-[50%] flex flex-col max-h-full">
-            <div className="space-y-2">
+
+          {/* Right Side: Instructor & Pricing */}
+          <div className="w-[40%] flex flex-col max-h-full">
+            {/* Instructor */}
+            <div className="space-y-4">
               <h1 className="text-3xl text-fcolor font-bold">Instructor</h1>
-              <p className="flex items-center gap-2 font-bold text-xl">
-                Lecture: <h2 className="text-fcolor">Nguyen Trung Tinh</h2>
-              </p>
-              <p>
-                This course is taught by experienced JavaScript developers who
-                have worked on real-world projects and have years of teaching
-                experience.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                Ranking & Reviews
-              </h1>
-              <div className="flex items-center w-full gap-40">
-                <p className="font-bold text-8xl">4.0</p>
-                <div className="font-bold text-xl">400 reviews</div>
-              </div>
-              <div className="">
-                <p className="text-2xl font-bold my-2">
-                  The most helpful review
-                </p>
-                <div className="border p-3">
-                  <p className="font-bold">
-                    Bài học hữu ích và hay nhất mà tôi từng học
+              <div className="flex items-center gap-2">
+                <img
+                  src="/instructor.jpg" // Replace with actual instructor image
+                  alt="Instructor"
+                  className="h-20 w-20 object-cover rounded-full"
+                />
+                <div>
+                  <p className="font-bold text-xl">
+                    Lecture: Nguyen Trung Tinh
                   </p>
                   <p>
-                    giảng viên dạy dễ hiểu, có nhiều bài tập tương tác và hỗ trợ
-                    người dùng rất tích cực
+                    This course is taught by experienced JavaScript developers
+                    who have worked on real-world projects.
                   </p>
                 </div>
               </div>
             </div>
-            <div className="space-y-2">
+
+            {/* Ranking & Reviews */}
+            <div className="space-y-4">
+              <h1 className="text-3xl text-fcolor font-bold">
+                Ranking & Reviews
+              </h1>
+              <div className="flex items-center gap-8">
+                <p className="font-bold text-6xl">4.0</p>
+                <div className="text-lg">400 reviews</div>
+              </div>
+              <div className="border p-4 mt-4 rounded-xl">
+                <p className="text-2xl font-semibold">
+                  The most helpful review:
+                </p>
+                <div className="border-t pt-2">
+                  <p className="font-bold">
+                    Bài học hữu ích và hay nhất mà tôi từng học
+                  </p>
+                  <p>
+                    Giảng viên dạy dễ hiểu, có nhiều bài tập tương tác và hỗ trợ
+                    người dùng rất tích cực.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pricing & Enrollment */}
+            <div className="space-y-4">
               <h1 className="text-3xl text-fcolor font-bold">
                 Pricing & Enrollment
               </h1>
-              <h1 className="font-bold text-2xl flex gap-2">
-                Price: <p className="text-rose-400">Free</p>
-              </h1>
+              <p className="font-bold text-2xl">
+                Price: <span className="text-rose-400">Free</span>
+              </p>
             </div>
-            <div className="flex-col flex-1 flex">
+
+            {/* Buy Button */}
+            <div className="mt-auto flex flex-col items-end">
               <button
                 onClick={() => buyCourse(id)}
-                className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end"
+                className="bg-scolor hover:scale-105 duration-300 text-xl py-3 px-16 font-bold rounded-lg shadow-lg"
               >
                 {buyLoading ? (
                   <Spinner animation="border" variant="white" />
