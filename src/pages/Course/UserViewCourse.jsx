@@ -1,53 +1,103 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar/Navbar";
 import { useParams } from "react-router-dom";
-import URL from "../../config/URLconfig"; // Đảm bảo URL được cấu hình đúng
-import { getCourseById } from "../../services/courseapi"; // Import service
-import axios from "axios"; // Import axios để thực hiện HTTP request
+import URL from "../../config/URLconfig";
+import { getCourseById } from "../../services/courseapi";
+import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
 
 export default function UserViewCourse() {
   const { id } = useParams();
-  const [course, setCourse] = useState(null); // Khởi tạo state là null
-  const [loading, setLoading] = useState(true); // Thêm state loading
+  const [course, setCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [buyLoading, setBuyLoading] = useState(false);
-  const [error, setError] = useState(null); // Thêm state error
+  const [error, setError] = useState(null);
+  const [videoDurations, setVideoDurations] = useState({});
+  const [showAllLessons, setShowAllLessons] = useState(false);
 
   useEffect(() => {
-    const fetchCourse = async () => {
-      // Sử dụng async/await
-      setLoading(true); // Bắt đầu loading
-      setError(null);
+    const fetchCourseData = async () => {
       try {
-        const courseData = await getCourseById(id); // Gọi service để lấy dữ liệu
-        setCourse(courseData.data);
-      } catch (error) {
-        setError(error); // Lưu lỗi vào state
+        setLoading(true);
+        setError(null);
+        const response = await getCourseById(id);
+        if (response && response.statusCode === 200) {
+          setCourse(response.data);
+          setLessons(response.data.lessons || []);
+        } else {
+          throw new Error(response?.message || "Failed to load course data");
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err);
       } finally {
-        setLoading(false); // Kết thúc loading
+        setLoading(false);
       }
     };
-    fetchCourse();
+
+    fetchCourseData();
   }, [id]);
+
+  useEffect(() => {
+    if (!lessons || lessons.length === 0) return;
+    const loadDurations = async () => {
+      const promises = lessons.map((lesson, i) => {
+        if (!lesson.videoURL) return Promise.resolve({ index: i, duration: 0 });
+
+        const video = document.createElement("video");
+        video.src = lesson.videoURL;
+
+        return new Promise((resolve) => {
+          video.onloadedmetadata = () => resolve({ index: i, duration: video.duration });
+          video.onerror = () => resolve({ index: i, duration: 0 });
+        });
+      });
+
+      const results = await Promise.all(promises);
+      const durations = {};
+      results.forEach(({ index, duration }) => {
+        durations[index] = duration;
+      });
+      setVideoDurations(durations);
+    };
+
+    loadDurations();
+  }, [lessons]);
+
+  const formatDuration = (duration) => {
+    if (!duration || isNaN(duration)) return "Loading...";
+    const minutes = Math.floor(duration / 60).toString().padStart(2, "0");
+    const seconds = Math.floor(duration % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
 
   const buyCourse = async (id) => {
     setBuyLoading(true);
     const userId = localStorage.getItem("id");
     if (!userId) {
-      // Handle trường hợp không có user id, ví dụ: chuyển hướng đăng nhập
       console.error("User ID not found. Please log in.");
-      return; // Dừng việc mua khóa học
+      setBuyLoading(false);
+      return;
     }
-    const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
-    if (response) {
-      console.log(response.data);
+    try {
+      const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
+      if (response) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
       setBuyLoading(false);
     }
   };
 
+  const toggleShowAllLessons = () => {
+    setShowAllLessons(!showAllLessons);
+  };
+
   if (loading) {
     return (
-      <div className="flex-1 h-screen py-3 flex items-center justify-center">
+      <div className="flex-1 h-full flex items-center justify-center">
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -55,109 +105,110 @@ export default function UserViewCourse() {
 
   if (error) {
     return (
-      <div className="flex-1 h-screen py-3 flex items-center justify-center">
-        <p>Error: {error.message}</p> {/* Hiển thị thông báo lỗi */}
+      <div className="flex-1 h-full flex items-center justify-center">
+        <p>Error: {error.message}</p>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="flex-1 h-screen py-3 flex items-center justify-center">
-        <p>Course not found.</p> {/* Xử lý trường hợp không có dữ liệu */}
+      <div className="flex-1 h-full flex items-center justify-center">
+        <p>Course not found.</p>
       </div>
     );
   }
 
+  const lessonsToDisplay = showAllLessons ? lessons : lessons.slice(0, 4);
+
   return (
-    <div className="flex-1 h-full drop-shadow-lg shadow">
-      <div className="bg-white h-full overflow-y-auto rounded-2xl">
-        <div className="flex w-full h-fit px-4 py-2 gap-12">
-          <div className=" space-y-4 text-gray-700 w-[50%] text-lg font-semibold">
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                Course Introduction
-              </h1>
-              <p className="text-2xl font-bold">{course?.courseName}</p>{" "}
-              {/* Sử dụng optional chaining */}
-              <p>{course?.description}</p> {/* Sử dụng optional chaining */}
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                What You Will Learn?
-              </h1>
-              <ul>
-                <li>Understanding JavaScript syntax and basic operations</li>
-                <li>Working with variables, data types, and functions</li>
-                <li>Implementing loops and conditional statements</li>
-                <li>Handling user interactions with events</li>
-                <li>Manipulating the DOM to dynamically update web pages</li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">Course Content</h1>
-              <ul>
-                <li>Module 1: Introduction to JavaScript & Setup</li>
-                <li>Module 2: Variables, Data Types & Operators</li>
-                <li>Module 3: Functions & Scope</li>
-                <li>Module 4: Loops & Conditional Statements</li>
-                <li>Module 5: DOM Manipulation & Events</li>
-              </ul>
+    <div className="flex flex-col h-full px-2 dark:bg-darkBackground dark:text-darkSubtext">
+      <div className="flex flex-col h-full gap-2 lg:flex-row mx-auto w-full">
+        {/* Left content */}
+        <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">
+          {/* Course Title */}
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
+            <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">{course.courseName}</h1>
+            <p className="text-lg">{course.description}</p>
+          </div>
+
+          {/* Instructor */}
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-darkText">Instructor</h2>
+            <div className="flex items-center gap-4">
+              {/* Instructor Image */}
+              <img
+                src="https://randomuser.me/api/portraits/men/44.jpg"  // Replace with actual instructor image
+                alt="Instructor"
+                className="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <p className="font-semibold dark:text-darkText">Nguyen Trung Tinh</p>
+                <p className="text-sm text-gray-600 dark:text-darkSubtext">
+                  Experienced instructor with over 10 years of teaching in the field of web development and software engineering.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-darkSubtext">Courses taught: 120+</p>
+              </div>
             </div>
           </div>
-          <div className="w-[50%] flex flex-col max-h-full">
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">Instructor</h1>
-              <p className="flex items-center gap-2 font-bold text-xl">
-                Lecture: <h2 className="text-fcolor">Nguyen Trung Tinh</h2>
-              </p>
-              <p>
-                This course is taught by experienced JavaScript developers who
-                have worked on real-world projects and have years of teaching
-                experience.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                Ranking & Reviews
-              </h1>
-              <div className="flex items-center w-full gap-40">
-                <p className="font-bold text-8xl">4.0</p>
-                <div className="font-bold text-xl">400 reviews</div>
+
+          {/* Course Content */}
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
+            <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">Course Content</h2>
+            {lessonsToDisplay.length === 0 ? (
+              <p>No lessons available.</p>
+            ) : (
+              <ul className="space-y-4">
+                {lessonsToDisplay.map((lesson, index) => (
+                  <li
+                    key={lesson._id || index}
+                    className="flex items-center justify-between border-b pb-3"
+                  >
+                    <div>
+                      <p className="font-semibold">{lesson.lessonName}</p>
+                      <p className="text-sm text-gray-500">
+                        {lesson.videoURL ? formatDuration(videoDurations[index]) : "No video link"}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {lessons.length > 4 && !showAllLessons && (
+              <button
+                onClick={toggleShowAllLessons}
+                className="text-blue-600 hover:underline mt-4"
+              >
+                See All
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
+          {/* Course Details */}
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
+            {/* Course Image */}
+            <div>
+              <div className="relative w-auto h-32 mb-6">
+                <img
+                  src={course.img}
+                  alt={course.courseName}
+                  className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                />
               </div>
-              <div className="">
-                <p className="text-2xl font-bold my-2">
-                  The most helpful review
-                </p>
-                <div className="border p-3">
-                  <p className="font-bold">
-                    Bài học hữu ích và hay nhất mà tôi từng học
-                  </p>
-                  <p>
-                    giảng viên dạy dễ hiểu, có nhiều bài tập tương tác và hỗ trợ
-                    người dùng rất tích cực
-                  </p>
-                </div>
-              </div>
+              <h2 className="text-xl font-semibold text-gray-800">Course Details</h2>
+              <p><strong>Price:</strong> {course.coin !== undefined ? `${course.coin} Coins` : "Free"}</p>
+              <p><strong>Lessons:</strong> {lessons.length}</p>
+              <p><strong>Instructor:</strong> Nguyen Trung Tinh</p>
             </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl text-fcolor font-bold">
-                Pricing & Enrollment
-              </h1>
-              <h1 className="font-bold text-2xl flex gap-2">
-                Price: <p className="text-rose-400">Free</p>
-              </h1>
-            </div>
-            <div className="flex-col flex-1 flex">
+            <div className="flex justify-end mt-6">
               <button
                 onClick={() => buyCourse(id)}
-                className="bg-scolor border hover:shadow-lg hover:scale-105 duration-500 text-xl py-3 px-20 font-bold rounded mt-auto self-end"
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
               >
-                {buyLoading ? (
-                  <Spinner animation="border" variant="white" />
-                ) : (
-                  "Buy Now"
-                )}
+                {buyLoading ? <Spinner animation="border" size="sm" /> : "Enroll Now"}
               </button>
             </div>
           </div>

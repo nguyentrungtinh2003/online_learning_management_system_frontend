@@ -98,7 +98,7 @@ export default function CourseLanding() {
             className={`rounded-2xl h-2 transition-all duration-300 hover:w-12 ${
               currentDivIndex === index
                 ? "w-[60px] bg-scolor"
-                : "w-[40px] bg-gray-300"
+                : "w-[40px] bg-gray-300 dark:bg-gray-700"
             }`}
             onClick={() => setCurrentDivIndex(index)}
           />
