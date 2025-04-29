@@ -31,9 +31,9 @@ export default function UserCourse() {
   };
 
   return (
-    <div className="flex-1 h-full overflow-y-auto p-6 bg-gray-50">
+    <div className="flex-1 h-full overflow-y-auto p-6">
       {loading ? (
-        <div className="w-full h-full flex items-center justify-center bg-white">
+        <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
         </div>
       ) : (
@@ -43,7 +43,7 @@ export default function UserCourse() {
           </h1>
 
           {courses.length === 0 ? (
-            <p className="text-gray-600 text-center">No courses enrolled.</p>
+            <p className="text-gray-600 dark:text-darkText text-center">No courses enrolled.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((item, index) => {
@@ -66,7 +66,7 @@ export default function UserCourse() {
                 return (
                   <div
                     key={index}
-                    className="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
+                    className="bg-wcolor dark:text-darkText dark:bg-darkBackground dark:border dark:border-darkBorder rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
                   >
                     <img
                       src={item.img || "/default.jpg"}
@@ -74,13 +74,13 @@ export default function UserCourse() {
                       className="h-48 w-full object-cover"
                     />
                     <div className="p-4 flex flex-col flex-1">
-                      <h2 className="text-xl font-semibold text-blue-800 truncate">
+                      <h2 className="text-xl font-semibold truncate">
                         {item.courseName}
                       </h2>
-                      <p className="text-gray-600 text-sm mt-1 line-clamp-2">
+                      <p className="text-gray-600 dark:text-slate-400 text-sm mt-1 line-clamp-2">
                         {item.description || "No description"}
                       </p>
-                      <p className="mt-2 text-xs text-gray-500">
+                      <p className="mt-2 text-xs text-gray-500 dark:text-darkSubtext">
                         <span className="font-medium">Enrolled:</span>{" "}
                         <span className="text-blue-600">{formattedDate}</span>
                       </p>

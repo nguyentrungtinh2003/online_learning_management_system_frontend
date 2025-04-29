@@ -188,8 +188,8 @@ export default function Blog() {
 
   if (dataLoading) {
     return (
-      <div className="flex h-full w-full place-items-center justify-center">
-        <Spinner animation="border" variant="white" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function Blog() {
                 onClick={handleCreatePost}
               >
                 {loading ? (
-                  <Spinner animation="border" variant="white" />
+                  <Spinner animation="border" variant="blue" />
                 ) : (
                   "Đăng"
                 )}
@@ -334,7 +334,7 @@ export default function Blog() {
                     <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
                         <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
-                          {post.user.username}
+                          {post.username}
                         </h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
