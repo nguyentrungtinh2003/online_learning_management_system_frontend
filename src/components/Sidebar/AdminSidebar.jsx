@@ -78,6 +78,12 @@ export default function Sidebar() {
       path: "/profile",
     },
     {
+      id: "E-Wallet",
+      label: "E-Wallet",
+      icon: <FaWallet size={25} />,
+      path: "/user/payment",
+    },
+    {
       id: "Settings",
       label: "Setting",
       icon: <MdSettingsSuggest size={25} />,

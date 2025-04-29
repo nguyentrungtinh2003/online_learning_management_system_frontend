@@ -188,8 +188,8 @@ export default function Blog() {
 
   if (dataLoading) {
     return (
-      <div className="flex h-full w-full place-items-center justify-center">
-        <Spinner animation="border" variant="white" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -275,7 +275,7 @@ export default function Blog() {
                 onClick={handleCreatePost}
               >
                 {loading ? (
-                  <Spinner animation="border" variant="white" />
+                  <Spinner animation="border" variant="blue" />
                 ) : (
                   "Đăng"
                 )}
@@ -334,7 +334,7 @@ export default function Blog() {
                     <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
                         <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
-                          {post.user.username}
+                          {post.username}
                         </h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
@@ -410,32 +410,30 @@ export default function Blog() {
                 {selectedPost === post.id && (
                   <div className="mt-2 p-2 border-t dark:border-darkBorder dark:text-darkText">
                     <div className="max-h-60 overflow-y-auto">
-                      {post.blogComments
-                        .slice(0, visibleComments)
-                        .map((comment) => (
-                          <div
-                            key={comment.id}
-                            className="flex items-center mb-2"
-                          >
+                      {post?.blogComments?.map((comment) => (
+                        <div
+                          key={comment.id}
+                          className="flex items-center mb-2"
+                        >
+                          <img
+                            src="./logo.png"
+                            alt="avatar"
+                            className="w-8 h-8 bg-gray-300 rounded-full mr-2"
+                          />
+                          <div className="bg-gray-100 p-2 rounded-lg">
+                            <p className="text-sm font-semibold">
+                              {comment.user.username}
+                            </p>
                             <img
-                              src="./logo.png"
-                              alt="avatar"
-                              className="w-8 h-8 bg-gray-300 rounded-full mr-2"
+                              src={comment.user.img}
+                              alt="Post"
+                              className="w-full h-60 object-cover rounded-lg mb-2"
                             />
-                            <div className="bg-gray-100 p-2 rounded-lg">
-                              <p className="text-sm font-semibold">
-                                {comment.user.username}
-                              </p>
-                              <img
-                                src={comment.user.img}
-                                alt="Post"
-                                className="w-full h-60 object-cover rounded-lg mb-2"
-                              />
-                              <p className="text-sm">{comment.content}</p>
-                            </div>
+                            <p className="text-sm">{comment.content}</p>
                           </div>
-                        ))}
-                      {visibleComments < post.blogComments.length && (
+                        </div>
+                      ))}
+                      {visibleComments < post?.blogComments?.length && (
                         <button
                           onClick={() =>
                             setVisibleComments(visibleComments + 3)
@@ -450,6 +448,7 @@ export default function Blog() {
                       <div className="w-8 h-8 bg-gray-300 rounded-full" />
                       <input
                         type="text"
+                        name="comment"
                         placeholder="Viết bình luận..."
                         className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
                       />

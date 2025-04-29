@@ -52,7 +52,7 @@ export default function PaymentPage() {
     >
       <Card
         style={{ width: "100%", maxWidth: "800px" }}
-        className="p-4 shadow-lg rounded-4 border-0"
+        className="p-4 shadow-lg rounded-4 border-4"
       >
         <FaCoins style={{ color: "gold" }} size={30} />
         <h1 className="text-center mb-8 text-primary fw-bold">
@@ -63,7 +63,7 @@ export default function PaymentPage() {
 
         <Form onSubmit={submitPayment}>
           <Form.Group className="mb-3" controlId="formAmount">
-            <Form.Label>Số tiền muốn nạp (USD):</Form.Label>
+            <Form.Label>Số tiền muốn nạp :</Form.Label>
             <Form.Control
               type="number"
               placeholder="Nhập số tiền (ví dụ: 5)"
@@ -76,13 +76,20 @@ export default function PaymentPage() {
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Label>Bạn sẽ nhận được:</Form.Label>
-            <Form.Control
+            <Form.Label>Bạn sẽ nhận được :</Form.Label>
+            <br></br>
+            {/* <Form.Control
               type="text"
               value={`${amount * 10} Coin`}
               readOnly
               className="bg-light"
-            />
+            /> */}
+            <Form.Label>
+              1 USD = 25.000 VND , 25.000 / 100 = 250 Coins
+            </Form.Label>
+            <br></br>
+            <Form.Label>25.000 VND , 25.000 / 100 = 250 Coins</Form.Label>
+            <br></br>
           </Form.Group>
 
           <Form.Group className="mb-4">

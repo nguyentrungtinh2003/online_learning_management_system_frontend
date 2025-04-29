@@ -93,15 +93,18 @@ export default function UserRanking() {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-1 gap-4 overflow-hidden">
+      <div className="flex flex-1 gap-4 overflow-y-hidden">
         {/* Podium */}
-        <div className="flex-1 flex justify-center items-end gap-4">
+        <div className="relative flex-1 flex justify-center items-end gap-4 py-4">
+          <div className="absolute translate-x-6 w-full z-0 h-16 bg-cyan-300 skew-x-[45deg] rounded-2xl"/>
           {/* Second */}
           {users[1] && (
             <div className="flex flex-col items-center">
-              <img src="/user.png" alt="" className="w-20 h-20" />
+              <img src="/user.png" alt="" className="w-20 h-20 rounded-full" />
               <p className="font-semibold">{users[1].name}</p>
-              <div className="w-24 h-24 bg-blue-300 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
+              <div
+                className="w-24 h-24 bg-blue-300 text-white text-3xl font-bold rounded-t-xl flex justify-center items-center shadow-lg transform transition duration-300 hover:shadow-2xl hover:border-4 hover:border-blue-600 hover:text-blue-800 cursor-pointer"
+              >
                 {users[1].rank}
               </div>
             </div>
@@ -109,24 +112,25 @@ export default function UserRanking() {
 
           {/* First */}
           {users[0] && (
-            <div className="flex flex-col items-center">
-              <div className="relative h-24 w-24 bg-gray-300 rounded-full mb-2">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-yellow-400 text-2xl">
-                  👑
-                </div>
-                <img src="/user.png" alt="" className="w-20 h-20" />
-              </div>
-              <p className="font-semibold">{users[0].name}</p>
-              <div className="w-24 h-40 bg-yellow-400 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
-                {users[0].rank}
-              </div>
+            <div className="relative w-24">
+            {/* Mặt trên */}
+            <div className="bg-yellow-400 rounded hover:border border-cyan-300 h-8 skew-x-[45deg] origin-left shadow-md"></div>
+            {/* Mặt trước */}
+            <div
+              className="bg-yellow-300 rounded hover:border-2 border-cyan-300 skew--[35deg] translate-x-4 h-40 flex items-center justify-center text-3xl font-bold text-white"
+            >
+              1
             </div>
+            <div
+              className="bg-yellow-500 rounded shadow-2xl hover:border-2 border-cyan-300 skew-x-[45deg] rotate-[45deg] translate-y-4 h-[112px] absolute top-[24px] -left-[21px] w-[42px] flex items-center justify-center text-3xl font-bold text-white"
+            />
+          </div>
           )}
 
           {/* Third */}
           {users[2] && (
             <div className="flex flex-col items-center">
-              <img src="/user.png" alt="" className="w-20 h-20" />
+              <img src="/user.png" alt="" className="w-20 h-20 rounded-full" />
               <p className="font-semibold">{users[2].name}</p>
               <div className="w-24 h-20 bg-orange-400 flex justify-center items-center text-white text-3xl font-bold rounded-t-md">
                 {users[2].rank}
