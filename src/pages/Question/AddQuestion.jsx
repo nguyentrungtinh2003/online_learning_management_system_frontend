@@ -1,6 +1,6 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
@@ -10,10 +10,10 @@ import URL from "../../config/URLconfig";
 
 const AddQuestion = () => {
   const navigate = useNavigate();
-
   const { quizId } = useParams();
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(""); // "A", "B", "C", "D"
 
   const [questionData, setQuestionData] = useState({
     questionName: "",
@@ -28,12 +28,32 @@ const AddQuestion = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuestionData({ ...questionData, [name]: value });
+    setQuestionData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleImageChange = (e) => {
     setImg(e.target.files[0]);
   };
+
+  useEffect(() => {
+    // Cập nhật answerCorrect mỗi khi selectedAnswer thay đổi
+    if (selectedAnswer) {
+      const correctText = questionData[`answer${selectedAnswer}`];
+      setQuestionData((prev) => ({
+        ...prev,
+        answerCorrect: correctText,
+      }));
+    }
+  }, [
+    selectedAnswer,
+    questionData.answerA,
+    questionData.answerB,
+    questionData.answerC,
+    questionData.answerD,
+  ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,10 +67,8 @@ const AddQuestion = () => {
     if (img) data.append("img", img);
 
     try {
-      const response = await axios.post(`${URL}/teacher/questions/add`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      await axios.post(`${URL}/teacher/questions/add`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 
@@ -59,9 +77,7 @@ const AddQuestion = () => {
         autoClose: 3000,
       });
 
-      setTimeout(() => {
-        navigate(-1);
-      }, 3000);
+      setTimeout(() => navigate(-1), 3000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
       toast.error("Không thể thêm câu hỏi!", {
@@ -89,29 +105,49 @@ const AddQuestion = () => {
         className="bg-white p-6 rounded-lg shadow-md"
       >
         <div className="space-y-4">
-          {[
-            { label: "Question Name", name: "questionName" },
-            { label: "Answer A", name: "answerA" },
-            { label: "Answer B", name: "answerB" },
-            { label: "Answer C", name: "answerC" },
-            { label: "Answer D", name: "answerD" },
-            { label: "Correct Answer (A/B/C/D)", name: "answerCorrect" },
-          ].map(({ label, name }) => (
-            <div key={name} className="flex items-center space-x-4">
+          {/* Câu hỏi */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">
+              Question Name:
+            </label>
+            <input
+              type="text"
+              name="questionName"
+              value={questionData.questionName}
+              onChange={handleChange}
+              required
+              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          {/* Các đáp án A, B, C, D */}
+          {["A", "B", "C", "D"].map((option) => (
+            <div key={option} className="flex items-center space-x-4">
               <label className="w-1/4 text-gray-700 font-medium">
-                {label}:
+                Answer {option}:
               </label>
               <input
                 type="text"
-                name={name}
-                value={questionData[name]}
+                name={`answer${option}`}
+                value={questionData[`answer${option}`]}
                 onChange={handleChange}
                 required
                 className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="correctAnswer"
+                  value={option}
+                  checked={selectedAnswer === option}
+                  onChange={(e) => setSelectedAnswer(e.target.value)}
+                />
+                <span className="text-sm">Correct</span>
+              </label>
             </div>
           ))}
 
+          {/* Ảnh */}
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">
               Image (optional):
@@ -123,8 +159,16 @@ const AddQuestion = () => {
               className="flex-1 border rounded-lg px-3 py-2"
             />
           </div>
+
+          {/* Hiển thị đáp án đúng */}
+          {questionData.answerCorrect && (
+            <div className="mt-2 text-green-600 font-medium">
+              Đáp án đúng: {questionData.answerCorrect}
+            </div>
+          )}
         </div>
 
+        {/* Nút */}
         <div className="flex justify-end space-x-2 mt-6">
           <Link
             onClick={() => navigate(-1)}

@@ -1,27 +1,27 @@
-import { ToastContainer,toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import URL from "../../config/URLconfig";
 
 const EditCourse = () => {
   const navigate = useNavigate();
-  
   const { id } = useParams();
+
   const [course, setCourse] = useState({
     courseName: "",
     description: "",
     price: "",
     img: "",
-    users: [],
-    user : {id: localStorage.getItem("id")}
+    courseEnum: "FREE",
+    userId: localStorage.getItem("id")
   });
 
-  const [lessons, setLessons] = useState([]);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,29 +29,65 @@ const EditCourse = () => {
   useEffect(() => {
     axios
       .get(`https://codearena-backend-dev.onrender.com/api/courses/${id}`, {
-        withCredentials: true, // Cho phép gửi cookies hoặc xác thực từ trình duyệt
+        withCredentials: true,
       })
       .then(({ data }) => {
         setCourse(data.data);
-        setLessons(data.data.lessons || []);
       })
       .catch(() => setError("Không thể tải dữ liệu khóa học"))
       .finally(() => setLoading(false));
   }, [id]);
-  
-  const handleChange = (e) =>
-    setCourse({ ...course, [e.target.name]: e.target.value });
-  
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setCourse((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "price") {
+      const parsedPrice = parseFloat(value);
+      setCourse((prev) => ({
+        ...prev,
+        price: value,
+        courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
+      }));
+    }
+  };
+
+  const handleEnumChange = (e) => {
+    const selectedType = e.target.value;
+
+    setCourse((prev) => {
+      let newPrice = prev.price;
+
+      if (selectedType === "FREE") {
+        newPrice = "0";
+      } else if (parseFloat(prev.price) <= 0) {
+        newPrice = "1";
+      }
+
+      return {
+        ...prev,
+        courseEnum: selectedType,
+        price: newPrice,
+      };
+    });
+  };
+
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (parseFloat(course.price) <= 0 && course.courseEnum === "PAID") {
+      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 1000 });
+      return;
+    }
+
     setLoading(true);
 
-    if (!course.user || !course.user.id) {
-      course.user = { id: localStorage.getItem("id") };
-    }
-  
     const formData = new FormData();
     formData.append(
       "course",
@@ -61,44 +97,29 @@ const EditCourse = () => {
 
     try {
       const response = await axios.put(
-        `https://codearena-backend-dev.onrender.com/api/teacher/courses/update/${id}`,
+        `${URL}/teacher/courses/update/${id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, // Cho phép gửi cookies, session
+          withCredentials: true,
         }
       );
-      console.log("Thành công:",response);
-      // alert("Cập nhật khóa học thành công!");
-      toast.success("Cập nhật khóa học thành công!", {
-        position: "top-right",
-        autoClose: 3000,  // 4 giây
-      });
-      
+      toast.success("Cập nhật khóa học thành công!", { autoClose: 1000 });
       setTimeout(() => {
-      navigate(-1);
-      }, 4000);    
+        navigate(-1);
+      }, 2000);
     } catch (error) {
-      console.error("Lỗi:", error.response?.data || error.message);
-      // alert("Lỗi khi thêm khóa học!");
-      toast.error("Không thể cập nhật khóa học!", {
-        position: "top-right",
-        autoClose: 3000, 
-      });
+      toast.error("Không thể cập nhật khóa học!", { autoClose: 1000 });
     } finally {
       setLoading(false);
     }
   };
 
   const handleAddLesson = () => {
-    // Chuyển hướng đến trang thêm bài học mới
     window.location.href = `/admin/courses/${id}/lesson`;
   };
-
-  // if (loading) return <div className="text-center mt-10">Loading...</div>;
-  // if (error) return <div className="text-center mt-10 text-red-500">{error}</div>;
 
   return (
     <div className="flex-1 flex flex-col h-fit py-6 px-3">
@@ -113,9 +134,7 @@ const EditCourse = () => {
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Course Title:
-            </label>
+            <label className="w-1/4 text-gray-700 font-medium">Course Title:</label>
             <input
               type="text"
               name="courseName"
@@ -152,9 +171,7 @@ const EditCourse = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Description:
-            </label>
+            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
             <textarea
               name="description"
               rows={3}
@@ -168,10 +185,9 @@ const EditCourse = () => {
             <select
               name="courseEnum"
               value={course.courseEnum}
-              onChange={handleChange}
+              onChange={handleEnumChange}
               className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             >
-              <option>Select Type</option>
               <option value="FREE">Free</option>
               <option value="PAID">Paid</option>
             </select>
@@ -179,7 +195,7 @@ const EditCourse = () => {
         </div>
 
         <div className="flex justify-end space-x-2 mt-6">
-        <Link
+          <Link
             onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
           >
@@ -194,11 +210,9 @@ const EditCourse = () => {
           </button>
         </div>
       </form>
-    <ToastContainer /> 
+      <ToastContainer />
     </div>
   );
 };
 
 export default EditCourse;
-
-

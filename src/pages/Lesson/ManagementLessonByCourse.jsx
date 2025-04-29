@@ -4,16 +4,17 @@ import { useState, useEffect } from "react";
 import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   deleteLesson,
-  searchLessons,
   getLessonByPage,
+  getLessonByCourseIdAndPage,
+  searchLessons,
 } from "../../services/lessonapi";
 
 export default function ManagementLesson() {
   const navigate = useNavigate();
+  const { courseId } = useParams();
 
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ export default function ManagementLesson() {
     const fetchLessons = async () => {
       setLoading(true);
       try {
-        const data = await getLessonByPage(currentPage, lessonsPerPage);
+        const data = await getLessonByCourseIdAndPage(courseId, currentPage, lessonsPerPage);
         if (!data?.data?.content) throw new Error("Invalid API Response");
         setLessons(data.data.content);
         setTotalPages(data.data.totalPages);
@@ -39,8 +40,8 @@ export default function ManagementLesson() {
       }
     };
 
-    fetchLessons();
-  }, [currentPage]);
+    if (courseId) fetchLessons();
+  }, [courseId, currentPage]);
 
   // Tìm kiếm bài học
   const handleSearch = async (e) => {
@@ -52,7 +53,7 @@ export default function ManagementLesson() {
       setCurrentPage(0);
       setLoading(true);
       try {
-        const data = await getLessonByPage(0, lessonsPerPage); // hoặc gọi API ban đầu
+        const data = await getCoursesByPage(0, lessonsPerPage); // hoặc gọi API ban đầu
         setLessons(data.data.content);
         setTotalPages(data.data.totalPages);
       } catch (error) {
@@ -78,21 +79,21 @@ export default function ManagementLesson() {
     }
   };
 
+  // Xóa bài học
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Bạn có chắc muốn xóa bài học "${name}" không?`)) return;
-  
+
     try {
       await deleteLesson(id);
-      const data = await getLessonByPage(currentPage, lessonsPerPage); // dùng API đã sửa
+      const data = await getLessonByCourseIdAndPage(courseId, currentPage, lessonsPerPage);
       setLessons(data.data.content);
       setTotalPages(data.data.totalPages);
-      toast.success("Xóa bài học thành công!", { position: "top-right", autoClose: 1000 });
+      toast.success("Xóa bài học thành công!", { position: "top-right", autoClose: 3000 });
     } catch (error) {
       console.error("Lỗi khi xóa bài học:", error);
-      toast.error("Không thể xóa bài học!", { position: "top-right", autoClose: 1000 });
+      toast.error("Không thể xóa bài học!", { position: "top-right", autoClose: 3000 });
     }
   };
-  
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
@@ -114,8 +115,8 @@ export default function ManagementLesson() {
             <MdNavigateBefore size={30} />
             <h2 className="text-lg font-bold mb-4">Back</h2>
           </Link>
-          <Link to={`/admin/lessons/add`} className="hover:text-ficolor">
-          <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+          <Link to={`/admin/courses/${courseId}/lessons/add`} className="hover:text-ficolor">
+            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
               <FaPlus size={30} />
             </button>
           </Link>
@@ -200,8 +201,10 @@ export default function ManagementLesson() {
                           >
                             <FaEye />
                           </Link>
-                          <Link to={`/admin/lessons/edit/${lesson.id}`} 
-                          className="p-2 border rounded">
+                          <Link
+                            to={`/admin/courses/${courseId}/lessons/edit/${lesson.id}`}
+                            className="p-2 border rounded"
+                          >
                             <FaEdit />
                           </Link>
                           <button
