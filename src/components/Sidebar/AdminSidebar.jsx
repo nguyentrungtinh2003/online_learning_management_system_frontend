@@ -7,7 +7,15 @@ import {
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
 } from "react-icons/md";
-import { FaBuffer, FaUsers, FaHome, FaUser, FaTrophy, FaBook, FaVideo } from "react-icons/fa";
+import {
+  FaBuffer,
+  FaUsers,
+  FaHome,
+  FaUser,
+  FaTrophy,
+  FaVideo,
+  FaWallet,
+} from "react-icons/fa";
 
 export default function Sidebar() {
   const location = useLocation();
