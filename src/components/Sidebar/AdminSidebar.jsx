@@ -7,7 +7,14 @@ import {
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
 } from "react-icons/md";
-import { FaBuffer, FaUsers, FaHome, FaUser, FaTrophy } from "react-icons/fa";
+import {
+  FaBuffer,
+  FaUsers,
+  FaHome,
+  FaUser,
+  FaTrophy,
+  FaWallet,
+} from "react-icons/fa";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -70,6 +77,12 @@ export default function Sidebar() {
       label: "Profile",
       icon: <FaUser size={25} />,
       path: "/profile",
+    },
+    {
+      id: "E-Wallet",
+      label: "E-Wallet",
+      icon: <FaWallet size={25} />,
+      path: "/user/payment",
     },
     {
       id: "Settings",
