@@ -334,7 +334,7 @@ export default function Blog() {
                     <Link to={`/blog/${post.id}`}>
                       <div className="ml-2">
                         <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
-                          {post.user.username}
+                          {post.username}
                         </h4>
                         <p className="text-sm text-gray-500">{post.date}</p>
                       </div>
