@@ -40,8 +40,13 @@ module.exports = {
         "slide-in-from-right": "slideInFromRight 1s ease-in-out",
         "slide-in-from-left": "slideInFromLeft 1s ease-in-out",
         pulse: "pulse 1s",
+        blink: 'blink 0.7s step-start infinite',
       },
       keyframes: {
+        blink: {
+          '0%, 100%': { color: 'inherit' },
+          '50%':     { color: '#67e8f9' }, // tương ứng cyan-400
+        },
         firework: {
           "0%": { transform: "scale(0.5)", opacity: "1" },
           "100%": { transform: "scale(2)", opacity: "0" },
