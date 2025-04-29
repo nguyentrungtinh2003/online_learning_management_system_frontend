@@ -90,3 +90,16 @@ export const deleteQuestion = async (id) => {
         throw error;
     }
   };
+
+
+6. // API Lấy danh sách theo phân trang
+export const getQuestionByQuizIdAndPage = async (quizId,page = 0, size = 6) => {
+    const response = await axios.get(
+      `${URL}/teacher/questions/quiz/${quizId}/page?page=${page}&size=${size}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  };
+  

@@ -2,104 +2,93 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import {
-  MdNavigateNext,
-  MdDeleteForever,
-  MdNavigateBefore,
-} from "react-icons/md";
+import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
-import {
-  getCourses,
-  deleteCourse,
-  getCoursesByPage,
-  searchCourses,
-} from "../../services/courseapi";
-
+import { getCoursesByPage, deleteCourse, searchCourses } from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState("All");
 
-  // Phân trang
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const coursesPerPage = 6;
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const data = await getCoursesByPage(currentPage, coursesPerPage);
-        if (!data || !data.data || !data.data.content) {
-          throw new Error("Invalid API Response");
-        }
-        const sortedCourses = data.data.content.sort((a, b) => b.id - a.id);
-        setCourses(sortedCourses);
-        setTotalPages(data.data.totalPages);
-      } catch (error) {
-        console.error("Lỗi tải khóa học:", error);
-        setCourses([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCourses();
-  }, [currentPage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, filterType]);
 
-  const handleSearch = async (e) => {
-    const value = e.target.value; // Lưu giá trị trước khi setState
-    setSearch(value);
-
-    // Nếu người dùng xóa hết -> reset lại danh sách gốc
-    if (value.trim() === "") {
-      setCurrentPage(0);
-      setLoading(true);
-      try {
-        const data = await getCoursesByPage(0, coursesPerPage); // hoặc gọi API ban đầu
-        const sortedCourses = data.data.content.sort((a, b) => b.id - a.id); // Thêm sort ở đây
-        setCourses(sortedCourses);
-        setTotalPages(data.data.totalPages);
-      } catch (error) {
-        console.error("Lỗi tải lại danh sách:", error);
-        setCourses([]);
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    // Nếu có từ khóa tìm kiếm -> gọi search API
+  const fetchCourses = async () => {
     setLoading(true);
     try {
-      const data = await searchCourses(value, 0, coursesPerPage);
-      const sortedCourses = data.data.content.sort((a, b) => b.id - a.id); // Thêm sort ở đây
-      setCourses(sortedCourses);
-      setTotalPages(data.data.totalPages);
-      setCurrentPage(0);
+      let data;
+      // Fetch tất cả course 1 lần
+      data = await getCoursesByPage(0, 1000); // Lấy nhiều hơn 6 cái, ví dụ 1000 courses
+  
+      if (!data || !data.data || !data.data.content) {
+        throw new Error("Invalid API Response");
+      }
+  
+      let fetchedCourses = data.data.content;
+  
+      // Lọc client
+      if (search.trim() !== "") {
+        fetchedCourses = fetchedCourses.filter(course =>
+          course.courseName.toLowerCase().includes(search.trim().toLowerCase())
+        );
+      }
+  
+      if (filterType === "Free") {
+        fetchedCourses = fetchedCourses.filter(
+          (course) => course.price === 0 || course.price === null
+        );
+      } else if (filterType === "Paid") {
+        fetchedCourses = fetchedCourses.filter(
+          (course) => course.price !== null && course.price > 0
+        );
+      }
+  
+      // Phân trang lại
+      const startIndex = currentPage * coursesPerPage;
+      const endIndex = startIndex + coursesPerPage;
+      const paginatedCourses = fetchedCourses.slice(startIndex, endIndex);
+  
+      setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
+      setTotalPages(Math.ceil(fetchedCourses.length / coursesPerPage));
     } catch (error) {
-      console.error("Lỗi tìm kiếm:", error);
+      console.error("Lỗi tải khóa học:", error);
       setCourses([]);
     } finally {
       setLoading(false);
     }
   };
+  
+
+  const handleSearchInput = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(0);
+  };
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    fetchCourses();
+  };
 
   const handleDelete = async (id, name) => {
-    const isConfirmed = window.confirm(
-      `Bạn có chắc muốn xóa khóa học "${name}" không?`
-    );
+    const isConfirmed = window.confirm(`Bạn có chắc muốn xóa khóa học "${name}" không?`);
     if (isConfirmed) {
       try {
         await deleteCourse(id);
-        const data = await getCoursesByPage(currentPage, coursesPerPage);
-        setCourses(data.data.content);
-        setTotalPages(data.data.totalPages);
         toast.success("Xóa khóa học thành công!", {
           position: "top-right",
           autoClose: 1000,
         });
+        fetchCourses();
       } catch (error) {
         console.error("Lỗi khi xóa khóa học:", error);
         toast.error("Không thể xóa khóa học!", {
@@ -110,7 +99,7 @@ export default function CourseManagement() {
     }
   };
 
-  const handledNextPage = () => {
+  const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
@@ -139,23 +128,40 @@ export default function CourseManagement() {
           </Link>
         </div>
 
-        {/* Ô tìm kiếm */}
-        <div className="mb-4">
+        <form onSubmit={handleSearchSubmit} className="mb-4 flex gap-2">
           <input
             type="text"
             placeholder="Search courses..."
             className="p-2 border rounded w-full focus:outline-none"
             value={search}
-            onChange={handleSearch}
+            onChange={handleSearchInput}
           />
-        </div>
+          <select
+            value={filterType}
+            onChange={(e) => {
+              setFilterType(e.target.value);
+              setCurrentPage(0);
+            }}
+            className="p-2 border rounded"
+          >
+          <option value="All">All</option>
+            <option value="Free">Free</option>
+            <option value="Paid">Paid</option>
+          </select>
+          <button
+            type="submit"
+            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+          >
+            Search
+          </button>
+        </form>
 
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-white p-4 rounded-2xl">
             <table className="w-full">
               <thead>
                 <tr className="text-center font-bold">
-                  <th className="p-2">ID</th>
+                  <th className="p-2">STT</th>
                   <th className="p-2">Course Name</th>
                   <th className="p-2">Description</th>
                   <th className="p-2">Image</th>
@@ -167,18 +173,14 @@ export default function CourseManagement() {
               </thead>
               <tbody>
                 {loading ? (
-                  [...Array(6)].map((_, index) => (
-                    <tr key={index} className="text-center">
-                      {Array(8)
-                        .fill(null)
-                        .map((_, i) => (
-                          <td key={i} className="p-2">
-                            <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
-                          </td>
-                        ))}
-                    </tr>
-                  ))
-                ) : courses?.length > 0 ? (
+                  <DataTableSkeleton rows={6} cols={8} />
+                ) : courses.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      Không có khóa học nào
+                    </td>
+                  </tr>
+                ) : (
                   courses.map((course, index) => (
                     <tr key={course.id} className="text-center">
                       <td className="p-2">
@@ -199,16 +201,25 @@ export default function CourseManagement() {
                           "No image"
                         )}
                       </td>
-                      <td className="p-2">{course.price || "Free"}</td>
                       <td className="p-2">
-                        {course.date ? new Date(
-                            course.date[0], 
-                            course.date[1] - 1, 
-                            course.date[2], 
-                            course.date[3], 
-                            course.date[4], 
-                            course.date[5]
-                          ).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
+                        {course.price === 0 || course.price === null
+                          ? "Free"
+                          : `${course.price} VND`}
+                      </td>
+                      <td className="p-2">
+                        {course.date
+                          ? new Date(
+                              course.date[0],
+                              course.date[1] - 1,
+                              course.date[2],
+                              course.date[3],
+                              course.date[4],
+                              course.date[5]
+                            ).toLocaleDateString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
                           : "N/A"}
                       </td>
                       <td className="p-2">
@@ -229,21 +240,13 @@ export default function CourseManagement() {
                         </Link>
                         <button
                           className="p-2 border rounded"
-                          onClick={() =>
-                            handleDelete(course.id, course.courseName)
-                          }
+                          onClick={() => handleDelete(course.id, course.courseName)}
                         >
                           <MdDeleteForever />
                         </button>
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4">
-                      Không có khóa học nào.
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
@@ -251,9 +254,7 @@ export default function CourseManagement() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>
-            Page {currentPage + 1} of {totalPages}
-          </p>
+          <p>Page {currentPage + 1} of {totalPages}</p>
           <div className="space-x-2">
             <button
               className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
@@ -264,7 +265,7 @@ export default function CourseManagement() {
             </button>
             <button
               className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
-              onClick={handledNextPage}
+              onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >
               <MdNavigateNext size={30} />
