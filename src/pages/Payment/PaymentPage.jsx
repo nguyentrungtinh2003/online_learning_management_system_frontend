@@ -43,7 +43,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4">
+    <div className="w-full h-full flex items-center justify-center py-4">
       <div className="w-full bg-wcolor dark:border dark:bg-darkBackground dark:border-darkBorder rounded-3xl shadow-2xl px-8 py-4 relative">
         <div className="flex flex-col items-center text-center">
           <FaCoins size={60} className="text-yellow-500 mb-2" />
