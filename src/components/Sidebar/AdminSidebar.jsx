@@ -24,6 +24,7 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false); // New state to handle animation
+  const [hoveredItem, setHoveredItem] = useState(null); // State to track hovered item
 
   const adminItems = [
     {
@@ -129,7 +130,7 @@ export default function Sidebar() {
   return (
     <div className="flex p-2 dark:bg-darkBackground">
       <div
-        className={`h-full shadow rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
+        className={`h-full border-box shadow rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
           isCollapsed ? "w-[90px]" : "w-56"
         }`}
       >
@@ -141,7 +142,7 @@ export default function Sidebar() {
             </h2>
           )}
           <button
-            className="p-2 rounded-md text-fcolor hover:bg-gray-200"
+            className="p-2 rounded-md text-fcolor hover:bg-tcolor"
             onClick={handleCollapseToggle}
           >
             {isCollapsed ? (
@@ -160,24 +161,27 @@ export default function Sidebar() {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative group ${
-                activeItem === item.id
-                  ? "bg-fcolor hover:bg-fcolor text-wcolor"
-                  : "hover:bg-tcolor text-fcolor"
-              }`}
+              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative`}
               onClick={() => handleNavigate(item.id, item.path)}
+              onMouseEnter={() => setHoveredItem(item.id)} // Track the hovered item
+              onMouseLeave={() => setHoveredItem(null)} // Reset when mouse leaves
             >
-              {item.icon}
+              {/* Apply 'fcolor' class to the icon */}
+              <span className="text-fcolor">{item.icon}</span>
               {!isCollapsed && !isAnimating && (
-                <span className="duration-1000">{item.label}</span>
+                <span className="duration-1000 text-fcolor">{item.label}</span>
               )}
               {isCollapsed && (
                 <div
-                  className="absolute left-full ml-2 whitespace-nowrap 
-                    bg-scolor text-white text-sm rounded-md py-1 px-2 opacity-0 scale-90 
-                    group-hover:opacity-100 group-hover:scale-100 transition-all duration-600"
+                  className={`absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-wcolor whitespace-nowrap text-sm border-2 rounded-md py-2 px-3 
+                    transition-all duration-300 ${
+                      hoveredItem === item.id
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-90"
+                    }`}
                 >
-                  {item.label}
+                  {/* Apply 'fcolor' class to the label */}
+                  <span className="text-fcolor">{item.label}</span>
                 </div>
               )}
             </li>

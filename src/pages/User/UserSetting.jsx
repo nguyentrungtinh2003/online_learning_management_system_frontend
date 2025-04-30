@@ -63,8 +63,8 @@ const UserSetting = () => {
               onChange={toggleDarkMode}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-scolor dark:bg-gray-700"></div>
-            <div className="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-5" />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-wcolor dark:bg-gray-700"></div>
+            <div className="absolute left-1 top-1 bg-wcolor w-4 h-4 rounded-full transition-all peer-checked:bg-black peer-checked:translate-x-5" />
           </label>
         </div>
 
