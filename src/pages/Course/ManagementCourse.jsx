@@ -114,7 +114,7 @@ export default function CourseManagement() {
     <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-full py-6 px-3">
         <div className="flex mb-2 items-center justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">Course Management</h2>
@@ -130,7 +130,7 @@ export default function CourseManagement() {
           <input
             type="text"
             placeholder="Search courses..."
-            className="p-2 border rounded w-full focus:outline-none"
+            className="py-2 px-3 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={search}
             onChange={handleSearchInput}
           />
@@ -140,7 +140,7 @@ export default function CourseManagement() {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 border rounded"
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
           <option value="All">All</option>
             <option value="Free">Free</option>
@@ -155,10 +155,10 @@ export default function CourseManagement() {
         </form>
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
+          <div className="bg-wcolor dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center font-bold">
+                <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">STT</th>
                   <th className="p-2">Course Name</th>
                   <th className="p-2">Description</th>

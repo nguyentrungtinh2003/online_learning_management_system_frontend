@@ -122,37 +122,37 @@ const EditCourse = () => {
 
   return (
     <div className="w-full flex flex-col h-full py-4 px-3">
-      <div className="flex gap-2">
+      <div className="flex dark:text-darkText gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Course Management</h2>
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Edit Course</h2>
       </div>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:text-darkText text-gray-700 p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Course Title:</label>
+            <label className="w-1/4 font-medium">Course Title:</label>
             <input
               type="text"
               name="courseName"
               value={course.courseName}
               onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             />
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Price:</label>
+            <label className="w-1/4 font-medium">Price:</label>
             <input
               type="number"
               name="price"
               value={course.price}
               onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             />
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+            <label className="w-1/4 font-medium">Image:</label>
             <div className="flex-1">
               {course.img && (
                 <img
@@ -164,27 +164,27 @@ const EditCourse = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
-                className="border rounded-lg px-3 py-2 w-full"
+                className="border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:bg-darkSubbackground dark:border-darkBorder rounded-lg px-3 py-2 w-full"
               />
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
+            <label className="w-1/4 font-medium">Description:</label>
             <textarea
               name="description"
               rows={3}
               value={course.description}
               onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             ></textarea>
           </div>
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
+            <label className="w-1/4 font-medium">Type:</label>
             <select
               name="courseEnum"
               value={course.courseEnum}
               onChange={handleEnumChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             >
               <option value="FREE">Free</option>
               <option value="PAID">Paid</option>
@@ -195,7 +195,7 @@ const EditCourse = () => {
         <div className="flex justify-end space-x-2 mt-6">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            className="px-6 py-2 border-2 border-sicolor dark:text-darkText text-ficolor rounded-lg hover:bg-opacity-80"
           >
             Cancel
           </Link>

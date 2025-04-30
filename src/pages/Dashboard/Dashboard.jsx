@@ -33,7 +33,7 @@ const Dashboard = () => {
           ].map((item, index) => (
             <div
               key={index}
-              className="bg-white space-y-2 px-4 pt-4 pb-2 sm: w-full rounded-xl shadow-md text-center"
+              className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText space-y-2 px-4 pt-4 pb-2 sm: w-full rounded-xl shadow-md text-center"
             >
               <div className="flex justify-between items-center">
                 <div>
