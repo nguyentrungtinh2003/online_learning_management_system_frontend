@@ -66,8 +66,8 @@ export default function UserRanking() {
         <p className="text-2xl font-bold">Xếp Hạng Điểm</p>
         <div className="flex gap-2 font-semibold">
           <button
-            className={`border rounded-xl px-4 py-2 ${
-              selectedTop === "day" ? "bg-black text-white" : ""
+            className={`border-2 rounded-xl px-4 py-2 ${
+              selectedTop === "day" ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground" : ""
             }`}
             onClick={() => setSelectedTop("day")}
           >
@@ -75,7 +75,7 @@ export default function UserRanking() {
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
-              selectedTop === "week" ? "bg-black text-white" : ""
+              selectedTop === "week" ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground" : ""
             }`}
             onClick={() => setSelectedTop("week")}
           >
@@ -83,7 +83,7 @@ export default function UserRanking() {
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
-              selectedTop === "month" ? "bg-black text-white" : ""
+              selectedTop === "month" ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground" : ""
             }`}
             onClick={() => setSelectedTop("month")}
           >
@@ -93,7 +93,7 @@ export default function UserRanking() {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-1 gap-4 overflow-y-hidden">
+      <div className="flex flex-1 flex-col gap-4">
         {/* Podium */}
         <div className="relative flex-1 flex justify-center items-end gap-24 py-12">
           {/* Second */}
@@ -109,7 +109,7 @@ export default function UserRanking() {
                 <div className="bg-yellow-600 -left-6 -bottom-4 w-[140px] absolute rounded-2xl h-16 skew-x-[45deg] origin-left shadow-2xl drop-shadow-2xl"></div>
                 {/* Mặt trước */}
                 <div
-                  className="bg-blue-300 text-wcolor hover:text-cyan-400 hover:border-2 border-cyan-300 translate-x-4 h-28 w-[92px] flex items-center justify-center text-7xl font-bold"
+                  className="bg-blue-300 hover:animate-blink  text-wcolor hover:text-cyan-400 hover:border-2 border-cyan-300 translate-x-4 h-28 w-[92px] flex items-center justify-center text-7xl font-bold"
                 >
                   2
                 </div>
@@ -157,7 +157,7 @@ export default function UserRanking() {
                 <div className="bg-yellow-600 -left-6 -bottom-4 w-[140px] absolute rounded-2xl h-16 skew-x-[45deg] origin-left shadow-2xl drop-shadow-2xl"></div>
                 {/* Mặt trước */}
                 <div
-                  className="bg-orange-200 text-wcolor hover:text-cyan-400 hover:border-2 border-cyan-300 translate-x-4 h-[80px] w-[92px] flex items-center justify-center text-6xl font-bold"
+                  className="bg-orange-200 hover:animate-blink  text-wcolor hover:text-cyan-400 hover:border-2 border-cyan-300 translate-x-4 h-[80px] w-[92px] flex items-center justify-center text-6xl font-bold"
                 >
                   3
                 </div>
@@ -170,10 +170,10 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="w-[50%] h-full max-h-full overflow-hidden border rounded-md shadow bg-white relative">
-          <div className="h-full overflow-y-auto pb-20">
+        <div className="w-full h-screen border mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+          <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
-              <thead className="bg-white sticky top-0 z-10">
+              <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
                 <tr>
                   <th className="text-left p-2">Hạng</th>
                   <th className="text-left p-2">Ảnh</th>
@@ -187,13 +187,13 @@ export default function UserRanking() {
                     key={user.rank}
                     className={`${
                       user.rank === 1
-                        ? "bg-yellow-100"
+                        ? "bg-yellow-100 dark:text-darkBackground"
                         : user.rank === 2
-                        ? "bg-blue-100"
+                        ? "bg-blue-100 dark:text-darkBackground"
                         : user.rank === 3
-                        ? "bg-orange-100"
-                        : "bg-gray-50"
-                    } border-b`}
+                        ? "bg-orange-100 dark:text-darkBackground"
+                        : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
+                    } border-b hover:bg-sicolor`}
                   >
                     <td className="p-2 px-4 font-medium">{user.rank}</td>
                     <td className="p-2">
@@ -208,12 +208,12 @@ export default function UserRanking() {
           </div>
 
           {/* Dòng "bản thân" nổi ở cuối bảng */}
-          <div className="absolute bottom-0 left-0 right-0 bg-green-100 border-t border-green-300 shadow-inner">
-            <div className="relative grid grid-cols-[60px_48px_1fr_auto] items-center gap-4 py-2 px-4">
+          <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
+            <div className="relative flex justify-between items-center px-4">
               <span className="font-semibold">{currentUser.rank}</span>
-              <img src="/user.png" alt="" className="w-8 h-8" />
-              <span className="ml-10">{currentUser.name}</span>
-              <span className="font-semibold mr-[67px]">
+              <img src="/user.png" alt="" className="w-8 h-8 ml-14" />
+              <span className="mr-40">{currentUser.name}</span>
+              <span className="font-semibold mr-40">
                 {currentUser.points}
               </span>
 

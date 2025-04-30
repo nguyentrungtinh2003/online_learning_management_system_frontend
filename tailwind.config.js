@@ -44,7 +44,7 @@ module.exports = {
       },
       keyframes: {
         blink: {
-          '0%, 100%': { color: 'inherit' },
+          '0%, 100%': { color: '#ffffff' },
           '50%':     { color: '#67e8f9' }, // tương ứng cyan-400
         },
         firework: {
