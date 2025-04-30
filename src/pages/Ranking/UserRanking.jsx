@@ -60,7 +60,7 @@ export default function UserRanking() {
   };
 
   return (
-    <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText p-4 flex flex-col">
+    <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-2xl font-bold">Xếp Hạng Điểm</p>
@@ -93,9 +93,9 @@ export default function UserRanking() {
       </div>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col gap-4">
+      <div className="flex h-full overflow-auto w-full flex-1 gap-14 pl-6">
         {/* Podium */}
-        <div className="relative flex-1 flex justify-center items-end gap-24 py-12">
+        <div className="relative h-full flex justify-center items-center gap-24 py-12">
           {/* Second */}
           {users[1] && (
             <div className="flex flex-col items-center">
@@ -170,7 +170,7 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="w-full h-screen border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+        <div className="flex-1 border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
@@ -197,7 +197,7 @@ export default function UserRanking() {
                   >
                     <td className="p-2 px-4 font-medium">{user.rank}</td>
                     <td className="p-2">
-                      <img src="/user.png" alt="" className="w-8 h-8" />
+                      <img src="/user.png" alt="" className="w-8 rounded-2xl h-8" />
                     </td>
                     <td className="p-2">{user.name}</td>
                     <td className="p-2">{user.points}</td>
@@ -209,11 +209,13 @@ export default function UserRanking() {
 
           {/* Dòng "bản thân" nổi ở cuối bảng */}
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
-            <div className="relative flex justify-between items-center px-4">
+            <div className="relative flex justify-around pr-32 gap-12 items-center pl-4">
               <span className="font-semibold">{currentUser.rank}</span>
-              <img src="/user.png" alt="" className="w-8 h-8 ml-14" />
-              <span className="mr-40">{currentUser.name}</span>
-              <span className="font-semibold mr-40">
+              <div className="flex items-center space-x-24 w-full pl-24">
+                <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
+                <span className="mr-64 whitespace-nowrap">{currentUser.name}</span>
+              </div>
+              <span className="font-semibold">
                 {currentUser.points}
               </span>
 
