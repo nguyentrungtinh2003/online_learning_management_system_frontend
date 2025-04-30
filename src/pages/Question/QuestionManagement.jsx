@@ -12,7 +12,7 @@ import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Table, Form, Button } from "react-bootstrap";
 import URL from "../../config/URLconfig";
-import { getQuestionByPage,searchQuestion, deleteQuestion } from "../../services/questionapi";
+import { getQuestionByPage,searchQuestion, deleteQuestion, getQuestionByQuizIdAndPage } from "../../services/questionapi";
 
 const QuestionManagement = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const QuestionManagement = () => {
       setLoading(true);
       try {
         console.log(`Fetching questions: Page${currentPage}, PerPage=${questionPerPage}`);
-        const data = await getQuestionByPage(currentPage, questionPerPage);
+        const data = await getQuestionByQuizIdAndPage(quizId,currentPage, questionPerPage);
         console.log("API Response:", data);
         if(!data || !data.data || !data.data.content){
           throw new Error("Invalid API Response");
@@ -161,7 +161,6 @@ const QuestionManagement = () => {
                              <th className="p-2">Question D</th>
                              <th className="p-2">Correct Answer</th>
                              <th className="p-2">Image</th>
-                             <th className="p-2">Delete</th>
                              <th className="p-2">Action</th>
                            </tr>
                          </thead>
@@ -197,7 +196,6 @@ const QuestionManagement = () => {
                                       "No image"
                                     )}
                                   </td>
-                                  <td className="p-2">{question.isDeleted ? "Inactive" : "Active"}</td>
                                   <td className="p-2 flex justify-center gap-1">
                                     <Link className="p-2 border rounded">
                                       <FaEye />

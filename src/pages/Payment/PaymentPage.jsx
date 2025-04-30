@@ -85,10 +85,10 @@ export default function PaymentPage() {
               className="bg-light"
             /> */}
             <Form.Label>
-              1 USD = 25.000 VND , 25.000 / 100 = 250 Coins
+              1 USD = 25.000 VND , 25.000 / 1000 = 25 Coins
             </Form.Label>
             <br></br>
-            <Form.Label>25.000 VND , 25.000 / 100 = 250 Coins</Form.Label>
+            <Form.Label>50.000 VND , 50.000 / 1000 = 50 Coins</Form.Label>
             <br></br>
           </Form.Group>
 

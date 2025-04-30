@@ -7,14 +7,7 @@ import {
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
 } from "react-icons/md";
-import {
-  FaBuffer,
-  FaUsers,
-  FaHome,
-  FaUser,
-  FaTrophy,
-  FaWallet,
-} from "react-icons/fa";
+import { FaBuffer, FaUsers, FaHome, FaUser, FaTrophy, FaBook, FaVideo, FaWallet } from "react-icons/fa";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -36,6 +29,12 @@ export default function Sidebar() {
       label: "Courses",
       icon: <FaBuffer size={25} />,
       path: "/admin/courses",
+    },
+    {
+      id: "Lessons",
+      label: "Lessons",
+      icon: <FaVideo size={25} />,
+      path: "/admin/lessons",
     },
     {
       id: "Users",

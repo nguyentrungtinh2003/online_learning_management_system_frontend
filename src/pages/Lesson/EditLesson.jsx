@@ -59,6 +59,7 @@ const EditLesson = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
     const formData = new FormData();
     formData.append("lesson", new Blob([JSON.stringify(lessons)], { type: "application/json" }));
     if (file) formData.append("img", file);

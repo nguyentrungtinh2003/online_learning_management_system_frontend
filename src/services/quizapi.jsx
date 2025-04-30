@@ -109,3 +109,19 @@ export const getQuizById = async (id) => {
     }
   };
   
+// 6. Get Quiz By Page
+export const getQuizzesByLessonIdAndPage = async (lessonId, page = 0, size = 6) => {
+    try {
+        const response = await axios.get(
+            `${URL}/teacher/quizzes/lesson/${lessonId}/page?page=${page}&size=${size}`,
+            {
+                withCredentials: true,
+            }
+        )
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching quizzes:", error);
+        return null;
+    }
+};
