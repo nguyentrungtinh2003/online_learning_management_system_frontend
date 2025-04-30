@@ -170,7 +170,7 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="w-full h-screen border mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+        <div className="w-full h-screen border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
@@ -193,7 +193,7 @@ export default function UserRanking() {
                         : user.rank === 3
                         ? "bg-orange-100 dark:text-darkBackground"
                         : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
-                    } border-b hover:bg-sicolor`}
+                    } border-b dark:border-darkBorder hover:bg-sicolor`}
                   >
                     <td className="p-2 px-4 font-medium">{user.rank}</td>
                     <td className="p-2">
