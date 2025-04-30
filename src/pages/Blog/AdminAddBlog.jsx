@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdForum, MdNavigateNext } from "react-icons/md";
 import { ToastContainer, toast, Slide } from "react-toastify";
 
@@ -63,9 +62,8 @@ const AdminAddBlog = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
         <div className="flex gap-2 items-center">
           <MdForum size={30} />
           <MdNavigateNext size={30} />

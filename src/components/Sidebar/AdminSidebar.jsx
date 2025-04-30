@@ -161,15 +161,18 @@ export default function Sidebar() {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative`}
+              className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative 
+                ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`
+              }
               onClick={() => handleNavigate(item.id, item.path)}
-              onMouseEnter={() => setHoveredItem(item.id)} // Track the hovered item
-              onMouseLeave={() => setHoveredItem(null)} // Reset when mouse leaves
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
+          
               {/* Apply 'fcolor' class to the icon */}
-              <span className="text-fcolor">{item.icon}</span>
+              <span className={`${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.icon}</span>
               {!isCollapsed && !isAnimating && (
-                <span className="duration-1000 text-fcolor">{item.label}</span>
+                 <span className={`duration-1000 ${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.label}</span>
               )}
               {isCollapsed && (
                 <div

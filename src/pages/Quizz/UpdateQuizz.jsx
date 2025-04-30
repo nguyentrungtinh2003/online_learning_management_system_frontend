@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 
@@ -92,14 +91,13 @@ const UpdateQuizz = () => {
     }
   };
   return (
-    <div className="flex-1 flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
-      <div className="flex gap-2">
+    <div className="w-full flex flex-col h-full py-4 px-3">
+      <div className="flex items-center mb-2 gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Quiz Management</h2>
+        <h2 className="text-lg font-bold">Quiz Management</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Edit Quiz</h2>
+        <h2 className="text-lg font-bold">Edit Quiz</h2>
       </div>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">

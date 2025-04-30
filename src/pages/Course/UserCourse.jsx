@@ -31,7 +31,7 @@ export default function UserCourse() {
   };
 
   return (
-    <div className="flex-1 h-full overflow-y-auto p-6">
+    <div className="w-full h-full py-4">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>

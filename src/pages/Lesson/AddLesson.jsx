@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
@@ -82,8 +81,7 @@ const AddLesson = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
+    <div className="w-full flex flex-col h-full py-4 px-3">
       <div className="flex gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

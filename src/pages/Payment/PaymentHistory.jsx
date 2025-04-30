@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 const transactions = [
   {
@@ -33,7 +33,7 @@ const transactions = [
 
 export default function TransactionHistory() {
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="px-3 py-4 h-full w-full mx-auto">
       <h1 className="text-2xl font-bold mb-4">Transaction History</h1>
 
       <table className="w-full border-collapse border border-gray-300">

@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
@@ -90,8 +89,7 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
+    <div className="flex flex-col w-full h-full py-4 px-3">
       <div className="flex items-center gap-2 mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

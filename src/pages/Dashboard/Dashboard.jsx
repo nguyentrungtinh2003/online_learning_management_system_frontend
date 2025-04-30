@@ -1,13 +1,11 @@
 import { FaUsers, FaDollarSign, FaBookOpen, FaChartLine } from "react-icons/fa";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import Chart from "./Chart";
 
 const Dashboard = () => {
   return (
-    <div className="flex-1 h-fit">
+    <div className="w-full h-full">
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">

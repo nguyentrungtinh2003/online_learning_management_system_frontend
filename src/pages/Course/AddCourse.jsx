@@ -4,7 +4,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
 import FormData from 'form-data';
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
@@ -138,8 +137,7 @@ const AddCourse = () => {
   
 
   return (
-    <div className="flex-1 flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
+    <div className="h-full flex flex-col w-full py-4 px-3">
       <div className="flex gap-2 items-center mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

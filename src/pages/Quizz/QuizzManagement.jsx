@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuizzesByLessonIdAndPage, deleteQuiz } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
@@ -115,14 +114,13 @@ const QuizzManagement = () => {
   
 
   return (
-    <div className="flex-1 h-screen">
-      <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
-        <div className="flex justify-between mb-4">
+    <div className="h-full w-full">
+      <div className="flex-1 flex flex-col h-full py-4 px-3">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex gap-2">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold mb-4">Quizz Management</h2>
+            <h2 className="text-lg font-bold">Quizz Management</h2>
           </div>
           <Link to={`/admin/lessons/${lessonId}/quizzes/add`}>
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">

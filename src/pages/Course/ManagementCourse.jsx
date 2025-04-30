@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
 import { getCoursesByPage, deleteCourse, searchCourses } from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
@@ -112,14 +111,13 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="flex-1 h-screen">
+    <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
-        <div className="flex justify-between mb-4">
+        <div className="flex mb-2 items-center justify-between">
           <div className="flex gap-2">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold mb-4">Course Management</h2>
+            <h2 className="text-lg font-bold">Course Management</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -128,7 +126,7 @@ export default function CourseManagement() {
           </Link>
         </div>
 
-        <form onSubmit={handleSearchSubmit} className="mb-4 flex gap-2">
+        <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
           <input
             type="text"
             placeholder="Search courses..."
@@ -150,7 +148,7 @@ export default function CourseManagement() {
           </select>
           <button
             type="submit"
-            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+            className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
           >
             Search
           </button>

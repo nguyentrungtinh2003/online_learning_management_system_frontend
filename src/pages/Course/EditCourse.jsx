@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -122,8 +121,7 @@ const EditCourse = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
+    <div className="w-full flex flex-col h-full py-4 px-3">
       <div className="flex gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

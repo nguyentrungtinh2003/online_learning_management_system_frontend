@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaUsers,
   FaCheckCircle,
@@ -10,7 +10,6 @@ import { MdNavigateNext, MdDeleteForever } from "react-icons/md";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { ToastContainer, toast, Slide } from "react-toastify";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
 
 export default function UserManagement() {
@@ -62,17 +61,14 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="flex-1 flex flex-col h-screen py-6 px-3">
+    <div className="h-full w-full flex flex-col py-4 px-3">
       <ToastContainer />
 
-      {/* Header */}
-      <AdminNavbar />
-
-      <div className="flex justify-between mb-4">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex gap-2">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold mb-4">User Management</h2>
+          <h2 className="text-lg font-bold">User Management</h2>
         </div>
         <Link
           className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"

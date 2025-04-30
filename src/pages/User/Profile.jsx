@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import RankLevel from "../../components/RankLevel/RankLevel";
-import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import URL from "../../config/URLconfig";

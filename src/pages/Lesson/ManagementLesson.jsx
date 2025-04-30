@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -104,15 +103,14 @@ export default function ManagementLesson() {
 
   return (
     <div className="flex-1 h-screen">
-      <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
+      <div className="w-full flex flex-col h-full py-4 px-3">
 
         {/* Header */}
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between items-center mb-2">
           <Link className="flex gap-2" onClick={() => navigate(-1)}>
             <FaBuffer size={30} />
             <MdNavigateBefore size={30} />
-            <h2 className="text-lg font-bold mb-4">Back</h2>
+            <h2 className="text-lg font-bold">Back</h2>
           </Link>
           <Link to={`/admin/lessons/add`} className="hover:text-ficolor">
           <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -122,7 +120,7 @@ export default function ManagementLesson() {
         </div>
 
         {/* Tìm kiếm */}
-        <div className="mb-4">
+        <div className="mb-2">
           <input
             type="text"
             placeholder="Search lessons..."
