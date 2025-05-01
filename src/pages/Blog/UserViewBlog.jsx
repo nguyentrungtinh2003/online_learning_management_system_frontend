@@ -16,6 +16,9 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import URLSocket from "../../config/URLsocket";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
 
 export default function Blog() {
   const [data, setData] = useState([]);
@@ -34,18 +37,60 @@ export default function Blog() {
   const [newPostVideo, setNewPostVideo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
+  const [comments, setComments] = useState([]);
+  const [stompClient, setStompClient] = useState(null);
+  const [content, setcontent] = useState("");
 
   const userId = parseInt(localStorage.getItem("id"));
 
   useEffect(() => {
     handleGetPosts();
-  }, []);
+    handleGetComments();
+
+    const socket = new SockJS(`${URLSocket}/ws`);
+    const client = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        client.subscribe(`/topic/blog/${selectedPost}`, (message) => {
+          const comment = JSON.parse(message.body);
+          setComments((prev) => [...prev, comment]);
+        });
+      },
+    });
+
+    client.activate();
+    setStompClient(client);
+
+    return () => {
+      client.deactivate();
+    };
+  }, [selectedPost]);
 
   const handleGetPosts = () => {
     axios
       .get(`${URL}/blogs/all`, { withCredentials: true })
       .then((response) => {
         setData(response.data.data);
+        setDataLoading(false);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log("Status code:", err.response?.status);
+          console.log("Response data:", err.response?.data);
+          console.log("Full error:", err);
+        }
+        console.log("error get blogs :" + err.message);
+      });
+  };
+
+  const handleGetComments = () => {
+    axios
+      .get(`${URL}/blog-comments/blog/${selectedPost}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setComments(response.data.data);
         setDataLoading(false);
       })
       .catch((err) => {
@@ -104,6 +149,21 @@ export default function Blog() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const addBlogComment = (blogId, userId, content) => {
+    axios
+      .post(
+        `${URL}/blog-comments/add`,
+        { blogId, userId, content },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log("add blog comment success");
+      })
+      .catch((error) => {
+        console.log("Error add blog comment");
+      });
   };
 
   const handleChange = (e) => {
@@ -410,24 +470,24 @@ export default function Blog() {
                 {selectedPost === post.id && (
                   <div className="mt-2 p-2 border-t dark:border-darkBorder dark:text-darkText">
                     <div className="max-h-60 overflow-y-auto">
-                      {post?.blogComments?.map((comment) => (
+                      {comments.map((comment) => (
                         <div
                           key={comment.id}
                           className="flex items-center mb-2"
                         >
-                          <img
+                          {/* <img
                             src="./logo.png"
                             alt="avatar"
                             className="w-8 h-8 bg-gray-300 rounded-full mr-2"
-                          />
+                          /> */}
                           <div className="bg-gray-100 p-2 rounded-lg">
                             <p className="text-sm font-semibold">
-                              {comment.user.username}
+                              {comment.username}
                             </p>
                             <img
-                              src={comment.user.img}
+                              src={comment?.img ? comment.img : "/user.png"}
                               alt="Post"
-                              className="w-full h-60 object-cover rounded-lg mb-2"
+                              className="w-20 h-20 object-cover rounded-lg mb-2"
                             />
                             <p className="text-sm">{comment.content}</p>
                           </div>
@@ -449,10 +509,19 @@ export default function Blog() {
                       <input
                         type="text"
                         name="comment"
+                        value={content}
+                        onChange={(e) => setcontent(e.target.value)}
                         placeholder="Viết bình luận..."
                         className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
                       />
                       <PiPaperPlaneRightFill className="" size={25} />
+                      <button
+                        onClick={() =>
+                          addBlogComment(selectedPost, userId, content)
+                        }
+                      >
+                        Send
+                      </button>
                     </div>
                   </div>
                 )}

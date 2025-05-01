@@ -7,4 +7,7 @@ export default defineConfig({
   server: {
     port: 3000, // hoặc port nào bạn muốn
   },
+  define: {
+    global: "globalThis", // giả lập `global` dùng `globalThis`
+  },
 });
