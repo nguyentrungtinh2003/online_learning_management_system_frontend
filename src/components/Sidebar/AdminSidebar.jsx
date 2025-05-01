@@ -15,6 +15,7 @@ import {
   FaTrophy,
   FaVideo,
   FaWallet,
+  FaClipboardList
 } from "react-icons/fa";
 
 export default function Sidebar() {
@@ -44,6 +45,12 @@ export default function Sidebar() {
       label: "Lessons",
       icon: <FaVideo size={25} />,
       path: "/admin/lessons",
+    },
+    {
+      id: "Quizzes",
+      label: "Quizzes",
+      icon: <FaClipboardList size={25} />,
+      path: "/admin/quizzes",
     },
     {
       id: "Users",

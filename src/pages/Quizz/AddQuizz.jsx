@@ -1,75 +1,135 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
-
 import URL from "../../config/URLconfig";
 
 const AddQuizz = () => {
   const navigate = useNavigate();
 
-  const { lessonId } = useParams();
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",
-    price: "",
+    price: "0",
     img: "",
     date: "",
     quizEnum: "FREE",
     isDeleted: false,
-    lessonId: lessonId,
+    lessonId: "",
+    courseId:""
   });
 
-  const [loading, setLoading] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState("");
   const [img, setImg] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [lessons, setLessons] = useState([]);
 
+  // Fetch all courses
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${URL}/courses/all`, {
+          withCredentials: true,
+        });
+        setCourses(res.data?.data || []);
+      } catch (err) {
+        console.error("Lỗi khi lấy khoá học:", err);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCourseId) {
+      setLessons([]);  // Nếu không chọn khóa học, xóa danh sách bài học
+      return;
+    }
+  
+    const fetchLessons = async () => {
+      try {
+        // Gọi API để lấy bài học theo khóa học đã chọn và phân trang
+        const res = await axios.get(`${URL}/teacher/lessons/courses/${selectedCourseId}/page`, {
+          params: {
+            page: 0,  // Chỉnh sửa page và size nếu cần
+            size: 10
+          },
+          withCredentials: true,
+        });
+  
+        // Kiểm tra dữ liệu trả về và cập nhật state
+        if (res.data) {
+          setLessons(res.data);  // Cập nhật danh sách bài học
+        } else {
+          setLessons([]);  // Nếu không có bài học, xóa danh sách
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy bài học:", error);
+        setLessons([]);  // Nếu có lỗi, xóa danh sách bài học
+      }
+    };
+    
+    fetchLessons();
+  }, [selectedCourseId]);  // Chạy lại khi selectedCourseId thay đổi
+  
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuizData({ ...quizData, [name]: value });
+
+    if (name === "quizEnum") {
+      setQuizData((prev) => ({
+        ...prev,
+        quizEnum: value,
+        price: value === "FREE" ? "0" : prev.price === "0" ? "1" : prev.price,
+      }));
+    } else if (name === "price") {
+      let sanitized = value.replace(/^0+(?=\d)/, ""); // Remove leading zeros
+      if (quizData.quizEnum === "FREE") sanitized = "0";
+      else if (parseInt(sanitized) < 1 || isNaN(parseInt(sanitized))) sanitized = "1";
+
+      setQuizData((prev) => ({ ...prev, price: sanitized }));
+    } else {
+      setQuizData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
+  // Handle image file
   const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+    const file = e.target.files[0];
+    if (!file) return;
+    setImg(file);
+    setPreview(URL.createObjectURL(file));
   };
 
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    const data = new FormData();
-    data.append(
-      "quiz",
-      new Blob([JSON.stringify(quizData)], { type: "application/json" })
-    );
-    if (img) data.append("img", img);
+    if (!quizData.lessonId) {
+      toast.error("Vui lòng chọn bài học!");
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("quiz", new Blob([JSON.stringify(quizData)], { type: "application/json" }));
+    if (img) formData.append("img", img);
 
     try {
-      const response = await axios.post(`${URL}/teacher/quizzes/add`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true, // Cho phép gửi cookies, session
+      await axios.post(`${URL}/teacher/quizzes/add`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
 
-      console.log("Thành công:", response.data);
-      toast.success("Thêm quiz thành công!", {
-        position: "top-right",
-        autoClose: 1000,
-      });
-
-      setTimeout(() => {
-        navigate(-1);
-      }, 2000);
+      toast.success("Thêm Quiz thành công!", { autoClose: 1000 });
+      setTimeout(() => navigate(-1), 1500);
     } catch (error) {
-      console.error("Lỗi:", error.response?.data || error.message);
-      toast.error("Không thể thêm quiz!", {
-        position: "top-right",
-        autoClose: 1000,
-      });
+      toast.error("Không thể thêm Quiz!", { autoClose: 1000 });
     } finally {
       setLoading(false);
     }
@@ -86,79 +146,119 @@ const AddQuizz = () => {
         <h2 className="text-lg font-bold">Add New Quiz</h2>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
-      >
-        <div className="space-y-4">
-          {[
-            { label: "Quiz Name:", name: "quizName" },
-            { label: "Price", name: "price", type: "number" },
-          ].map(({ label, name, type }) => (
-            <div key={name} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">{label}</label>
-              <input
-                type={type || "text"}
-                name={name}
-                value={quizData[name]}
-                onChange={handleChange}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
+      <label className="w-1/4 font-medium">Course:</label>
+      <div>
+        <select
+          name="courseId"
+          className="w-full p-2 border rounded"
+          value={selectedCourseId}  // Đảm bảo rằng value là ID khóa học (courseId)
+          onChange={(e) => setSelectedCourseId(e.target.value)}  // Cập nhật giá trị khi thay đổi
+        >
+          <option value="">-- Chọn khoá học --</option>
+          {courses.map((course) => (
+            <option key={course.id} value={course.id}>  // Giá trị của option là course.id
+              {course.courseName}  // Hiển thị tên khóa học
+            </option>
           ))}
+        </select>
+      </div>
 
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
-            <input
-              type="file"
-              onChange={handleImageChange}
-              className="flex-1 border rounded-lg px-3 py-2"
-            />
-          </div>
+      <label className="w-1/4 font-medium">Lesson:</label>
+      <div>
+        <select
+          name="lessonId"
+          value={quizData.lessonId}  // Đảm bảo rằng value là lessonId từ quizData
+          onChange={handleChange}
+          className="flex-1 p-2 border rounded"
+        >
+          <option value="">-- Chọn bài học --</option>
+          {lessons.map((lesson) => (
+            <option key={lesson.lessonId} value={lesson.lessonId}>
+              {lesson.lessonName}  // Hiển thị tên bài học
+            </option>
+          ))}
+        </select>
+      </div>
 
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Description:
-            </label>
-            <textarea
-              name="description"
-              rows={3}
-              value={quizData.description}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            ></textarea>
-          </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
-            <select
-              name="quizEnum"
-              value={quizData.quizEnum}
-              onChange={(e) =>
-                setQuizData({ ...quizData, quizEnum: e.target.value })
-              }
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="FREE">Free</option>
-              <option value="PAID">Paid</option>
-            </select>
-          </div>
+
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">Quiz Name:</label>
+          <input
+            type="text"
+            name="quizName"
+            value={quizData.quizName}
+            onChange={handleChange}
+            className="flex-1 p-2 border rounded"
+            required
+          />
         </div>
 
-        <div className="flex justify-end space-x-2 mt-6">
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">Price:</label>
+          <input
+            type="number"
+            name="price"
+            value={quizData.price}
+            onChange={handleChange}
+            disabled={quizData.quizEnum === "FREE"}
+            className="flex-1 p-2 border rounded"
+          />
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">Image:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="flex-1 p-2 border rounded"
+          />
+        </div>
+
+        {preview && (
+          <div className="flex justify-center">
+            <img src={preview} alt="Preview" className="w-48 h-32 object-cover rounded shadow" />
+          </div>
+        )}
+
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">Description:</label>
+          <textarea
+            name="description"
+            value={quizData.description}
+            onChange={handleChange}
+            rows={3}
+            className="flex-1 p-2 border rounded"
+          />
+        </div>
+
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">Type:</label>
+          <select
+            name="quizEnum"
+            value={quizData.quizEnum}
+            onChange={handleChange}
+            className="flex-1 p-2 border rounded"
+          >
+            <option value="FREE">Free</option>
+            <option value="PAID">Paid</option>
+          </select>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-4">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            className="px-6 py-2 border border-gray-500 text-gray-600 rounded hover:bg-gray-100"
           >
             Cancel
           </Link>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading
-                ? "bg-gray-400"
-                : "bg-scolor text-wcolor hover:bg-opacity-80"
-            }`}
             disabled={loading}
+            className={`px-6 py-2 rounded text-white ${
+              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
             {loading ? "Processing..." : "Submit"}
           </button>

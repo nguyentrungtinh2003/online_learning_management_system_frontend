@@ -1,28 +1,42 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
 const AddLesson = () => {
-  // State lưu dữ liệu từ form nhập vào
   const navigate = useNavigate();
 
-  const { courseId, id } = useParams();
   const [lessonData, setLessonData] = useState({
     lessonName: "",
     description: "",
     date: "",
-    courseId: courseId, // ID của khóa học
+    courseId: "", // gán sau khi chọn
     isDeleted: false,
   });
-  const [loading, setLoading] = useState(false); // Trạng thái loading
-
+  const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
   const [video, setVideo] = useState(null);
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get("https://codearena-backend-dev.onrender.com/api/courses/all", {
+          withCredentials: true,
+        });
+        setCourses(res.data?.data || []);
+        console.log("Courses API response:", res.data);
+      } catch (error) {
+        console.error("Lỗi lấy danh sách khoá học:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const handleChange = (e) => {
     setLessonData({ ...lessonData, [e.target.name]: e.target.value });
@@ -56,14 +70,12 @@ const AddLesson = () => {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          withCredentials: true, // Cho phép gửi cookies, session
+          withCredentials: true,
         }
       );
-      console.log("Thành công:", response.data);
-      // alert("Thêm bài học thành công!");
       toast.success("Thêm bài học thành công!", {
         position: "top-right",
-        autoClose: 1000, // 4 giây
+        autoClose: 1000,
       });
 
       setTimeout(() => {
@@ -71,7 +83,6 @@ const AddLesson = () => {
       }, 2000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
-      // alert("Lỗi khi thêm bài học!");
       toast.error("Không thể thêm bài học!", {
         position: "top-right",
         autoClose: 1000,
@@ -93,22 +104,38 @@ const AddLesson = () => {
       </div>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
-          {[{ label: "Lesson Title:", name: "lessonName", type: "text" }].map(
-            ({ label, name, type }) => (
-              <div key={name} className="flex items-center space-x-4">
-                <label className="w-1/4 text-gray-700 font-medium">
-                  {label}
-                </label>
-                <input
-                  type={type}
-                  name={name}
-                  value={lessonData[name]}
-                  onChange={handleChange}
-                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-                />
-              </div>
-            )
-          )}
+          {/* Chọn khoá học */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Select Course:</label>
+            <select
+              name="courseId"
+              value={lessonData.courseId}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            >
+              <option value="">-- Chọn khoá học --</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.courseName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Các trường nhập bài học */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 text-gray-700 font-medium">Lesson Title:</label>
+            <input
+              type="text"
+              name="lessonName"
+              value={lessonData.lessonName}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            />
+          </div>
+
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Image:</label>
             <input
@@ -117,6 +144,7 @@ const AddLesson = () => {
               className="flex-1 border rounded-lg px-3 py-2"
             />
           </div>
+
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Video:</label>
             <input
@@ -125,10 +153,9 @@ const AddLesson = () => {
               className="flex-1 border rounded-lg px-3 py-2"
             />
           </div>
+
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Description:
-            </label>
+            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
             <textarea
               name="description"
               rows={3}
@@ -138,6 +165,7 @@ const AddLesson = () => {
             ></textarea>
           </div>
         </div>
+
         <div className="flex justify-end space-x-2 mt-6">
           <button
             onClick={() => navigate(-1)}

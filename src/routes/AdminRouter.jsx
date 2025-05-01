@@ -17,18 +17,19 @@ import AdminPaymentManagement from "../pages/Payment/AdminPaymentManagement";
 import ManagementCourse from "../pages/Course/ManagementCourse";
 import AddCourse from "../pages/Course/AddCourse";
 import UpdateCourse from "../pages/Course/EditCourse";
-import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse";
-import AddLesson from "../pages/Lesson/AddLesson";
+import AddLesson from "../pages/Lesson/AddLessonByCourse";
 import EditLesson from "../pages/Lesson/EditLesson";
-import QuizzManagement from "../pages/Quizz/QuizzManagement";
-import AddQuizz from "../pages/Quizz/AddQuizz";
+import QuizzManagementByLesson from "../pages/Quizz/QuizzManagementByLesson";
 import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import AdminLayout from "../components/Layout/AdminLayout";
 import ManagementLesson from "../pages/Lesson/ManagementLesson";
-import AddLessonByCourse from "../pages/Lesson/AddLessonByCourse";
+import AddLessonByCourse from "../pages/Lesson/AddLesson";
+import QuizzManagement from "../pages/Quizz/QuizzManagement";
+import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse"
+import AddQuizz from "../pages/Quizz/AddQuizz";
 
 const AdminRoutes = () => {
   return (
@@ -54,13 +55,15 @@ const AdminRoutes = () => {
         <Route path="payment" element={<AdminPaymentManagement />} />
         <Route path="courses" element={<ManagementCourse />} />
         <Route path="lessons" element={<ManagementLesson />} />
+        <Route path="quizzes" element={<QuizzManagement />} />
         <Route path="lessons/add" element={<AddLessonByCourse />} />
+        <Route path="quizzes/add" element={<AddQuizz />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
         <Route path="courses/:courseId/lessons" element={<ManagementlessonByCourse />} />
         <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
         <Route path="courses/:courseId/lessons/edit/:lessonId" element={<EditLesson />} />
-        <Route path="lessons/:lessonId/quizzes" element={<QuizzManagement />} />
+        <Route path="lessons/:lessonId/quizzes" element={<QuizzManagementByLesson />} />
         <Route path="lessons/:lessonId/quizzes/add" element={<AddQuizz />} />
         <Route path="lessons/:lessonId/quizzes/edit/:quizId" element={<UpdateQuizz />} />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />

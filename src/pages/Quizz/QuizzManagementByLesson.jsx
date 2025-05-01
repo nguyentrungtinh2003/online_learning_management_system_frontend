@@ -5,7 +5,7 @@ import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
 import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getQuizzesByPage, deleteQuiz } from "../../services/quizapi";
+import { getQuizzesByLessonIdAndPage, deleteQuiz } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 
 const QuizzManagement = () => {
@@ -29,7 +29,7 @@ const QuizzManagement = () => {
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const res = await getQuizzesByPage(currentPage, quizzesPerPage); // lấy toàn bộ quiz của bài học
+      const res = await getQuizzesByLessonIdAndPage(lessonId, 0, 1000); // lấy toàn bộ quiz của bài học
   
       if (!res || !res.data || !res.data.content) {
         throw new Error("Invalid API Response");
@@ -39,12 +39,10 @@ const QuizzManagement = () => {
   
       // Tìm kiếm
       if (search.trim() !== "") {
-        const keyword = search.trim().toLowerCase();
         fetchedQuizzes = fetchedQuizzes.filter((quiz) =>
-          (quiz.quizName?.toLowerCase().includes(keyword) || 
-           quiz.description?.toLowerCase().includes(keyword))
+          quiz.title.toLowerCase().includes(search.trim().toLowerCase())
         );
-      }      
+      }
   
       // Lọc theo loại Free / Paid
       if (filterType === "Free") {
@@ -126,7 +124,7 @@ const QuizzManagement = () => {
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold mb-4">Quizz Management</h2>
           </div>
-          <Link to={`/admin/quizzes/add`}>
+          <Link to={`/admin/lessons/${lessonId}/quizzes/add`}>
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
               <FaPlus size={30} color="white" />
             </button>
