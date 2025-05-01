@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { FaCog, FaUserShield, FaBell, FaCreditCard } from "react-icons/fa";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 
 const AdminSettings = () => {
   const [activeTab, setActiveTab] = useState("general");
 
   return (
-    <div className="flex-1">
+    <div className="w-full h-full">
       <div className="flex-1 flex flex-col h-fit py-6 px-3">
-        <AdminNavbar />
-
         <div className="flex gap-2 items-center mb-4">
           <FaCog size={30} />
           <h2 className="text-lg font-bold">Admin Settings</h2>

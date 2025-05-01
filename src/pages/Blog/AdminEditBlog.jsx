@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdForum, MdNavigateNext } from "react-icons/md";
 
 const AdminEditBlog = () => {
@@ -22,9 +21,8 @@ const AdminEditBlog = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-fit py-6 px-3">
-        <AdminNavbar />
         <div className="flex gap-2 mb-4 items-center">
           <MdForum size={30} />
           <MdNavigateNext size={30} />

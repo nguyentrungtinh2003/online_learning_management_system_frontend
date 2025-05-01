@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { Spinner } from "react-bootstrap";
@@ -65,9 +64,8 @@ const AdminUpdateUser = () => {
   if (!userData) return <div className="p-6 text-red-500">User not found!</div>;
 
   return (
-    <div className="flex-1">
+    <div className="h-full w-full">
       <div className="flex flex-col h-fit py-6 px-3">
-        <AdminNavbar />
         <div className="flex gap-2 mb-4 items-center">
           <FaBuffer size={30} />
           <MdNavigateNext size={30} />

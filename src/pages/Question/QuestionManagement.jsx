@@ -8,7 +8,6 @@ import {
   MdNavigateBefore,
 } from "react-icons/md";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Table, Form, Button } from "react-bootstrap";
 import URL from "../../config/URLconfig";
@@ -115,9 +114,8 @@ const QuestionManagement = () => {
           };
 
   return (
-               <div className="flex-1 h-screen">
+               <div className="h-full w-full">
                  <div className="flex-1 flex flex-col h-full py-6 px-3">
-                   <AdminNavbar />
                    <div className="flex justify-between mb-4">
                      <Link className="flex gap-2" onClick={() => navigate(-1)}>
                        <MdNavigateBefore size={30} />

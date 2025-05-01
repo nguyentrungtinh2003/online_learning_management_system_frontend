@@ -2,7 +2,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -94,8 +93,7 @@ const EditLesson = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-fit p-6">
-      <AdminNavbar />
+    <div className="w-full flex flex-col h-full py-4 px-3">
       <div className="flex gap-2">
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Lesson Management</h2>

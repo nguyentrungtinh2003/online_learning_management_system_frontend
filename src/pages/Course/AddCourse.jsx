@@ -4,7 +4,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
 import FormData from 'form-data';
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
@@ -138,9 +137,8 @@ const AddCourse = () => {
   
 
   return (
-    <div className="flex-1 flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
-      <div className="flex gap-2 items-center mb-4">
+    <div className="h-full flex flex-col w-full py-4 px-3">
+      <div className="flex dark:text-darkText gap-2 items-center mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold">Course Management</h2>
@@ -150,11 +148,11 @@ const AddCourse = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow space-y-4"
+        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">
+          <label className="w-1/4 font-medium">
             Course Title:
           </label>
           <input
@@ -162,37 +160,37 @@ const AddCourse = () => {
             name="courseName"
             value={courseData.courseName}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
 
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">Price:</label>
+          <label className="w-1/4 font-medium">Price:</label>
           <input
             type="number"
             name="price"
             value={courseData.price}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
             min="0"
           />
         </div>
 
         {/* Image Upload */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+          <label className="w-1/4 font-medium">Image:</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="flex-1 border rounded-lg px-3 py-2"
+            className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
           />
         </div>
 
         {/* Description */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">
+          <label className="w-1/4 font-medium">
             Description:
           </label>
           <textarea
@@ -200,19 +198,19 @@ const AddCourse = () => {
             rows={3}
             value={courseData.description}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
             required
           ></textarea>
         </div>
 
         {/* Course Type */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 text-gray-700 font-medium">Type:</label>
+          <label className="w-1/4 font-medium">Type:</label>
           <select
             name="courseEnum"
             value={courseData.courseEnum}
             onChange={handleEnumChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="FREE">Free</option>
             <option value="PAID">Paid</option>
@@ -223,7 +221,7 @@ const AddCourse = () => {
         <div className="flex justify-end space-x-2 mt-6">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80 cursor-pointer"
+            className="px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer"
           >
             Cancel
           </Link>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { FaUsers } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { ToastContainer, toast, Slide } from "react-toastify";
@@ -65,9 +64,8 @@ const AdminAddUser = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-fit p-6">
-        <AdminNavbar />
         <div className="flex gap-2 items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />

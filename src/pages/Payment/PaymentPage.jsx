@@ -43,14 +43,14 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="w-full flex items-center justify-center py-4">
-      <div className="w-[500px] bg-wcolor dark:border dark:bg-darkBackground dark:border-darkBorder rounded-3xl shadow-2xl px-8 py-4 relative">
+    <div className="w-full h-full flex items-center justify-center py-4">
+      <div className="w-[70%] h-fit bg-wcolor dark:border dark:bg-darkBackground dark:border-darkBorder rounded-3xl shadow-2xl px-8 py-4 relative">
         <div className="flex flex-col items-center text-center">
-          <FaCoins size={60} className="text-yellow-500 mb-2" />
-          <h1 className="text-3xl font-bold text-fcolor mb-4">
+          <FaCoins size={60} className="text-yellow-500" />
+          <h1 className="text-3xl font-bold text-fcolor pb-2">
             Nạp tiền vào hệ thống
           </h1>
-          <p className="text-gray-500 text-darkSubtext mb-4">
+          <p className="text-gray-500 dark:text-darkSubtext">
             Hệ thống hỗ trợ thanh toán qua VNPay và PayPal
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function PaymentPage() {
           <div>
             <label
               htmlFor="amount"
-              className="text-sm text-darkSubtext font-medium text-gray-700 mb-1"
+              className="text-sm dark:text-darkSubtext font-medium text-gray-700 mb-1"
             >
               Số tiền muốn nạp (VND/USD):
             </label>
@@ -82,15 +82,15 @@ export default function PaymentPage() {
             />
           </div>
 
-          <div className="w-full max-w-md mx-auto my-6">
+          <div className="w-full mx-auto py-2">
             <label
               htmlFor="method"
-              className="text-sm text-darkSubtext font-medium text-gray-700 mb-1"
+              className="text-sm dark:text-darkSubtext font-medium text-gray-700 mb-1"
             >
               Chọn phương thức thanh toán:
             </label>
 
-            <div className="w-full flex items-center space-x-4 bg-white dark:bg-darkSubbackground p-4 rounded-xl shadow-md border border-gray-200 dark:border-darkBorder">
+            <div className="w-full flex items-center space-x-4 bg-wcolor dark:border-darkBorder dark:bg-darkBackground p-2 rounded-xl shadow-md dark:border dark:border-darkBorder">
               <select
                 id="method"
                 value={method}
@@ -109,22 +109,26 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          <div className="m-2">
-            <p className="text-sm text-gray-600 text-darkSubtext m-2 font-medium">
-              Bạn sẽ nhận được:
-            </p>
-            <p className="text-lg font-semibold text-green-600">
-              {method === "PayPal"
-                ? Math.floor((amount * 25000) / 1000)
-                : amount / 1000}{" "}
-              Coins
-            </p>
-            <p className="text-sm text-black-500 text-dark mt-1">
-              Tỷ giá: 1,000 VND = 1 Coin
-            </p>
-            <p className="text-sm text-black-500 text-dark mt-1">
-              1 USD = 25,000 VND = 25 Coin
-            </p>
+          <div className="mb-4 mx-2 flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600 dark:text-darkSubtext font-medium">
+                Bạn sẽ nhận được:
+              </p>
+              <p className="text-lg font-semibold text-green-600">
+                {method === "PayPal"
+                  ? Math.floor((amount * 25000) / 1000)
+                  : amount / 1000}{" "}
+                Coins
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-black-500 dark:text-darkSubtext mt-1">
+                Tỷ giá: 1,000 VND = 1 Coin
+              </p>
+              <p className="text-sm text-black-500 dark:text-darkSubtext mt-1">
+                1 USD = 25,000 VND = 25 Coin
+              </p>
+            </div>
           </div>
 
           <button

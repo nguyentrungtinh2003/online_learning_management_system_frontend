@@ -49,13 +49,13 @@ const Chart = () => {
   return (
     <div className="flex gap-4">
       {/* Line Chart - Revenue */}
-      <div className="flex-1 bg-white shadow-lg rounded-lg p-4">
-        <ReactECharts option={lineChartOption} style={{ height: 300 }} />
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText shadow-lg rounded-lg p-4">
+        <ReactECharts option={lineChartOption} style={{ height: 300, filter: 'invert(1)'  }} />
       </div>
 
       {/* Pie Chart - Course Enrollments */}
-      <div className="w-1/3 bg-white shadow-lg rounded-lg p-4">
-        <ReactECharts option={pieChartOption} style={{ height: 300 }} />
+      <div className="w-1/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+        <ReactECharts option={pieChartOption} style={{ height: 300, filter: 'invert(1)' }} />
       </div>
     </div>
   );

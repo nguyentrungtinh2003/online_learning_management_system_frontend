@@ -2,7 +2,7 @@ import React from "react";
 
 export default function CourseManagement() {
   return (
-    <div className="w-screen border shadow bg-white">
+    <div className="h-full w-full border shadow bg-white">
       <div className="flex justify-between w-full">
         <p className="text-3xl font-bold text-black">Xếp Hạng Điểm</p>
         <div className="gap-2 flex items-center font-semibold">

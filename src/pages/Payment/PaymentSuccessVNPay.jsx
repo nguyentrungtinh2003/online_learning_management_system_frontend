@@ -42,7 +42,7 @@ const PaymentSuccessVNPay = () => {
   }, [location.search]);
 
   return (
-    <div>
+    <div className="w-full h-full items-center justify-center">
       <h2>Thanh toán VNPay</h2>
       {loading ? <p>Đang xử lý...</p> : <p>{message}</p>}
       {error && <div className="error-message">{error}</div>}

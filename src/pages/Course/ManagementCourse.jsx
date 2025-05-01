@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link } from "react-router-dom";
 import { getCoursesByPage, deleteCourse, searchCourses } from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
@@ -112,14 +111,13 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="flex-1 h-screen">
+    <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
-        <div className="flex justify-between mb-4">
-          <div className="flex gap-2">
+        <div className="flex mb-2 items-center justify-between">
+          <div className="flex gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold mb-4">Course Management</h2>
+            <h2 className="text-lg font-bold">Course Management</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -128,11 +126,11 @@ export default function CourseManagement() {
           </Link>
         </div>
 
-        <form onSubmit={handleSearchSubmit} className="mb-4 flex gap-2">
+        <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
           <input
             type="text"
             placeholder="Search courses..."
-            className="p-2 border rounded w-full focus:outline-none"
+            className="py-2 px-3 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={search}
             onChange={handleSearchInput}
           />
@@ -142,7 +140,7 @@ export default function CourseManagement() {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 border rounded"
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
           <option value="All">All</option>
             <option value="Free">Free</option>
@@ -150,17 +148,17 @@ export default function CourseManagement() {
           </select>
           <button
             type="submit"
-            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+            className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
           >
             Search
           </button>
         </form>
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
+          <div className="bg-wcolor dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center font-bold">
+                <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">STT</th>
                   <th className="p-2">Course Name</th>
                   <th className="p-2">Description</th>
