@@ -122,7 +122,7 @@ export default function UserViewCourse() {
   const lessonsToDisplay = showAllLessons ? lessons : lessons.slice(0, 4);
 
   return (
-    <div className="flex flex-col w-full h-full px-2 dark:bg-darkBackground dark:text-darkSubtext">
+    <div className="flex flex-col w-full h-full dark:bg-darkBackground dark:text-darkSubtext">
       <div className="flex flex-col h-full gap-2 lg:flex-row mx-auto w-full">
         {/* Left content */}
         <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">

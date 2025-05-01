@@ -21,7 +21,7 @@ import AddLesson from "../pages/Lesson/AddLessonByCourse";
 import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagementByLesson from "../pages/Quizz/QuizzManagementByLesson";
 import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
-import QuestionManagement from "../pages/Question/QuestionManagement";
+import QuestionManagementByQuiz from "../pages/Question/QuestionManagementByQuiz";
 import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import AdminLayout from "../components/Layout/AdminLayout";
@@ -30,6 +30,7 @@ import AddLessonByCourse from "../pages/Lesson/AddLesson";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse"
 import AddQuizz from "../pages/Quizz/AddQuizz";
+import QuestionManagement from "../pages/Question/QuestionManagement";
 
 const AdminRoutes = () => {
   return (
@@ -37,7 +38,7 @@ const AdminRoutes = () => {
       <Route
         path="/"
         element={
-          <ProtectedRouter requiredRole="ADMIN">
+          <ProtectedRouter requiredRole="">
             <AdminLayout/>
           </ProtectedRouter>
         }
@@ -56,6 +57,7 @@ const AdminRoutes = () => {
         <Route path="courses" element={<ManagementCourse />} />
         <Route path="lessons" element={<ManagementLesson />} />
         <Route path="quizzes" element={<QuizzManagement />} />
+        <Route path="questions" element={<QuestionManagement />} />
         <Route path="lessons/add" element={<AddLessonByCourse />} />
         <Route path="quizzes/add" element={<AddQuizz />} />
         <Route path="courses/add-course" element={<AddCourse />} />
@@ -67,7 +69,7 @@ const AdminRoutes = () => {
         <Route path="lessons/:lessonId/quizzes/add" element={<AddQuizz />} />
         <Route path="lessons/:lessonId/quizzes/edit/:quizId" element={<UpdateQuizz />} />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />
-        <Route path="quizzes/:quizId/questions" element={<QuestionManagement />} />
+        <Route path="quizzes/:quizId/questions" element={<QuestionManagementByQuiz />} />
         <Route path="quizzes/:quizId/questions/add" element={<AddQuestion />} />
       </Route>
     </Routes>

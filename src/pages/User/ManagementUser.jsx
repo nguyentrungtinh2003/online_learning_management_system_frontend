@@ -11,6 +11,7 @@ import axios from "axios";
 import URL from "../../config/URLconfig";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import { Link } from "react-router-dom";
+import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 
 export default function UserManagement() {
   const [search, setSearch] = useState("");
@@ -44,7 +45,7 @@ export default function UserManagement() {
             autoClose: 3000,
             transition: Slide,
           });
-          setUsers(users.filter((user) => user.id !== id)); // Cập nhật danh sách user
+          setUsers(users.filter((user) => user.id !== id));
         })
         .catch(() => {
           toast.error("Lỗi khi xoá người dùng!", {
@@ -61,7 +62,7 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full w-full flex flex-col py-4 px-3">
+    <div className="h-full w-full flex flex-col">
       <ToastContainer />
 
       <div className="flex items-center justify-between mb-2">
@@ -96,17 +97,7 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {loading ? (
-                [...Array(6)].map((_, index) => (
-                  <tr key={index} className="text-center animate-pulse">
-                    {Array(8)
-                      .fill(null)
-                      .map((_, i) => (
-                        <td key={i} className="p-2">
-                          <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
-                        </td>
-                      ))}
-                  </tr>
-                ))
+                [...Array(6)].map((_, index) => <DataTableSkeleton key={index} />)
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">
@@ -129,7 +120,7 @@ export default function UserManagement() {
                           <p>Online</p>
                         </div>
                       ) : (
-                        <div className="justify-center items-center gap-1">
+                        <div className="flex justify-center items-center gap-1">
                           <FaTimesCircle className="text-red-500" />
                           <p>Offline</p>
                         </div>

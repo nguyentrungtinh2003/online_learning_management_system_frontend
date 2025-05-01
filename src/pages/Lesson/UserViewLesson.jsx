@@ -92,7 +92,7 @@ export default function UserViewLesson() {
   ]);
 
   return (
-    <div className="flex flex-1 py-3 text-sm font-semibold box-border relative">
+    <div className="flex flex-1 text-sm font-semibold box-border relative">
       {/* Overlay + Form */}
       {showCommentForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

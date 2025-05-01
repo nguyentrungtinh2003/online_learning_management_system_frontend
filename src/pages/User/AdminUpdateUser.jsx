@@ -65,7 +65,7 @@ const AdminUpdateUser = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex flex-col h-fit py-6 px-3">
+      <div className="flex flex-col h-fit">
         <div className="flex gap-2 mb-4 items-center">
           <FaBuffer size={30} />
           <MdNavigateNext size={30} />

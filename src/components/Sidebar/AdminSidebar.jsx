@@ -15,7 +15,8 @@ import {
   FaTrophy,
   FaVideo,
   FaWallet,
-  FaClipboardList
+  FaClipboardList,
+  FaQuestion
 } from "react-icons/fa";
 
 export default function Sidebar() {
@@ -51,6 +52,12 @@ export default function Sidebar() {
       label: "Quizzes",
       icon: <FaClipboardList size={25} />,
       path: "/admin/quizzes",
+    },
+    {
+      id: "Questions",
+      label: "Questions",
+      icon: <FaQuestion size={25} />,
+      path: "/admin/questions",
     },
     {
       id: "Users",
@@ -135,7 +142,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex p-2 dark:bg-darkBackground">
+    <div className="flex dark:bg-darkBackground">
       <div
         className={`h-full border-box shadow rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
           isCollapsed ? "w-[90px]" : "w-56"

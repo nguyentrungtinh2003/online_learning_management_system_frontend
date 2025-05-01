@@ -32,9 +32,9 @@ const QuestionManagement = () => {
       const fetchQuestions = async () => { 
       setLoading(true);
       try {
-        // console.log(`Fetching questions: Page${currentPage}, PerPage=${questionPerPage}`);
-        const data = await getQuestionByPage(currentPage, questionPerPage);
-        // console.log("API Response:", data);
+        console.log(`Fetching questions: Page${currentPage}, PerPage=${questionPerPage}`);
+        const data = await getQuestionByQuizIdAndPage(quizId,currentPage, questionPerPage);
+        console.log("API Response:", data);
         if(!data || !data.data || !data.data.content){
           throw new Error("Invalid API Response");
             }
@@ -60,6 +60,7 @@ const QuestionManagement = () => {
           try {
             const data = await searchQuestion(e.target.value,currentPage,questionPerPage);
             searchQuestion(data.data.content);
+            setTotalPages(data.data.totalPages);
             setTotalPages(data.data.totalPages);
             setCurrentPage(0); // Đảm bảo về trang đầu tiên sau khi search
           }

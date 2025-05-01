@@ -1,6 +1,5 @@
 import axios from "axios";
 import URL from "../config/URLconfig";
-import { ToastContainer, toast, Slide } from "react-toastify";
 
 export const getCourses = async () => {
   try {

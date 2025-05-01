@@ -39,7 +39,7 @@ const UserSetting = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full items-center justify-center py-10 px-4">
+    <div className="flex-1 flex flex-col h-full items-center justify-center">
       <div className="max-w-2xl w-full mx-auto space-y-6 bg-wcolor dark:bg-darkBackground dark:border dark:border-darkBorder dark:bg-darkBackground dark:text-darkText rounded-2xl shadow-md p-8">
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <FaGlobe size={24} />

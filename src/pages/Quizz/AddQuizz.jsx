@@ -20,7 +20,6 @@ const AddQuizz = () => {
     quizEnum: "",
     isDeleted: false,
     lessonId: "",
-    courseId: "",
   });
 
   const [selectedCourseId, setSelectedCourseId] = useState("");

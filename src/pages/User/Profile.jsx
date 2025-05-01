@@ -67,7 +67,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="h-full overflow-y-auto pb-2 shadow flex-1">
+    <div className="h-full overflow-y-auto shadow flex-1">
       {/* Header Section */}
       <div className="relative h-[50%]">
         <div className="bg-gradient-to-b from-cyan-300 to-blue-500 h-60 rounded-2xl m-2"></div>

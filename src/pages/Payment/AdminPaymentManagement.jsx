@@ -27,7 +27,7 @@ export default function TransactionAdmin() {
     );
 
   return (
-    <div className="px-3 py-4 w-full h-full mx-auto">
+    <div className="w-full h-full mx-auto">
       <h1 className="text-2xl font-bold mb-4">Admin Transaction Management</h1>
 
       {/* Transactions Table */}

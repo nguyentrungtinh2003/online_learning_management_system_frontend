@@ -91,7 +91,7 @@ const UpdateQuizz = () => {
     }
   };
   return (
-    <div className="w-full flex flex-col h-full py-4 px-3">
+    <div className="w-full flex flex-col h-full">
       <div className="flex items-center mb-2 gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

@@ -103,3 +103,19 @@ export const getQuestionByQuizIdAndPage = async (quizId,page = 0, size = 6) => {
     return response.data;
   };
   
+  7. //Get Question All
+  export const getQuestions = async () => {
+    try {
+      const response = await axios.get(`${URL}/teacher/questions/all`, {
+        withCredentials: true,
+      });
+      // const filteredCourses = response.data.data.filter(course => !course.deleted); // Chỉ lấy khóa học chưa bị xóa
+      // return { ...response.data, data: filteredCourses };
+  
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      throw error;
+    }
+  };
+  

@@ -43,10 +43,10 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center py-4">
-      <div className="w-[70%] h-fit bg-wcolor dark:border dark:bg-darkBackground dark:border-darkBorder rounded-3xl shadow-2xl px-8 py-4 relative">
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-[70%] h-full bg-wcolor dark:border dark:bg-darkBackground dark:border-darkBorder rounded-3xl shadow-2xl px-8 py-4 relative">
         <div className="flex flex-col items-center text-center">
-          <FaCoins size={60} className="text-yellow-500" />
+          <FaCoins size={60} className="text-yellow-500 my-2" />
           <h1 className="text-3xl font-bold text-fcolor pb-2">
             Nạp tiền vào hệ thống
           </h1>
@@ -109,7 +109,7 @@ export default function PaymentPage() {
             </div>
           </div>
 
-          <div className="mb-4 mx-2 flex items-center justify-between">
+          <div className="mb-2 mx-2 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-darkSubtext font-medium">
                 Bạn sẽ nhận được:

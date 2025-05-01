@@ -65,7 +65,7 @@ const AdminAddUser = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-fit p-6">
+      <div className="flex-1 flex flex-col h-fit">
         <div className="flex gap-2 items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />

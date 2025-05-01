@@ -93,7 +93,7 @@ const EditLesson = () => {
   };
 
   return (
-    <div className="w-full flex flex-col h-full py-4 px-3">
+    <div className="w-full flex flex-col h-full">
       <div className="flex gap-2">
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Lesson Management</h2>

@@ -1,173 +1,197 @@
-import { useState } from "react";
-import { FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import {
-  MdNavigateNext,
-  MdDeleteForever,
-  MdNavigateBefore,
-  MdForum,
-} from "react-icons/md";
-import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react";
+import { FaEdit, FaPlus } from "react-icons/fa";
+import { MdNavigateNext, MdDeleteForever, MdNavigateBefore, MdForum } from "react-icons/md";
+import { Link, useNavigate } from "react-router-dom";
 
-const initialBlogs = [
-  {
-    id: "001",
-    title: "How blogs boost work",
-    description: "Tips & tricks for using blogs...",
-    image: "img1.jpg",
-    video: "video1.mp4",
-    createdAt: "11/01/2023",
-    interactions: 325,
-    views: 700,
-    author: "Yuki Tam",
-  },
-  {
-    id: "002",
-    title: "Python for Beginners",
-    description: "Let's write Python codes...",
-    image: "img2.jpg",
-    video: "video2.mp4",
-    createdAt: "12/03/2023",
-    interactions: 203,
-    views: 512,
-    author: "Tom Kha",
-  },
-  {
-    id: "003",
-    title: "Master Java",
-    description: "An advanced Java tutorial...",
-    image: "img3.jpg",
-    video: "video3.mp4",
-    createdAt: "17/05/2023",
-    interactions: 121,
-    views: 715,
-    author: "Alice Tran",
-  },
-  {
-    id: "004",
-    title: "How blogs boost work",
-    description: "Tips & tricks for using blogs...",
-    image: "img1.jpg",
-    video: "video1.mp4",
-    createdAt: "11/01/2023",
-    interactions: 325,
-    views: 700,
-    author: "Yuki Tam",
-  },
-  {
-    id: "005",
-    title: "Python for Beginners",
-    description: "Let's write Python codes...",
-    image: "img2.jpg",
-    video: "video2.mp4",
-    createdAt: "12/03/2023",
-    interactions: 203,
-    views: 512,
-    author: "Tom Kha",
-  },
-  {
-    id: "006",
-    title: "Master Java",
-    description: "An advanced Java tutorial...",
-    image: "img3.jpg",
-    video: "video3.mp4",
-    createdAt: "17/05/2023",
-    interactions: 121,
-    views: 715,
-    author: "Alice Tran",
-  },
-];
+import { getBlogs, searchBlogs, deleteBlog } from "../../services/blogapi";
 
-export default function BlogManagement() {
-  const [blogs, setBlogs] = useState(initialBlogs);
+export default function AdminBlogManagement() {
+  const navigate = useNavigate();
+
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const blogsPerPage = 6;
 
-  const handleDelete = (id) => {
-    const updatedBlogs = blogs.filter((blog) => blog.id !== id);
-    setBlogs(updatedBlogs);
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      setLoading(true);
+      try {
+        const data = await getBlogs();
+        if (!data?.data?.content) throw new Error("Invalid API Response");
+        setBlogs(data.data.content);
+        setTotalPages(data.data.totalPages);
+      } catch (error) {
+        console.error("Lỗi tải blog:", error);
+        setBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, [currentPage]);
+
+  const handleSearch = async (e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    if (value.trim() === "") {
+      setCurrentPage(0);
+      setLoading(true);
+      try {
+        const data = await getBlogs();
+        setBlogs(data.data.content);
+        setTotalPages(data.data.totalPages);
+      } catch (error) {
+        console.error("Lỗi tải lại danh sách:", error);
+        setBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const data = await searchBlogs(value, currentPage, blogsPerPage);
+      setBlogs(data.data.content);
+      setTotalPages(data.data.totalPages);
+      setCurrentPage(0);
+    } catch (error) {
+      console.error("Lỗi tìm kiếm:", error);
+      setBlogs([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredBlogs = blogs.filter((blog) =>
-    blog.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Bạn có chắc muốn xóa blog \"${title}\" không?`)) return;
+
+    try {
+      await deleteBlog(id);
+      const data = await getBlogs();
+      setBlogs(data.data.content);
+      setTotalPages(data.data.totalPages);
+      toast.success("Xóa blog thành công!", { position: "top-right", autoClose: 1000 });
+    } catch (error) {
+      console.error("Lỗi khi xóa blog:", error);
+      toast.error("Không thể xóa blog!", { position: "top-right", autoClose: 1000 });
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
 
   return (
     <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-full py-4 px-3">
-        <div className="flex justify-between mb-4">
-          <div className="flex gap-2">
+      <ToastContainer />
+      <div className="flex flex-col h-full">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex gap-2 items-center">
             <MdForum size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold mb-4">Blog Management</h2>
+            <h2 className="text-xl font-bold">Blog Management</h2>
           </div>
           <Link
-            className="text-white hover:text-ficolor cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
             to="/admin/blog/add-blog"
+            className="bg-scolor text-white px-4 py-2 rounded-xl hover:scale-105 drop-shadow-lg"
           >
-            <FaPlus size={30} />
+            <FaPlus size={20} /> Thêm Blog
           </Link>
         </div>
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
-            <table className="w-full">
-              <thead>
-                <tr className=" text-center font-bold">
-                  <th className="p-2">ID</th>
-                  <th className="p-2">Blog Title</th>
-                  <th className="p-2">Description</th>
-                  <th className="p-2">Image</th>
-                  <th className="p-2">Video</th>
-                  <th className="p-2 whitespace-nowrap">Created Date</th>
-                  <th className="p-2">Interactions</th>
-                  <th className="p-2">Views</th>
-                  <th className="p-2">Author</th>
-                  <th className="p-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBlogs.map((blog) => (
-                  <tr key={blog.id} className="text-center">
-                    <td className="p-2">{blog.id}</td>
-                    <td className="p-2">{blog.title}</td>
-                    <td className="p-2">{blog.description}</td>
-                    <td className="p-2">
-                      <img
-                        src={blog.image}
-                        alt="blog"
-                        className="w-8 h-8 rounded mx-auto"
-                      />
-                    </td>
-                    <td className="p-2">{blog.video}</td>
-                    <td className="p-2">{blog.createdAt}</td>
-                    <td className="p-2">{blog.interactions}</td>
-                    <td className="p-2">{blog.views}</td>
-                    <td className="p-2">{blog.author}</td>
-                    <td className="p-2 flex justify-center gap-1">
-                      <Link
-                        to="/admin/blog/edit-blog"
-                        className="p-2 border rounded hover:text-fcolor hover:scale-105"
-                      >
-                        <FaEdit />
-                      </Link>
-                      <button
-                        className="p-2 border rounded text-red-600 hover:scale-105"
-                        onClick={() => handleDelete(blog.id)}
-                      >
-                        <MdDeleteForever />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Tìm kiếm blog..."
+            className="w-full px-4 py-2 border rounded-xl focus:outline-none"
+            value={search}
+            onChange={handleSearch}
+          />
         </div>
-        <div className="text-white flex justify-between mt-4">
-          <p>Showing 1 of 4 pages</p>
-          <div className="space-x-2">
-            <button className="bg-scolor p-1 hover:scale-105 duration-500">
+
+        <div className="bg-white rounded-2xl drop-shadow-lg overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-100">
+              <tr className="text-center font-bold">
+                <th className="p-2">ID</th>
+                <th className="p-2">Tiêu đề</th>
+                <th className="p-2">Mô tả</th>
+                <th className="p-2">Hình ảnh</th>
+                <th className="p-2">Video</th>
+                <th className="p-2 whitespace-nowrap">Ngày tạo</th>
+                <th className="p-2">Tương tác</th>
+                <th className="p-2">Lượt xem</th>
+                <th className="p-2">Tác giả</th>
+                <th className="p-2">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr><td colSpan="10" className="text-center py-4">Đang tải...</td></tr>
+              ) : blogs.length === 0 ? (
+                <tr><td colSpan="10" className="text-center py-4">Không có blog nào.</td></tr>
+              ) : blogs.map((blog) => (
+                <tr key={blog.id} className="text-center">
+                  <td className="p-2">{blog.id}</td>
+                  <td className="p-2">{blog.title}</td>
+                  <td className="p-2 truncate max-w-xs">{blog.description}</td>
+                  <td className="p-2">
+                    <img src={blog.image} alt="blog" className="w-8 h-8 rounded mx-auto" />
+                  </td>
+                  <td className="p-2">{blog.video}</td>
+                  <td className="p-2">{blog.createdAt}</td>
+                  <td className="p-2">{blog.interactions}</td>
+                  <td className="p-2">{blog.views}</td>
+                  <td className="p-2">{blog.author}</td>
+                  <td className="p-2 flex justify-center gap-2">
+                    <Link
+                      to={`/admin/blog/edit-blog/${blog.id}`}
+                      className="p-2 border rounded hover:text-blue-500 hover:scale-105"
+                    >
+                      <FaEdit />
+                    </Link>
+                    <button
+                      className="p-2 border rounded text-red-600 hover:scale-105"
+                      onClick={() => handleDelete(blog.id, blog.title)}
+                    >
+                      <MdDeleteForever />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex justify-between items-center mt-4 text-white">
+          <p>
+            Trang {currentPage + 1} / {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 0}
+              className="bg-scolor p-1 rounded disabled:opacity-50"
+            >
               <MdNavigateBefore size={30} />
             </button>
-            <button className="bg-scolor p-1 hover:scale-105 duration-500 ">
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1}
+              className="bg-scolor p-1 rounded disabled:opacity-50"
+            >
               <MdNavigateNext size={30} />
             </button>
           </div>
