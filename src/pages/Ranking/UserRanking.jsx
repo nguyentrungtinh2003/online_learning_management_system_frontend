@@ -95,8 +95,9 @@ export default function UserRanking() {
       {/* Main content */}
       <div className="flex h-full overflow-auto w-full flex-1 gap-14 pl-6">
         {/* Podium */}
-        <div className="relative h-full flex justify-center items-center gap-24 py-12">
-          {/* Second */}
+        <div className="relative h-full justify-center items-center">
+          <div className="flex justify-center items-end ml-8 mt-20 gap-24">
+            {/* Second */}
           {users[1] && (
             <div className="flex flex-col items-center">
               <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
@@ -168,6 +169,7 @@ export default function UserRanking() {
             </div>
           )}
         </div>
+          </div>
 
         {/* Ranking Table */}
         <div className="flex-1 border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">

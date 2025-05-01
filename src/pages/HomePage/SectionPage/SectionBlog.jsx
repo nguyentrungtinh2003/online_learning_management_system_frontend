@@ -60,7 +60,7 @@ const blogs = [
 ];
 
 const BlogCard = ({ blog }) => (
-  <div className="font-semibold text-gray-700 dark:text-darkSubtext dark:border-darkBorder border-1 border-gray-300 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
+  <div className="font-semibold text-gray-700 dark:bg-darkSubbackground dark:text-darkSubtext dark:border-darkBorder border-1 border-gray-300 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
     <img
       src={blog.imgSrc}
       alt={blog.title}

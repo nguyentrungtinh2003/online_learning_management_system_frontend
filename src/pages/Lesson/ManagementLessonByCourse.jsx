@@ -104,7 +104,7 @@ export default function ManagementLesson() {
 
   return (
     <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-full py-4 px-3">
+      <div className="flex-1 flex flex-col h-full">
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
           <Link className="flex gap-2" onClick={() => navigate(-1)}>

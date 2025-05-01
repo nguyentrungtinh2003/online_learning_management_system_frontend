@@ -47,7 +47,7 @@ export default function UserQuizz() {
   const currentQuestion = quiz.questions[currentQuestionIndex];
 
   return (
-    <div className="h-full w-full flex py-3 text-sm font-semibold box-border relative">
+    <div className="h-full w-full flex text-sm font-semibold box-border relative">
       <div className="h-full flex-1 overflow-y-auto bg-white flex-row p-4 z-0">
         <div className="quiz-container px-2">
           <h2 className="text-xl font-bold mb-2">{quiz.quizName}</h2>

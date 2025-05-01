@@ -81,7 +81,7 @@ const AddLesson = () => {
   };
 
   return (
-    <div className="w-full flex flex-col h-full py-4 px-3">
+    <div className="w-full flex flex-col h-full">
       <div className="flex gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

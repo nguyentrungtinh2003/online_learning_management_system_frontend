@@ -92,7 +92,7 @@ export default function BlogManagement() {
 
   return (
     <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-full py-4 px-3">
+      <div className="flex-1 flex flex-col h-full">
         <div className="flex justify-between mb-4">
           <div className="flex gap-2">
             <MdForum size={30} />

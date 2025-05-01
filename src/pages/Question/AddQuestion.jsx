@@ -89,7 +89,7 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full py-4 px-3">
+    <div className="flex flex-col w-full h-full">
       <div className="flex items-center gap-2 mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

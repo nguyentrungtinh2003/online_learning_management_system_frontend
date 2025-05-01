@@ -255,7 +255,7 @@ export default function Blog() {
   }
 
   return (
-    <div className="h-full dark:text-darkSubtext overflow-y-auto flex-1 flex flex-col gap-2">
+    <div className="h-full dark:text-darkSubtext overflow-y-auto flex-1 flex flex-col">
       <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (
@@ -383,7 +383,7 @@ export default function Blog() {
         data.map((post) => (
           <div key={post.id}>
             {!hiddenPosts.includes(post.id) ? (
-              <div className="pt-4 px-4 pb-2 border-1 dark:border-darkBorder rounded-2xl">
+              <div className="pt-4 px-4 pb-2 mt-2 border-1 dark:border-darkBorder rounded-2xl">
                 <div className="flex justify-between dark:text-darkText">
                   <div className="flex items-center mb-2">
                     <img

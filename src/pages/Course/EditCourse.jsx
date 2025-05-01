@@ -121,7 +121,7 @@ const EditCourse = () => {
   };
 
   return (
-    <div className="w-full flex flex-col h-full py-4 px-3">
+    <div className="w-full flex flex-col h-full">
       <div className="flex dark:text-darkText gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

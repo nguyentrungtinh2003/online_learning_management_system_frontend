@@ -137,7 +137,7 @@ const AddCourse = () => {
   
 
   return (
-    <div className="h-full flex flex-col w-full py-4 px-3">
+    <div className="h-full flex flex-col w-full">
       <div className="flex dark:text-darkText gap-2 items-center mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />

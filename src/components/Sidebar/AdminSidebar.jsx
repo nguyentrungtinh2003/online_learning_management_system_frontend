@@ -128,7 +128,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="flex p-2 dark:bg-darkBackground">
+    <div className="flex dark:bg-darkBackground">
       <div
         className={`h-full border-box shadow rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
           isCollapsed ? "w-[90px]" : "w-56"

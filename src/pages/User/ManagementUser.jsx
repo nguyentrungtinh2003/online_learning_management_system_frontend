@@ -61,7 +61,7 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full w-full flex flex-col py-4 px-3">
+    <div className="h-full w-full flex flex-col">
       <ToastContainer />
 
       <div className="flex items-center justify-between mb-2">

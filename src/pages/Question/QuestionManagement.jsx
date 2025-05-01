@@ -115,7 +115,7 @@ const QuestionManagement = () => {
 
   return (
                <div className="h-full w-full">
-                 <div className="flex-1 flex flex-col h-full py-6 px-3">
+                 <div className="flex-1 flex flex-col h-full">
                    <div className="flex justify-between mb-4">
                      <Link className="flex gap-2" onClick={() => navigate(-1)}>
                        <MdNavigateBefore size={30} />

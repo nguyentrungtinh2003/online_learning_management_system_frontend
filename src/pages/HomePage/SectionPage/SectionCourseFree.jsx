@@ -39,7 +39,7 @@ export default function SectionCourseFree() {
   };
 
   const CourseCard = ({ course }) => (
-    <div className="font-semibold text-gray-600 dark:text-darkSubtext rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border-1 dark:border-darkBorder hover:shadow-2xl duration-300">
+    <div className="font-semibold text-gray-600 dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border-1 dark:border-darkBorder hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}

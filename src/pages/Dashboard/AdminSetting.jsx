@@ -6,7 +6,7 @@ const AdminSettings = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex-1 flex flex-col h-fit py-6 px-3">
+      <div className="flex-1 flex flex-col h-fit">
         <div className="flex gap-2 items-center mb-4">
           <FaCog size={30} />
           <h2 className="text-lg font-bold">Admin Settings</h2>

@@ -66,7 +66,7 @@ export default function UserCourse() {
                 return (
                   <div
                     key={index}
-                    className="bg-wcolor dark:text-darkText dark:bg-darkBackground dark:border dark:border-darkBorder rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
+                    className="bg-wcolor dark:text-darkText dark:bg-darkSubbackground dark:border dark:border-darkBorder rounded-xl shadow-lg hover:shadow-xl transition duration-300 flex flex-col overflow-hidden"
                   >
                     <img
                       src={item.img || "/default.jpg"}

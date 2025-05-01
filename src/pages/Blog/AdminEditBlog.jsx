@@ -22,7 +22,7 @@ const AdminEditBlog = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-fit py-6 px-3">
+      <div className="flex-1 flex flex-col h-fit">
         <div className="flex gap-2 mb-4 items-center">
           <MdForum size={30} />
           <MdNavigateNext size={30} />

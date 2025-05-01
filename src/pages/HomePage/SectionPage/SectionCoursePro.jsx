@@ -27,7 +27,7 @@ export default function SectionCoursePro() {
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="font-semibold dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
+    <div className="font-semibold dark:bg-darkSubbackground dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}

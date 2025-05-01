@@ -103,7 +103,7 @@ export default function ManagementLesson() {
 
   return (
     <div className="flex-1 h-screen">
-      <div className="w-full flex flex-col h-full py-4 px-3">
+      <div className="w-full flex flex-col h-full">
 
         {/* Header */}
         <div className="flex justify-between items-center mb-2">
