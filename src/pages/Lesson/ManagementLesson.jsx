@@ -102,7 +102,7 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="flex-1 h-screen">
+    <div className="h-full w-full dark:text-darkText">
       <div className="w-full flex flex-col h-full">
 
         {/* Header */}
@@ -112,7 +112,7 @@ export default function ManagementLesson() {
             <MdNavigateBefore size={30} />
             <h2 className="text-lg font-bold">Back</h2>
           </Link>
-          <Link to={`/admin/lessons/add`} className="hover:text-ficolor">
+          <Link to={`/admin/lessons/add`} className="">
           <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
               <FaPlus size={30} />
             </button>
@@ -124,7 +124,7 @@ export default function ManagementLesson() {
           <input
             type="text"
             placeholder="Search lessons..."
-            className="p-2 border rounded w-full focus:outline-none"
+            className="p-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={search}
             onChange={handleSearch}
           />
@@ -132,13 +132,13 @@ export default function ManagementLesson() {
 
         {/* Danh sách bài học */}
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
+          <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
             {loading ? (
               <p className="text-center">Loading lessons...</p>
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="text-center font-bold">
+                  <tr className="text-center whitespace-nowrap font-bold">
                     <th className="p-2">STT</th>
                     <th className="p-2">Lesson Name</th>
                     <th className="p-2">Description</th>

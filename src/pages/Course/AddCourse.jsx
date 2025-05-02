@@ -148,7 +148,7 @@ const AddCourse = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
+        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border-2 dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">

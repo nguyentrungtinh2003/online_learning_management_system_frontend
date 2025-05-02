@@ -90,7 +90,7 @@ const AddQuestion = () => {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 dark:text-darkText">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold">Question Management</h2>

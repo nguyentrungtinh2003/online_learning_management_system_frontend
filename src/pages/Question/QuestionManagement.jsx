@@ -115,10 +115,10 @@ const QuestionManagement = () => {
   return (
                <div className="h-full w-full">
                  <div className="flex-1 flex flex-col h-full">
-                   <div className="flex justify-between mb-4">
-                     <Link className="flex gap-2" onClick={() => navigate(-1)}>
+                   <div className="flex justify-between dark:text-darkText mb-2">
+                     <Link className="flex gap-2 items-center" onClick={() => navigate(-1)}>
                        <MdNavigateBefore size={30} />
-                       <h2 className="text-lg font-bold mb-4">Back</h2>
+                       <h2 className="text-lg font-bold">Back</h2>
                      </Link>
                      <Link
                        className="hover:text-ficolor"
@@ -135,7 +135,7 @@ const QuestionManagement = () => {
                      <input
                        type="text"
                        placeholder="Search question..."
-                       className="p-2 border rounded w-full focus:outline-none"
+                       className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
                        value={search}
                        onChange={handleSearch}
                      />
@@ -143,13 +143,13 @@ const QuestionManagement = () => {
            
            
                    <div className="flex-1 drop-shadow-lg">
-                     <div className="bg-white p-4 rounded-2xl">
+                     <div className="bg-wcolor dark:border dark:text-Subtext dark:border-darkBorder dark:bg-darkSubbackground  p-4 rounded-2xl">
                        {loading ? ( 
                          <p className="text-center">Loading question...</p>
                        ) : (
                        <table className="w-full">
                          <thead>
-                           <tr className="text-center font-bold">
+                           <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
                              <th className="p-2">ID</th>
                              <th className="p-2">Question Name</th>
                              <th className="p-2">Question A</th>
@@ -174,7 +174,7 @@ const QuestionManagement = () => {
                               ))
                             ) : questions.length > 0 ? (
                               questions.map((question, index) => (
-                                <tr key={question.id} className="text-center">
+                                <tr key={question.id} className="text-center dark:text-darkSubtext">
                                   <td className="p-2">{index + 1 + currentPage*questionPerPage}</td>
                                   <td className="p-2">{question.questionName}</td>
                                   <td className="p-2">{question.answerA}</td>

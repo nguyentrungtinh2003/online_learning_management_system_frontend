@@ -114,12 +114,12 @@ const QuestionManagement = () => {
           };
 
   return (
-               <div className="h-full w-full">
+               <div className="h-full w-full dark:text-darkText">
                  <div className="flex-1 flex flex-col h-full">
-                   <div className="flex justify-between mb-4">
+                   <div className="flex justify-between items-center mb-2">
                      <Link className="flex gap-2" onClick={() => navigate(-1)}>
                        <MdNavigateBefore size={30} />
-                       <h2 className="text-lg font-bold mb-4">Back</h2>
+                       <h2 className="text-lg font-bold">Back</h2>
                      </Link>
                      <Link
                        className="hover:text-ficolor"
@@ -136,7 +136,7 @@ const QuestionManagement = () => {
                      <input
                        type="text"
                        placeholder="Search question..."
-                       className="p-2 border rounded w-full focus:outline-none"
+                       className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
                        value={search}
                        onChange={handleSearch}
                      />
@@ -144,7 +144,7 @@ const QuestionManagement = () => {
            
            
                    <div className="flex-1 drop-shadow-lg">
-                     <div className="bg-white p-4 rounded-2xl">
+                     <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-4 rounded-2xl">
                        {loading ? ( 
                          <p className="text-center">Loading question...</p>
                        ) : (
@@ -168,7 +168,7 @@ const QuestionManagement = () => {
                                 <tr key={index} className="text-center">
                                   {Array(10).fill(null).map((_, i) => (
                                     <td key={i} className="p-2">
-                                      <div className="h-8 w-full my-1 bg-gray-300 rounded mx-auto"></div>
+                                      <div className="h-8 w-full dark:text my-1 bg-gray-300 rounded mx-auto"></div>
                                     </td>
                                   ))}
                                 </tr>

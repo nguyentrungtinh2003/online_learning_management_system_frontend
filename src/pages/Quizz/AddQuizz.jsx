@@ -131,9 +131,8 @@ const AddQuizz = () => {
   };
 
   return (
-    <div className="flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
-      <div className="flex items-center gap-2 mb-4">
+    <div className="flex w-full flex-col h-full">
+      <div className="flex dark:text-darkText mb-2 items-center gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold">Quiz Management</h2>
@@ -141,14 +140,14 @@ const AddQuizz = () => {
         <h2 className="text-lg font-bold">Add New Quiz</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-4">
-        <div className="flex items-center space-x-4">
+      <form onSubmit={handleSubmit} className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Course:</label>
           <select
             name="courseId"
             value={quizData.courseId}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
           >
             <option value="">-- Select Course --</option>
@@ -160,13 +159,13 @@ const AddQuizz = () => {
           </select>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Lesson:</label>
           <select
             name="lessonId"
             value={quizData.lessonId}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
           >
             <option value="">-- Select Lesson --</option>
@@ -178,19 +177,19 @@ const AddQuizz = () => {
           </select>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Quiz Name:</label>
           <input
             type="text"
             name="quizName"
             value={quizData.quizName}
             onChange={handleChange}
-            className="flex-1 p-2 border rounded"
+            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
             required
           />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Price:</label>
           <input
             type="number"
@@ -198,38 +197,38 @@ const AddQuizz = () => {
             value={quizData.price}
             onChange={handleChange}
             disabled={quizData.quizEnum === "FREE"}
-            className="flex-1 p-2 border rounded"
+            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
           />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Image:</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="flex-1 p-2 border rounded"
+            className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
           />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Description:</label>
           <textarea
             name="description"
             value={quizData.description}
             onChange={handleChange}
             rows={3}
-            className="flex-1 p-2 border rounded"
+            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
           />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <label className="w-1/4 font-medium">Type:</label>
           <select
             name="quizEnum"
             value={quizData.quizEnum}
             onChange={handleChange}
-            className="flex-1 p-2 border rounded"
+            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
           >
             <option value="FREE">Free</option>
             <option value="PAID">Paid</option>
@@ -239,7 +238,7 @@ const AddQuizz = () => {
         <div className="flex justify-end gap-2 pt-4">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border border-gray-500 text-gray-600 rounded hover:bg-gray-100"
+            className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
           >
             Cancel
           </Link>

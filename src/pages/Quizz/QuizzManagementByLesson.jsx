@@ -3,7 +3,6 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuizzesByLessonIdAndPage, deleteQuiz } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
@@ -115,14 +114,13 @@ const QuizzManagement = () => {
   
 
   return (
-    <div className="flex-1 h-screen">
-      <div className="flex-1 flex flex-col h-full py-6 px-3">
-        <AdminNavbar />
-        <div className="flex justify-between mb-4">
-          <div className="flex gap-2">
+    <div className="w-full h-full">
+      <div className="flex-1 flex flex-col h-full">
+        <div className="flex justify-between mb-2">
+          <div className="flex gap-2 items-center dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold mb-4">Quizz Management</h2>
+            <h2 className="text-lg font-bold">Quizz Management</h2>
           </div>
           <Link to={`/admin/lessons/${lessonId}/quizzes/add`}>
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -131,11 +129,11 @@ const QuizzManagement = () => {
           </Link>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); fetchQuizzes(); }} className="mb-4 flex gap-2">
+        <form onSubmit={(e) => { e.preventDefault(); fetchQuizzes(); }} className=" mb-2 flex gap-2">
           <input
             type="text"
             placeholder="Search quizzes..."
-            className="p-2 border rounded w-full focus:outline-none"
+            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -148,7 +146,7 @@ const QuizzManagement = () => {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 border rounded"
+            className="p-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText rounded"
           >
             <option value="All">All</option>
             <option value="Free">Free</option>
@@ -164,7 +162,7 @@ const QuizzManagement = () => {
 
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
+          <div className="bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder dark:border dark:text-darkText p-4 rounded-2xl">
             <table className="w-full">
               <thead>
                 <tr className="text-center font-bold">

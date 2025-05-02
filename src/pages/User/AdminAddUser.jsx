@@ -66,7 +66,7 @@ const AdminAddUser = () => {
   return (
     <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-fit">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 dark:text-darkText items-center mb-2">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">User Management</h2>
@@ -75,7 +75,7 @@ const AdminAddUser = () => {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white py-6 px-3 rounded-lg shadow mt-4"
+          className="bg-wcolor dark:border dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground py-6 px-3 rounded-lg shadow"
         >
           <div className="space-y-4">
             {[
@@ -87,7 +87,7 @@ const AdminAddUser = () => {
               { label: "Address", name: "address", type: "text" },
             ].map((field) => (
               <div key={field.name} className="flex items-center space-x-4">
-                <label className="w-1/4 text-gray-700 font-medium">
+                <label className="w-1/4 font-medium">
                   {field.label}:
                 </label>
                 <input
@@ -95,19 +95,19 @@ const AdminAddUser = () => {
                   name={field.name}
                   value={formData[field.name]}
                   onChange={handleInputChange}
-                  className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
                   required
                 />
               </div>
             ))}
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">Role:</label>
+              <label className="w-1/4 font-medium">Role:</label>
               <select
                 name="roleEnum"
                 value={formData.roleEnum}
                 onChange={handleInputChange}
-                className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               >
                 <option value="STUDENT">STUDENT</option>
                 <option value="TEACHER">LECTURE</option>
@@ -115,21 +115,21 @@ const AdminAddUser = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 Profile Image:
               </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="flex-1 border rounded-lg px-2 py-2"
+                className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-2 py-2"
               />
             </div>
           </div>
           <div className="flex justify-end space-x-2 mt-6">
             <Link
               to="/admin/users"
-              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 dark:text-darkText border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
             >
               Cancel
             </Link>

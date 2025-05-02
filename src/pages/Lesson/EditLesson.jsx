@@ -94,7 +94,7 @@ const EditLesson = () => {
 
   return (
     <div className="w-full flex flex-col h-full">
-      <div className="flex gap-2">
+      <div className="flex gap-2 dark:text-darkText">
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Lesson Management</h2>
         <MdNavigateNext size={30} />
