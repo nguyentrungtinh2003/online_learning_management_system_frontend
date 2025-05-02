@@ -22,7 +22,13 @@ export default function UserViewLesson() {
   const [videoDurations, setVideoDurations] = useState({});
   const videoRefs = useRef([]);
   const [loadingVideo, setLoadingVideo] = useState(true);
-  const [value, setValue] = useState('');
+  const [content, setContent] = useState("");
+  const [comments, setComments] = useState([]);
+  const [stompClient, setStompClient] = useState(null);
+  const mainLayoutRef = useRef(null);
+  const [mainRect, setMainRect] = useState(null);
+
+  const userId = parseInt(localStorage.getItem("id"));
 
   const modules = {
     toolbar: [["bold", "italic", "underline"], [{ align: [] }]],
@@ -40,8 +46,6 @@ export default function UserViewLesson() {
       return () => window.removeEventListener("resize", updateRect);
     }
   }, []);
-  
-
   // Fetching course and lessons data
   useEffect(() => {
     const fetchCourse = async () => {
@@ -242,7 +246,6 @@ export default function UserViewLesson() {
                 </div>
               )}
 
-
             {/* Video */}
             {lessons[currentLessonIndex]?.videoURL ? (
               <>
@@ -266,10 +269,10 @@ export default function UserViewLesson() {
             {/* Thông tin bài học */}
             {!loadingVideo && (
               <>
-              <div className="space-y-2">
+              <div className="space-y-2 mb-40 dark:text-darkSubtext">
                 <div className="flex w-full justify-between my-4">
-                  <h1 className="text-xl font-bold">{lessons[currentLessonIndex]?.lessonName}</h1>
-                  <button className="bg-scolor border py-2 px-10 hover:shadow duration-700 rounded-xl">
+                  <h1 className="text-xl font-bold dark:text-darkText">{lessons[currentLessonIndex]?.lessonName}</h1>
+                  <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
                     Thêm ghi chú tại 00:00:00
                   </button>
                 </div>
@@ -282,25 +285,6 @@ export default function UserViewLesson() {
                   <li>Group: http://psdvsnv.com</li>
                   <li>Youtube: http://psdvsnv.com</li>
                 </ul>
-              </div>
-              {/* Navigation buttons */}
-              <div className="flex justify-center gap-4 mt-6">
-                <button
-                  onClick={() => setCurrentLessonIndex((prev) => Math.max(0, prev - 1))}
-                  disabled={currentLessonIndex === 0}
-                  className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
-                >
-                  <MdNavigateBefore /> Bài trước
-                </button>
-                <button
-                  onClick={() =>
-                    setCurrentLessonIndex((prev) => Math.min(lessons.length - 1, prev + 1))
-                  }
-                  disabled={currentLessonIndex === lessons.length - 1}
-                  className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
-                >
-                  Bài sau <MdNavigateNext />
-                </button>
               </div></>
             )}
           </div>
@@ -308,20 +292,26 @@ export default function UserViewLesson() {
       </div>
 
       {/* Sidebar */}
-      <div className="shadow h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
-        <div className="space-y-4">
-          <p className="text-2xl">Nội dung khóa học</p>
-          {lessons.map((lesson, index) => (
-            <div
-              key={index}
-              onClick={() => setCurrentLessonIndex(index)}
-              className={`cursor-pointer p-3 rounded-xl transition-all duration-300
-                ${currentLessonIndex === index ? "bg-scolor text-white" : "hover:bg-gray-100"}`}
-            >
-              <h1 className="truncate">{lesson.lessonName || "Không có tiêu đề"}</h1>
-              <p className="text-sm opacity-80">
-                {videoDurations[index] ? formatDuration(videoDurations[index]) : "Đang tải..."}
-              </p>
+      <div className="shadow dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
+        <div className="sticky top-5">
+          <div className="space-y-6">
+            <div className="text-center">Danh sách bài học</div>
+            <div>
+              <ul className="flex flex-col gap-2">
+                {lessons.map((lesson, index) => (
+                  <li
+                    key={lesson.id}
+                    onClick={() => setCurrentLessonIndex(index)}
+                    className={`cursor-pointer py-2 px-3 rounded-xl ${
+                      currentLessonIndex === index
+                        ? "bg-scolor text-white"
+                        : "hover:bg-gray-100 dark:hover:bg-darkBorder"
+                    }`}
+                  >
+                    {lesson.lessonName}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
