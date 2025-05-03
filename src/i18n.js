@@ -2,9 +2,12 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// Nhập file JSON chứa bản dịch
+// Nhập tất cả các bản dịch
 import enSettings from "./locales/en/settings.json";
 import viSettings from "./locales/vi/settings.json";
+
+import enNavbar from "./locales/en/navbar.json";
+import viNavbar from "./locales/vi/navbar.json";
 
 i18n
   .use(LanguageDetector)
@@ -12,12 +15,18 @@ i18n
   .init({
     fallbackLng: "en",
     supportedLngs: ["en", "vi"],
-    debug: true, // bật để xem console log
-    ns: ["settings"],
+    debug: true,
+    ns: ["settings", "navbar"], // danh sách namespace
     defaultNS: "settings",
     resources: {
-      en: { settings: enSettings },
-      vi: { settings: viSettings },
+      en: {
+        settings: enSettings,
+        navbar: enNavbar,
+      },
+      vi: {
+        settings: viSettings,
+        navbar: viNavbar,
+      },
     },
     interpolation: {
       escapeValue: false,
