@@ -23,6 +23,7 @@ import Profile from "../pages/User/Profile";
 import UserRanking from "../pages/Ranking/UserRanking";
 import UserLayout from "../components/Layout/UserLayout";
 import UserSetting from "../pages/User/UserSetting";
+import ChatRoom from "../pages/Chat/ChatRoom";
 
 const UserRouter = () => {
   return (
@@ -39,7 +40,7 @@ const UserRouter = () => {
         path="/"
         element={
           <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
-            <UserLayout/>
+            <UserLayout />
           </ProtectedRouter>
         }
       >
@@ -47,6 +48,7 @@ const UserRouter = () => {
         <Route path="user/process" element={<LearningProgress />} />
         <Route path="user/payment" element={<PaymentPage />} />
         <Route path="user/payment/history" element={<PaymentHistory />} />
+        <Route path="/chat" element={<ChatRoom />} />
         <Route path="user-course" element={<UserCourse />} />
         <Route path="view-course/:id" element={<UserViewCourse />} />
         <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
@@ -56,7 +58,7 @@ const UserRouter = () => {
         <Route path="question" element={<ManagementQuestion />} />
         <Route path="profile" element={<Profile />} />
         <Route path="ranking" element={<UserRanking />} />
-        <Route path="settings" element={<UserSetting/>} />
+        <Route path="settings" element={<UserSetting />} />
       </Route>
     </Routes>
   );
