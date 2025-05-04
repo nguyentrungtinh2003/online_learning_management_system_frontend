@@ -63,12 +63,13 @@ export default function Navbar() {
   const fetchUserData = async () => {
     try {
       const response = await axios.get(`${URL}/user-info`);
-      const { id, email, username, img, coin } = response.data.data;
+      const { id, email, username, img, coin, roleEnum } = response.data.data;
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
       localStorage.setItem("username", username);
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
+      localStorage.setItem("role", roleEnum);
     } catch {
       try {
         const googleResponse = await axios.get(`${URL}/user-google`);
@@ -77,6 +78,11 @@ export default function Navbar() {
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
+
+        axios.get(`${URL}/user/email/${email}`).then((response) => {
+          localStorage.setItem("coin", response.data.data.coin);
+          localStorage.setItem("role", roleEnum);
+        });
       } catch {
         console.log("Không tìm thấy user đăng nhập");
       }
