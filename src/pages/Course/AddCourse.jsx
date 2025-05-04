@@ -8,6 +8,8 @@ import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
 import URL from "../../config/URLconfig";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"
 
 const AddCourse = () => {
   const navigate = useNavigate();
@@ -24,33 +26,6 @@ const AddCourse = () => {
 
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  // useEffect(() => {
-  //   const userId = localStorage.getItem("id");
-  //   const token = localStorage.getItem("token");
-
-  //   if (!token || !userId) {
-  //     console.warn("⚠️ Token hoặc userId không tồn tại.");
-  //     return;
-  //   }
-
-  //   axios
-  //     .get(
-  //       `https://codearena-backend-dev.onrender.com/api/auth/user/${userId}`,
-  //       {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       }
-  //     )
-  //     .then((res) => {
-  //       setCourseData((prev) => ({
-  //         ...prev,
-  //         user: { id: res.data?.id || "1" },
-  //       }));
-  //     })
-  //     .catch((err) => {
-  //       console.error("❌ Lỗi lấy thông tin người dùng:", err);
-  //     });
-  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -91,6 +66,13 @@ const AddCourse = () => {
     });
   };
 
+  const handleDescriptionChange = (value) => {
+    setCourseData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+  
   const handleImageChange = (e) => {
     setImg(e.target.files[0]);
   };
@@ -193,14 +175,13 @@ const AddCourse = () => {
           <label className="w-1/4 font-medium">
             Description:
           </label>
-          <textarea
-            name="description"
-            rows={3}
+          <ReactQuill
+            theme="snow"
             value={courseData.description}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-            required
-          ></textarea>
+            onChange={handleDescriptionChange}
+            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+            style={{ minHeight: '300px' }}
+          />
         </div>
 
         {/* Course Type */}

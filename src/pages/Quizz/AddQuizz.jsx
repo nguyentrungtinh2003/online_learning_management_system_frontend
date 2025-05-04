@@ -7,6 +7,8 @@ import AdminNavbar from "../../components/Navbar/AdminNavbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"
 
 const AddQuizz = () => {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ const AddQuizz = () => {
   });
 
   const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [selectedLessonId, setSelectedLessonId] = useState(null); // Trạng thái lưu ID bài học
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
@@ -46,16 +49,15 @@ const AddQuizz = () => {
       setLessons([]);
       return;
     }
-
+  
     const fetchLessons = async () => {
       try {
-        const res = await axios.get(`${URL}/teacher/lessons/courses/${selectedCourseId}/page`, {
-          params: { page: 0, size: 10 },
+        const res = await axios.get(`${URL}/teacher/lessons/courses/${selectedCourseId}/all`, {
           withCredentials: true,
         });
-
-        if (res.data?.data?.content) {
-          setLessons(res.data.data.content);
+  
+        if (res.data?.data) {
+          setLessons(res.data.data);
         } else {
           setLessons([]);
         }
@@ -64,29 +66,37 @@ const AddQuizz = () => {
         setLessons([]);
       }
     };
-
+  
     fetchLessons();
   }, [selectedCourseId]);
-
+  
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "quizEnum") {
+  
+    if (name === "courseId") {
+      setSelectedCourseId(value);
+      setQuizData((prev) => ({ ...prev, lessonId: "", courseId: value }));
+    } else if (name === "quizEnum") {
       setQuizData((prev) => ({
         ...prev,
         quizEnum: value,
         price: value === "FREE" ? "0" : prev.price === "0" ? "1" : prev.price,
       }));
+    } else if (name === "lessonId") {
+      setQuizData((prev) => ({ ...prev, lessonId: value }));
     } else if (name === "price") {
       let sanitized = value.replace(/^0+(?=\d)/, "");
       if (quizData.quizEnum === "FREE") sanitized = "0";
       else if (parseInt(sanitized) < 1 || isNaN(parseInt(sanitized))) sanitized = "1";
-
+  
       setQuizData((prev) => ({ ...prev, price: sanitized }));
     } else {
       setQuizData((prev) => ({ ...prev, [name]: value }));
     }
   };
+  
+  
 
   const handleImageChange = (e) => {
     setImg(e.target.files[0]);
@@ -94,28 +104,38 @@ const AddQuizz = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Kiểm tra xem lessonId có được chọn chưa
     if (!quizData.lessonId) {
       toast.error("Please select a lesson!");
       return;
     }
 
-    setLoading(true);
-    const formData = new FormData();
-    formData.append("quiz", new Blob([JSON.stringify(quizData)], { type: "application/json" }));
-    if (img) formData.append("img", img);
+    console.log("quizData.lessonId:", quizData.lessonId);
 
+    setLoading(true);
+  
+    // Kiểm tra và đảm bảo lessonId được set đúng
+    const updatedQuizData = {...quizData};
+
+    // In ra đối tượng updatedQuizData để kiểm tra giá trị của lessonId
+    console.log("Updated Quiz Data:", updatedQuizData);
+  
+    const formData = new FormData();
+    formData.append("quiz", new Blob([JSON.stringify(updatedQuizData)], { type: "application/json" }));
+    if (img) formData.append("img", img);
+  
     try {
       await axios.post(`${URL}/teacher/quizzes/add`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-
+  
       toast.success("Quiz added successfully!", {
         position: "top-right",
         autoClose: 1000,
       });
-
+  
       setTimeout(() => {
         navigate(-1);
       }, 2000);
@@ -129,6 +149,15 @@ const AddQuizz = () => {
       setLoading(false);
     }
   };
+  
+
+  const handleDescriptionChange = (value) => {
+    setQuizData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+  
 
   return (
     <div className="flex flex-col h-fit py-6 px-3">
@@ -145,9 +174,15 @@ const AddQuizz = () => {
         <div className="flex items-center space-x-4">
           <label className="w-1/4 font-medium">Course:</label>
           <select
-            name="courseId"
-            value={quizData.courseId}
-            onChange={handleChange}
+            value={selectedCourseId}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSelectedCourseId(value);
+              setQuizData((prev) => ({
+                ...prev,
+                lessonId: "", // reset lesson khi đổi course
+              }));
+            }}
             className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
           >
@@ -158,6 +193,7 @@ const AddQuizz = () => {
               </option>
             ))}
           </select>
+
         </div>
 
         <div className="flex items-center space-x-4">
@@ -165,13 +201,21 @@ const AddQuizz = () => {
           <select
             name="lessonId"
             value={quizData.lessonId}
-            onChange={handleChange}
+            onChange={(e) => {
+              const selectedLessonId = e.target.value; // Lấy lessonId
+              setSelectedLessonId(selectedLessonId); // Cập nhật selectedLessonId
+              setQuizData((prev) => ({
+                ...prev,
+                lessonId: selectedLessonId, // Cập nhật đúng lessonId
+              }));
+            }}    
             className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
+            disabled={!selectedCourseId}
           >
             <option value="">-- Select Lesson --</option>
             {lessons.map((lesson) => (
-              <option key={lesson.lessonId} value={lesson.lessonId}>
+              <option key={lesson.id} value={lesson.id}>
                 {lesson.lessonName}
               </option>
             ))}
@@ -214,12 +258,12 @@ const AddQuizz = () => {
 
         <div className="flex items-center space-x-4">
           <label className="w-1/4 font-medium">Description:</label>
-          <textarea
-            name="description"
+          <ReactQuill
+            theme="snow"
             value={quizData.description}
-            onChange={handleChange}
-            rows={3}
-            className="flex-1 p-2 border rounded"
+            onChange={handleDescriptionChange}
+            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+            style={{ minHeight: '300px' }}
           />
         </div>
 

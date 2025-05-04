@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"
 
 const AddLesson = () => {
   const navigate = useNavigate();
@@ -49,6 +51,13 @@ const AddLesson = () => {
     setVideo(e.target.files[0]);
   };
 
+  const handleDescriptionChange = (value) => {
+    setCourseData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -154,13 +163,13 @@ const AddLesson = () => {
 
           <div className="flex items-center space-x-4">
             <label className="w-1/4 text-gray-700 font-medium">Description:</label>
-            <textarea
-              name="description"
-              rows={3}
+            <ReactQuill
+              theme="snow"
               value={lessonData.description}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            ></textarea>
+              onChange={handleDescriptionChange}
+              className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+              style={{ minHeight: '300px' }}
+            />
           </div>
         </div>
 

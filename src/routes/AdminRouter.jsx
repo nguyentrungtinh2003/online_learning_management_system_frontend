@@ -38,7 +38,7 @@ const AdminRoutes = () => {
       <Route
         path="/"
         element={
-          <ProtectedRouter requiredRole="">
+          <ProtectedRouter requiredRole="ADMIN">
             <AdminLayout/>
           </ProtectedRouter>
         }
@@ -60,6 +60,7 @@ const AdminRoutes = () => {
         <Route path="questions" element={<QuestionManagement />} />
         <Route path="lessons/add" element={<AddLessonByCourse />} />
         <Route path="quizzes/add" element={<AddQuizz />} />
+        <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
         <Route path="courses/:courseId/lessons" element={<ManagementlessonByCourse />} />
