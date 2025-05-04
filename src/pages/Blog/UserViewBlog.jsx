@@ -40,12 +40,16 @@ export default function Blog() {
   const [comments, setComments] = useState([]);
   const [stompClient, setStompClient] = useState(null);
   const [content, setcontent] = useState("");
+  const [currentLikePost, setCurrentLikePost] = useState(null);
+  const [likedUsersMap, setLikedUsersMap] = useState({});
 
   const userId = parseInt(localStorage.getItem("id"));
 
   useEffect(() => {
     handleGetPosts();
-    handleGetComments();
+    if (selectedPost) {
+      handleGetComments();
+    }
 
     const socket = new SockJS(`${URLSocket}/ws`);
     const client = new Client({
@@ -67,11 +71,59 @@ export default function Blog() {
     };
   }, [selectedPost]);
 
+  //like
+  useEffect(() => {
+    const socket = new SockJS(`${URLSocket}/ws`);
+    const client = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+    });
+
+    client.onConnect = () => {
+      if (selectedPost) {
+        client.subscribe(`/topic/blog/${selectedPost}`, (message) => {
+          const comment = JSON.parse(message.body);
+          setComments((prev) => [...prev, comment]);
+        });
+      }
+
+      if (currentLikePost) {
+        client.subscribe(`/topic/like/${currentLikePost}`, (message) => {
+          const updateUserIds = JSON.parse(message.body);
+          setLikedUsersMap((prev) => ({
+            ...prev,
+            [currentLikePost]: updateUserIds,
+          }));
+        });
+
+        client.subscribe(`/topic/un-like/${currentLikePost}`, (message) => {
+          const updateUserIds = JSON.parse(message.body);
+          setLikedUsersMap((prev) => ({
+            ...prev,
+            [currentLikePost]: updateUserIds,
+          }));
+        });
+      }
+    };
+
+    client.activate();
+    setStompClient(client);
+
+    return () => client.deactivate();
+  }, []);
+
   const handleGetPosts = () => {
     axios
       .get(`${URL}/blogs/all`, { withCredentials: true })
       .then((response) => {
-        setData(response.data.data);
+        const posts = response.data.data;
+        setData(posts);
+        const initialLikedMap = {};
+        posts.forEach((post) => {
+          initialLikedMap[post.id] = post.likedUsers.map((user) => user.id); // hoặc post.likedUsers nếu là danh sách id
+        });
+
+        setLikedUsersMap(initialLikedMap);
         setDataLoading(false);
       })
       .catch((err) => {
@@ -184,6 +236,7 @@ export default function Blog() {
 
   const postLike = (blogId) => {
     console.log("BlogId : " + blogId + " UserId " + userId);
+    setCurrentLikePost(blogId);
     axios
       .post(
         `${URL}/blogs/like/${blogId}/${userId}`, // Sử dụng backtick đúng
@@ -193,7 +246,10 @@ export default function Blog() {
         }
       )
       .then((response) => {
-        setLikedPosts(response.data.data);
+        setLikedUsersMap((prev) => ({
+          ...prev,
+          [blogId]: response.data.data,
+        }));
         console.log("Like success !" + response.data.data);
       })
       .catch((error) => {
@@ -204,6 +260,7 @@ export default function Blog() {
   };
 
   const postUnLike = (blogId) => {
+    setCurrentLikePost(blogId);
     axios
       .post(
         `${URL}/blogs/unlike/${blogId}/${userId}`,
@@ -213,7 +270,10 @@ export default function Blog() {
         }
       )
       .then((response) => {
-        setLikedPosts(response.data.data);
+        setLikedUsersMap((prev) => ({
+          ...prev,
+          [blogId]: response.data.data,
+        }));
         console.log("Un Like success !");
       })
       .catch((error) => {
@@ -224,7 +284,7 @@ export default function Blog() {
   };
 
   const handleLike = (postId, post) => {
-    if (post.likedUsers.includes(parseInt(localStorage.getItem("id")))) {
+    if (likedUsersMap[post.id].includes(parseInt(localStorage.getItem("id")))) {
       postUnLike(postId); // nếu đã like → thì unlike
     } else {
       postLike(postId); // nếu chưa like → thì like
@@ -380,169 +440,169 @@ export default function Blog() {
       </div>
 
       {Array.isArray(data) &&
-        data.map((post) => (
-          <div key={post.id}>
-            {!hiddenPosts.includes(post.id) ? (
-              <div className="pt-4 px-4 pb-2 mt-2 border-1 dark:border-darkBorder rounded-2xl">
-                <div className="flex justify-between dark:text-darkText">
-                  <div className="flex items-center mb-2">
-                    <img
-                      src={post?.user?.img ? post?.user?.img : "/user.png"}
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <Link to={`/blog/${post.id}`}>
-                      <div className="ml-2">
-                        <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
-                          {post.username}
-                        </h4>
-                        <p className="text-sm text-gray-500">{post.date}</p>
-                      </div>
-                    </Link>
-                  </div>
-                  <div className="flex items-center gap-2 relative">
-                    <button
-                      onClick={() =>
-                        setMenuOpenPost(
-                          menuOpenPost === post.id ? null : post.id
-                        )
-                      }
-                    >
-                      <PiDotsThreeBold size={25} />
-                    </button>
-                    {menuOpenPost === post.id && (
-                      <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
-                        <button
-                          className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
-                          onClick={() => reportPost(post.id)}
-                        >
-                          Báo cáo bài viết
-                        </button>
-                      </div>
-                    )}
-                    <button onClick={() => hidePost(post.id)}>
-                      <PiBackspace size={25} />
-                    </button>
-                  </div>
-                </div>
-                <h2 className="mb-2">{post.blogName}</h2>
-                <p className="mb-2">{post.description}</p>
-                {post.img && (
-                  <img
-                    src={post.img}
-                    alt="Post"
-                    className="w-full h-60 object-cover rounded-lg mb-2"
-                  />
-                )}
-                <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
-                  <button
-                    className="flex items-center gap-2"
-                    onClick={() => handleLike(post.id, post)}
-                  >
-                    <PiHeartFill
-                      size={25}
-                      color={
-                        post?.likedUsers?.includes(
-                          parseInt(localStorage.getItem("id"))
-                        )
-                          ? "red"
-                          : "gray"
-                      }
-                    />
-                    <span>{post?.likedUsers?.length || 0}</span>
-                  </button>
-                  <button
-                    className="flex items-center space-x-1"
-                    onClick={() =>
-                      setSelectedPost(post.id === selectedPost ? null : post.id)
-                    }
-                  >
-                    <PiChatCircle size={25} />
-                    <span>{post.blogComments ? post.blogComments : 0}</span>
-                  </button>
-                  <button className="flex items-center space-x-1">
-                    <PiShareFatLight size={25} />
-                    {/* <span>{post.shares.toLocaleString()}</span> */}
-                  </button>
-                </div>
-
-                {/* Hiển thị bình luận khi bấm vào comment */}
-                {selectedPost === post.id && (
-                  <div className="mt-2 p-2 border-t dark:border-darkBorder dark:text-darkText">
-                    <div className="max-h-60 overflow-y-auto">
-                      {comments.map((comment) => (
-                        <div
-                          key={comment.id}
-                          className="flex items-center mb-2"
-                        >
-                          {/* <img
-                            src="./logo.png"
-                            alt="avatar"
-                            className="w-8 h-8 bg-gray-300 rounded-full mr-2"
-                          /> */}
-                          <div className="bg-gray-100 p-2 rounded-lg">
-                            <p className="text-sm font-semibold">
-                              {comment.username}
-                            </p>
-                            <img
-                              src={comment?.img ? comment.img : "/user.png"}
-                              alt="Post"
-                              className="w-20 h-20 object-cover rounded-lg mb-2"
-                            />
-                            <p className="text-sm">{comment.content}</p>
-                          </div>
-                        </div>
-                      ))}
-                      {visibleComments < post?.blogComments?.length && (
-                        <button
-                          onClick={() =>
-                            setVisibleComments(visibleComments + 3)
-                          }
-                          className="text-blue-500 text-sm mt-2"
-                        >
-                          Xem thêm bình luận
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-2 border-t pt-2">
-                      <div className="w-8 h-8 bg-gray-300 rounded-full" />
-                      <input
-                        type="text"
-                        name="comment"
-                        value={content}
-                        onChange={(e) => setcontent(e.target.value)}
-                        placeholder="Viết bình luận..."
-                        className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
+        data.map((post) => {
+          const currentUserId = parseInt(localStorage.getItem("id"));
+          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers || [];
+          const isLiked = usersWhoLiked.includes(currentUserId);
+          return (
+            <div key={post.id}>
+              {!hiddenPosts.includes(post.id) ? (
+                <div className="pt-4 px-4 pb-2 mt-2 border-1 dark:border-darkBorder rounded-2xl">
+                  <div className="flex justify-between dark:text-darkText">
+                    <div className="flex items-center mb-2">
+                      <img
+                        src={post?.user?.img ? post?.user?.img : "/user.png"}
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full"
                       />
-                      <PiPaperPlaneRightFill className="" size={25} />
+                      <Link to={`/blog/${post.id}`}>
+                        <div className="ml-2">
+                          <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
+                            {post.username}
+                          </h4>
+                          <p className="text-sm text-gray-500">{post.date}</p>
+                        </div>
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-2 relative">
                       <button
                         onClick={() =>
-                          addBlogComment(selectedPost, userId, content)
+                          setMenuOpenPost(
+                            menuOpenPost === post.id ? null : post.id
+                          )
                         }
                       >
-                        Send
+                        <PiDotsThreeBold size={25} />
+                      </button>
+                      {menuOpenPost === post.id && (
+                        <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
+                          <button
+                            className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
+                            onClick={() => reportPost(post.id)}
+                          >
+                            Báo cáo bài viết
+                          </button>
+                        </div>
+                      )}
+                      <button onClick={() => hidePost(post.id)}>
+                        <PiBackspace size={25} />
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="px-4 py-3 border-1 dark:border-darkBorder dark:text-darkText flex justify-between items-center rounded-xl">
-                <span className="flex items-center gap-2">
-                  <PiEyeClosed size={25} />
-                  Bài viết đã được ẩn
-                </span>
-                <button
-                  onClick={() => restorePost(post.id)}
-                  className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
-                >
-                  <PiArrowsClockwise size={25} />
-                  Hoàn tác
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+                  <h2 className="mb-2">{post.blogName}</h2>
+                  <p className="mb-2">{post.description}</p>
+                  {post.img && (
+                    <img
+                      src={post.img}
+                      alt="Post"
+                      className="w-full h-60 object-cover rounded-lg mb-2"
+                    />
+                  )}
+                  <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
+                    <button
+                      className="flex items-center gap-2"
+                      onClick={() => handleLike(post.id, post)}
+                    >
+                      <PiHeartFill size={25} color={isLiked ? "red" : "gray"} />
+                      <span>
+                        {likedUsersMap[post.id]?.length || 0} lượt thích
+                      </span>
+                    </button>
+                    <button
+                      className="flex items-center space-x-1"
+                      onClick={() =>
+                        setSelectedPost(
+                          post.id === selectedPost ? null : post.id
+                        )
+                      }
+                    >
+                      <PiChatCircle size={25} />
+                      <span>{post.blogComments ? post.blogComments : 0}</span>
+                    </button>
+                    <button className="flex items-center space-x-1">
+                      <PiShareFatLight size={25} />
+                      {/* <span>{post.shares.toLocaleString()}</span> */}
+                    </button>
+                  </div>
+
+                  {/* Hiển thị bình luận khi bấm vào comment */}
+                  {selectedPost === post.id && (
+                    <div className="mt-2 p-2 border-t dark:border-darkBorder dark:text-darkText">
+                      <div className="max-h-60 overflow-y-auto">
+                        {comments.map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="flex items-center mb-2"
+                          >
+                            {/* <img
+                          src="./logo.png"
+                          alt="avatar"
+                          className="w-8 h-8 bg-gray-300 rounded-full mr-2"
+                        /> */}
+                            <div className="bg-gray-100 p-2 rounded-lg">
+                              <p className="text-sm font-semibold">
+                                {comment.username}
+                              </p>
+                              <img
+                                src={comment?.img ? comment.img : "/user.png"}
+                                alt="Post"
+                                className="w-20 h-20 object-cover rounded-lg mb-2"
+                              />
+                              <p className="text-sm">{comment.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {visibleComments < post?.blogComments?.length && (
+                          <button
+                            onClick={() =>
+                              setVisibleComments(visibleComments + 3)
+                            }
+                            className="text-blue-500 text-sm mt-2"
+                          >
+                            Xem thêm bình luận
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-2 border-t pt-2">
+                        <div className="w-8 h-8 bg-gray-300 rounded-full" />
+                        <input
+                          type="text"
+                          name="comment"
+                          value={content}
+                          onChange={(e) => setcontent(e.target.value)}
+                          placeholder="Viết bình luận..."
+                          className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
+                        />
+                        <PiPaperPlaneRightFill className="" size={25} />
+                        <button
+                          onClick={() =>
+                            addBlogComment(selectedPost, userId, content)
+                          }
+                        >
+                          Send
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="px-4 py-3 border-1 dark:border-darkBorder dark:text-darkText flex justify-between items-center rounded-xl">
+                  <span className="flex items-center gap-2">
+                    <PiEyeClosed size={25} />
+                    Bài viết đã được ẩn
+                  </span>
+                  <button
+                    onClick={() => restorePost(post.id)}
+                    className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
+                  >
+                    <PiArrowsClockwise size={25} />
+                    Hoàn tác
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
     </div>
   );
 }
