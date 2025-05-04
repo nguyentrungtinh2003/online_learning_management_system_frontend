@@ -55,11 +55,14 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    fetchUserData();
+    fetchNotifications();
+  }, []);
+
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URL}/user-info`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(`${URL}/user-info`);
       const { id, email, username, img, coin } = response.data.data;
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
@@ -68,9 +71,7 @@ export default function Navbar() {
       localStorage.setItem("coin", coin);
     } catch {
       try {
-        const googleResponse = await axios.get(`${URL}/user-google`, {
-          withCredentials: true,
-        });
+        const googleResponse = await axios.get(`${URL}/user-google`);
         const { id, email, name, picture } = googleResponse.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
@@ -94,11 +95,6 @@ export default function Navbar() {
       })
       .catch((error) => console.error("Failed to fetch notifications:", error));
   };
-
-  useEffect(() => {
-    fetchUserData();
-    fetchNotifications();
-  }, []);
 
   const fetchSearchSuggestions = (value) => {
     axios

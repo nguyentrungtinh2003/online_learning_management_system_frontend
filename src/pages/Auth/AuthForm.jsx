@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
 import gglogo from "../../assets/google-color.svg";
+import URLSocket from "../../config/URLsocket";
 
 export default function AuthForm() {
   const [fromLogin, setFromLogin] = useState({
@@ -115,7 +116,7 @@ export default function AuthForm() {
 
   //--- login google ----
   const handleGoogleLogin = () => {
-    window.location.href = `https://codearena-backend-dev.onrender.com/oauth2/authorization/google`;
+    window.location.href = `${URLSocket}/oauth2/authorization/google`;
   };
 
   const handelRegister = () => {
