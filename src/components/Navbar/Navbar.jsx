@@ -5,6 +5,7 @@ import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { Spinner } from "react-bootstrap";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
   const { t, i18n } = useTranslation("navbar");
   const [language, setLanguage] = useState(i18n.language || "en");
@@ -85,7 +87,9 @@ export default function Navbar() {
       .get(`${URL}/notifications`, { withCredentials: true })
       .then((response) => {
         setNotifications(response.data.notifications);
-        const unread = response.data.notifications.filter((n) => !n.read).length;
+        const unread = response.data.notifications.filter(
+          (n) => !n.read
+        ).length;
         setUnreadCount(unread);
       })
       .catch((error) => console.error("Failed to fetch notifications:", error));
@@ -151,6 +155,7 @@ export default function Navbar() {
   }, [isDropdownOpen, isNotificationOpen]);
 
   const handleLogout = async () => {
+    setLoadingLogout(true);
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
     } catch (error) {
@@ -158,6 +163,7 @@ export default function Navbar() {
     } finally {
       localStorage.clear();
       window.location.href = "/";
+      setLoadingLogout(false);
     }
   };
 
@@ -294,7 +300,11 @@ export default function Navbar() {
                   className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
                   onClick={handleLogout}
                 >
-                  {t("logout")}
+                  {loadingLogout ? (
+                    <Spinner animation="border" variant="blue" />
+                  ) : (
+                    t("logout")
+                  )}
                 </li>
               </ul>
             </div>
