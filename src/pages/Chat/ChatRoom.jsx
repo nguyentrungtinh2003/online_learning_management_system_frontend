@@ -8,8 +8,8 @@ import URL from "../../config/URLconfig";
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [currentTeacher, setCurrentTeacher] = useState(null);
-  const [chatRoomId, setChatRoomId] = useState(null);
+  const [currentTeacher, setCurrentTeacher] = useState(1);
+  const [chatRoomId, setChatRoomId] = useState(44);
   const [content, setContent] = useState("");
 
   const stompClientRef = useRef(null);
@@ -31,8 +31,11 @@ const ChatRoom = () => {
   };
 
   const getChatByChatRoomId = () => {
+    console.log("Chat-room id " + chatRoomId);
     axios
-      .get(`${URL}/chats/chat-room/${chatRoomId}`, { withCredentials: true })
+      .get(`${URL}/chats/chat-room/${parseInt(chatRoomId)}`, {
+        withCredentials: true,
+      })
       .then((response) => {
         setMessages(response.data.data);
       })
@@ -66,6 +69,21 @@ const ChatRoom = () => {
       });
   };
 
+  const deleteChat = (chatId) => {
+    axios
+      .delete(
+        `${URL}/chats/delete/${chatId}`,
+
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log("Delete chat success");
+      })
+      .catch((error) => {
+        console.log("Error add chat!" + error.message);
+      });
+  };
+
   // Tự động scroll đến tin nhắn mới
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,6 +110,11 @@ const ChatRoom = () => {
         console.log("Error create chat room!" + error.message);
       });
   }, [currentTeacher]);
+
+  useEffect(() => {
+    if (!chatRoomId || isNaN(chatRoomId)) return;
+    getChatByChatRoomId();
+  }, [chatRoomId]);
 
   // Kết nối WebSocket khi có chatRoomId
   useEffect(() => {
@@ -121,7 +144,7 @@ const ChatRoom = () => {
     <div className="w-full max-w-7xl mx-auto p-4 flex">
       {/* Danh sách giảng viên */}
       <div className="w-64 bg-white p-4 border rounded-lg shadow-lg mr-4">
-        <h3 className="text-lg font-semibold mb-4">Chọn Giảng Viên:</h3>
+        <h3 className="text-lg font-semibold mb-4">Chọn người dùng:</h3>
         <div className="flex flex-col space-y-4">
           {teachers.map((teacher) => (
             <div
@@ -155,7 +178,7 @@ const ChatRoom = () => {
             <div
               key={idx}
               className={`flex items-end gap-2 ${
-                msg.senderId === user1Id
+                msg.user1Id === user1Id
                   ? "ml-auto flex-row-reverse"
                   : "mr-auto flex-row"
               }`}
@@ -166,17 +189,38 @@ const ChatRoom = () => {
                 className="w-8 h-8 rounded-full"
               />
               <div>
+                <div className="d-flex">
+                  <div
+                    className={`p-3 rounded-2xl max-w-xs break-words ${
+                      msg.user1Id === user1Id
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-300 text-black"
+                    }`}
+                  >
+                    {msg.message}
+                  </div>
+                  <div>
+                    {msg.user1Id === parseInt(localStorage.getItem("id")) ? (
+                      <>
+                        <button
+                          onClick={() => deleteChat(parseInt(msg.id))}
+                          className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
+                        >
+                          X
+                        </button>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+
                 <div
-                  className={`p-3 rounded-2xl max-w-xs break-words ${
-                    msg.senderId === user1Id
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-300 text-black"
+                  className={`text-xs text-gray-500 mt-1 ${
+                    msg.user1Id === user1Id ? "text-right" : ""
                   }`}
                 >
-                  {msg.message}
-                </div>
-                <div className="text-xs text-gray-500 mt-1 text-right">
-                  {msg.timestamp}
+                  {msg.timeStamp}
                 </div>
               </div>
             </div>
