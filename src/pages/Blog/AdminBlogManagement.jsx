@@ -97,8 +97,8 @@ export default function AdminBlogManagement() {
     <div className="h-full w-full">
       <ToastContainer />
       <div className="flex flex-col h-full">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-2 items-center">
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex gap-2 dark:text-darkText items-center">
             <MdForum size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-xl font-bold">Blog Management</h2>
@@ -107,23 +107,23 @@ export default function AdminBlogManagement() {
             to="/admin/blog/add-blog"
             className="bg-scolor text-white px-4 py-2 rounded-xl hover:scale-105 drop-shadow-lg"
           >
-            <FaPlus size={20} /> Thêm Blog
+            <FaPlus size={25} />
           </Link>
         </div>
 
         <div className="mb-4">
           <input
             type="text"
-            placeholder="Tìm kiếm blog..."
-            className="w-full px-4 py-2 border rounded-xl focus:outline-none"
+            placeholder="Search..."
+            className="w-full px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-xl focus:outline-none"
             value={search}
             onChange={handleSearch}
           />
         </div>
 
-        <div className="bg-white rounded-2xl drop-shadow-lg overflow-x-auto">
+        <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground rounded-2xl drop-shadow-lg overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100">
+            <thead className="dark:text-darkText">
               <tr className="text-center font-bold">
                 <th className="p-2">ID</th>
                 <th className="p-2">Tiêu đề</th>
@@ -143,7 +143,7 @@ export default function AdminBlogManagement() {
               ) : blogs.length === 0 ? (
                 <tr><td colSpan="10" className="text-center py-4">Không có blog nào.</td></tr>
               ) : blogs.map((blog) => (
-                <tr key={blog.id} className="text-center">
+                <tr key={blog.id} className="text-center dark:text-darkSubtext">
                   <td className="p-2">{blog.id}</td>
                   <td className="p-2">{blog.title}</td>
                   <td className="p-2 truncate max-w-xs">{blog.description}</td>

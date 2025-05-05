@@ -1,19 +1,29 @@
 import { useEffect, useState } from "react";
 import { FaMoon, FaGlobe, FaSignOutAlt, FaSun } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import URL from "../../config/URLconfig"; // Cập nhật nếu cần
 
 const UserSetting = () => {
+  const { i18n, t } = useTranslation("settings"); // Sử dụng đúng namespace
   const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState("English");
+  const [language, setLanguage] = useState(i18n.language || "en");
 
+  // Load theme + language from localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("darkMode");
+    const savedLang = localStorage.getItem("language");
+
     if (savedTheme === "true") {
       setDarkMode(true);
       document.body.classList.add("dark");
     }
-  }, []);
+
+    if (savedLang) {
+      setLanguage(savedLang);
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]);
 
   const toggleDarkMode = () => {
     const newMode = !darkMode;
@@ -25,6 +35,13 @@ const UserSetting = () => {
       document.body.classList.remove("dark");
       localStorage.setItem("darkMode", "false");
     }
+  };
+
+  const handleLanguageChange = (e) => {
+    const selectedLang = e.target.value;
+    setLanguage(selectedLang);
+    i18n.changeLanguage(selectedLang);
+    localStorage.setItem("language", selectedLang);
   };
 
   const handleLogout = async () => {
@@ -40,10 +57,10 @@ const UserSetting = () => {
 
   return (
     <div className="flex-1 flex flex-col h-full items-center justify-center">
-      <div className="max-w-2xl w-full mx-auto space-y-6 bg-wcolor dark:bg-darkBackground dark:border dark:border-darkBorder dark:bg-darkBackground dark:text-darkText rounded-2xl shadow-md p-8">
+      <div className="max-w-2xl w-full mx-auto space-y-6 bg-wcolor dark:bg-darkBackground dark:border dark:border-darkBorder dark:text-darkText rounded-2xl shadow-md p-8">
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <FaGlobe size={24} />
-          Settings
+          {t("title")} {/* Đổi từ settings.title sang t("title") */}
         </h2>
 
         {/* Dark Mode Toggle */}
@@ -54,7 +71,7 @@ const UserSetting = () => {
             ) : (
               <FaMoon size={20} className="text-gray-500" />
             )}
-            <span className="font-medium">Dark Mode</span>
+            <span className="font-medium">{t("darkMode")}</span> {/* Đổi từ settings.darkMode sang t("darkMode") */}
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -72,15 +89,15 @@ const UserSetting = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <FaGlobe size={20} className="text-gray-500" />
-            <span className="font-medium">Language</span>
+            <span className="font-medium">{t("language")}</span> {/* Đổi từ settings.language sang t("language") */}
           </div>
           <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="border-1 dark:border-darkBorder bg-wcolor dark:border dark:bg-darkBackground text-gray-700 dark:text-darkText rounded-lg px-4 py-2 focus:outline-none hover:background"
+            value={language} // Đảm bảo giá trị của select được đồng bộ với trạng thái language
+            onChange={handleLanguageChange}
+            className="border-1 dark:border-darkBorder bg-wcolor dark:border dark:bg-darkBackground text-gray-700 dark:text-darkText rounded-lg px-4 py-2 focus:outline-none"
           >
-            <option>English</option>
-            <option>Vietnamese</option>
+            <option value="en">{t("english")}</option> {/* Đổi từ English sang t("english") */}
+            <option value="vi">{t("vietnamese")}</option> {/* Đổi từ Vietnamese sang t("vietnamese") */}
           </select>
         </div>
 
@@ -91,7 +108,7 @@ const UserSetting = () => {
             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 py-3 rounded-lg transition"
           >
             <FaSignOutAlt size={18} />
-            Logout
+            {t("logout")} {/* Đổi từ settings.logout sang t("logout") */}
           </button>
         </div>
       </div>

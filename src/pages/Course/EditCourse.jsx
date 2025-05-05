@@ -129,7 +129,7 @@ const EditCourse = () => {
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Edit Course</h2>
       </div>
-      <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:text-darkText text-gray-700 p-6 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText text-gray-700 p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
             <label className="w-1/4 font-medium">Course Title:</label>

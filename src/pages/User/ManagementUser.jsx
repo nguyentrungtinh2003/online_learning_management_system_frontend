@@ -66,7 +66,7 @@ export default function UserManagement() {
       <ToastContainer />
 
       <div className="flex items-center justify-between mb-2">
-        <div className="flex gap-2">
+        <div className="flex gap-2 dark:text-darkText items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">User Management</h2>
@@ -81,10 +81,10 @@ export default function UserManagement() {
 
       {/* User Table */}
       <div className="flex-1 drop-shadow-lg">
-        <div className="bg-white p-4 rounded-2xl">
+        <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-4 rounded-2xl">
           <table className="w-full">
             <thead>
-              <tr className="text-center font-bold">
+              <tr className="text-center dark:text-darkText font-bold">
                 <th className="p-2">ID</th>
                 <th className="p-2">Username</th>
                 <th className="p-2">Email</th>
@@ -106,7 +106,7 @@ export default function UserManagement() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="text-center">
+                  <tr key={user.id} className="text-center dark:text-darkSubtext">
                     <td className="p-2">{user.id}</td>
                     <td className="p-2">{user.username}</td>
                     <td className="p-2">{user.email}</td>

@@ -119,7 +119,7 @@ const QuizzManagement = () => {
     <div className="h-full w-full">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex gap-2">
+          <div className="flex gap-2 dark:text-darkText items-center">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">Quizz Management</h2>
@@ -135,7 +135,7 @@ const QuizzManagement = () => {
           <input
             type="text"
             placeholder="Search quizzes..."
-            className="p-2 border rounded w-full focus:outline-none"
+            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -148,7 +148,7 @@ const QuizzManagement = () => {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 border rounded"
+            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText rounded"
           >
             <option value="All">All</option>
             <option value="Free">Free</option>
@@ -164,10 +164,10 @@ const QuizzManagement = () => {
 
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
+          <div className="bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center font-bold">
+                <tr className="text-center dark:text-darkText font-bold">
                   <th className="p-2">STT</th>
                   <th className="p-2">Name</th>
                   <th className="p-2">Description</th>

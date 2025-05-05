@@ -66,7 +66,7 @@ const AdminUpdateUser = () => {
   return (
     <div className="h-full w-full">
       <div className="flex flex-col h-fit">
-        <div className="flex gap-2 mb-4 items-center">
+        <div className="flex gap-2 mb-2 dark:text-darkText items-center">
           <FaBuffer size={30} />
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">User Management</h2>
@@ -75,13 +75,13 @@ const AdminUpdateUser = () => {
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded-lg shadow"
+          className="bg-wcolor dark:border-2 dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow"
         >
           <div className="space-y-4">
             {Object.keys(userData).map((key) =>
               key !== "rank" && key !== "img" ? (
                 <div key={key} className="flex items-center space-x-4">
-                  <label className="w-1/4 text-gray-700 font-medium capitalize">
+                  <label className="w-1/4 font-medium capitalize">
                     {key.replace(/([A-Z])/g, " $1")}:
                   </label>
                   <input
@@ -96,27 +96,27 @@ const AdminUpdateUser = () => {
                     value={userData[key] || ""}
                     onChange={handleChange}
                     readOnly={key === "userId"}
-                    className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                    className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
                   />
                 </div>
               ) : null
             )}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+              <label className="w-1/4 font-medium">Image:</label>
               <input
                 type="file"
                 name="img"
                 onChange={handleImageChange}
-                className="flex-1 border rounded-lg px-2 py-2"
+                className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-2 py-2"
               />
             </div>
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">Rank:</label>
+              <label className="w-1/4 font-medium">Rank:</label>
               <select
                 name="rank"
                 value={userData.rankEnum}
                 onChange={handleChange}
-                className="flex-1 px-2 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               >
                 <option value="Silver">Silver</option>
                 <option value="Bronze">Bronze</option>
@@ -128,7 +128,7 @@ const AdminUpdateUser = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <Link
               to="/admin/users"
-              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 dark:text-darkText border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
             >
               Cancel
             </Link>

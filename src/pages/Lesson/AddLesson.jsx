@@ -102,23 +102,23 @@ const AddLesson = () => {
 
   return (
     <div className="w-full flex flex-col h-full">
-      <div className="flex gap-2">
+      <div className="flex gap-2 dark:text-darkText">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Lesson Management</h2>
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">Add New Lesson</h2>
       </div>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+      <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow">
         <div className="space-y-4">
           {/* Chọn khoá học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Select Course:</label>
+            <label className="w-1/4 font-medium">Select Course:</label>
             <select
               name="courseId"
               value={lessonData.courseId}
               onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               required
             >
               <option value="">-- Chọn khoá học --</option>
@@ -132,32 +132,32 @@ const AddLesson = () => {
 
           {/* Các trường nhập bài học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Lesson Title:</label>
+            <label className="w-1/4 font-medium">Lesson Title:</label>
             <input
               type="text"
               name="lessonName"
               value={lessonData.lessonName}
               onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               required
             />
           </div>
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
+            <label className="w-1/4 font-medium">Image:</label>
             <input
               type="file"
               onChange={handleImageChange}
-              className="flex-1 border rounded-lg px-3 py-2"
+              className="flex-1 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
             />
           </div>
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Video:</label>
+            <label className="w-1/4 font-medium">Video:</label>
             <input
               type="file"
               onChange={handleVideoChange}
-              className="flex-1 border rounded-lg px-3 py-2"
+              className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
             />
           </div>
 
@@ -176,7 +176,7 @@ const AddLesson = () => {
         <div className="flex justify-end space-x-2 mt-6">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            className="px-6 py-2 border-2 border-sicolor dark:text-darkText text-ficolor rounded-lg hover:bg-opacity-80"
           >
             Cancel
           </button>

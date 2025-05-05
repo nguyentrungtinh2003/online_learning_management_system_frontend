@@ -1,23 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaCoins, FaMoon, FaSun } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { FaCoins, FaMoon, FaSun } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { Spinner } from "react-bootstrap";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [loadingLogout, setLoadingLogout] = useState(false);
 
-  const [searchQuery, setSearchQuery] = useState(""); // Lưu trữ giá trị nhập vào của search
-  const [suggestions, setSuggestions] = useState([]); // Lưu trữ các gợi ý khóa học
-  const [showSuggestions, setShowSuggestions] = useState(false); // Kiểm tra xem có nên hiển thị gợi ý hay không
-  const [isDarkMode, setIsDarkMode] = useState(false); // State cho dark mode
+  const { t, i18n } = useTranslation("navbar");
+  const [language, setLanguage] = useState(i18n.language || "en");
 
-  // Lấy giá trị dark mode từ localStorage khi component load
+  const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
+
+  // Lấy dark mode từ localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("darkMode");
     if (savedTheme === "true") {
@@ -26,7 +33,17 @@ export default function Navbar() {
     }
   }, []);
 
-  // Toggle dark mode
+  // Lắng nghe sự kiện đổi ngôn ngữ
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLanguage(i18n.language);
+    };
+    i18n.on("languageChanged", handleLangChange);
+    return () => {
+      i18n.off("languageChanged", handleLangChange);
+    };
+  }, [i18n]);
+
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     if (isDarkMode) {
@@ -38,49 +55,39 @@ export default function Navbar() {
     }
   };
 
-  // Các gợi ý mặc định khi người dùng chưa nhập gì
-  const defaultSuggestions = [
-    { id: 1, name: "React for Beginners" },
-    { id: 2, name: "Mastering JavaScript" },
-    { id: 3, name: "HTML & CSS Fundamentals" },
-    { id: 4, name: "Advanced React Patterns" },
-    { id: 5, name: "Node.js and Express" },
-  ];
-
-  const dropdownRef = useRef(null);
-  const notificationRef = useRef(null);
+  useEffect(() => {
+    fetchUserData();
+    fetchNotifications();
+  }, []);
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URL}/user-info`, {
-        withCredentials: true,
-      });
-      const { id, email, username, img, coin } = response.data.data;
+      const response = await axios.get(`${URL}/user-info`);
+      const { id, email, username, img, coin, roleEnum } = response.data.data;
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
       localStorage.setItem("username", username);
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
-    } catch (err1) {
+      localStorage.setItem("role", roleEnum);
+    } catch {
       try {
-        const googleResponse = await axios.get(`${URL}/user-google`, {
-          withCredentials: true,
-        });
+        const googleResponse = await axios.get(`${URL}/user-google`);
         const { id, email, name, picture } = googleResponse.data.data;
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
         localStorage.setItem("username", name);
         localStorage.setItem("img", picture);
-      } catch (err2) {
+
+        axios.get(`${URL}/user/email/${email}`).then((response) => {
+          localStorage.setItem("coin", response.data.data.coin);
+          localStorage.setItem("role", roleEnum);
+        });
+      } catch {
         console.log("Không tìm thấy user đăng nhập");
       }
     }
   };
-
-  useEffect(() => {
-    fetchUserData();
-    fetchNotifications();
-  }, []);
 
   const fetchNotifications = () => {
     axios
@@ -95,7 +102,6 @@ export default function Navbar() {
       .catch((error) => console.error("Failed to fetch notifications:", error));
   };
 
-  // Fetch search suggestions
   const fetchSearchSuggestions = (value) => {
     axios
       .get(`${URL}/searchAll/search?keyword=${value}`)
@@ -107,14 +113,12 @@ export default function Navbar() {
       });
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     if (e.target.value.length >= 2) {
-      // Fetch search suggestions if input length > 2
       fetchSearchSuggestions(e.target.value);
     } else {
-      setSuggestions([]); // Clear suggestions if input is less than 3 characters
+      setSuggestions([]);
     }
   };
 
@@ -131,7 +135,6 @@ export default function Navbar() {
     }
   };
 
-  // Đóng form khi click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -154,6 +157,7 @@ export default function Navbar() {
   }, [isDropdownOpen, isNotificationOpen]);
 
   const handleLogout = async () => {
+    setLoadingLogout(true);
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
     } catch (error) {
@@ -161,26 +165,15 @@ export default function Navbar() {
     } finally {
       localStorage.clear();
       window.location.href = "/";
+      setLoadingLogout(false);
     }
   };
 
-  // // Hàm để hiển thị các gợi ý (có thể là mặc định hoặc từ API)
-  // const displaySuggestions = () => {
-  //   if (searchQuery.length === 0) {
-  //     // Nếu người dùng chưa nhập gì, hiển thị gợi ý mặc định
-  //     return defaultSuggestions;
-  //   }
-  //   // Nếu người dùng đã nhập, hiển thị các gợi ý từ API
-  //   return suggestions;
-  // };
-
   const handleFocus = () => {
-    // Khi người dùng focus vào ô input, hiển thị các gợi ý mặc định
     setShowSuggestions(true);
   };
 
   const handleBlur = () => {
-    // Khi người dùng blur khỏi ô input, ẩn các gợi ý
     setShowSuggestions(false);
   };
 
@@ -191,14 +184,14 @@ export default function Navbar() {
           src="/logo.png"
           className="rounded-full cursor-pointer object-cover h-10 mx-2"
           alt="logo"
-        ></img>
+        />
         {/* Search Bar */}
         <div className="flex-1 flex justify-center w-full ml-4">
           <div className="flex w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
-              placeholder="Search courses..."
+              placeholder={t("searchPlaceholder")}
               value={searchQuery}
               onChange={handleSearchChange}
               onFocus={handleFocus}
@@ -208,7 +201,7 @@ export default function Navbar() {
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
                 <ul className="max-h-60 overflow-auto">
-                  {suggestions.map((suggestion, id) => (
+                  {suggestions.map((suggestion) => (
                     <li
                       key={suggestion.id}
                       className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
@@ -247,9 +240,7 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span className="">
-                  {localStorage.getItem("coin")}
-                </span>
+                <span>{localStorage.getItem("coin")}</span>
                 <FaCoins style={{ color: "gold" }} size={30} />
               </div>
               <div ref={notificationRef} className="relative">
@@ -261,7 +252,7 @@ export default function Navbar() {
                     size={40}
                     className="hover:bg-focolor p-1 rounded-xl"
                   />
-                  {unreadCount >= 0 && (
+                  {unreadCount > 0 && (
                     <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
@@ -281,12 +272,11 @@ export default function Navbar() {
                   alt="User"
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="text-lg w-34 overflow:hidden">
+                <span className="text-lg w-34 overflow-hidden">
                   {localStorage.getItem("username")}
                 </span>
               </div>
 
-              {/* Dark Mode Button with Icon */}
               <button
                 onClick={toggleDarkMode}
                 className="text-gray-600 dark:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -297,29 +287,35 @@ export default function Navbar() {
           ) : (
             <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
               <Link to="/login" className="no-underline text-white">
-                Start Learning
+                {t("startLearning")}
               </Link>
             </button>
           )}
+
           {isDropdownOpen && (
             <div className="absolute right-10 top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
               <ul className="py-2 whitespace-nowrap">
                 <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                  <Link to="/profile">Thông tin tài khoản</Link>
+                  <Link to="/profile">{t("profileInfo")}</Link>
                 </li>
                 <li
-                  className="px-4 py-2  dark:hover:bg-gray-800 text-red-600 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleLogout()}
+                  className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                  onClick={handleLogout}
                 >
-                  Đăng xuất
+                  {loadingLogout ? (
+                    <Spinner animation="border" variant="blue" />
+                  ) : (
+                    t("logout")
+                  )}
                 </li>
               </ul>
             </div>
           )}
+
           {isNotificationOpen && (
             <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
               <h3 className="text-lg w-full text-center font-semibold border-b dark:border-darkBorder pb-2">
-                Thông báo
+                {t("notifications")}
               </h3>
               <ul className="py-2 h-[40%] overflow-auto">
                 {notifications.length > 0 ? (
@@ -337,7 +333,7 @@ export default function Navbar() {
                   ))
                 ) : (
                   <li className="hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 text-gray-500 dark:text-darkText break-words">
-                    Không có thông báo nào.
+                    {t("noNotifications")}
                   </li>
                 )}
               </ul>

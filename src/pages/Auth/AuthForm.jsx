@@ -7,6 +7,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { ToastContainer, toast, Slide } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
 import gglogo from "../../assets/google-color.svg";
+import URLSocket from "../../config/URLsocket";
 
 export default function AuthForm() {
   const [fromLogin, setFromLogin] = useState({
@@ -115,7 +116,7 @@ export default function AuthForm() {
 
   //--- login google ----
   const handleGoogleLogin = () => {
-    window.location.href = `https://codearena-backend-dev.onrender.com/oauth2/authorization/google`;
+    window.location.href = `${URLSocket}/oauth2/authorization/google`;
   };
 
   const handelRegister = () => {
@@ -167,6 +168,7 @@ export default function AuthForm() {
       .post(`${URL}/reset-password`, resetPassword)
       .then((response) => {
         console.log("Reset password success !", response);
+        window.location.href = "/";
       })
       .catch((error) => {
         console.log("Error : ", error);
@@ -422,11 +424,7 @@ export default function AuthForm() {
             </button>
             <p className="text-center text-lg m-2">Or</p>
             <button className="border-2 flex items-center justify-center rounded-2xl py-2 w-full hover:bg-cyan-300">
-              <img
-                className="ml-3 w-6"
-                src={gglogo}
-                alt="Google logo"
-              />
+              <img className="ml-3 w-6" src={gglogo} alt="Google logo" />
               <p className="ml-4" onClick={() => handleGoogleLogin()}>
                 Login with Google
               </p>
