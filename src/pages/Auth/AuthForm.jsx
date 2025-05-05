@@ -375,7 +375,7 @@ export default function AuthForm() {
               value={fromLogin.username}
               onChange={handleInputChangeLogin}
             />
-            <div className="relative">
+           <div className="relative">
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showPassword ? "text" : "password"}
@@ -384,6 +384,12 @@ export default function AuthForm() {
                 name="password"
                 value={fromLogin.password}
                 onChange={handleInputChangeLogin}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // Ngăn reload trang
+                    handelLogin(); // Gọi hàm đăng nhập
+                  }
+                }}
               />
               <button
                 type="button"
@@ -393,6 +399,7 @@ export default function AuthForm() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+
             <a
               className="text-rose-600 text-sm text-center block"
               href="#"

@@ -12,6 +12,8 @@ export default function CourseManagement() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -20,7 +22,7 @@ export default function CourseManagement() {
   useEffect(() => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, filterType]);
+  }, [currentPage, filterType, statusFilter]); 
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -51,7 +53,14 @@ export default function CourseManagement() {
           (course) => course.price !== null && course.price > 0
         );
       }
-  
+
+      // Lọc theo trạng thái (Deleted/Not Deleted)
+      if (statusFilter === "Not Deleted") {
+        fetchedCourses = fetchedCourses.filter(course => !course.isDeleted);
+      } else if (statusFilter === "Deleted") {
+        fetchedCourses = fetchedCourses.filter(course => course.isDeleted);
+      }
+
       // Phân trang lại
       const startIndex = currentPage * coursesPerPage;
       const endIndex = startIndex + coursesPerPage;
@@ -146,6 +155,18 @@ export default function CourseManagement() {
             <option value="Free">Free</option>
             <option value="Paid">Paid</option>
           </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(0); // Reset trang khi thay đổi trạng thái
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+          >
+            <option value="All">All</option>
+            <option value="Not Deleted">Not Deleted</option>
+            <option value="Deleted">Deleted</option>
+          </select>
           <button
             type="submit"
             className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
@@ -202,7 +223,7 @@ export default function CourseManagement() {
                       <td className="p-2">
                         {course.price === 0 || course.price === null
                           ? "Free"
-                          : `${course.price} VND`}
+                          : `${course.price} Coin`}
                       </td>
                       <td className="p-2">
                         {course.date
@@ -221,7 +242,7 @@ export default function CourseManagement() {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {course.isDeleted ? "Inactive" : "Active"}
+                        {course.isDeleted ? "Deleted" : "Not Deleted"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
