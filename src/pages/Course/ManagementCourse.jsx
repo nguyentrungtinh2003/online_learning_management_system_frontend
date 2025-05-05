@@ -152,7 +152,7 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex gap-2 dark:text-darkText">

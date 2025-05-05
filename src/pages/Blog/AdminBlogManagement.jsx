@@ -15,6 +15,7 @@ import {
   searchBlogs,
   deleteBlog,
   getBlogsByPage,
+  restoreBlog,
 } from "../../services/blogapi";
 
 export default function AdminBlogManagement() {
@@ -32,7 +33,7 @@ export default function AdminBlogManagement() {
     const fetchBlogs = async () => {
       setLoading(true);
       try {
-        const data = await getBlogsByPage();
+        const data = await getBlogsByPage(currentPage, blogsPerPage);
         if (!data?.data?.content) throw new Error("Invalid API Response");
 
         let fetchedBlogs = data.data.content;
@@ -49,9 +50,9 @@ export default function AdminBlogManagement() {
 
         // Filter by status (Deleted/Not Deleted)
         if (statusFilter === "Deleted") {
-          fetchedBlogs = fetchedBlogs.filter((blog) => !blog.deleted);
-        } else if (statusFilter === "Active") {
           fetchedBlogs = fetchedBlogs.filter((blog) => blog.deleted);
+        } else if (statusFilter === "Active") {
+          fetchedBlogs = fetchedBlogs.filter((blog) => !blog.deleted);
         }
 
         // Phân trang
@@ -59,8 +60,8 @@ export default function AdminBlogManagement() {
         const endIndex = startIndex + blogsPerPage;
         const paginatedBlogs = fetchedBlogs.slice(startIndex, endIndex);
 
-        setBlogs(paginatedBlogs.sort((a, b) => b.id - a.id));
-        setTotalPages(Math.ceil(fetchedBlogs.length / blogsPerPage));
+        setBlogs(fetchedBlogs.sort((a, b) => b.id - a.id));
+        setTotalPages(data.data.totalPages);
       } catch (error) {
         console.error("Lỗi tải blog:", error);
         setBlogs([]);
@@ -179,7 +180,7 @@ export default function AdminBlogManagement() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            fetchQuizzes();
+            fetchBlogs();
           }}
           className="mb-4 flex gap-2"
         >
@@ -248,22 +249,36 @@ export default function AdminBlogManagement() {
                     className="text-center dark:text-darkSubtext"
                   >
                     <td className="p-2">{blog.id}</td>
-                    <td className="p-2">{blog.title}</td>
+                    <td className="p-2">{blog.blogName}</td>
                     <td className="p-2 truncate max-w-xs">
                       {blog.description}
                     </td>
                     <td className="p-2">
                       <img
-                        src={blog.image}
+                        src={blog.img}
                         alt="blog"
                         className="w-8 h-8 rounded mx-auto"
                       />
                     </td>
                     <td className="p-2">{blog.video}</td>
-                    <td className="p-2">{blog.createdAt}</td>
-                    <td className="p-2">{blog.interactions}</td>
-                    <td className="p-2">{blog.views}</td>
-                    <td className="p-2">{blog.author}</td>
+                    <td className="p-2">
+                      {blog.date
+                        ? new Date(
+                            blog.date[0],
+                            blog.date[1] - 1,
+                            blog.date[2],
+                            blog.date[3],
+                            blog.date[4],
+                            blog.date[5]
+                          ).toLocaleDateString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          })
+                        : "N/A"}
+                    </td>{" "}
+                    <td className="p-2">{blog.likedUsers?.length || 0}</td>
+                    <td className="p-2">{blog.user.username}</td>
                     <td className="p-2 flex justify-center gap-2">
                       <Link
                         to={`/admin/blog/edit-blog/${blog.id}`}
@@ -273,7 +288,7 @@ export default function AdminBlogManagement() {
                       </Link>
                       <button
                         className="p-2 border rounded text-red-600 hover:scale-105"
-                        onClick={() => handleDelete(blog.id, blog.title)}
+                        onClick={() => handleDelete(blog.id, blog.blogName)}
                       >
                         <MdDeleteForever />
                       </button>

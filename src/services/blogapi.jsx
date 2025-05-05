@@ -81,7 +81,7 @@ export const deleteBlog = async (id) => {
 export const getBlogsByPage = async (page = 0, size = 6) => {
   try {
     const response = await axios.get(
-      `${URL}/teacher/blogs/page?page=${page}&size=${size}`,
+      `${URL}/blogs/page?page=${page}&size=${size}`,
       {
         withCredentials: true,
       }
@@ -96,7 +96,7 @@ export const getBlogsByPage = async (page = 0, size = 6) => {
 //. API Restore
 export const restoreBlog = async (id) => {
   try {
-    const response = await fetch(`${URL}/teacher/blogs/restore/${id}`, {
+    const response = await fetch(`${URL}/blogs/restore/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -6,8 +6,32 @@ import URL from "../../config/URLconfig";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "react-bootstrap";
+import Dropdown from "../Button/Dropdown";
+import vietnamFlag from "../../assets/vietnamflag.webp";
+import englishFlag from "../../assets/english.png";
 
 export default function Navbar() {
+  const languageOptions = [
+    {
+      value: "en",
+      label: (
+        <div className="flex items-center gap-2">
+          <img src={englishFlag} alt="English" className="h-6 w-6 object-cover" />
+          <span>EN</span>
+        </div>
+      ),
+    },
+    {
+      value: "vi",
+      label: (
+        <div className="flex items-center gap-2">
+          <img src={vietnamFlag} alt="Vietnamese" className="h-6 w-6 object-cover" />
+          <span>VI</span>
+        </div>
+      ),
+    },
+  ];
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -24,16 +48,21 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
 
-  // Lấy dark mode từ localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("darkMode");
+    const savedLang = localStorage.getItem("language");
+
     if (savedTheme === "true") {
       setIsDarkMode(true);
       document.body.classList.add("dark");
     }
-  }, []);
 
-  // Lắng nghe sự kiện đổi ngôn ngữ
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+      setLanguage(savedLang);
+    }
+  }, [i18n]);
+
   useEffect(() => {
     const handleLangChange = () => {
       setLanguage(i18n.language);
@@ -43,6 +72,14 @@ export default function Navbar() {
       i18n.off("languageChanged", handleLangChange);
     };
   }, [i18n]);
+
+  const handleLanguageChange = (e) => {
+    const selectedLang = e.target.value;
+    i18n.changeLanguage(selectedLang);
+    localStorage.setItem("language", selectedLang);
+    setLanguage(selectedLang);
+    window.location.reload(); // Thêm dòng này để reload trang
+  };
 
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
@@ -81,7 +118,7 @@ export default function Navbar() {
 
         axios.get(`${URL}/user/email/${email}`).then((response) => {
           localStorage.setItem("coin", response.data.data.coin);
-          localStorage.setItem("role", roleEnum);
+          localStorage.setItem("role", response.data.data.roleEnum);
         });
       } catch {
         console.log("Không tìm thấy user đăng nhập");
@@ -94,9 +131,7 @@ export default function Navbar() {
       .get(`${URL}/notifications`, { withCredentials: true })
       .then((response) => {
         setNotifications(response.data.notifications);
-        const unread = response.data.notifications.filter(
-          (n) => !n.read
-        ).length;
+        const unread = response.data.notifications.filter((n) => !n.read).length;
         setUnreadCount(unread);
       })
       .catch((error) => console.error("Failed to fetch notifications:", error));
@@ -185,8 +220,7 @@ export default function Navbar() {
           className="rounded-full cursor-pointer object-cover h-10 mx-2"
           alt="logo"
         />
-        {/* Search Bar */}
-        <div className="flex-1 flex justify-center w-full ml-4">
+        <div className="flex-1 flex justify-end pr-32 w-full ml-4">
           <div className="flex w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
@@ -248,11 +282,8 @@ export default function Navbar() {
                   className="relative cursor-pointer"
                   onClick={toggleNotificationDropdown}
                 >
-                  <PiBellRinging
-                    size={40}
-                    className="hover:bg-focolor p-1 rounded-xl"
-                  />
-                  {unreadCount > 0 && (
+                  <PiBellRinging size={40} className="hover:bg-focolor dark:hover:bg-darkBorder p-1 rounded-xl" />
+                  {unreadCount >= 0 && (
                     <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
@@ -260,7 +291,7 @@ export default function Navbar() {
                 </div>
               </div>
               <div
-                className="flex items-center space-x-2 cursor-pointer"
+                className="flex relative items-center space-x-2 cursor-pointer"
                 onClick={toggleDropdown}
               >
                 <img
@@ -275,6 +306,26 @@ export default function Navbar() {
                 <span className="text-lg w-34 overflow-hidden">
                   {localStorage.getItem("username")}
                 </span>
+                {isDropdownOpen && (
+                  <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
+                    <ul className="py-2 font-semibold whitespace-nowrap">
+                      <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                        <Link to="/profile">{t("profileInfo")}</Link>
+                      </li>
+                      <hr className="border-t border-gray-400 dark:border-darkBorder mx-3 my-1" />
+                      <li
+                        className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                        onClick={handleLogout}
+                      >
+                        {loadingLogout ? (
+                          <Spinner animation="border" variant="blue" />
+                        ) : (
+                          t("logout")
+                        )}
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <button
@@ -283,6 +334,18 @@ export default function Navbar() {
               >
                 {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
               </button>
+
+              {/* Language Dropdown */}
+              <Dropdown
+                options={languageOptions}
+                selected={language}
+                onChange={(lang) => {
+                  i18n.changeLanguage(lang);
+                  localStorage.setItem("language", lang);
+                  window.location.reload();
+                }}
+                placeholder="Select Language"
+              />
             </div>
           ) : (
             <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
@@ -290,26 +353,6 @@ export default function Navbar() {
                 {t("startLearning")}
               </Link>
             </button>
-          )}
-
-          {isDropdownOpen && (
-            <div className="absolute right-10 top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
-              <ul className="py-2 whitespace-nowrap">
-                <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                  <Link to="/profile">{t("profileInfo")}</Link>
-                </li>
-                <li
-                  className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                  onClick={handleLogout}
-                >
-                  {loadingLogout ? (
-                    <Spinner animation="border" variant="blue" />
-                  ) : (
-                    t("logout")
-                  )}
-                </li>
-              </ul>
-            </div>
           )}
 
           {isNotificationOpen && (

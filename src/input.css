@@ -4,8 +4,27 @@
 
 .ql-container {
     border: none !important; /* Xóa viền ngoài */
-  }
+}
   
-  .ql-editor {
+.ql-editor {
     outline: none !important; /* Xóa outline khi focus */
+}
+/* Light mode scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a1a1aa;
+  border-radius: 4px;
+}
+
+/* Dark mode scrollbar */
+html.dark ::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background-color: #1f2937;
 }

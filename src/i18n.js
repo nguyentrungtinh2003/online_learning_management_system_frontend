@@ -8,6 +8,8 @@ import viSettings from "./locales/vi/settings.json";
 
 import enNavbar from "./locales/en/navbar.json";
 import viNavbar from "./locales/vi/navbar.json";
+import enSidebar from "./locales/en/sidebar.json";
+import viSidebar from "./locales/vi/sidebar.json";
 
 i18n
   .use(LanguageDetector)
@@ -16,17 +18,19 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "vi"],
     debug: true,
-    ns: ["settings", "navbar"], // danh sách namespace
+    ns: ["settings", "navbar", "sidebar"],
     defaultNS: "settings",
     resources: {
       en: {
         settings: enSettings,
         navbar: enNavbar,
+        sidebar: enSidebar
       },
       vi: {
         settings: viSettings,
         navbar: viNavbar,
-      },
+        sidebar: viSidebar
+      }
     },
     interpolation: {
       escapeValue: false,
@@ -36,5 +40,3 @@ i18n
       caches: ["localStorage"],
     },
   });
-
-export default i18n;

@@ -8,6 +8,27 @@ export default function UserCourse() {
   const userId = localStorage.getItem("id");
   const navigate = useNavigate();
 
+  const language = localStorage.getItem("language") || "en"; // Lấy ngôn ngữ từ localStorage, mặc định là 'en'
+
+  const translations = {
+    en: {
+      enrolledCourses: "Your Enrolled Courses",
+      noCourses: "No courses enrolled.",
+      continueLearning: "Continue Learning",
+      noDescription: "No description",
+      enrolled: "Enrolled",
+    },
+    vi: {
+      enrolledCourses: "Khóa học bạn đã tham gia",
+      noCourses: "Bạn chưa tham gia khóa học nào.",
+      continueLearning: "Tiếp tục học",
+      noDescription: "Không có mô tả",
+      enrolled: "Ngày tham gia",
+    },
+  };
+
+  const t = translations[language];
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -39,30 +60,18 @@ export default function UserCourse() {
       ) : (
         <div>
           <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">
-            Your Enrolled Courses
+            {t.enrolledCourses}
           </h1>
 
           {courses.length === 0 ? (
-            <p className="text-gray-600 dark:text-darkText text-center">No courses enrolled.</p>
+            <p className="text-gray-600 dark:text-darkText text-center">
+              {t.noCourses}
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((item, index) => {
-                // Lấy mảng enrolledDate từ mỗi item
-                const enrolledDateArray = item.enrolledDate;
-
-                // Tạo đối tượng Date từ mảng
-                const date = new Date(
-                  enrolledDateArray[0], // Năm
-                  enrolledDateArray[1] - 1, // Tháng (trừ 1 vì JavaScript bắt đầu từ tháng 0)
-                  enrolledDateArray[2], // Ngày
-                  enrolledDateArray[3], // Giờ
-                  enrolledDateArray[4], // Phút
-                  enrolledDateArray[5], // Giây
-                  enrolledDateArray[6] // Millisecond
-                );
-
-                // Chuyển đối tượng Date thành chuỗi ngày tháng theo định dạng vi-VN
-                const formattedDate = date.toLocaleDateString("vi-VN");
+                const enrolledDate = new Date(...item.enrolledDate); // Mảng ngày đã được sử dụng
+                const formattedDate = enrolledDate.toLocaleDateString("vi-VN");
                 return (
                   <div
                     key={index}
@@ -78,10 +87,10 @@ export default function UserCourse() {
                         {item.courseName}
                       </h2>
                       <p className="text-gray-600 dark:text-slate-400 text-sm mt-1 line-clamp-2">
-                        {item.description || "No description"}
+                        {item.description || t.noDescription}
                       </p>
                       <p className="mt-2 text-xs text-gray-500 dark:text-darkSubtext">
-                        <span className="font-medium">Enrolled:</span>{" "}
+                        <span className="font-medium">{t.enrolled}: </span>
                         <span className="text-blue-600">{formattedDate}</span>
                       </p>
 
@@ -91,7 +100,7 @@ export default function UserCourse() {
                         }
                         className="mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition duration-300 hover:scale-105 shadow-lg"
                       >
-                        🚀 Continue Learning
+                        🚀 {t.continueLearning}
                       </button>
                     </div>
                   </div>
