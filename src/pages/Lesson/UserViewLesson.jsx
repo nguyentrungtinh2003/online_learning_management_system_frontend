@@ -40,7 +40,7 @@ export default function UserViewLesson() {
         const rect = mainLayoutRef.current.getBoundingClientRect();
         setMainRect(rect);
       };
-  
+
       updateRect(); // tính ngay khi mount
       window.addEventListener("resize", updateRect);
       return () => window.removeEventListener("resize", updateRect);
@@ -107,6 +107,22 @@ export default function UserViewLesson() {
       })
       .catch((err) => {
         console.error("Error adding comment:", err.message);
+      });
+  };
+
+  //
+  const deleteLessonComment = (lessonCommentId) => {
+    axios
+      .delete(
+        `${URL}/lesson-comment/delete/${lessonCommentId}`,
+
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log("Delete comment successfully!");
+      })
+      .catch((err) => {
+        console.error("Error delete comment:", err.message);
       });
   };
 
@@ -193,11 +209,23 @@ export default function UserViewLesson() {
                     className="mt-2 ml-12"
                     dangerouslySetInnerHTML={{ __html: cmt.content }}
                   ></p>
+                  {cmt.username === localStorage.getItem("username") ? (
+                    <>
+                      <button
+                        onClick={() => deleteChat(parseInt(msg.id))}
+                        className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
+                      >
+                        X
+                      </button>
+                    </>
+                  ) : (
+                    ""
+                  )}
 
-                  <div className="ml-12 text-sm text-blue-500 mt-1 flex gap-3">
+                  {/* <div className="ml-12 text-sm text-blue-500 mt-1 flex gap-3">
                     <button>Thích</button>
                     <button>Phản hồi</button>
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>
@@ -206,45 +234,52 @@ export default function UserViewLesson() {
       )}
 
       {/* Main Layout */}
-      <div ref={mainLayoutRef} className="h-full flex-1 overflow-y-auto bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground flex-row p-4 z-0">
+      <div
+        ref={mainLayoutRef}
+        className="h-full flex-1 overflow-y-auto bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground flex-row p-4 z-0"
+      >
         <div className="flex w-full gap-4">
           <div className="flex-1 relative">
             {/* Navigation buttons */}
             {mainRect && (
-                <div
-                  className="fixed dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText justify-between px-4 flex h-fit bottom-0 border-t-2 border-gray-300 items-center gap-14 bg-wcolor py-2 z-50"
-                  style={{
-                    width: mainRect.width,
-                    left: mainRect.left,
-                  }}
-                >
-                  <div className="flex justify-center flex-1 justify-center gap-4">
-                    <button
-                      onClick={() => setCurrentLessonIndex((prev) => Math.max(0, prev - 1))}
-                      disabled={currentLessonIndex === 0}
-                      className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
-                    >
-                      <MdNavigateBefore /> Bài trước
-                    </button>
-                    <button
-                      onClick={() =>
-                        setCurrentLessonIndex((prev) => Math.min(lessons.length - 1, prev + 1))
-                      }
-                      disabled={currentLessonIndex === lessons.length - 1}
-                      className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
-                    >
-                      Bài sau <MdNavigateNext />
-                    </button>
-                  </div>
+              <div
+                className="fixed dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText justify-between px-4 flex h-fit bottom-0 border-t-2 border-gray-300 items-center gap-14 bg-wcolor py-2 z-50"
+                style={{
+                  width: mainRect.width,
+                  left: mainRect.left,
+                }}
+              >
+                <div className="flex justify-center flex-1 justify-center gap-4">
                   <button
-                    onClick={() => setShowCommentForm(true)}
-                    className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 font-semibold py-2 px-4 rounded-xl flex items-center gap-2 z-10"
+                    onClick={() =>
+                      setCurrentLessonIndex((prev) => Math.max(0, prev - 1))
+                    }
+                    disabled={currentLessonIndex === 0}
+                    className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
                   >
-                    <PiQuestion size={20} />
-                    <p>Hỏi Đáp</p>
+                    <MdNavigateBefore /> Bài trước
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentLessonIndex((prev) =>
+                        Math.min(lessons.length - 1, prev + 1)
+                      )
+                    }
+                    disabled={currentLessonIndex === lessons.length - 1}
+                    className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+                  >
+                    Bài sau <MdNavigateNext />
                   </button>
                 </div>
-              )}
+                <button
+                  onClick={() => setShowCommentForm(true)}
+                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 font-semibold py-2 px-4 rounded-xl flex items-center gap-2 z-10"
+                >
+                  <PiQuestion size={20} />
+                  <p>Hỏi Đáp</p>
+                </button>
+              </div>
+            )}
 
             {/* Video */}
             {lessons[currentLessonIndex]?.videoURL ? (
@@ -269,23 +304,27 @@ export default function UserViewLesson() {
             {/* Thông tin bài học */}
             {!loadingVideo && (
               <>
-              <div className="space-y-2 mb-40 dark:text-darkSubtext">
-                <div className="flex w-full justify-between my-4">
-                  <h1 className="text-xl font-bold dark:text-darkText">{lessons[currentLessonIndex]?.lessonName}</h1>
-                  <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
-                    Thêm ghi chú tại 00:00:00
-                  </button>
+                <div className="space-y-2 mb-40 dark:text-darkSubtext">
+                  <div className="flex w-full justify-between my-4">
+                    <h1 className="text-xl font-bold dark:text-darkText">
+                      {lessons[currentLessonIndex]?.lessonName}
+                    </h1>
+                    <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
+                      Thêm ghi chú tại 00:00:00
+                    </button>
+                  </div>
+                  <h2>Cập nhật tháng 11 năm 2024</h2>
+                  <p className="text-lg">
+                    Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
+                    xem Code Arena có gì mới nhé
+                  </p>
+                  <ul>
+                    <li>Fanpage: http://psdvsnv.com</li>
+                    <li>Group: http://psdvsnv.com</li>
+                    <li>Youtube: http://psdvsnv.com</li>
+                  </ul>
                 </div>
-                <h2>Cập nhật tháng 11 năm 2024</h2>
-                <p className="text-lg">
-                  Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính” xem Code Arena có gì mới nhé
-                </p>
-                <ul>
-                  <li>Fanpage: http://psdvsnv.com</li>
-                  <li>Group: http://psdvsnv.com</li>
-                  <li>Youtube: http://psdvsnv.com</li>
-                </ul>
-              </div></>
+              </>
             )}
           </div>
         </div>

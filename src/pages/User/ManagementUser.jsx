@@ -1,4 +1,10 @@
 import React, { useState, useEffect } from "react";
+
+import axios from "axios";
+import URL from "../../config/URLconfig";
+import { ToastContainer, toast, Slide } from "react-toastify";
+import { Link } from "react-router-dom";
+import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import {
   FaUsers,
   FaCheckCircle,
@@ -6,25 +12,46 @@ import {
   FaEdit,
   FaUserPlus,
 } from "react-icons/fa";
-import { MdNavigateNext, MdDeleteForever } from "react-icons/md";
-import axios from "axios";
-import URL from "../../config/URLconfig";
-import { ToastContainer, toast, Slide } from "react-toastify";
-import { Link } from "react-router-dom";
-import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 
 export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const usersPerPage = 6;
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrePage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   useEffect(() => {
+    setLoading(true);
     axios
-      .get(`${URL}/admin/user/all`, { withCredentials: true })
+      .get(`${URL}/admin/user/page?page=${currentPage}&size=${usersPerPage}`, {
+        withCredentials: true,
+      })
       .then((response) => {
-        setUsers(response.data.data);
+        const fetchedUsers = response.data.data.content;
+        setUsers(fetchedUsers.sort((a, b) => b.id - a.id)); // sắp xếp theo ID
+        setTotalPages(response.data.data.totalPages);
         setLoading(false);
       })
+
       .catch((error) => {
         toast.error("Lỗi khi tải dữ liệu người dùng!", {
           position: "top-right",
@@ -33,7 +60,7 @@ export default function UserManagement() {
         });
         setLoading(false);
       });
-  }, []);
+  }, [currentPage]); // nhớ thêm currentPage vào dependencies
 
   const handleDeleteUser = (id, name) => {
     if (window.confirm(`Bạn có muốn xoá người dùng ${name} không ?`)) {
@@ -97,7 +124,9 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {loading ? (
-                [...Array(1)].map((_, index) => <DataTableSkeleton key={index} />)
+                [...Array(1)].map((_, index) => (
+                  <DataTableSkeleton key={index} />
+                ))
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">
@@ -106,7 +135,10 @@ export default function UserManagement() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="text-center dark:text-darkSubtext">
+                  <tr
+                    key={user.id}
+                    className="text-center dark:text-darkSubtext"
+                  >
                     <td className="p-2">{user.id}</td>
                     <td className="p-2">{user.username}</td>
                     <td className="p-2">{user.email}</td>
@@ -114,15 +146,15 @@ export default function UserManagement() {
                     <td className="p-2">{user.point}</td>
                     <td className="p-2">{user.rankEnum}</td>
                     <td className="p-2">
-                      {user.statusUserEnum === "ACTIVE" ? (
+                      {!user.deleted ? (
                         <div className="flex justify-center items-center gap-1">
                           <FaCheckCircle className="text-green-500" />
-                          <p>Online</p>
+                          <p></p>
                         </div>
                       ) : (
                         <div className="flex justify-center items-center gap-1">
                           <FaTimesCircle className="text-red-500" />
-                          <p>Offline</p>
+                          <p></p>
                         </div>
                       )}
                     </td>
@@ -147,6 +179,27 @@ export default function UserManagement() {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+      <div className="flex justify-between mt-4">
+        <p>
+          Page {currentPage + 1} of {totalPages}
+        </p>
+        <div className="space-x-2">
+          <button
+            className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+            onClick={handlePrePage}
+            disabled={currentPage === 0}
+          >
+            <MdNavigateBefore size={30} />
+          </button>
+          <button
+            className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages - 1}
+          >
+            <MdNavigateNext size={30} />
+          </button>
         </div>
       </div>
     </div>
