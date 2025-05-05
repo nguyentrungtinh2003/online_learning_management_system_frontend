@@ -218,6 +218,21 @@ export default function Blog() {
       });
   };
 
+  const deleteBlogComment = (blogCommentId) => {
+    axios
+      .delete(
+        `${URL}/blog-comments/delete/${blogCommentId}`,
+
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log("Delete blog comment success");
+      })
+      .catch((error) => {
+        console.log("Error delete blog comment");
+      });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewPostContent({
@@ -532,23 +547,50 @@ export default function Blog() {
                         {comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="flex items-center mb-2"
+                            className="flex items-start gap-3 mb-4 p-3 bg-white rounded-lg shadow-sm"
                           >
-                            {/* <img
-                          src="./logo.png"
-                          alt="avatar"
-                          className="w-8 h-8 bg-gray-300 rounded-full mr-2"
-                        /> */}
-                            <div className="bg-gray-100 p-2 rounded-lg">
-                              <p className="text-sm font-semibold">
-                                {comment.username}
+                            {/* Avatar hoặc icon mặc định */}
+                            <img
+                              src="/user.png"
+                              alt="avatar"
+                              className="w-10 h-10 rounded-full object-cover border"
+                            />
+
+                            {/* Nội dung comment */}
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <p className="text-sm font-semibold text-gray-800">
+                                  {comment.username}
+                                </p>
+                                {comment.username ===
+                                localStorage.getItem("username") ? (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        deleteChat(parseInt(msg.id))
+                                      }
+                                      className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
+                                    >
+                                      X
+                                    </button>
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </div>
+
+                              {/* Nếu có ảnh trong comment */}
+                              {comment.img && (
+                                <img
+                                  src={comment.img}
+                                  alt="Comment"
+                                  className="w-28 h-28 mt-2 object-cover rounded-lg border"
+                                />
+                              )}
+
+                              <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">
+                                {comment.content}
                               </p>
-                              <img
-                                src={comment?.img ? comment.img : "/user.png"}
-                                alt="Post"
-                                className="w-20 h-20 object-cover rounded-lg mb-2"
-                              />
-                              <p className="text-sm">{comment.content}</p>
                             </div>
                           </div>
                         ))}
