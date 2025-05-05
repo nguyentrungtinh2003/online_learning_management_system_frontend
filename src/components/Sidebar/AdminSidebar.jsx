@@ -18,8 +18,10 @@ import {
   FaClipboardList,
   FaQuestion
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar() {
+  const { t } = useTranslation("sidebar");
   const location = useLocation();
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("");
@@ -29,89 +31,23 @@ export default function Sidebar() {
   const [hoveredItem, setHoveredItem] = useState(null); // State to track hovered item
 
   const adminItems = [
-    {
-      id: "Dashboard",
-      label: "Dashboard",
-      icon: <MdDashboardCustomize size={25} />,
-      path: "/admin/",
-    },
-    {
-      id: "Courses",
-      label: "Courses",
-      icon: <FaBuffer size={25} />,
-      path: "/admin/courses",
-    },
-    {
-      id: "Lessons",
-      label: "Lessons",
-      icon: <FaVideo size={25} />,
-      path: "/admin/lessons",
-    },
-    {
-      id: "Quizzes",
-      label: "Quizzes",
-      icon: <FaClipboardList size={25} />,
-      path: "/admin/quizzes",
-    },
-    {
-      id: "Questions",
-      label: "Questions",
-      icon: <FaQuestion size={25} />,
-      path: "/admin/questions",
-    },
-    {
-      id: "Users",
-      label: "Users",
-      icon: <FaUsers size={25} />,
-      path: "/admin/users",
-    },
-    {
-      id: "Blog",
-      label: "Blog",
-      icon: <MdForum size={25} />,
-      path: "/admin/blog",
-    },
-    {
-      id: "Settings",
-      label: "Setting",
-      icon: <MdSettingsSuggest size={25} />,
-      path: "/admin/settings",
-    },
+    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={25} />, path: "/admin/" },
+    { id: "Courses", label: t("courses"), icon: <FaBuffer size={25} />, path: "/admin/courses" },
+    { id: "Lessons", label: t("lessons"), icon: <FaVideo size={25} />, path: "/admin/lessons" },
+    { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={25} />, path: "/admin/quizzes" },
+    { id: "Questions", label: t("questions"), icon: <FaQuestion size={25} />, path: "/admin/questions" },
+    { id: "Users", label: t("users"), icon: <FaUsers size={25} />, path: "/admin/users" },
+    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/admin/blog" },
+    { id: "Settings", label: t("settings"), icon: <MdSettingsSuggest size={25} />, path: "/admin/settings" }
   ];
 
   const userItems = [
-    { id: "Home", label: "Home", icon: <FaHome size={25} />, path: "/" },
-    {
-      id: "MyCourses",
-      label: "My Courses",
-      icon: <FaBuffer size={25} />,
-      path: "/user-course",
-    },
-    { id: "Blog", label: "Blog", icon: <MdForum size={25} />, path: "/blog" },
-    {
-      id: "Ranking",
-      label: "Ranking",
-      icon: <FaTrophy size={25} />,
-      path: "/ranking",
-    },
-    {
-      id: "Profile",
-      label: "Profile",
-      icon: <FaUser size={25} />,
-      path: "/profile",
-    },
-    {
-      id: "E-Wallet",
-      label: "E-Wallet",
-      icon: <FaWallet size={25} />,
-      path: "/user/payment",
-    },
-    {
-      id: "Settings",
-      label: "Setting",
-      icon: <MdSettingsSuggest size={25} />,
-      path: "/settings",
-    },
+    { id: "Home", label: t("home"), icon: <FaHome size={25} />, path: "/" },
+    { id: "MyCourses", label: t("myCourses"), icon: <FaBuffer size={25} />, path: "/user-course" },
+    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/blog" },
+    { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={25} />, path: "/ranking" },
+    { id: "Profile", label: t("profile"), icon: <FaUser size={25} />, path: "/profile" },
+    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" }
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");

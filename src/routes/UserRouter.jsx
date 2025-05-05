@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "../components/Navbar/Navbar";
 import AuthForm from "../pages/Auth/AuthForm";
 import PaymentSuccessPayPal from "../pages/Payment/PaymentSuccessPayPal ";
 import VNPaySuccess from "../pages/Payment/PaymentSuccessVNPay";
@@ -22,7 +21,6 @@ import ManagementQuestion from "../pages/Question/QuestionManagement";
 import Profile from "../pages/User/Profile";
 import UserRanking from "../pages/Ranking/UserRanking";
 import UserLayout from "../components/Layout/UserLayout";
-import UserSetting from "../pages/User/UserSetting";
 import ChatRoom from "../pages/Chat/ChatRoom";
 
 const UserRouter = () => {
@@ -58,7 +56,6 @@ const UserRouter = () => {
         <Route path="question" element={<ManagementQuestion />} />
         <Route path="profile" element={<Profile />} />
         <Route path="ranking" element={<UserRanking />} />
-        <Route path="settings" element={<UserSetting />} />
       </Route>
     </Routes>
   );

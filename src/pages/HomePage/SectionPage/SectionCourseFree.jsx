@@ -2,9 +2,19 @@ import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
+
 export default function SectionCourseFree() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState("en");
+
+  useEffect(() => {
+    const storedLang =
+      localStorage.getItem("i18nextLng") || localStorage.getItem("language");
+    if (storedLang === "vi" || storedLang === "en") {
+      setLanguage(storedLang);
+    }
+  }, []);
 
   useEffect(() => {
     axios
@@ -24,7 +34,11 @@ export default function SectionCourseFree() {
   const buyCourse = (courseId) => {
     const userId = localStorage.getItem("id");
     if (!userId) {
-      alert("Bạn cần đăng nhập để mua khóa học!");
+      alert(
+        language === "vi"
+          ? "Bạn cần đăng nhập để mua khóa học!"
+          : "You need to log in to buy the course!"
+      );
       return;
     }
 
@@ -47,16 +61,20 @@ export default function SectionCourseFree() {
       />
       <div className="p-6 font-bold">
         <h3 className="text-2xl w-full font-bold dark:text-darkText text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
-          {course.courseName || "Java Backend"}
+          {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
         </h3>
         <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
-          {course.description || "Khoá học Java Springboot API cho người mới."}
+          {course.description ||
+            (language === "vi"
+              ? "Khoá học Java Spring Boot cho người mới bắt đầu."
+              : "Beginner-friendly Java Spring Boot course.")}
         </p>
         <p className="text-sm mt-1">
-          {Array.isArray(course?.lessons) ? course.lessons.length : 60} lessons
+          {language === "vi" ? "Số bài học: " : "Lessons: "}
+          {Array.isArray(course?.lessons) ? course.lessons.length : 60}
         </p>
         <p className="text-sm mt-1">
-          Lecturer:{" "}
+          {language === "vi" ? "Giảng viên: " : "Lecturer: "}
           <span className="text-fcolor">
             {course.user?.username || "Nguyen Trung Tinh"}
           </span>
@@ -64,7 +82,7 @@ export default function SectionCourseFree() {
 
         <a href={`/view-course/${course.id}`}>
           <button className="mt-4 w-full bg-scolor text-white text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
-            View Course
+            {language === "vi" ? "Xem khoá học" : "View Course"}
           </button>
         </a>
       </div>
@@ -74,7 +92,9 @@ export default function SectionCourseFree() {
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
-        Top Courses – No Payment Needed!
+        {language === "vi"
+          ? "Khoá học miễn phí – Không cần thanh toán!"
+          : "Top Courses – No Payment Needed!"}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {loading ? (
@@ -86,8 +106,10 @@ export default function SectionCourseFree() {
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
-          <div className="col-span-full">
-            <SkeletonSection />
+          <div className="col-span-full text-center text-xl font-semibold text-gray-500">
+            {language === "vi"
+              ? "Không có khoá học miễn phí nào."
+              : "No free courses available."}
           </div>
         )}
       </div>

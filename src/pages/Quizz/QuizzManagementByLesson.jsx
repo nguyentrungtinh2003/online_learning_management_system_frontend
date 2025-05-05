@@ -114,7 +114,7 @@ const QuizzManagement = () => {
   
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex justify-between mb-2">
           <div className="flex gap-2 items-center dark:text-darkText">

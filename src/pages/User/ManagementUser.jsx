@@ -97,7 +97,7 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {loading ? (
-                [...Array(6)].map((_, index) => <DataTableSkeleton key={index} />)
+                [...Array(1)].map((_, index) => <DataTableSkeleton key={index} />)
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">

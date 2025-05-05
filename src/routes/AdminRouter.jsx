@@ -1,7 +1,6 @@
 // src/routes/AdminRoutes.jsx
 import { Routes, Route } from "react-router-dom";
 import ProtectedRouter from "./ProtectedRouter";
-import AdminSidebar from "../components/Sidebar/AdminSidebar";
 
 // Admin Pages
 import Dashboard from "../pages/Dashboard/Dashboard";
