@@ -1,7 +1,7 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
@@ -9,79 +9,125 @@ import URL from "../../config/URLconfig";
 
 const AddQuestion = () => {
   const navigate = useNavigate();
-  const { quizId } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [img, setImg] = useState(null);
-  const [selectedAnswer, setSelectedAnswer] = useState(""); // "A", "B", "C", "D"
 
-  const [questionData, setQuestionData] = useState({
-    questionName: "",
+  const [courses, setCourses] = useState([]);
+  const [lessons, setLessons] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
+
+  const [questions, setQuestions] = useState({
+    courseId: "",
+    lessonId: "",
+    quizId: "",
+    questionText: "",
     answerA: "",
     answerB: "",
     answerC: "",
     answerD: "",
-    answerCorrect: "",
-    isDeleted: false,
-    quizId: quizId,
+    correctAnswer: "",
   });
+
+  const [img, setImg] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch course list
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${URL}/courses/all`, { withCredentials: true });
+        setCourses(res.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  // Fetch lessons based on course
+  useEffect(() => {
+    if (!questions.courseId) {
+      setLessons([]);
+      setQuizzes([]);
+      setQuestions((prev) => ({ ...prev, lessonId: "", quizId: "" }));
+      return;
+    }
+
+    const fetchLessons = async () => {
+      try {
+        const res = await axios.get(`${URL}/teacher/lessons/courses/${questions.courseId}/all`, {
+          withCredentials: true,
+        });
+        setLessons(res.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching lessons:", err);
+      }
+    };
+    fetchLessons();
+  }, [questions.courseId]);
+
+  // Fetch quizzes based on lesson
+  useEffect(() => {
+    if (!questions.lessonId) {
+      setQuizzes([]);
+      setQuestions((prev) => ({ ...prev, quizId: "" }));
+      return;
+    }
+
+    const fetchQuizzes = async () => {
+      try {
+        const res = await axios.get(`${URL}/teacher/quizzes/lessons/${questions.lessonId}/all`, {
+          withCredentials: true,
+        });
+        setQuizzes(res.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching quizzes:", err);
+      }
+    };
+    fetchQuizzes();
+  }, [questions.lessonId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setQuestionData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setQuestions((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+    const file = e.target.files[0];
+    setImg(file);
+    setImgPreview(URL.createObjectURL(file));
   };
-
-  useEffect(() => {
-    // Cập nhật answerCorrect mỗi khi selectedAnswer thay đổi
-    if (selectedAnswer) {
-      const correctText = questionData[`answer${selectedAnswer}`];
-      setQuestionData((prev) => ({
-        ...prev,
-        answerCorrect: correctText,
-      }));
-    }
-  }, [
-    selectedAnswer,
-    questionData.answerA,
-    questionData.answerB,
-    questionData.answerC,
-    questionData.answerD,
-  ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!questions.quizId || !questions.correctAnswer || !questions.questionText) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("question", new Blob([JSON.stringify(questions)], { type: "application/json" }));
+    if (img) formData.append("img", img);
+
     setLoading(true);
 
-    const data = new FormData();
-    data.append(
-      "question",
-      new Blob([JSON.stringify(questionData)], { type: "application/json" })
-    );
-    if (img) data.append("img", img);
-
     try {
-      await axios.post(`${URL}/teacher/questions/add`, data, {
+      await axios.post(`${URL}/teacher/questions/add`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
 
-      toast.success("Thêm câu hỏi thành công!", {
+      toast.success("Question added successfully!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
       });
 
-      setTimeout(() => navigate(-1), 3000);
+      setTimeout(() => navigate(-1), 1500);
     } catch (error) {
-      console.error("Lỗi:", error.response?.data || error.message);
-      toast.error("Không thể thêm câu hỏi!", {
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("Unable to add question!", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1000,
       });
     } finally {
       setLoading(false);
@@ -89,8 +135,8 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="flex items-center gap-2 dark:text-darkText">
+    <div className="flex w-full flex-col h-full">
+      <div className="flex dark:text-darkText mb-2 items-center gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold">Question Management</h2>
@@ -100,88 +146,134 @@ const AddQuestion = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
+        className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4"
       >
-        <div className="space-y-4">
-          {/* Câu hỏi */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Question Name:
-            </label>
-            <input
-              type="text"
-              name="questionName"
-              value={questionData.questionName}
-              onChange={handleChange}
-              required
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+        <div className="flex items-center">
+          <label className="w-1/4 font-medium">Course:</label>
+          <select
+            name="courseId"
+            value={questions.courseId}
+            onChange={handleChange}
+            className="flex-1 px-4 py-2 border rounded-lg"
+            required
+          >
+            <option value="">-- Select Course --</option>
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.courseName}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Các đáp án A, B, C, D */}
-          {["A", "B", "C", "D"].map((option) => (
-            <div key={option} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
-                Answer {option}:
-              </label>
-              <input
-                type="text"
-                name={`answer${option}`}
-                value={questionData[`answer${option}`]}
-                onChange={handleChange}
-                required
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="correctAnswer"
-                  value={option}
-                  checked={selectedAnswer === option}
-                  onChange={(e) => setSelectedAnswer(e.target.value)}
-                />
-                <span className="text-sm">Correct</span>
-              </label>
-            </div>
-          ))}
+        <div className="flex items-center">
+          <label className="w-1/4 font-medium">Lesson:</label>
+          <select
+            name="lessonId"
+            value={questions.lessonId}
+            onChange={handleChange}
+            className="flex-1 px-4 py-2 border rounded-lg"
+            required
+            disabled={!questions.courseId}
+          >
+            <option value="">-- Select Lesson --</option>
+            {lessons.map((lesson) => (
+              <option key={lesson.id} value={lesson.id}>
+                {lesson.lessonName}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Ảnh */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Image (optional):
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="flex-1 border rounded-lg px-3 py-2"
-            />
-          </div>
+        <div className="flex items-center">
+          <label className="w-1/4 font-medium">Quiz:</label>
+          <select
+            name="quizId"
+            value={questions.quizId}
+            onChange={handleChange}
+            className="flex-1 px-4 py-2 border rounded-lg"
+            required
+            disabled={!questions.lessonId}
+          >
+            <option value="">-- Select Quiz --</option>
+            {quizzes.map((quiz) => (
+              <option key={quiz.id} value={quiz.id}>
+                {quiz.quizName}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Hiển thị đáp án đúng */}
-          {questionData.answerCorrect && (
-            <div className="mt-2 text-green-600 font-medium">
-              Đáp án đúng: {questionData.answerCorrect}
-            </div>
+        <div className="flex items-center">
+          <label className="w-1/4 font-medium">Question Text:</label>
+          <input
+            type="text"
+            name="questionText"
+            value={questions.questionText}
+            onChange={handleChange}
+            className="flex-1 p-2 border-2 rounded"
+            required
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <label className="w-1/4 font-medium">Image:</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="flex-1 p-2 border-2 rounded"
+          />
+          {imgPreview && (
+            <img src={imgPreview} alt="preview" className="h-16 w-auto border rounded" />
           )}
         </div>
 
-        {/* Nút */}
-        <div className="flex justify-end space-x-2 mt-6">
+        <div className="grid grid-cols-2 gap-4">
+          {["A", "B", "C", "D"].map((letter) => (
+            <div key={letter} className="flex items-center">
+              <label className="w-1/4 font-medium">{`Answer ${letter}:`}</label>
+              <input
+                type="text"
+                name={`answer${letter}`}
+                value={questions[`answer${letter}`]}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 rounded"
+                required
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center">
+          <label className="w-1/4 font-medium">Correct Answer:</label>
+          <select
+            name="correctAnswer"
+            value={questions.correctAnswer}
+            onChange={handleChange}
+            className="flex-1 px-4 py-2 border rounded-lg"
+            required
+          >
+            <option value="">-- Select Correct Answer --</option>
+            {["A", "B", "C", "D"].map((ans) => (
+              <option key={ans} value={ans}>
+                {ans}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-4">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100"
+            className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
           >
             Cancel
           </Link>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading
-                ? "bg-gray-400"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
             disabled={loading}
+            className={`px-6 py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
           >
             {loading ? "Processing..." : "Submit"}
           </button>

@@ -122,7 +122,7 @@ const QuestionManagement = () => {
                      </Link>
                      <Link
                        className="hover:text-ficolor"
-                       to={`/admin/quizzes/${quizId}/questions/add`}
+                       to={`/admin/questions/add`}
                        >
                        <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
                          <FaPlus size={30} />

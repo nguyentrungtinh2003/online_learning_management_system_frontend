@@ -53,12 +53,12 @@ export default function Sidebar() {
       icon: <FaClipboardList size={25} />,
       path: "/admin/quizzes",
     },
-    {
-      id: "Questions",
-      label: "Questions",
-      icon: <FaQuestion size={25} />,
-      path: "/admin/questions",
-    },
+    // {
+    //   id: "Questions",
+    //   label: "Questions",
+    //   icon: <FaQuestion size={25} />,
+    //   path: "/admin/questions",
+    // },
     {
       id: "Users",
       label: "Users",

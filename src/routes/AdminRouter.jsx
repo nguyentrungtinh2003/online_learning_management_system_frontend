@@ -31,6 +31,7 @@ import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse"
 import AddQuizz from "../pages/Quizz/AddQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
+import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz"
 
 const AdminRoutes = () => {
   return (
@@ -71,7 +72,7 @@ const AdminRoutes = () => {
         <Route path="lessons/:lessonId/quizzes/edit/:quizId" element={<UpdateQuizz />} />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />
         <Route path="quizzes/:quizId/questions" element={<QuestionManagementByQuiz />} />
-        <Route path="quizzes/:quizId/questions/add" element={<AddQuestion />} />
+        <Route path="quizzes/:quizId/questions/add" element={<AddQuestionByQuiz />} />
       </Route>
     </Routes>
   );
