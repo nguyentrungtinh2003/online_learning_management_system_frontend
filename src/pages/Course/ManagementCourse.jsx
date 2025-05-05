@@ -2,14 +2,22 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 import { Link } from "react-router-dom";
-import { getCoursesByPage, deleteCourse, restoreCourse, searchCourses } from "../../services/courseapi";
+import {
+  getCoursesByPage,
+  deleteCourse,
+  restoreCourse,
+  searchCourses,
+} from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
-import { FaLockOpen, FaLock } from 'react-icons/fa';
+import { FaLockOpen, FaLock } from "react-icons/fa";
 
 export default function CourseManagement() {
-  
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -23,7 +31,7 @@ export default function CourseManagement() {
   useEffect(() => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, filterType, statusFilter, search]); 
+  }, [currentPage, filterType, statusFilter, search]);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -40,7 +48,7 @@ export default function CourseManagement() {
 
       // Client-side search filter
       if (search.trim() !== "") {
-        fetchedCourses = fetchedCourses.filter(course =>
+        fetchedCourses = fetchedCourses.filter((course) =>
           course.courseName.toLowerCase().includes(search.trim().toLowerCase())
         );
       }
@@ -56,10 +64,10 @@ export default function CourseManagement() {
       }
 
       // Filter by status (Deleted/Not Deleted)
-      if (statusFilter === "Lock") {
-        fetchedCourses = fetchedCourses.filter(course => !course.deleted);
-      } else if (statusFilter === "Unlock") {
-        fetchedCourses = fetchedCourses.filter(course => course.deleted);
+      if (statusFilter === "Deleted") {
+        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
+      } else if (statusFilter === "Active") {
+        fetchedCourses = fetchedCourses.filter((course) => course.deleted);
       }
 
       // Pagination
@@ -88,7 +96,9 @@ export default function CourseManagement() {
   };
 
   const handleDelete = async (id, name) => {
-    const isConfirmed = window.confirm(`Are you sure you want to delete course "${name}"?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete course "${name}"?`
+    );
     if (isConfirmed) {
       try {
         await deleteCourse(id);
@@ -108,7 +118,9 @@ export default function CourseManagement() {
   };
 
   const handleRestore = async (id, name) => {
-    const isConfirmed = window.confirm(`Are you sure you want to restore course "${name}"?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to restore course "${name}"?`
+    );
     if (isConfirmed) {
       try {
         await restoreCourse(id);
@@ -184,8 +196,8 @@ export default function CourseManagement() {
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">All</option>
-            <option value="Lock">Lock</option>
-            <option value="Unlock">Unlock</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Active">Active</option>
           </select>
           <button
             type="submit"
@@ -226,7 +238,9 @@ export default function CourseManagement() {
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
                       <td className="p-2">{course.courseName || "N/A"}</td>
-                      <td className="p-2">{course.description || "No description"}</td>
+                      <td className="p-2">
+                        {course.description || "No description"}
+                      </td>
                       <td className="p-2">
                         {course.img ? (
                           <img
@@ -278,14 +292,18 @@ export default function CourseManagement() {
                         {course.deleted ? (
                           <button
                             className="p-2 border rounded"
-                            onClick={() => handleRestore(course.id, course.courseName)}
+                            onClick={() =>
+                              handleRestore(course.id, course.courseName)
+                            }
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
                             className="p-2 border rounded"
-                            onClick={() => handleDelete(course.id, course.courseName)}
+                            onClick={() =>
+                              handleDelete(course.id, course.courseName)
+                            }
                           >
                             <FaLock />
                           </button>
@@ -300,7 +318,9 @@ export default function CourseManagement() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Page {currentPage + 1} of {totalPages}</p>
+          <p>
+            Page {currentPage + 1} of {totalPages}
+          </p>
           <div className="space-x-2">
             <button
               className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"

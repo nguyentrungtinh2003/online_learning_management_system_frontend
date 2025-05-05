@@ -35,7 +35,7 @@ export default function AdminBlogManagement() {
         const data = await getBlogsByPage();
         if (!data?.data?.content) throw new Error("Invalid API Response");
 
-        let fetchedBlogs = res.data.content;
+        let fetchedBlogs = data.data.content;
 
         // Tìm kiếm
         if (search.trim() !== "") {
@@ -48,9 +48,9 @@ export default function AdminBlogManagement() {
         }
 
         // Filter by status (Deleted/Not Deleted)
-        if (statusFilter === "Lock") {
+        if (statusFilter === "Deleted") {
           fetchedBlogs = fetchedBlogs.filter((blog) => !blog.deleted);
-        } else if (statusFilter === "Unlock") {
+        } else if (statusFilter === "Active") {
           fetchedBlogs = fetchedBlogs.filter((blog) => blog.deleted);
         }
 
@@ -202,8 +202,8 @@ export default function AdminBlogManagement() {
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">All</option>
-            <option value="Lock">Lock</option>
-            <option value="Unlock">Unlock</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Active">Active</option>
           </select>
           <button
             type="submit"
