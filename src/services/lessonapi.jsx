@@ -116,3 +116,26 @@ export const searchLessons = async (keyword, page = 0, size = 6) => {
   );
   return response.data;
 };
+
+// API Restore
+export const restoreLesson = async (id) => {
+  try {
+    const response = await fetch(`${URL}/teacher/lessons/restore/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to restore lesson");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting lesson:", error);
+    throw error;
+  }
+};

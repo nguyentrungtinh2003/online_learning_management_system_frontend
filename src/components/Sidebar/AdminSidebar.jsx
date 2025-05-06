@@ -35,55 +35,60 @@ export default function Sidebar() {
   const adminItems = [
     {
       id: "Dashboard",
-      label: t("dashboard"),
+
+      label: "Dashboard",
+
       icon: <MdDashboardCustomize size={25} />,
       path: "/admin/",
     },
     {
       id: "Courses",
-      label: t("courses"),
+
+      label: "Courses",
+
       icon: <FaBuffer size={25} />,
       path: "/admin/courses",
     },
     {
       id: "Lessons",
-      label: t("lessons"),
+
+      label: "Lessons",
+
       icon: <FaVideo size={25} />,
       path: "/admin/lessons",
     },
     {
       id: "Quizzes",
-      label: t("quizzes"),
+
+      label: "Quizzes",
       icon: <FaClipboardList size={25} />,
       path: "/admin/quizzes",
     },
-    {
-      id: "Questions",
-      label: t("questions"),
-      icon: <FaQuestion size={25} />,
-      path: "/admin/questions",
-    },
+    // {
+    //   id: "Questions",
+    //   label: "Questions",
+    //   icon: <FaQuestion size={25} />,
+    //   path: "/admin/questions",
+    // },
     {
       id: "Users",
-      label: t("users"),
+      label: "Users",
+
       icon: <FaUsers size={25} />,
       path: "/admin/users",
     },
     {
       id: "Blog",
-      label: t("blog"),
+
+      label: "Blog",
+
       icon: <MdForum size={25} />,
       path: "/admin/blog",
     },
     {
-      id: "Chats",
-      label: t("chats"),
-      icon: <MdChatBubble size={25} />,
-      path: "/chat",
-    },
-    {
       id: "Settings",
-      label: t("settings"),
+      label: "Setting",
+
       icon: <MdSettingsSuggest size={25} />,
       path: "/admin/settings",
     },
