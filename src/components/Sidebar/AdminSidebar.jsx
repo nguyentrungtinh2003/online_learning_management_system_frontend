@@ -6,6 +6,7 @@ import {
   MdSettingsSuggest,
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
+  MdMessage,
 } from "react-icons/md";
 import {
   FaBuffer,
@@ -16,7 +17,7 @@ import {
   FaVideo,
   FaWallet,
   FaClipboardList,
-  FaQuestion
+  FaQuestion,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
@@ -47,7 +48,8 @@ export default function Sidebar() {
     { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/blog" },
     { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={25} />, path: "/ranking" },
     { id: "Profile", label: t("profile"), icon: <FaUser size={25} />, path: "/profile" },
-    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" }
+    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" },
+    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={25} />, path: "/chat" }
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");

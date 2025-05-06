@@ -85,7 +85,7 @@ const BlogCard = ({ blog, language }) => (
       className="w-full h-48 object-cover"
     />
     <div className="p-6">
-      <h3 className="text-2xl font-bold dark:text-darkText text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
+      <h3 className="text-2xl font-bold dark:text-darkText text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[4.rem]">
         {language === "vi" ? blog.title_vi : blog.title_en}
       </h3>
 
