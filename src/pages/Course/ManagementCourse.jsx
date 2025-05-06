@@ -65,9 +65,9 @@ export default function CourseManagement() {
 
       // Filter by status (Deleted/Not Deleted)
       if (statusFilter === "Deleted") {
-        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
-      } else if (statusFilter === "Active") {
         fetchedCourses = fetchedCourses.filter((course) => course.deleted);
+      } else if (statusFilter === "Active") {
+        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
       }
 
       // Pagination
@@ -274,7 +274,7 @@ export default function CourseManagement() {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {course.deleted ? "Unlock" : "Lock"}
+                        {course.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link

@@ -226,6 +226,7 @@ export default function AdminBlogManagement() {
                 <th className="p-2 whitespace-nowrap">Created Date</th>
                 <th className="p-2">Like</th>
                 <th className="p-2">Author</th>
+                <th className="p-2">Status</th>
                 <th className="p-2">Action</th>
               </tr>
             </thead>
@@ -279,6 +280,9 @@ export default function AdminBlogManagement() {
                     </td>{" "}
                     <td className="p-2">{blog.likedUsers?.length || 0}</td>
                     <td className="p-2">{blog.user.username}</td>
+                    <td className="p-2">
+                      {blog.deleted ? "Deleted" : "Active"}
+                    </td>
                     <td className="p-2 flex justify-center gap-2">
                       <Link
                         to={`/admin/blog/edit-blog/${blog.id}`}

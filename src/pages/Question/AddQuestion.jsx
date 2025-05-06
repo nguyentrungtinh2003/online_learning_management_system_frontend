@@ -34,7 +34,9 @@ const AddQuestion = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get(`${URL}/courses/all`, { withCredentials: true });
+        const res = await axios.get(`${URL}/courses/all`, {
+          withCredentials: true,
+        });
         setCourses(res.data?.data || []);
       } catch (err) {
         console.error("Error fetching courses:", err);
@@ -54,9 +56,12 @@ const AddQuestion = () => {
 
     const fetchLessons = async () => {
       try {
-        const res = await axios.get(`${URL}/teacher/lessons/courses/${questions.courseId}/all`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${URL}/teacher/lessons/courses/${questions.courseId}/all`,
+          {
+            withCredentials: true,
+          }
+        );
         setLessons(res.data?.data || []);
       } catch (err) {
         console.error("Error fetching lessons:", err);
@@ -75,9 +80,12 @@ const AddQuestion = () => {
 
     const fetchQuizzes = async () => {
       try {
-        const res = await axios.get(`${URL}/teacher/quizzes/lessons/${questions.lessonId}/all`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${URL}/teacher/quizzes/lessons/${questions.lessonId}/all`,
+          {
+            withCredentials: true,
+          }
+        );
         setQuizzes(res.data?.data || []);
       } catch (err) {
         console.error("Error fetching quizzes:", err);
@@ -100,13 +108,20 @@ const AddQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!questions.quizId || !questions.correctAnswer || !questions.questionText) {
+    if (
+      !questions.quizId ||
+      !questions.correctAnswer ||
+      !questions.questionText
+    ) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("question", new Blob([JSON.stringify(questions)], { type: "application/json" }));
+    formData.append(
+      "question",
+      new Blob([JSON.stringify(questions)], { type: "application/json" })
+    );
     if (img) formData.append("img", img);
 
     setLoading(true);
@@ -225,7 +240,11 @@ const AddQuestion = () => {
             className="flex-1 p-2 border-2 rounded"
           />
           {imgPreview && (
-            <img src={imgPreview} alt="preview" className="h-16 w-auto border rounded" />
+            <img
+              src={imgPreview}
+              alt="preview"
+              className="h-16 w-auto border rounded"
+            />
           )}
         </div>
 
@@ -273,7 +292,9 @@ const AddQuestion = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`px-6 py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
+            className={`px-6 py-2 rounded text-white ${
+              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
             {loading ? "Processing..." : "Submit"}
           </button>

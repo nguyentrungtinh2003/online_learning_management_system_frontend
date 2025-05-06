@@ -220,7 +220,20 @@ const ChatRoom = () => {
                     msg.user1Id === user1Id ? "text-right" : ""
                   }`}
                 >
-                  {msg.timeStamp}
+                  {msg.timeStamp
+                    ? new Date(
+                        msg.timeStamp[0],
+                        msg.timeStamp[1] - 1,
+                        msg.timeStamp[2],
+                        msg.timeStamp[3],
+                        msg.timeStamp[4],
+                        msg.timeStamp[5]
+                      ).toLocaleDateString("vi-VN", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                    : "N/A"}
                 </div>
               </div>
             </div>
