@@ -9,6 +9,9 @@ import { Spinner } from "react-bootstrap";
 import Dropdown from "../Button/Dropdown";
 import vietnamFlag from "../../assets/vietnamflag.webp";
 import englishFlag from "../../assets/english.png";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import URLSocket from "../../config/URLsocket";
 
 export default function Navbar() {
   const languageOptions = [
@@ -16,7 +19,11 @@ export default function Navbar() {
       value: "en",
       label: (
         <div className="flex items-center gap-2">
-          <img src={englishFlag} alt="English" className="h-6 w-6 object-cover" />
+          <img
+            src={englishFlag}
+            alt="English"
+            className="h-6 w-6 object-cover"
+          />
           <span>EN</span>
         </div>
       ),
@@ -25,13 +32,17 @@ export default function Navbar() {
       value: "vi",
       label: (
         <div className="flex items-center gap-2">
-          <img src={vietnamFlag} alt="Vietnamese" className="h-6 w-6 object-cover" />
+          <img
+            src={vietnamFlag}
+            alt="Vietnamese"
+            className="h-6 w-6 object-cover"
+          />
           <span>VI</span>
         </div>
       ),
     },
   ];
-  
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -47,6 +58,7 @@ export default function Navbar() {
 
   const dropdownRef = useRef(null);
   const notificationRef = useRef(null);
+  const stompClientRef = useRef(null);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("darkMode");
@@ -94,8 +106,11 @@ export default function Navbar() {
 
   useEffect(() => {
     fetchUserData();
-    fetchNotifications();
   }, []);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [unreadCount]);
 
   const fetchUserData = async () => {
     try {
@@ -128,14 +143,55 @@ export default function Navbar() {
 
   const fetchNotifications = () => {
     axios
-      .get(`${URL}/notifications`, { withCredentials: true })
+      .get(`${URL}/notifications/${parseInt(localStorage.getItem("id"))}`, {
+        withCredentials: true,
+      })
       .then((response) => {
-        setNotifications(response.data.notifications);
-        const unread = response.data.notifications.filter((n) => !n.read).length;
+        setNotifications(response.data.data);
+        const unread = response.data.data.length;
         setUnreadCount(unread);
+        console.log("Notilength " + unread);
       })
       .catch((error) => console.error("Failed to fetch notifications:", error));
   };
+
+  const readNotifications = (notificationId) => {
+    console.log("Noti id " + notificationId);
+    axios
+      .put(`${URL}/notifications/read/${notificationId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log("Read notification success !");
+        window.location.reload();
+        fetchNotifications();
+      })
+      .catch((error) => console.error("Failed to fetch notifications:", error));
+  };
+
+  useEffect(() => {
+    const socket = new SockJS(`${URLSocket}/ws`);
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        stompClient.subscribe(
+          `/topic/user/${parseInt(localStorage.getItem("id"))}`,
+          (message) => {
+            const notification = JSON.parse(message.body);
+            setNotifications((prev) => [...prev, notification]);
+          }
+        );
+      },
+    });
+
+    stompClient.activate();
+    stompClientRef.current = stompClient;
+
+    return () => {
+      stompClient.deactivate();
+    };
+  }, []);
 
   const fetchSearchSuggestions = (value) => {
     axios
@@ -282,7 +338,10 @@ export default function Navbar() {
                   className="relative cursor-pointer"
                   onClick={toggleNotificationDropdown}
                 >
-                  <PiBellRinging size={40} className="hover:bg-focolor dark:hover:bg-darkBorder p-1 rounded-xl" />
+                  <PiBellRinging
+                    size={40}
+                    className="hover:bg-focolor dark:hover:bg-darkBorder p-1 rounded-xl"
+                  />
                   {unreadCount >= 0 && (
                     <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
@@ -362,17 +421,26 @@ export default function Navbar() {
               </h3>
               <ul className="py-2 h-[40%] overflow-auto">
                 {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <li
-                      key={index}
-                      className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
-                        !notification.read
-                          ? "font-bold text-black dark:text-darkText"
-                          : "text-gray-700 dark:text-darkSubtext"
-                      }`}
-                    >
-                      {notification.message}
-                    </li>
+                  notifications.map((notification) => (
+                    <div key={notification.id}>
+                      <li
+                        className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
+                          !notification.read
+                            ? "font-bold text-black dark:text-darkText"
+                            : "text-gray-700 dark:text-darkSubtext"
+                        }`}
+                      >
+                        {notification.message}
+                      </li>
+                      <button
+                        onClick={() =>
+                          readNotifications(parseInt(notification.id))
+                        }
+                        className="btn btn-primary"
+                      >
+                        Read
+                      </button>
+                    </div>
                   ))
                 ) : (
                   <li className="hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 text-gray-500 dark:text-darkText break-words">

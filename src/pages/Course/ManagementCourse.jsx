@@ -2,10 +2,20 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 import { Link } from "react-router-dom";
-import { getCoursesByPage, deleteCourse, searchCourses } from "../../services/courseapi";
+import {
+  getCoursesByPage,
+  deleteCourse,
+  restoreCourse,
+  searchCourses,
+} from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import { FaLockOpen, FaLock } from "react-icons/fa";
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
@@ -14,7 +24,6 @@ export default function CourseManagement() {
   const [filterType, setFilterType] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
-
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const coursesPerPage = 6;
@@ -22,28 +31,28 @@ export default function CourseManagement() {
   useEffect(() => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, filterType, statusFilter]); 
+  }, [currentPage, filterType, statusFilter, search]);
 
   const fetchCourses = async () => {
     setLoading(true);
     try {
       let data;
-      // Fetch tất cả course 1 lần
-      data = await getCoursesByPage(0, 1000); // Lấy nhiều hơn 6 cái, ví dụ 1000 courses
-  
+      // Fetch all courses once
+      data = await getCoursesByPage(0, 1000); // Get more than 6 courses, e.g., 1000 courses
+
       if (!data || !data.data || !data.data.content) {
         throw new Error("Invalid API Response");
       }
-  
+
       let fetchedCourses = data.data.content;
-  
-      // Lọc client
+
+      // Client-side search filter
       if (search.trim() !== "") {
-        fetchedCourses = fetchedCourses.filter(course =>
+        fetchedCourses = fetchedCourses.filter((course) =>
           course.courseName.toLowerCase().includes(search.trim().toLowerCase())
         );
       }
-  
+
       if (filterType === "Free") {
         fetchedCourses = fetchedCourses.filter(
           (course) => course.price === 0 || course.price === null
@@ -54,28 +63,27 @@ export default function CourseManagement() {
         );
       }
 
-      // Lọc theo trạng thái (Deleted/Not Deleted)
-      if (statusFilter === "Not Deleted") {
-        fetchedCourses = fetchedCourses.filter(course => !course.isDeleted);
-      } else if (statusFilter === "Deleted") {
-        fetchedCourses = fetchedCourses.filter(course => course.isDeleted);
+      // Filter by status (Deleted/Not Deleted)
+      if (statusFilter === "Deleted") {
+        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
+      } else if (statusFilter === "Active") {
+        fetchedCourses = fetchedCourses.filter((course) => course.deleted);
       }
 
-      // Phân trang lại
+      // Pagination
       const startIndex = currentPage * coursesPerPage;
       const endIndex = startIndex + coursesPerPage;
       const paginatedCourses = fetchedCourses.slice(startIndex, endIndex);
-  
+
       setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedCourses.length / coursesPerPage));
     } catch (error) {
-      console.error("Lỗi tải khóa học:", error);
+      console.error("Error loading courses:", error);
       setCourses([]);
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value);
@@ -88,18 +96,42 @@ export default function CourseManagement() {
   };
 
   const handleDelete = async (id, name) => {
-    const isConfirmed = window.confirm(`Bạn có chắc muốn xóa khóa học "${name}" không?`);
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete course "${name}"?`
+    );
     if (isConfirmed) {
       try {
         await deleteCourse(id);
-        toast.success("Xóa khóa học thành công!", {
+        toast.success("Course deleted successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
         fetchCourses();
       } catch (error) {
-        console.error("Lỗi khi xóa khóa học:", error);
-        toast.error("Không thể xóa khóa học!", {
+        console.error("Error deleting course:", error);
+        toast.error("Failed to delete course!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+      }
+    }
+  };
+
+  const handleRestore = async (id, name) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to restore course "${name}"?`
+    );
+    if (isConfirmed) {
+      try {
+        await restoreCourse(id);
+        toast.success("Course restored successfully!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        fetchCourses(); // Reload courses list
+      } catch (error) {
+        console.error("Error restoring course:", error);
+        toast.error("Failed to restore course!", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -151,7 +183,7 @@ export default function CourseManagement() {
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-          <option value="All">All</option>
+            <option value="All">All</option>
             <option value="Free">Free</option>
             <option value="Paid">Paid</option>
           </select>
@@ -159,13 +191,13 @@ export default function CourseManagement() {
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
-              setCurrentPage(0); // Reset trang khi thay đổi trạng thái
+              setCurrentPage(0); // Reset page when status filter changes
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">All</option>
-            <option value="Not Deleted">Not Deleted</option>
             <option value="Deleted">Deleted</option>
+            <option value="Active">Active</option>
           </select>
           <button
             type="submit"
@@ -196,7 +228,7 @@ export default function CourseManagement() {
                 ) : courses.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center py-4">
-                      Không có khóa học nào
+                      No courses available
                     </td>
                   </tr>
                 ) : (
@@ -242,7 +274,7 @@ export default function CourseManagement() {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {course.isDeleted ? "Deleted" : "Not Deleted"}
+                        {course.deleted ? "Unlock" : "Lock"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
@@ -257,12 +289,25 @@ export default function CourseManagement() {
                         >
                           <FaEdit />
                         </Link>
-                        <button
-                          className="p-2 border rounded"
-                          onClick={() => handleDelete(course.id, course.courseName)}
-                        >
-                          <MdDeleteForever />
-                        </button>
+                        {course.deleted ? (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() =>
+                              handleRestore(course.id, course.courseName)
+                            }
+                          >
+                            <FaLockOpen />
+                          </button>
+                        ) : (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() =>
+                              handleDelete(course.id, course.courseName)
+                            }
+                          >
+                            <FaLock />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -273,21 +318,23 @@ export default function CourseManagement() {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Page {currentPage + 1} of {totalPages}</p>
+          <p>
+            Page {currentPage + 1} of {totalPages}
+          </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
-              <MdNavigateBefore size={30} />
+              <MdNavigateBefore />
             </button>
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
               onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >
-              <MdNavigateNext size={30} />
+              <MdNavigateNext />
             </button>
           </div>
         </div>

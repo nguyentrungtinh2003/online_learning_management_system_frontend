@@ -21,6 +21,8 @@ import {
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
+import { MdChatBubble, MdMessage } from "react-icons/md";
+
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
   const location = useLocation();
@@ -32,14 +34,65 @@ export default function Sidebar() {
   const [hoveredItem, setHoveredItem] = useState(null); // State to track hovered item
 
   const adminItems = [
-    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={25} />, path: "/admin/" },
-    { id: "Courses", label: t("courses"), icon: <FaBuffer size={25} />, path: "/admin/courses" },
-    { id: "Lessons", label: t("lessons"), icon: <FaVideo size={25} />, path: "/admin/lessons" },
-    { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={25} />, path: "/admin/quizzes" },
-    { id: "Questions", label: t("questions"), icon: <FaQuestion size={25} />, path: "/admin/questions" },
-    { id: "Users", label: t("users"), icon: <FaUsers size={25} />, path: "/admin/users" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/admin/blog" },
-    { id: "Settings", label: t("settings"), icon: <MdSettingsSuggest size={25} />, path: "/admin/settings" }
+    {
+      id: "Dashboard",
+
+      label: "Dashboard",
+
+      icon: <MdDashboardCustomize size={25} />,
+      path: "/admin/",
+    },
+    {
+      id: "Courses",
+
+      label: "Courses",
+
+      icon: <FaBuffer size={25} />,
+      path: "/admin/courses",
+    },
+    {
+      id: "Lessons",
+
+      label: "Lessons",
+
+      icon: <FaVideo size={25} />,
+      path: "/admin/lessons",
+    },
+    {
+      id: "Quizzes",
+
+      label: "Quizzes",
+      icon: <FaClipboardList size={25} />,
+      path: "/admin/quizzes",
+    },
+    // {
+    //   id: "Questions",
+    //   label: "Questions",
+    //   icon: <FaQuestion size={25} />,
+    //   path: "/admin/questions",
+    // },
+    {
+      id: "Users",
+      label: "Users",
+
+      icon: <FaUsers size={25} />,
+      path: "/admin/users",
+    },
+    {
+      id: "Blog",
+
+      label: "Blog",
+
+      icon: <MdForum size={25} />,
+      path: "/admin/blog",
+    },
+    {
+      id: "Settings",
+      label: "Setting",
+
+      icon: <MdSettingsSuggest size={25} />,
+      path: "/admin/settings",
+    },
   ];
 
   const userItems = [
@@ -114,17 +167,27 @@ export default function Sidebar() {
             <li
               key={item.id}
               className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative 
-                ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`
-              }
+                ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`}
               onClick={() => handleNavigate(item.id, item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
             >
-          
               {/* Apply 'fcolor' class to the icon */}
-              <span className={`${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.icon}</span>
+              <span
+                className={`${
+                  activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                }`}
+              >
+                {item.icon}
+              </span>
               {!isCollapsed && !isAnimating && (
-                 <span className={`duration-1000 ${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.label}</span>
+                <span
+                  className={`duration-1000 ${
+                    activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                  }`}
+                >
+                  {item.label}
+                </span>
               )}
               {isCollapsed && (
                 <div

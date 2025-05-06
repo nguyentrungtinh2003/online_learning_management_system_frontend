@@ -210,3 +210,27 @@ export const userEnroll = async (id) => {
     }
   }
 };
+
+
+// API Restore
+export const restoreCourse = async (id) => {
+  try {
+    const response = await fetch(`${URL}/teacher/courses/restore/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to restore course");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    throw error;
+  }
+};

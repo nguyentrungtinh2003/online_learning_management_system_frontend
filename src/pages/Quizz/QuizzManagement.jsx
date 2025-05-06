@@ -2,10 +2,19 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
 import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/md";
+import {
+  MdNavigateNext,
+  MdDeleteForever,
+  MdNavigateBefore,
+} from "react-icons/md";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getQuizzesByPage, deleteQuiz } from "../../services/quizapi";
+import {
+  getQuizzesByPage,
+  deleteQuiz,
+  restoreQuiz,
+} from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import { FaLockOpen, FaLock } from "react-icons/fa";
 
 const QuizzManagement = () => {
   const navigate = useNavigate();
@@ -13,6 +22,7 @@ const QuizzManagement = () => {
 
   const [quizzes, setQuizzes] = useState([]);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [filterType, setFilterType] = useState("All");
   const [loading, setLoading] = useState(true);
 
@@ -23,28 +33,29 @@ const QuizzManagement = () => {
   useEffect(() => {
     fetchQuizzes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, search, filterType, currentPage]);
+  }, [lessonId, search, filterType, statusFilter, currentPage]);
 
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
       const res = await getQuizzesByPage(currentPage, quizzesPerPage); // lấy toàn bộ quiz của bài học
-  
+
       if (!res || !res.data || !res.data.content) {
         throw new Error("Invalid API Response");
       }
-  
+
       let fetchedQuizzes = res.data.content;
-  
+
       // Tìm kiếm
       if (search.trim() !== "") {
         const keyword = search.trim().toLowerCase();
-        fetchedQuizzes = fetchedQuizzes.filter((quiz) =>
-          (quiz.quizName?.toLowerCase().includes(keyword) || 
-           quiz.description?.toLowerCase().includes(keyword))
+        fetchedQuizzes = fetchedQuizzes.filter(
+          (quiz) =>
+            quiz.quizName?.toLowerCase().includes(keyword) ||
+            quiz.description?.toLowerCase().includes(keyword)
         );
-      }      
-  
+      }
+
       // Lọc theo loại Free / Paid
       if (filterType === "Free") {
         fetchedQuizzes = fetchedQuizzes.filter(
@@ -55,12 +66,19 @@ const QuizzManagement = () => {
           (quiz) => quiz.price !== null && quiz.price > 0
         );
       }
-  
+
+      // Filter by status (Deleted/Not Deleted)
+      if (statusFilter === "Lock") {
+        fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
+      } else if (statusFilter === "Unlock") {
+        fetchedQuizzes = fetchedQuizzes.filter((quiz) => quiz.deleted);
+      }
+
       // Phân trang
       const startIndex = currentPage * quizzesPerPage;
       const endIndex = startIndex + quizzesPerPage;
       const paginatedQuizzes = fetchedQuizzes.slice(startIndex, endIndex);
-  
+
       setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedQuizzes.length / quizzesPerPage));
     } catch (err) {
@@ -70,7 +88,6 @@ const QuizzManagement = () => {
       setLoading(false);
     }
   };
-  
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value);
@@ -79,41 +96,64 @@ const QuizzManagement = () => {
 
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    fetchCourses();
+    fetchQuizzes();
   };
 
   const handleDelete = async (id, name) => {
-      const isConfirmed = window.confirm(`Bạn có chắc muốn xóa khóa học "${name}" không?`);
-      if (isConfirmed) {
-        try {
-          await deleteCourse(id);
-          toast.success("Xóa quiz thành công!", {
-            position: "top-right",
-            autoClose: 1000,
-          });
-          fetchCourses();
-        } catch (error) {
-          console.error("Lỗi khi xóa quiz:", error);
-          toast.error("Không thể xóa quiz!", {
-            position: "top-right",
-            autoClose: 1000,
-          });
-        }
+    const isConfirmed = window.confirm(
+      `Bạn có chắc muốn xóa khóa học "${name}" không?`
+    );
+    if (isConfirmed) {
+      try {
+        await deleteQuiz(id);
+        toast.success("Xóa quiz thành công!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        fetchQuizzes();
+      } catch (error) {
+        console.error("Lỗi khi xóa quiz:", error);
+        toast.error("Không thể xóa quiz!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
       }
-    };
-  
-    const handleNextPage = () => {
-      if (currentPage < totalPages - 1) {
-        setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleRestore = async (id, name) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to restore quiz "${name}"?`
+    );
+    if (isConfirmed) {
+      try {
+        await restoreQuiz(id);
+        toast.success("Course restored successfully!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        fetchQuizzes(); // Reload quiz list
+      } catch (error) {
+        console.error("Error restoring quiz:", error);
+        toast.error("Failed to restore quiz!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
       }
-    };
-  
-    const handlePrePage = () => {
-      if (currentPage > 0) {
-        setCurrentPage(currentPage - 1);
-      }
-    };
-  
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrePage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <div className="h-full w-full dark:text-darkText">
@@ -131,7 +171,13 @@ const QuizzManagement = () => {
           </Link>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); fetchQuizzes(); }} className="mb-4 flex gap-2">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            fetchQuizzes();
+          }}
+          className="mb-4 flex gap-2"
+        >
           <input
             type="text"
             placeholder="Search quizzes..."
@@ -154,6 +200,18 @@ const QuizzManagement = () => {
             <option value="Free">Free</option>
             <option value="Paid">Paid</option>
           </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setCurrentPage(0); // Reset page when status filter changes
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+          >
+            <option value="All">All</option>
+            <option value="Lock">Lock</option>
+            <option value="Unlock">Unlock</option>
+          </select>
           <button
             type="submit"
             className="bg-fcolor text-white p-2 rounded hover:scale-105"
@@ -161,7 +219,6 @@ const QuizzManagement = () => {
             Search
           </button>
         </form>
-
 
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
@@ -174,6 +231,7 @@ const QuizzManagement = () => {
                   <th className="p-2">Price</th>
                   <th className="p-2">Image</th>
                   <th className="p-2">Date</th>
+                  <th className="p-2">Status</th>
                   <th className="p-2">Action</th>
                 </tr>
               </thead>
@@ -189,7 +247,9 @@ const QuizzManagement = () => {
                 ) : (
                   quizzes.map((quiz, index) => (
                     <tr key={quiz.id} className="text-center">
-                      <td className="p-2">{index + 1 + currentPage * quizzesPerPage}</td>
+                      <td className="p-2">
+                        {index + 1 + currentPage * quizzesPerPage}
+                      </td>
                       <td className="p-2">{quiz.quizName || "N/A"}</td>
                       <td className="p-2">{quiz.description || "N/A"}</td>
                       <td className="p-2">
@@ -224,6 +284,9 @@ const QuizzManagement = () => {
                             })
                           : "N/A"}
                       </td>
+                      <td className="p-2">
+                        {quiz.deleted ? "Unlock" : "Lock"}
+                      </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
                           to={`/admin/quizzes/${quiz.id}/questions`}
@@ -237,24 +300,36 @@ const QuizzManagement = () => {
                         >
                           <FaEdit />
                         </Link>
-                        <button
-                          className="p-2 border rounded"
-                          onClick={() => handleDelete(quiz.id,quiz.quizName)}
-                        >
-                          <MdDeleteForever />
-                        </button>
+                        {quiz.deleted ? (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() =>
+                              handleRestore(quiz.id, quiz.quizName)
+                            }
+                          >
+                            <FaLockOpen />
+                          </button>
+                        ) : (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() => handleDelete(quiz.id, quiz.quizName)}
+                          >
+                            <FaLock />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
-
             </table>
           </div>
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Page {currentPage + 1} of {totalPages}</p>
+          <p>
+            Page {currentPage + 1} of {totalPages}
+          </p>
           <div className="space-x-2">
             <button
               className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
