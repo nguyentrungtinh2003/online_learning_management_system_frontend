@@ -87,6 +87,7 @@ export default function AuthForm() {
         localStorage.setItem("img", userData.img);
         localStorage.setItem("coin", userData.coin);
         localStorage.setItem("role", userData.roleEnum);
+        localStorage.setItem("point", userInfo.point);
         console.log(userData);
         console.log(document.cookie);
 

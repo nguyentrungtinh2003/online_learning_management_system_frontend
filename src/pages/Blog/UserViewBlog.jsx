@@ -44,6 +44,7 @@ export default function Blog() {
   const [likedUsersMap, setLikedUsersMap] = useState({});
 
   const userId = parseInt(localStorage.getItem("id"));
+  console.log("User id " + userId);
 
   useEffect(() => {
     handleGetPosts();
@@ -218,10 +219,10 @@ export default function Blog() {
       });
   };
 
-  const deleteBlogComment = (blogCommentId) => {
+  const deleteBlogComment = (blogCommentId, userId) => {
     axios
       .delete(
-        `${URL}/blog-comments/delete/${blogCommentId}`,
+        `${URL}/blog-comments/delete/${blogCommentId}/${parseInt(userId)}`,
 
         { withCredentials: true }
       )
@@ -532,7 +533,9 @@ export default function Blog() {
                       }
                     >
                       <PiChatCircle size={25} />
-                      <span>{post.blogComments ? post.blogComments : 0}</span>
+                      <span>
+                        {post.blogComments ? post.blogComments.length : 0}
+                      </span>
                     </button>
                     <button className="flex items-center space-x-1">
                       <PiShareFatLight size={25} />
@@ -567,7 +570,10 @@ export default function Blog() {
                                   <>
                                     <button
                                       onClick={() =>
-                                        deleteChat(parseInt(msg.id))
+                                        deleteBlogComment(
+                                          parseInt(comment.id),
+                                          localStorage.getItem("id")
+                                        )
                                       }
                                       className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
                                     >
@@ -606,7 +612,16 @@ export default function Blog() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-2 border-t pt-2">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full" />
+                        <img
+                          src={
+                            localStorage.getItem("img") !== "null"
+                              ? localStorage.getItem("img")
+                              : "/user.png"
+                          }
+                          alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+
                         <input
                           type="text"
                           name="comment"

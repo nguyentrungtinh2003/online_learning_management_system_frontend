@@ -171,7 +171,7 @@ export default function Sidebar() {
           {/* Only show the "Code Arena" title when sidebar is expanded and not animating */}
           {!isCollapsed && !isAnimating && (
             <h2 className="flex-1 text-center text-xl font-bold text-fcolor">
-              Code Arena
+              {localStorage.getItem("systemName")}
             </h2>
           )}
           <button

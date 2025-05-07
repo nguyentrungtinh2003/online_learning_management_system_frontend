@@ -121,11 +121,11 @@ const Profile = () => {
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
+                      "& fieldset": {
+                        borderColor: "rgb(75 85 99)", // Tailwind gray-600
                       },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
+                      "& input": {
+                        color: "rgb(107 114 128)", // Tailwind gray-400
                       },
                     },
                   }}
@@ -138,11 +138,11 @@ const Profile = () => {
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
+                      "& fieldset": {
+                        borderColor: "rgb(75 85 99)", // Tailwind gray-600
                       },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
+                      "& input": {
+                        color: "rgb(107 114 128)", // Tailwind gray-400
                       },
                     },
                   }}
@@ -155,11 +155,11 @@ const Profile = () => {
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
+                      "& fieldset": {
+                        borderColor: "rgb(75 85 99)", // Tailwind gray-600
                       },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
+                      "& input": {
+                        color: "rgb(107 114 128)", // Tailwind gray-400
                       },
                     },
                   }}
@@ -175,11 +175,11 @@ const Profile = () => {
                   type="date"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
+                      "& fieldset": {
+                        borderColor: "rgb(75 85 99)", // Tailwind gray-600
                       },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
+                      "& input": {
+                        color: "rgb(107 114 128)", // Tailwind gray-400
                       },
                     },
                   }}
@@ -192,35 +192,22 @@ const Profile = () => {
                   variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
+                      "& fieldset": {
+                        borderColor: "rgb(75 85 99)", // Tailwind gray-600
                       },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
+                      "& input": {
+                        color: "rgb(107 114 128)", // Tailwind gray-400
                       },
                     },
                   }}
                 />
                 <label className="mt-2">Role</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.roleEnum}
-                  variant="outlined"
-                  InputProps={{
-                    sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
-                    },
-                  }}
-                />
+                <h3 className="mt-2">{user.roleEnum}</h3>
               </div>
               <div className="col-span-2 flex text-black justify-end">
-                <button className="border-2 border-sicolor dark:bg-darkText dark:hover:text-darkText dark:hover:bg-darkSubbackground hover:bg-sicolor hover:text-darkText rounded font-semibold py-2 px-4">Save Change</button>
+                <button className="border-2 border-sicolor dark:bg-darkText dark:hover:text-darkText dark:hover:bg-darkSubbackground hover:bg-sicolor hover:text-darkText rounded font-semibold py-2 px-4">
+                  Save Change
+                </button>
               </div>
             </div>
           </div>

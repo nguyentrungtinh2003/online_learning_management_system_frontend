@@ -133,10 +133,10 @@ export default function UserViewLesson() {
   };
 
   //
-  const deleteLessonComment = (lessonCommentId) => {
+  const deleteLessonComment = (lessonCommentId, userId) => {
     axios
       .delete(
-        `${URL}/lesson-comment/delete/${lessonCommentId}`,
+        `${URL}/lesson-comment/delete/${lessonCommentId}/${parseInt(userId)}`,
 
         { withCredentials: true }
       )
@@ -234,7 +234,12 @@ export default function UserViewLesson() {
                   {cmt.username === localStorage.getItem("username") ? (
                     <>
                       <button
-                        onClick={() => deleteChat(parseInt(msg.id))}
+                        onClick={() =>
+                          deleteLessonComment(
+                            parseInt(cmt.id),
+                            localStorage.getItem("id")
+                          )
+                        }
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
                       >
                         X

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { FaSearch, FaCoins, FaMoon, FaSun } from "react-icons/fa";
+import { FaSearch, FaCoins, FaMoon, FaSun, FaStar } from "react-icons/fa";
 import { PiBellRinging } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
@@ -52,6 +52,9 @@ export default function Navbar() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loadingLogout, setLoadingLogout] = useState(false);
+
+  const [point, setPoint] = useState(localStorage.getItem("point") || 0);
+  const [coin, setCoin] = useState(localStorage.getItem("coin") || 0);
 
   const { t, i18n } = useTranslation("navbar");
   const [language, setLanguage] = useState(i18n.language || "en");
@@ -106,6 +109,7 @@ export default function Navbar() {
 
   useEffect(() => {
     fetchUserData();
+    fetchSystemInfo();
   }, []);
 
   useEffect(() => {
@@ -114,14 +118,20 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URL}/user-info`);
-      const { id, email, username, img, coin, roleEnum } = response.data.data;
+      const response = await axios.get(`${URL}/user-info`, {
+        withCredentials: true,
+      });
+      const { id, email, username, img, coin, roleEnum, point } =
+        response.data.data;
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
       localStorage.setItem("username", username);
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
       localStorage.setItem("role", roleEnum);
+      localStorage.setItem("point", point);
+      setCoin(coin);
+      setPoint(point);
     } catch {
       try {
         const googleResponse = await axios.get(`${URL}/user-google`);
@@ -139,6 +149,24 @@ export default function Navbar() {
         console.log("Không tìm thấy user đăng nhập");
       }
     }
+  };
+
+  const fetchSystemInfo = () => {
+    axios
+      .get(`${URL}/admin/system-info/1`, { withCredentials: true })
+      .then((response) => {
+        localStorage.setItem("systemName", response.data.data.systemName);
+        localStorage.setItem("description", response.data.data.description);
+        localStorage.setItem("slogan", response.data.data.slogan);
+        localStorage.setItem("systemImg", response.data.data.img);
+        localStorage.setItem("address", response.data.data.address);
+        localStorage.setItem("phoneNumber", response.data.data.phoneNumber);
+        localStorage.setItem("systemEmail", response.data.data.email);
+        localStorage.setItem(
+          "socialMediaURL",
+          response.data.data.socialMediaURL
+        );
+      });
   };
 
   const fetchNotifications = () => {
@@ -180,6 +208,16 @@ export default function Navbar() {
           (message) => {
             const notification = JSON.parse(message.body);
             setNotifications((prev) => [...prev, notification]);
+          }
+        );
+        stompClient.subscribe(
+          `/topic/user-info/${parseInt(localStorage.getItem("id"))}`,
+          async (message) => {
+            const userInfo = JSON.parse(message.body);
+            console.log("User websocket: ", userInfo);
+
+            setCoin(userInfo.coin);
+            setPoint(userInfo.point);
           }
         );
       },
@@ -272,8 +310,12 @@ export default function Navbar() {
     <nav className="px-4 py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
         <img
-          src="/logo.png"
-          className="rounded-full cursor-pointer object-cover h-10 mx-2"
+          src={
+            localStorage.getItem("systemImg") !== "null"
+              ? localStorage.getItem("systemImg")
+              : "/logo.png"
+          }
+          className="rounded-full w-16 h-16 cursor-pointer object-cover h-10 mx-2"
           alt="logo"
         />
         <div className="flex-1 flex justify-end pr-32 w-full ml-4">
@@ -330,7 +372,11 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span>{localStorage.getItem("coin")}</span>
+                <span>{point}</span>
+                <FaStar style={{ color: "gold" }} size={30} />
+              </div>
+              <div className="flex items-center gap-2">
+                <span>{coin}</span>
                 <FaCoins style={{ color: "gold" }} size={30} />
               </div>
               <div ref={notificationRef} className="relative">

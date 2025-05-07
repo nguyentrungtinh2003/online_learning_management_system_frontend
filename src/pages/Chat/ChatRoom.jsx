@@ -30,31 +30,39 @@ const ChatRoom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const fetchChatRoomAndMessages = useCallback(async (teacherId) => {
-    setLoadingChatRoom(true);
-    try {
-      const roomRes = await axios.post(
-        `${URL}/chat-room/add`,
-        { user1Id, user2Id: teacherId },
-        { withCredentials: true }
-      );
-      const roomId = roomRes.data.data.id;
-      setChatRoomId(roomId);
+  const fetchChatRoomAndMessages = useCallback(
+    async (teacherId) => {
+      setLoadingChatRoom(true);
+      try {
+        const roomRes = await axios.post(
+          `${URL}/chat-room/add`,
+          { user1Id, user2Id: teacherId },
+          { withCredentials: true }
+        );
+        const roomId = roomRes.data.data.id;
+        setChatRoomId(roomId);
 
-      const messagesRes = await axios.get(`${URL}/chats/chat-room/${roomId}`, {
-        withCredentials: true,
-      });
-      setMessages(messagesRes.data.data);
-    } catch (error) {
-      console.log("Error fetching chat room and messages:", error);
-    } finally {
-      setLoadingChatRoom(false);
-    }
-  }, [user1Id]);
+        const messagesRes = await axios.get(
+          `${URL}/chats/chat-room/${roomId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setMessages(messagesRes.data.data);
+      } catch (error) {
+        console.log("Error fetching chat room and messages:", error);
+      } finally {
+        setLoadingChatRoom(false);
+      }
+    },
+    [user1Id]
+  );
 
   const fetchTeachers = useCallback(async () => {
     try {
-      const response = await axios.get(`${URL}/user/all`, { withCredentials: true });
+      const response = await axios.get(`${URL}/user/all`, {
+        withCredentials: true,
+      });
       const allTeachers = response.data.data.filter((t) => t.id !== user1Id);
 
       const updated = await Promise.all(
@@ -67,9 +75,12 @@ const ChatRoom = () => {
             );
             const roomId = res.data.data.id;
 
-            const chatRes = await axios.get(`${URL}/chats/chat-room/${roomId}`, {
-              withCredentials: true,
-            });
+            const chatRes = await axios.get(
+              `${URL}/chats/chat-room/${roomId}`,
+              {
+                withCredentials: true,
+              }
+            );
             const lastMsg = chatRes.data.data.slice(-1)[0];
 
             return {
@@ -117,12 +128,17 @@ const ChatRoom = () => {
 
   const deleteChat = async (chatId) => {
     try {
-      await axios.delete(`${URL}/chats/delete/${chatId}`, { withCredentials: true });
+      await axios.delete(`${URL}/chats/delete/${chatId}`, {
+        withCredentials: true,
+      });
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === chatId ? { ...msg, message: "Tin nhắn đã bị xóa", isDeleted: true } : msg
+          msg.id === chatId
+            ? { ...msg, message: "Tin nhắn đã bị xóa", isDeleted: true }
+            : msg
         )
       );
+      fetchChatRoomAndMessages();
     } catch (error) {
       console.log("Error deleting chat:", error);
     }
@@ -204,7 +220,9 @@ const ChatRoom = () => {
             <div
               key={teacher.id}
               className={`cursor-pointer p-2 rounded-lg flex items-center gap-3 ${
-                currentTeacher === teacher.id ? "bg-blue-500 text-white" : "hover:bg-focolor dark:hover:bg-darkBorder dark:text-darkText"
+                currentTeacher === teacher.id
+                  ? "bg-blue-500 text-white"
+                  : "hover:bg-focolor dark:hover:bg-darkBorder dark:text-darkText"
               }`}
               onClick={() => setCurrentTeacher(teacher.id)}
             >
@@ -214,10 +232,8 @@ const ChatRoom = () => {
                 className="w-12 h-12 rounded-full object-cover"
               />
               <div className="flex flex-col overflow-hidden">
-                <div className="font-semibold truncate">
-                  {teacher.username}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                <div className="font-semibold truncate">{teacher.username}</div>
+                <div className="text-sm text-black-600 dark:text-white-300 truncate">
                   {teacher.lastMessage?.sender === "teacher"
                     ? teacher.lastMessage?.content
                     : `Bạn: ${teacher.lastMessage?.content}`}
@@ -238,7 +254,9 @@ const ChatRoom = () => {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold dark:text-darkText text-gray-700">
-                💬 Chat với {teachers.find((t) => t.id === currentTeacher)?.username || "Đang tải..."}
+                💬 Chat với{" "}
+                {teachers.find((t) => t.id === currentTeacher)?.username ||
+                  "Đang tải..."}
               </h2>
             </div>
 
@@ -252,7 +270,11 @@ const ChatRoom = () => {
                 >
                   {msg.user1Id !== user1Id && (
                     <img
-                      src={msg.img || "/user.png"}
+                      src={
+                        msg.user1Img && msg.user1Img !== "null"
+                          ? msg.user1Img
+                          : "/user.png"
+                      }
                       alt="avatar"
                       className="w-8 h-8 rounded-full object-cover"
                     />
@@ -263,12 +285,14 @@ const ChatRoom = () => {
                       className={`relative p-3 rounded-2xl shadow-md ${
                         msg.user1Id === user1Id
                           ? "bg-blue-500 text-white"
-                          : "bg-white border"
+                          : "bg-white text-dark border"
                       }`}
                     >
                       <p className="break-words">
                         {msg.isDeleted ? (
-                          <i className="text-sm text-gray-400">Tin nhắn đã bị xóa</i>
+                          <i className="text-sm text-gray-400">
+                            Tin nhắn đã bị xóa
+                          </i>
                         ) : (
                           msg.message
                         )}
@@ -313,7 +337,7 @@ const ChatRoom = () => {
                             month: "2-digit",
                             year: "numeric",
                           })
-                        : "N/A"}
+                        : "Vừa xong"}
                     </div>
                   </div>
                 </div>
@@ -323,6 +347,15 @@ const ChatRoom = () => {
 
             {/* Nhập tin nhắn */}
             <div className="flex mt-4 space-x-2">
+              <img
+                src={
+                  localStorage.getItem("img") !== "null"
+                    ? localStorage.getItem("img")
+                    : "/user.png"
+                }
+                alt="avatar"
+                className="w-8 h-8 rounded-full object-cover"
+              />
               <input
                 type="text"
                 value={content}
