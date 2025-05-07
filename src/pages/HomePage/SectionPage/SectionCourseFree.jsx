@@ -53,14 +53,14 @@ export default function SectionCourseFree() {
   };
 
   const CourseCard = ({ course }) => (
-    <div className="font-semibold text-gray-600 dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border-1 dark:border-darkBorder hover:shadow-2xl duration-300">
+    <div className="font-semibold h-full text-gray-600 dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl overflow-hidden transition-transform transform hover:scale-105 border-1 dark:border-darkBorder hover:shadow-2xl duration-300">
       <img
         src={course.img || "/default-course-img.jpg"}
         alt={course.courseName}
         className="w-full h-48 object-cover"
       />
       <div className="p-6 font-bold">
-        <h3 className="text-2xl w-full font-bold dark:text-darkText text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[4.rem]">
+        <h3 className="text-2xl w-full h-16 font-bold dark:text-darkText text-gray-800 overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[4.rem]">
           {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
         </h3>
         <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">

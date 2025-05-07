@@ -21,8 +21,6 @@ import {
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
-import { MdChatBubble, MdMessage } from "react-icons/md";
-
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
   const location = useLocation();
