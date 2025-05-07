@@ -1,0 +1,25 @@
+{
+    "total_revenue": "Tổng doanh thu",
+    "total_users": "Tổng người dùng",
+    "total_courses": "Tổng khóa học",
+    "new_access": "Lượt truy cập mới",
+    "last_30_days": "30 ngày qua",
+    "sales_analytic": "Phân tích doanh số",
+    "course_enrollments": "Ghi danh khóa học",
+    "user_points_by_course": "Điểm người dùng theo khóa",
+    "user_progress": "Tiến độ người dùng",
+    "revenue": "Doanh thu",
+    "enrollments": "Ghi danh",
+    "points": "Điểm số",
+    "user_a": "Người dùng A",
+    "user_b": "Người dùng B",
+    "web_development": "Lập trình web",
+    "data_science": "Khoa học dữ liệu",
+    "ai_ml": "Trí tuệ nhân tạo & Máy học",
+    "cybersecurity": "An ninh mạng",
+    "week_1": "Tuần 1",
+    "week_2": "Tuần 2",
+    "week_3": "Tuần 3",
+    "week_4": "Tuần 4"
+  }
+  

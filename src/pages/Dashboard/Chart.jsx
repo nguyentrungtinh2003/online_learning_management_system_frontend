@@ -1,16 +1,34 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
+import { useTranslation } from "react-i18next";
 
 const Chart = () => {
-  // Line Chart - Revenue
+  const { t } = useTranslation("dashboard");
+
+  const courseNames = [
+    t("web_development"),
+    t("data_science"),
+    t("ai_ml"),
+    t("cybersecurity"),
+  ];
+
   const lineChartOption = {
-    title: { text: "Sales Analytic" },
+    title: { text: t("sales_analytic") },
     tooltip: { trigger: "axis" },
-    xAxis: { type: "category", data: ["Week 1", "Week 2", "Week 3", "Week 4"] },
+    xAxis: {
+      type: "category",
+      data: [
+        t("week_1"),
+        t("week_2"),
+        t("week_3"),
+        t("week_4")
+      ],
+    },
+    
     yAxis: { type: "value" },
     series: [
       {
-        name: "Revenue",
+        name: t("revenue"),
         type: "line",
         data: [5000, 8000, 7000, 12000],
         areaStyle: {},
@@ -20,20 +38,19 @@ const Chart = () => {
     ],
   };
 
-  // Pie Chart - Course Enrollments
   const pieChartOption = {
-    title: { text: "Course Enrollments", left: "center" },
+    title: { text: t("course_enrollments"), left: "center" },
     tooltip: { trigger: "item" },
     series: [
       {
-        name: "Enrollments",
+        name: t("enrollments"),
         type: "pie",
         radius: "50%",
         data: [
-          { value: 150, name: "Web Development" },
-          { value: 200, name: "Data Science" },
-          { value: 180, name: "AI & ML" },
-          { value: 120, name: "Cybersecurity" },
+          { value: 150, name: courseNames[0] },
+          { value: 200, name: courseNames[1] },
+          { value: 180, name: courseNames[2] },
+          { value: 120, name: courseNames[3] },
         ],
         emphasis: {
           itemStyle: {
@@ -46,15 +63,14 @@ const Chart = () => {
     ],
   };
 
-  // Bar Chart - User Points by Course
   const barChartOption = {
-    title: { text: "User Points by Course" },
+    title: { text: t("user_points_by_course") },
     tooltip: { trigger: "axis" },
-    xAxis: { type: "category", data: ["Web Development", "Data Science", "AI & ML", "Cybersecurity"] },
+    xAxis: { type: "category", data: courseNames },
     yAxis: { type: "value" },
     series: [
       {
-        name: "Points",
+        name: t("points"),
         type: "bar",
         data: [200, 300, 250, 150],
         color: "#f39c12",
@@ -62,25 +78,22 @@ const Chart = () => {
     ],
   };
 
-  // Radar Chart - User Progress
   const radarChartOption = {
-    title: { text: "User Progress" },
+    title: { text: t("user_progress") },
     tooltip: { trigger: "item" },
     radar: {
-      indicator: [
-        { name: "Web Development", max: 100 },
-        { name: "Data Science", max: 100 },
-        { name: "AI & ML", max: 100 },
-        { name: "Cybersecurity", max: 100 },
-      ],
+      indicator: courseNames.map((name) => ({
+        name,
+        max: 100,
+      })),
     },
     series: [
       {
-        name: "User Progress",
+        name: t("user_progress"),
         type: "radar",
         data: [
-          { value: [80, 90, 85, 70], name: "User A" },
-          { value: [60, 70, 65, 50], name: "User B" },
+          { value: [80, 90, 85, 70], name: t("user_a") },
+          { value: [60, 70, 65, 50], name: t("user_b") },
         ],
         areaStyle: {},
         color: "#e74c3c",
