@@ -96,7 +96,11 @@ export const getLessonByPage = async (page = 0, size = 6) => {
 };
 
 // API Lấy danh sách khóa học theo phân trang
-export const getLessonByCourseIdAndPage = async (courseId,page = 0, size = 6) => {
+export const getLessonByCourseIdAndPage = async (
+  courseId,
+  page = 0,
+  size = 6
+) => {
   const response = await axios.get(
     `${URL}/teacher/lessons/courses/${courseId}/page?page=${page}&size=${size}`,
     {
@@ -137,5 +141,26 @@ export const restoreLesson = async (id) => {
   } catch (error) {
     console.error("Error deleting lesson:", error);
     throw error;
+  }
+};
+
+// API Update Lesson Process
+export const updateLessonProcess = async (userId, courseId, lessonId) => {
+  try {
+    const response = await axios.put(
+      `${URL}/process/update/${userId}/${courseId}/${lessonId}`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data; // Trả về dữ liệu từ backend
+  } catch (error) {
+    if (error.response) {
+      console.error("Lỗi từ API:", error.response.data);
+      console.error("Trạng thái lỗi:", error.response.status);
+    } else {
+      console.error("Lỗi không xác định:", error);
+    }
   }
 };

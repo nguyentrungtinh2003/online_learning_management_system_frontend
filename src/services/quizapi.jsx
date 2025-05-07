@@ -175,7 +175,6 @@ export const submitQuiz = async (id, userId, answersUser) => {
   try {
     // Cấu hình dữ liệu cần gửi
     const data = {
-      quizId: quizId, // ID của quiz
       userId: userId, // ID của người dùng
       answersUser: answersUser, // Mảng câu trả lời người dùng đã chọn
     };
@@ -198,5 +197,32 @@ export const submitQuiz = async (id, userId, answersUser) => {
     // Xử lý lỗi nếu có
     console.error("Error submitting quiz:", error);
     throw error;
+  }
+};
+
+// 10. Save Point
+export const savePointHistory = async (userId, point) => {
+  try {
+    const response = await axios.post(
+      `${URL}/rankings/add`,
+      {
+        user: { id: userId },
+        point: point,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // nếu cần gửi cookie
+      }
+    );
+
+    if (response.data.statusCode === 200) {
+      console.log("✅ Lưu lịch sử điểm thành công.");
+    } else {
+      console.error("❌ Lỗi khi lưu lịch sử điểm:", response.data.message);
+    }
+  } catch (error) {
+    console.error("🚫 Có lỗi khi gọi API lưu lịch sử điểm:", error);
   }
 };

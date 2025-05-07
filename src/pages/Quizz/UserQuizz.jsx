@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getQuizById } from "../../services/quizapi";
 import { PiYoutubeLogo } from "react-icons/pi";
 import { submitQuiz } from "../../services/quizapi";
+import { savePointHistory } from "../../services/quizapi";
 
 export default function UserQuizz() {
   const navigate = useNavigate();
@@ -42,24 +43,39 @@ export default function UserQuizz() {
   };
 
   const handleSubmitQuiz = async () => {
-    // Lấy dữ liệu từ câu trả lời đã chọn của người dùng
-    const answersUser = Object.values(selectedAnswers);
-    const userId = parseInt(localStorage.getItem("id")); // Lấy userId từ context hoặc local storage, nếu cần
+    const answersUser = Object.values(selectedAnswers); // Câu trả lời của người dùng
+    const userId = parseInt(localStorage.getItem("id"));
     const id = parseInt(quizId);
-    console.log(userId);
-    console.log("Quiz ID từ URL:", id);
+
     try {
-      // Gọi API để nộp quiz và tính điểm
-      const response = await submitQuiz(parseInt(id), userId, answersUser);
+      const response = await submitQuiz(id, userId, answersUser);
 
-      // Kiểm tra kết quả từ API
       if (response.statusCode === 200) {
-        alert("Bài làm đã được nộp thành công!");
+        const point = response.data;
+        console.log("Dữ liệu API trả về:", response.data);
 
-        // Thực hiện điều hướng sau khi nộp quiz
+        const totalQuestions = quiz.questions.length;
+        const score = (point / totalQuestions) * 100;
+        console.log("Điểm số tính được:", score);
+
+        // ✅ Lưu vào localStorage
+        localStorage.setItem(
+          "quizResult",
+          JSON.stringify({
+            quiz,
+            selectedAnswers,
+            score,
+            point,
+          })
+        );
+
+        // ✅ Gọi API để lưu lại lịch sử điểm
+        await savePointHistory(userId, point); // Lưu lịch sử điểm
+
+        // ✅ Điều hướng đến trang kết quả
         setTimeout(() => {
-          navigate(`/quiz-result/${id}`); // Điều hướng đến trang kết quả, nếu cần
-        }, 2000);
+          navigate(`/view-result/${quizId}`);
+        }, 1000);
       } else {
         alert("Có lỗi xảy ra khi nộp bài. Vui lòng thử lại.");
       }

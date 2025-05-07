@@ -13,6 +13,8 @@ import URL from "../../config/URLconfig";
 import axios from "axios";
 import { getAllQuizzesByLessonId } from "../../services/quizapi";
 import { Link } from "react-router-dom";
+import { FaCheckCircle } from "react-icons/fa";
+import { updateLessonProcess } from "../../services/lessonapi";
 
 export default function UserViewLesson() {
   const navigate = useNavigate();
@@ -32,7 +34,48 @@ export default function UserViewLesson() {
   const [quizzes, setQuizzes] = useState([]);
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
 
+  const [watchedPercent, setWatchedPercent] = useState(0);
+  const [lastAllowedTime, setLastAllowedTime] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false);
+
   const userId = parseInt(localStorage.getItem("id"));
+  const handleWatchProgress = (e) => {
+    const video = e.target;
+    const current = video.currentTime;
+    const duration = video.duration;
+
+    if (current > lastAllowedTime) {
+      setLastAllowedTime(current);
+    }
+
+    const percent = (lastAllowedTime / duration) * 100;
+    setWatchedPercent(percent);
+
+    if (percent >= 50 && !isCompleted) {
+      markLessonAsCompleted();
+      setIsCompleted(true);
+    }
+  };
+
+  const markLessonAsCompleted = async () => {
+    try {
+      const lessonId = lessons[currentLessonIndex]?.id;
+      const courseId = 78; // Lấy courseId từ đối tượng course
+      if (!userId || !courseId || !lessonId) {
+        console.warn("Thiếu thông tin để cập nhật tiến độ bài học", {
+          userId,
+          courseId,
+          lessonId,
+        });
+        return;
+      }
+
+      await updateLessonProcess(userId, courseId, lessonId);
+      console.log("✅ Đã cập nhật tiến độ bài học thành công");
+    } catch (error) {
+      console.error("❌ Lỗi khi đánh dấu bài học hoàn thành:", error);
+    }
+  };
 
   const modules = {
     toolbar: [["bold", "italic", "underline"], [{ align: [] }]],
@@ -169,6 +212,12 @@ export default function UserViewLesson() {
     fetchComments();
   }, [currentLessonIndex, lessons]);
 
+  useEffect(() => {
+    setIsCompleted(false);
+    setWatchedPercent(0);
+    setLastAllowedTime(0);
+  }, [currentLessonIndex]);
+
   return (
     <div className="flex flex-1 text-sm font-semibold box-border relative">
       {/* Overlay + Form */}
@@ -304,49 +353,51 @@ export default function UserViewLesson() {
             )}
 
             {/* Video */}
-            {lessons[currentLessonIndex]?.videoURL ? (
-              <>
-                {loadingVideo && <SkeletonVideo />}
-                <video
-                  ref={(el) => (videoRefs.current[currentLessonIndex] = el)}
-                  className={`w-full h-[70%] bg-black rounded-lg ${
-                    loadingVideo ? "hidden" : "block"
-                  }`}
-                  src={lessons[currentLessonIndex]?.videoURL}
-                  controls
-                  onLoadedMetadata={() => {
-                    setLoadingVideo(false);
-                  }}
-                />
-              </>
-            ) : (
-              <SkeletonVideo />
-            )}
+            <video
+              ref={(el) => (videoRefs.current[currentLessonIndex] = el)}
+              className={`w-full h-[70%] bg-black rounded-lg ${
+                loadingVideo ? "hidden" : "block"
+              }`}
+              src={lessons[currentLessonIndex]?.videoURL}
+              controls
+              onLoadedMetadata={() => {
+                setLoadingVideo(false);
+                const video = videoRefs.current[currentLessonIndex];
+                if (video) {
+                  // Ngăn người dùng tua video
+                  video.addEventListener("seeking", () => {
+                    if (video.currentTime > lastAllowedTime) {
+                      video.currentTime = lastAllowedTime; // quay lại phần được phép xem
+                    }
+                  });
+                }
+              }}
+              onTimeUpdate={(e) => handleWatchProgress(e)}
+            />
 
             {/* Thông tin bài học */}
             {!loadingVideo && (
-              <>
-                <div className="space-y-2 mb-40 dark:text-darkSubtext">
-                  <div className="flex w-full justify-between my-4">
-                    <h1 className="text-xl font-bold dark:text-darkText">
-                      {lessons[currentLessonIndex]?.lessonName}
-                    </h1>
-                    <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
-                      Thêm ghi chú tại 00:00:00
-                    </button>
-                  </div>
-                  <h2>Cập nhật tháng 11 năm 2024</h2>
-                  <p className="text-lg">
-                    Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
-                    xem Code Arena có gì mới nhé
-                  </p>
-                  <ul>
-                    <li>Fanpage: http://psdvsnv.com</li>
-                    <li>Group: http://psdvsnv.com</li>
-                    <li>Youtube: http://psdvsnv.com</li>
-                  </ul>
+              <div className="space-y-2 mb-40 dark:text-darkSubtext">
+                <div className="flex w-full justify-between my-4">
+                  <h1 className="text-xl font-bold dark:text-darkText">
+                    {lessons[currentLessonIndex]?.lessonName}
+                    {/* Hiển thị icon check nếu bài học hoàn thành */}
+                  </h1>
+                  <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
+                    Thêm ghi chú tại 00:00:00
+                  </button>
                 </div>
-              </>
+                <h2>Cập nhật tháng 11 năm 2024</h2>
+                <p className="text-lg">
+                  Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
+                  xem Code Arena có gì mới nhé
+                </p>
+                <ul>
+                  <li>Fanpage: http://psdvsnv.com</li>
+                  <li>Group: http://psdvsnv.com</li>
+                  <li>Youtube: http://psdvsnv.com</li>
+                </ul>
+              </div>
             )}
           </div>
         </div>
@@ -357,6 +408,17 @@ export default function UserViewLesson() {
         <div className="sticky top-5">
           <div className="space-y-6">
             <div className="text-center">Danh sách bài học</div>
+            {/* Progress bar */}
+            <div className="mt-4">
+              <div className="text-center">
+                Tiến độ video: {Math.round(watchedPercent)}%
+              </div>
+              <progress
+                value={watchedPercent}
+                max="100"
+                className="w-full"
+              ></progress>
+            </div>
             <div>
               <ul className="flex flex-col gap-2">
                 {lessons.map((lesson, index) => (
@@ -371,6 +433,11 @@ export default function UserViewLesson() {
                     >
                       <span className="flex items-center gap-2">
                         <span>{lesson.lessonName}</span>
+
+                        {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
+                        {currentLessonIndex === index && isCompleted && (
+                          <FaCheckCircle className="text-green-500 ml-2" />
+                        )}
 
                         {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
                         {lesson.quizzes && lesson.quizzes.length > 0 && (

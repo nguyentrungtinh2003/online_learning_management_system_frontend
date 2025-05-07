@@ -21,8 +21,6 @@ import {
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
-import { MdChatBubble, MdMessage } from "react-icons/md";
-
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
   const location = useLocation();
@@ -97,12 +95,42 @@ export default function Sidebar() {
 
   const userItems = [
     { id: "Home", label: t("home"), icon: <FaHome size={25} />, path: "/" },
-    { id: "MyCourses", label: t("myCourses"), icon: <FaBuffer size={25} />, path: "/user-course" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/blog" },
-    { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={25} />, path: "/ranking" },
-    { id: "Profile", label: t("profile"), icon: <FaUser size={25} />, path: "/profile" },
-    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" },
-    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={25} />, path: "/chat" }
+    {
+      id: "MyCourses",
+      label: t("myCourses"),
+      icon: <FaBuffer size={25} />,
+      path: "/user-course",
+    },
+    {
+      id: "Blog",
+      label: t("blog"),
+      icon: <MdForum size={25} />,
+      path: "/blog",
+    },
+    {
+      id: "Ranking",
+      label: t("ranking"),
+      icon: <FaTrophy size={25} />,
+      path: "/ranking",
+    },
+    {
+      id: "Profile",
+      label: t("profile"),
+      icon: <FaUser size={25} />,
+      path: "/profile",
+    },
+    {
+      id: "E-Wallet",
+      label: t("eWallet"),
+      icon: <FaWallet size={25} />,
+      path: "/user/payment",
+    },
+    {
+      id: "Chatting",
+      label: t("chatting"),
+      icon: <MdMessage size={25} />,
+      path: "/chat",
+    },
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");
