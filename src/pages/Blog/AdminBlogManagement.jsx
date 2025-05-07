@@ -160,7 +160,7 @@ export default function AdminBlogManagement() {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full flex flex-col justify-between">
       <ToastContainer />
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
@@ -303,10 +303,10 @@ export default function AdminBlogManagement() {
             </tbody>
           </table>
         </div>
-
-        <div className="flex justify-between items-center mt-4 text-white">
+      </div>
+      <div className="flex justify-between items-center text-white">
           <p>
-            Trang {currentPage + 1} / {totalPages}
+            Page {currentPage + 1} of {totalPages}
           </p>
           <div className="flex gap-2">
             <button
@@ -325,7 +325,6 @@ export default function AdminBlogManagement() {
             </button>
           </div>
         </div>
-      </div>
     </div>
   );
 }

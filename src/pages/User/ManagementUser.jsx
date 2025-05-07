@@ -92,7 +92,7 @@ export default function UserManagement() {
     <div className="h-full w-full flex flex-col">
       <ToastContainer />
 
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between">
         <div className="flex gap-2 dark:text-darkText items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
@@ -181,20 +181,20 @@ export default function UserManagement() {
           </table>
         </div>
       </div>
-      <div className="flex justify-between mt-4">
+      <div className="flex dark:text-darkText items-center justify-between">
         <p>
           Page {currentPage + 1} of {totalPages}
         </p>
         <div className="space-x-2">
           <button
-            className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+             className="bg-scolor p-1 rounded disabled:opacity-50"
             onClick={handlePrePage}
             disabled={currentPage === 0}
           >
             <MdNavigateBefore size={30} />
           </button>
           <button
-            className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+             className="bg-scolor p-1 rounded disabled:opacity-50"
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
           >

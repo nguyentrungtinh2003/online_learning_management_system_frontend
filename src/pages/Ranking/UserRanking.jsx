@@ -1,11 +1,48 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import URL from "../../config/URLconfig";
+import React, { useState } from "react";
 
 export default function UserRanking() {
-  const [topDaily, setTopDaily] = useState([]);
-  const [topWeekly, setTopWeekly] = useState([]);
-  const [topMonthly, setTopMonthly] = useState([]);
+  // Dữ liệu top
+  const topDaily = [
+    { rank: 1, name: "Van Tan", points: 520 },
+    { rank: 2, name: "Tinh Nguyen", points: 510 },
+    { rank: 3, name: "Hieu Nguyen", points: 500 },
+    { rank: 4, name: "Ngoc Le", points: 495 },
+    { rank: 5, name: "Minh Tran", points: 490 },
+    { rank: 6, name: "Anh Pham", points: 485 },
+    { rank: 7, name: "Quang Do", points: 482 },
+    { rank: 8, name: "Duc Hoang", points: 478 },
+    { rank: 9, name: "Linh Nguyen", points: 475 },
+    { rank: 10, name: "Bao Chau", points: 470 },
+    { rank: 11, name: "Tuan Vo", points: 468 },
+    { rank: 12, name: "Phuong Mai", points: 465 },
+    { rank: 13, name: "Khoa Bui", points: 460 },
+  ];
+
+  const topWeekly = [
+    { rank: 1, name: "Tinh Nguyen", points: 1500 },
+    { rank: 2, name: "Van Tan", points: 1480 },
+    { rank: 3, name: "Hieu Nguyen", points: 1450 },
+    { rank: 4, name: "Bao Chau", points: 1400 },
+    { rank: 5, name: "Ngoc Le", points: 1350 },
+    { rank: 6, name: "Anh Pham", points: 1320 },
+    { rank: 7, name: "Linh Nguyen", points: 1280 },
+    { rank: 8, name: "Phuong Mai", points: 1270 },
+    { rank: 9, name: "Khoa Bui", points: 1250 },
+    { rank: 10, name: "Tuan Vo", points: 1240 },
+  ];
+
+  const topMonthly = [
+    { rank: 1, name: "Hieu Nguyen", points: 3200 },
+    { rank: 2, name: "Van Tan", points: 3100 },
+    { rank: 3, name: "Tinh Nguyen", points: 3050 },
+    { rank: 4, name: "Ngoc Le", points: 2900 },
+    { rank: 5, name: "Minh Tran", points: 2800 },
+    { rank: 6, name: "Quang Do", points: 2750 },
+    { rank: 7, name: "Bao Chau", points: 2700 },
+    { rank: 8, name: "Duc Hoang", points: 2600 },
+    { rank: 9, name: "Tuan Vo", points: 2500 },
+    { rank: 10, name: "Phuong Mai", points: 2400 },
+  ];
 
   const [selectedTop, setSelectedTop] = useState("day");
 
@@ -72,7 +109,7 @@ export default function UserRanking() {
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl font-bold">Xếp Hạng Điểm</p>
+        <p className="text-2xl font-bold">{t("title")}</p>
         <div className="flex gap-2 font-semibold">
           <button
             className={`border-2 rounded-xl px-4 py-2 ${
@@ -82,7 +119,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("day")}
           >
-            Top Ngày
+            {t("topDay")}
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
@@ -92,7 +129,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("week")}
           >
-            Top Tuần
+            {t("topWeek")}
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
@@ -102,7 +139,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("month")}
           >
-            Top Tháng
+            {t("topMonth")}
           </button>
         </div>
       </div>
@@ -194,10 +231,10 @@ export default function UserRanking() {
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
                 <tr>
-                  <th className="text-left p-2">Hạng</th>
-                  <th className="text-left p-2">Ảnh</th>
-                  <th className="text-left p-2">Tên</th>
-                  <th className="text-left p-2">Điểm</th>
+                  <th className="text-left p-2">{t("columnRank")}</th>
+                  <th className="text-left p-2">{t("columnAvatar")}</th>
+                  <th className="text-left p-2">{t("columnName")}</th>
+                  <th className="text-left p-2">{t("columnPoints")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -244,7 +281,7 @@ export default function UserRanking() {
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
-                Bản thân
+                {t("you")}
               </span>
             </div>
           </div>

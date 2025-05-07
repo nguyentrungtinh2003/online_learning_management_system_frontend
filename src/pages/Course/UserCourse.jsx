@@ -76,7 +76,7 @@ export default function UserCourse() {
                 {displayedCourses.map((item, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-darkSubbackground rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
+                    className="bg-wcolor dark:text-darkText dark:bg-darkSubbackground rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden"
                   >
                     <img
                       src={item.img || "/default.jpg"}
@@ -101,7 +101,7 @@ export default function UserCourse() {
                         onClick={() =>
                           navigate(`/view-lesson/${item.courseId}`)
                         }
-                        className="mt-auto bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition duration-300 hover:scale-105 shadow"
+                        className="mt-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition duration-300 hover:scale-105 shadow"
                       >
                         🚀 {t.continueLearning}
                       </button>

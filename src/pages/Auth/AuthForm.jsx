@@ -23,7 +23,6 @@ export default function AuthForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showOtpPassword, setShowOtpPassword] = useState(false);
   const [emailOTP, setEmailOTP] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -203,10 +202,10 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100">
+    <div className="h-screen flex justify-center items-center dark:bg-darkBackground bg-gray-100">
       <ToastContainer />
       <div
-        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-[35%] p-8 bg-white"
+        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-[35%] p-8 bg-wcolor dark:bg-darkBackground"
         ref={formContainerRef}
       >
         {isForgotPassword || isCreatePassword ? (

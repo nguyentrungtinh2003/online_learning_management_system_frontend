@@ -4,7 +4,7 @@ import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
-import { Spinner } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const ChatRoom = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +14,7 @@ const ChatRoom = () => {
   const [chatRoomId, setChatRoomId] = useState(null);
   const [content, setContent] = useState("");
   const [loadingChatRoom, setLoadingChatRoom] = useState(false);
+  const { t } = useTranslation("chatroom");
 
   const stompClientRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -209,7 +210,7 @@ const ChatRoom = () => {
       <div className="w-64 bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder p-4 border-2 rounded-lg shadow-lg">
         <input
           type="text"
-          placeholder="Tìm người dùng..."
+          placeholder={t("searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
@@ -236,7 +237,7 @@ const ChatRoom = () => {
                 <div className="text-sm text-black-600 dark:text-white-300 truncate">
                   {teacher.lastMessage?.sender === "teacher"
                     ? teacher.lastMessage?.content
-                    : `Bạn: ${teacher.lastMessage?.content}`}
+                    : `${t("you")}: ${teacher.lastMessage?.content}`}
                 </div>
               </div>
             </div>
@@ -264,7 +265,7 @@ const ChatRoom = () => {
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-start gap-2 ${
+                  className={`flex items-center gap-2 ${
                     msg.user1Id === user1Id ? "justify-end" : "justify-start"
                   }`}
                 >
@@ -285,7 +286,7 @@ const ChatRoom = () => {
                       className={`relative p-3 rounded-2xl shadow-md ${
                         msg.user1Id === user1Id
                           ? "bg-blue-500 text-white"
-                          : "bg-white text-dark border"
+                          : "bg-white border"
                       }`}
                     >
                       <p className="break-words">
@@ -310,7 +311,7 @@ const ChatRoom = () => {
                               onClick={() => deleteChat(parseInt(msg.id))}
                               className="block w-full text-left px-3 py-2 dark:bg-darkBackground text-sm text-red-600 hover:bg-gray-100"
                             >
-                              Xóa
+                              {t("delete")}
                             </button>
                           </div>
                         </div>
@@ -337,7 +338,7 @@ const ChatRoom = () => {
                             month: "2-digit",
                             year: "numeric",
                           })
-                        : "Vừa xong"}
+                        : "N/A"}
                     </div>
                   </div>
                 </div>
@@ -361,7 +362,7 @@ const ChatRoom = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="flex-1 px-4 py-2 rounded-lg border-2 dark:border-darkBorder dark:bg-darkBackground border-gray-300 focus:outline-none"
-                placeholder="Nhập tin nhắn..."
+                placeholder={t("inputPlaceholder")}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -373,7 +374,7 @@ const ChatRoom = () => {
                 onClick={addChat}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                Gửi
+                {t("send")}
               </button>
             </div>
           </>
