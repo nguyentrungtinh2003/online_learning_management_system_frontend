@@ -1,0 +1,12 @@
+{
+    "title": "Nạp tiền vào hệ thống",
+    "description": "Hệ thống hỗ trợ thanh toán qua VNPay và PayPal",
+    "labelAmount": "Số tiền muốn nạp (VND/USD):",
+    "placeholderAmount": "Ví dụ: 50000",
+    "labelMethod": "Chọn phương thức thanh toán:",
+    "received": "Bạn sẽ nhận được:",
+    "rate1": "Tỷ giá: 1,000 VND = 1 Coin",
+    "rate2": "1 USD = 25,000 VND = 25 Coin",
+    "processing": "Đang xử lý...",
+    "payWith": "Thanh toán bằng"
+}

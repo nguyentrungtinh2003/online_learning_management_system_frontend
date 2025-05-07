@@ -3,8 +3,10 @@ import axios from "axios";
 import URL from "../../config/URLconfig";
 import { FaCoins } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im";
+import { useTranslation } from "react-i18next";
 
 export default function PaymentPage() {
+  const { t } = useTranslation("payment");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [method, setMethod] = useState("VNPay");
@@ -48,10 +50,10 @@ export default function PaymentPage() {
         <div className="flex flex-col items-center text-center">
           <FaCoins size={60} className="text-yellow-500 my-2" />
           <h1 className="text-3xl font-bold text-fcolor pb-2">
-            Nạp tiền vào hệ thống
+            {t("title")}
           </h1>
           <p className="text-gray-500 dark:text-darkSubtext">
-            Hệ thống hỗ trợ thanh toán qua VNPay và PayPal
+            {t("description")}
           </p>
         </div>
 
@@ -61,13 +63,13 @@ export default function PaymentPage() {
           </div>
         )}
 
-        <form onSubmit={submitPayment} className="">
+        <form onSubmit={submitPayment}>
           <div>
             <label
               htmlFor="amount"
               className="text-sm dark:text-darkSubtext font-medium text-gray-700 mb-1"
             >
-              Số tiền muốn nạp (VND/USD):
+              {t("labelAmount")}
             </label>
             <input
               type="number"
@@ -78,7 +80,7 @@ export default function PaymentPage() {
               onChange={(e) => setAmount(parseFloat(e.target.value))}
               required
               className="w-full dark:bg-darkSubbackground dark:text-darkText rounded-lg border-2 dark:border-darkBorder border-gray-300 p-3 focus:ring-2 focus:ring-indigo-400"
-              placeholder="Ví dụ: 50000"
+              placeholder={t("placeholderAmount")}
             />
           </div>
 
@@ -87,7 +89,7 @@ export default function PaymentPage() {
               htmlFor="method"
               className="text-sm dark:text-darkSubtext font-medium text-gray-700 mb-1"
             >
-              Chọn phương thức thanh toán:
+              {t("labelMethod")}
             </label>
 
             <div className="w-full flex items-center space-x-4 bg-wcolor dark:border-darkBorder dark:bg-darkBackground p-2 rounded-xl shadow-md dark:border dark:border-darkBorder">
@@ -112,7 +114,7 @@ export default function PaymentPage() {
           <div className="mb-2 mx-2 flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 dark:text-darkSubtext font-medium">
-                Bạn sẽ nhận được:
+                {t("received")}
               </p>
               <p className="text-lg font-semibold text-green-600">
                 {method === "PayPal"
@@ -123,10 +125,10 @@ export default function PaymentPage() {
             </div>
             <div>
               <p className="text-sm text-black-500 dark:text-darkSubtext mt-1">
-                Tỷ giá: 1,000 VND = 1 Coin
+                {t("rate1")}
               </p>
               <p className="text-sm text-black-500 dark:text-darkSubtext mt-1">
-                1 USD = 25,000 VND = 25 Coin
+                {t("rate2")}
               </p>
             </div>
           </div>
@@ -139,10 +141,12 @@ export default function PaymentPage() {
             {loading ? (
               <>
                 <ImSpinner2 className="animate-spin text-white" />
-                Đang xử lý...
+                {t("processing")}
               </>
             ) : (
-              <>Thanh toán bằng {method} </>
+              <>
+                {t("payWith")} {method}
+              </>
             )}
           </button>
         </form>

@@ -4,7 +4,7 @@ import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
-import { Spinner } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const ChatRoom = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,6 +14,7 @@ const ChatRoom = () => {
   const [chatRoomId, setChatRoomId] = useState(null);
   const [content, setContent] = useState("");
   const [loadingChatRoom, setLoadingChatRoom] = useState(false);
+  const { t } = useTranslation("chatroom");
 
   const stompClientRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -193,7 +194,7 @@ const ChatRoom = () => {
       <div className="w-64 bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder p-4 border-2 rounded-lg shadow-lg">
         <input
           type="text"
-          placeholder="Tìm người dùng..."
+          placeholder={t("searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
@@ -220,7 +221,7 @@ const ChatRoom = () => {
                 <div className="text-sm text-gray-600 dark:text-gray-300 truncate">
                   {teacher.lastMessage?.sender === "teacher"
                     ? teacher.lastMessage?.content
-                    : `Bạn: ${teacher.lastMessage?.content}`}
+                    : `${t("you")}: ${teacher.lastMessage?.content}`}
                 </div>
               </div>
             </div>
@@ -238,7 +239,8 @@ const ChatRoom = () => {
           <>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold dark:text-darkText text-gray-700">
-                💬 Chat với {teachers.find((t) => t.id === currentTeacher)?.username || "Đang tải..."}
+                  💬 {t("chatWith")}{" "}
+                  {teachers.find((t) => t.id === currentTeacher)?.username || t("loading")}
               </h2>
             </div>
 
@@ -246,7 +248,7 @@ const ChatRoom = () => {
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`flex items-start gap-2 ${
+                  className={`flex items-center gap-2 ${
                     msg.user1Id === user1Id ? "justify-end" : "justify-start"
                   }`}
                 >
@@ -263,12 +265,12 @@ const ChatRoom = () => {
                       className={`relative p-3 rounded-2xl shadow-md ${
                         msg.user1Id === user1Id
                           ? "bg-blue-500 text-white"
-                          : "bg-white border"
+                          : "bg-wcolor border-2 dark:border-darkBorder dark:bg-darkBackground"
                       }`}
                     >
                       <p className="break-words">
                         {msg.isDeleted ? (
-                          <i className="text-sm text-gray-400">Tin nhắn đã bị xóa</i>
+                          <i className="text-sm text-gray-400">{t("deletedMessage")}</i>
                         ) : (
                           msg.message
                         )}
@@ -286,7 +288,7 @@ const ChatRoom = () => {
                               onClick={() => deleteChat(parseInt(msg.id))}
                               className="block w-full text-left px-3 py-2 dark:bg-darkBackground text-sm text-red-600 hover:bg-gray-100"
                             >
-                              Xóa
+                            {t("delete")}
                             </button>
                           </div>
                         </div>
@@ -300,19 +302,19 @@ const ChatRoom = () => {
                     >
                       {msg.timeStamp
                         ? new Date(
-                            msg.timeStamp[0],
-                            msg.timeStamp[1] - 1,
-                            msg.timeStamp[2],
-                            msg.timeStamp[3],
-                            msg.timeStamp[4],
-                            msg.timeStamp[5]
-                          ).toLocaleString("vi-VN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
+                          msg.timeStamp[0],
+                          msg.timeStamp[1] - 1,
+                          msg.timeStamp[2],
+                          msg.timeStamp[3] + 7, // +7 hours manually
+                          msg.timeStamp[4],
+                          msg.timeStamp[5]
+                        ).toLocaleString("vi-VN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })
                         : "N/A"}
                     </div>
                   </div>
@@ -328,7 +330,7 @@ const ChatRoom = () => {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 className="flex-1 px-4 py-2 rounded-lg border-2 dark:border-darkBorder dark:bg-darkBackground border-gray-300 focus:outline-none"
-                placeholder="Nhập tin nhắn..."
+                placeholder={t("inputPlaceholder")}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -340,7 +342,7 @@ const ChatRoom = () => {
                 onClick={addChat}
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                Gửi
+              {t("send")}
               </button>
             </div>
           </>

@@ -1,0 +1,12 @@
+{
+    "title": "Deposit to System",
+    "description": "The system supports payment via VNPay and PayPal",
+    "labelAmount": "Amount to deposit (VND/USD):",
+    "placeholderAmount": "e.g. 50000",
+    "labelMethod": "Select payment method:",
+    "received": "You will receive:",
+    "rate1": "Exchange rate: 1,000 VND = 1 Coin",
+    "rate2": "1 USD = 25,000 VND = 25 Coins",
+    "processing": "Processing...",
+    "payWith": "Pay with"
+}
