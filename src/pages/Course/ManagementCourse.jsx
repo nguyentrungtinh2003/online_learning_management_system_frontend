@@ -345,24 +345,24 @@ export default function CourseManagement() {
           </div>
         </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="flex items-center justify-between">
           <p>
             Page {currentPage + 1} of {totalPages}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
+               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
-              <MdNavigateBefore />
+              <MdNavigateBefore fontSize={30}/>
             </button>
             <button
-              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
+               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >
-              <MdNavigateNext />
+              <MdNavigateNext fontSize={30}/>
             </button>
           </div>
         </div>

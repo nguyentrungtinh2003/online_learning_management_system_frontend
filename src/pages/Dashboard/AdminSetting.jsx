@@ -103,7 +103,7 @@ const AdminSettings = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 border-b pb-2">
+        <div className="flex w-full justify-center dark:border-darkBorder gap-4 border-b pb-2">
           {[
             { key: "general", icon: <FaCog />, label: "General" },
             {
@@ -132,9 +132,9 @@ const AdminSettings = () => {
         </div>
 
         {/* Content */}
-        <div className="mt-6 bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
+        <div className="mt-2 bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow-xl space-y-4">
           {activeTab === "general" && (
-            <div className="p-6 space-y-4 bg-white dark:bg-darkBackground rounded-xl shadow-lg">
+            <div className="p-6 space-y-4">
               <div className="flex items-center space-x-4">
                 <label className="w-1/4 font-medium">Website Name:</label>
                 <input
