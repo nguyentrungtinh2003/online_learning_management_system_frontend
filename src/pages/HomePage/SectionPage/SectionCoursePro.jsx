@@ -43,7 +43,7 @@ export default function SectionCoursePro() {
         className="w-full h-48 object-cover"
       />
       <div className="p-6 font-bold">
-        <h3 className="text-2xl w-full font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[3.5rem]">
+        <h3 className="text-2xl w-full font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 leading-tight h-[4.rem]">
           {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
         </h3>
         <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">

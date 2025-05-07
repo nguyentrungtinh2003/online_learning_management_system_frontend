@@ -6,6 +6,7 @@ import {
   MdSettingsSuggest,
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
+  MdMessage,
 } from "react-icons/md";
 import {
   FaBuffer,
@@ -16,9 +17,11 @@ import {
   FaVideo,
   FaWallet,
   FaClipboardList,
-  FaQuestion
+  FaQuestion,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+
+import { MdChatBubble, MdMessage } from "react-icons/md";
 
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
@@ -33,24 +36,31 @@ export default function Sidebar() {
   const adminItems = [
     {
       id: "Dashboard",
+
       label: "Dashboard",
+
       icon: <MdDashboardCustomize size={25} />,
       path: "/admin/",
     },
     {
       id: "Courses",
+
       label: "Courses",
+
       icon: <FaBuffer size={25} />,
       path: "/admin/courses",
     },
     {
       id: "Lessons",
+
       label: "Lessons",
+
       icon: <FaVideo size={25} />,
       path: "/admin/lessons",
     },
     {
       id: "Quizzes",
+
       label: "Quizzes",
       icon: <FaClipboardList size={25} />,
       path: "/admin/quizzes",
@@ -64,18 +74,22 @@ export default function Sidebar() {
     {
       id: "Users",
       label: "Users",
+
       icon: <FaUsers size={25} />,
       path: "/admin/users",
     },
     {
       id: "Blog",
+
       label: "Blog",
+
       icon: <MdForum size={25} />,
       path: "/admin/blog",
     },
     {
       id: "Settings",
       label: "Setting",
+
       icon: <MdSettingsSuggest size={25} />,
       path: "/admin/settings",
     },
@@ -87,7 +101,8 @@ export default function Sidebar() {
     { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/blog" },
     { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={25} />, path: "/ranking" },
     { id: "Profile", label: t("profile"), icon: <FaUser size={25} />, path: "/profile" },
-    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" }
+    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" },
+    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={25} />, path: "/chat" }
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");
@@ -152,17 +167,27 @@ export default function Sidebar() {
             <li
               key={item.id}
               className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative 
-                ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`
-              }
+                ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`}
               onClick={() => handleNavigate(item.id, item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
             >
-          
               {/* Apply 'fcolor' class to the icon */}
-              <span className={`${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.icon}</span>
+              <span
+                className={`${
+                  activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                }`}
+              >
+                {item.icon}
+              </span>
               {!isCollapsed && !isAnimating && (
-                 <span className={`duration-1000 ${activeItem === item.id ? "!text-wcolor" : "text-fcolor"}`}>{item.label}</span>
+                <span
+                  className={`duration-1000 ${
+                    activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                  }`}
+                >
+                  {item.label}
+                </span>
               )}
               {isCollapsed && (
                 <div

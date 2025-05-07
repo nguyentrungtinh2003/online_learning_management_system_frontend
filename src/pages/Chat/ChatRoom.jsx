@@ -4,6 +4,7 @@ import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
+import { Spinner } from "react-bootstrap";
 
 const ChatRoom = () => {
   const [messages, setMessages] = useState([]);
@@ -17,6 +18,8 @@ const ChatRoom = () => {
 
   const user1Id = parseInt(localStorage.getItem("id"));
   const user2Id = currentTeacher;
+
+  const [loadingChatRoom, setLoadingChatRoom] = useState(false);
 
   // Lấy danh sách giảng viên
   const getTeachers = () => {
@@ -32,12 +35,14 @@ const ChatRoom = () => {
 
   const getChatByChatRoomId = () => {
     console.log("Chat-room id " + chatRoomId);
+    setLoadingChatRoom(true);
     axios
       .get(`${URL}/chats/chat-room/${parseInt(chatRoomId)}`, {
         withCredentials: true,
       })
       .then((response) => {
         setMessages(response.data.data);
+        setLoadingChatRoom(false);
       })
       .catch((error) => {
         console.log("Error get chat by chat room!" + error.message);
@@ -91,6 +96,9 @@ const ChatRoom = () => {
 
   useEffect(() => {
     getTeachers();
+  }, []);
+
+  useEffect(() => {
     getChatByChatRoomId();
   }, []);
 
@@ -161,7 +169,14 @@ const ChatRoom = () => {
                 alt={teacher.username}
                 className="w-10 h-10 rounded-full mx-auto"
               />
-              <div className="text-center">{teacher.username}</div>
+              <div className="text-center">
+                {teacher.username}{" "}
+                {currentTeacher === teacher.id && loadingChatRoom ? (
+                  <Spinner animation="border" variant="white" />
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -171,6 +186,7 @@ const ChatRoom = () => {
       <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-gray-100 flex flex-col space-y-3">
         <h2 className="text-xl font-semibold mb-4 text-center">
           💬 Phòng Chat
+          {loadingChatRoom ? <Spinner animation="border" variant="blue" /> : ""}
         </h2>
 
         <div className="flex-1 overflow-y-auto">
