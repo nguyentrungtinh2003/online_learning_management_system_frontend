@@ -8,7 +8,7 @@ const Dashboard = () => {
       <div className="flex-1 flex flex-col h-full">
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-2">
           {[
             {
               title: "Total Revenue",

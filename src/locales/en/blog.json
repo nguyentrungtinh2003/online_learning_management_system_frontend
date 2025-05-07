@@ -1,0 +1,21 @@
+{
+    "createPost": "Create Post",
+    "placeholderTitle": "Enter your post title?",
+    "placeholderDescription": "{{username}}, what's on your mind?",
+    "cancel": "Cancel",
+    "publish": "Post",
+    "public": "Public",
+    "image": "Image ",
+    "video": " Video",
+    "writeComment": "Write a comment...",
+    "send": "Send",
+    "hiddenPost": "Post has been hidden",
+    "undo": "Undo",
+    "like": "Likes",
+    "comment": "Comments",
+    "report": "Report post",
+    "hide": "Hide post",
+    "share": "Share",
+    "emotion": "Feeling / Activity",
+    "moreComments": "View more comments"
+}

@@ -1,0 +1,21 @@
+{
+    "createPost": "Tạo bài viết",
+    "placeholderTitle": "Nhập tiêu đề bài viết ?",
+    "placeholderDescription": "{{username}} ơi, bạn đang nghĩ gì thế ?",
+    "cancel": "Hủy",
+    "publish": "Đăng",
+    "public": "Công khai",
+    "image": "Ảnh ",
+    "video": " Băng ghi hình",
+    "writeComment": "Viết bình luận...",
+    "send": "Gửi",
+    "hiddenPost":  "Bài viết đã được ẩn",
+    "undo": "Hoàn tác",
+    "like": "lượt thích",
+    "comment": "bình luận",
+    "report": "Báo cáo bài viết",
+    "hide": "Ẩn bài viết",
+    "share": "Chia sẻ",
+    "emotion": "Cảm xúc / Hoạt động",
+    "moreComments": "Xem thêm bình luận"
+}

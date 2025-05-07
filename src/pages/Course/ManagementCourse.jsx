@@ -228,7 +228,7 @@ export default function CourseManagement() {
         </form>
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
             <table className="w-full">
               <thead>
                 <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
@@ -345,24 +345,24 @@ export default function CourseManagement() {
           </div>
         </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="flex items-center justify-between">
           <p>
             Page {currentPage + 1} of {totalPages}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
+               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
-              <MdNavigateBefore />
+              <MdNavigateBefore fontSize={30}/>
             </button>
             <button
-              className="bg-scolor text-white px-4 py-2 rounded-md hover:bg-scolorDark"
+               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >
-              <MdNavigateNext />
+              <MdNavigateNext fontSize={30}/>
             </button>
           </div>
         </div>

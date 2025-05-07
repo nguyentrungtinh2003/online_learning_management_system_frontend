@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function UserRanking() {
+  const { t } = useTranslation("ranking");
   // Dữ liệu top
   const topDaily = [
     { rank: 1, name: "Van Tan", points: 520 },
@@ -63,7 +65,7 @@ export default function UserRanking() {
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl font-bold">Xếp Hạng Điểm</p>
+        <p className="text-2xl font-bold">{t("title")}</p>
         <div className="flex gap-2 font-semibold">
           <button
             className={`border-2 rounded-xl px-4 py-2 ${
@@ -71,7 +73,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("day")}
           >
-            Top Ngày
+           {t("topDay")}
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
@@ -79,7 +81,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("week")}
           >
-            Top Tuần
+           {t("topWeek")}
           </button>
           <button
             className={`border rounded-xl px-4 py-2 ${
@@ -87,7 +89,7 @@ export default function UserRanking() {
             }`}
             onClick={() => setSelectedTop("month")}
           >
-            Top Tháng
+           {t("topMonth")}
           </button>
         </div>
       </div>
@@ -177,10 +179,10 @@ export default function UserRanking() {
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
                 <tr>
-                  <th className="text-left p-2">Hạng</th>
-                  <th className="text-left p-2">Ảnh</th>
-                  <th className="text-left p-2">Tên</th>
-                  <th className="text-left p-2">Điểm</th>
+                  <th className="text-left p-2">{t("columnRank")}</th>
+                  <th className="text-left p-2">{t("columnAvatar")}</th>
+                  <th className="text-left p-2">{t("columnName")}</th>
+                  <th className="text-left p-2">{t("columnPoints")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -223,7 +225,7 @@ export default function UserRanking() {
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
-                Bản thân
+              {t("you")}
               </span>
             </div>
           </div>

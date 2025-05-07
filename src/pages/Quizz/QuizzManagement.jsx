@@ -326,20 +326,20 @@ const QuizzManagement = () => {
           </div>
         </div>
 
-        <div className="flex justify-between mt-4">
+        <div className="flex justify-between items-center">
           <p>
             Page {currentPage + 1} of {totalPages}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+              className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >

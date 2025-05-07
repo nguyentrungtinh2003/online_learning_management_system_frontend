@@ -4,6 +4,7 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -24,6 +25,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   const userId = localStorage.getItem("id");
+  const { t } = useTranslation("profile");
 
   const fetchUserInfo = () => {
     axios.get(`${URL}/user/${userId}`).then((response) => {
@@ -90,8 +92,8 @@ const Profile = () => {
       {/* Navigation Tabs */}
       <div className="mt-10 flex justify-center">
         {[
-          { label: "Introduce", key: "introduce" },
-          { label: "Rank", key: "rank" },
+          { label: t("introduce"), key: "introduce" },
+          { label: t("rank"), key: "rank" },
         ].map((item) => (
           <button
             key={item.key}
@@ -113,114 +115,67 @@ const Profile = () => {
           <div className="text-slate-500">
             <div className="grid grid-cols-2 dark:text-darkText gap-8 p-6 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-2xl shadow rounded-lg">
               <div>
-                <label>Username</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.username}
-                  variant="outlined"
+                <label>{t("username")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.username} variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
-                <label className="mt-2">Email</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.email}
-                  variant="outlined"
+                <label className="mt-2">{t("email")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.email} variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
-                <label className="mt-2">Phone Number</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.phoneNumber}
-                  variant="outlined"
+                <label className="mt-2">{t("phoneNumber")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.phoneNumber} variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
               </div>
               <div>
-                <label>Birth Day</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.birthDay}
-                  variant="outlined"
-                  type="date"
+                <label>{t("birthDay")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.birthDay} type="date" variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
-                <label className="mt-2">Address</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.address}
-                  variant="outlined"
+                <label className="mt-2">{t("address")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.address} variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
-                <label className="mt-2">Role</label>
-                <TextField
-                  className="mt-2 w-full dark:text-gray-400"
-                  required
-                  value={user.roleEnum}
-                  variant="outlined"
+                <label className="mt-2">{t("role")}</label>
+                <TextField className="mt-2 w-full dark:text-gray-400" required value={user.roleEnum} variant="outlined"
                   InputProps={{
                     sx: {
-                      '& fieldset': {
-                        borderColor: 'rgb(75 85 99)', // Tailwind gray-600
-                      },
-                      '& input': {
-                        color: 'rgb(107 114 128)', // Tailwind gray-400
-                      },
+                      '& fieldset': { borderColor: 'rgb(75 85 99)' },
+                      '& input': { color: 'rgb(107 114 128)' },
                     },
                   }}
                 />
               </div>
               <div className="col-span-2 flex text-black justify-end">
-                <button className="border-2 border-sicolor dark:bg-darkText dark:hover:text-darkText dark:hover:bg-darkSubbackground hover:bg-sicolor hover:text-darkText rounded font-semibold py-2 px-4">Save Change</button>
+                <button className="border-2 border-sicolor dark:bg-darkText dark:hover:text-darkText dark:hover:bg-darkSubbackground hover:bg-sicolor hover:text-darkText rounded font-semibold py-2 px-4">
+                  {t("saveChange")}
+                </button>
               </div>
             </div>
           </div>
@@ -231,7 +186,7 @@ const Profile = () => {
             <RankLevel />
             <div className="flex-1 p-4 bg-gray-50 dark:bg-darkSubbackground rounded-lg shadow-inner">
               <p className="text-2xl font-semibold text-gray-700 dark:text-darkText mb-6">
-                Activity Log
+                {t("activityLog")}
               </p>
               <ul className="space-y-4">
                 {[...Array(5)].map((_, index) => (
@@ -240,7 +195,7 @@ const Profile = () => {
                     className="w-full flex items-center border-l-8 border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
                   >
                     <span className="text-gray-600 dark:text-darkSubtext font-medium">
-                      Watched Video +8 points
+                      {t("activityItem")}
                     </span>
                   </li>
                 ))}

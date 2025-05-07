@@ -296,24 +296,26 @@ export default function ManagementLesson() {
           </div>
         </div>
         {/* Pagination gắn liền bên dưới */}
-        <div className="mt-4 flex justify-center gap-4">
+        <div className="flex dark:text-darkText items-center justify-between">
+          <p>
+            Page {currentPage + 1} of {totalPages}
+          </p>
+          <div className="space-x-2">
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 0}
-            className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+            className="bg-scolor p-1 rounded disabled:opacity-50"
           >
-            <MdNavigateBefore />
+            <MdNavigateNext size={30} />
           </button>
-          <span className="self-center">{`Page ${
-            currentPage + 1
-          } of ${totalPages}`}</span>
           <button
             onClick={handleNextPage}
             disabled={currentPage >= totalPages - 1}
-            className="bg-gray-300 px-4 py-2 rounded disabled:opacity-50"
+            className="bg-scolor p-1 rounded disabled:opacity-50"
           >
-            <MdNavigateNext />
+            <MdNavigateNext size={30} />
           </button>
+          </div>
         </div>
       </div>
     </div>
