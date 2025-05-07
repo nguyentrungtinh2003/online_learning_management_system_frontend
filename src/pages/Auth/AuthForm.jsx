@@ -92,13 +92,13 @@ export default function AuthForm() {
 
         toast.success("Đăng nhập thành công!", {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 500,
           transition: Slide,
         });
 
         setTimeout(() => {
           window.location.replace("/");
-        }, 3000);
+        }, 1000);
       })
       .catch((error) => {
         setLoginLoading(false);
@@ -108,7 +108,7 @@ export default function AuthForm() {
         );
         toast.error("Đăng nhập thất bại!", {
           position: "top-right",
-          autoClose: 3000,
+          autoClose: 500,
           transition: Slide,
         });
       });
@@ -375,7 +375,7 @@ export default function AuthForm() {
               value={fromLogin.username}
               onChange={handleInputChangeLogin}
             />
-           <div className="relative">
+            <div className="relative">
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showPassword ? "text" : "password"}

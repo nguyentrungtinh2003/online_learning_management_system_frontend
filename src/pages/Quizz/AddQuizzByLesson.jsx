@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/AdminNavbar";
+import AdminNavbar from "../../components/Navbar/Navbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 

@@ -153,3 +153,50 @@ export const restoreQuiz = async (id) => {
     throw error;
   }
 };
+
+// 8. GET ALL Quizzes By Lesson Id
+export const getAllQuizzesByLessonId = async (lessonId) => {
+  try {
+    const response = await axios.get(
+      `${URL}/teacher/quizzes/lessons/${lessonId}/all`,
+      {
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching quizzes by lessonId:", error);
+    return null;
+  }
+};
+
+// 9. Submit Quiz & Calculate Points
+export const submitQuiz = async (id, userId, answersUser) => {
+  try {
+    // Cấu hình dữ liệu cần gửi
+    const data = {
+      quizId: quizId, // ID của quiz
+      userId: userId, // ID của người dùng
+      answersUser: answersUser, // Mảng câu trả lời người dùng đã chọn
+    };
+
+    // Gọi API để nộp quiz và nhận điểm
+    const response = await axios.post(
+      `${URL}/quizzes/submit/${id}/${userId}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // Gửi cookie nếu cần
+      }
+    );
+
+    // Trả về kết quả thành công từ server
+    return response.data;
+  } catch (error) {
+    // Xử lý lỗi nếu có
+    console.error("Error submitting quiz:", error);
+    throw error;
+  }
+};

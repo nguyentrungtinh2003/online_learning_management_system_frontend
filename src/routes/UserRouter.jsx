@@ -22,6 +22,7 @@ import Profile from "../pages/User/Profile";
 import UserRanking from "../pages/Ranking/UserRanking";
 import UserLayout from "../components/Layout/UserLayout";
 import ChatRoom from "../pages/Chat/ChatRoom";
+import UserQuizz from "../pages/Quizz/UserQuizz";
 
 const UserRouter = () => {
   return (
@@ -50,6 +51,7 @@ const UserRouter = () => {
         <Route path="user-course" element={<UserCourse />} />
         <Route path="view-course/:id" element={<UserViewCourse />} />
         <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
+        <Route path="view-quiz/:quizId" element={<UserQuizz />} />
         <Route path="blog" element={<UserViewBlog />} />
         <Route path="quiz" element={<QuizzManagement />} />
         <Route path="lesson" element={<ManagementLesson />} />

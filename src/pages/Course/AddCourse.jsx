@@ -3,43 +3,47 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-import FormData from 'form-data';
+import FormData from "form-data";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 
 import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"
+import "react-quill/dist/quill.snow.css";
+import { addCourse } from "../../services/courseapi";
 
 const AddCourse = () => {
   const navigate = useNavigate();
 
-  const [courseData, setCourseData] = useState({
+  const [courseData, setCourse] = useState({
     courseName: "",
     description: "",
-    img:"",
+    img: "",
     price: "",
     courseEnum: "FREE",
-    isDeleted:false,
+    isDeleted: false,
     userId: localStorage.getItem("id"),
   });
 
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourseData({ ...courseData, [name]: value });
+    setCourse({ ...courseData, [name]: value });
 
     if (name === "price") {
       const parsedPrice = parseFloat(value);
-      setCourseData((prev) => ({
+      setCourse((prev) => ({
         ...prev,
         price: value,
         courseEnum: parsedPrice === 0 ? "FREE" : "PAID",
       }));
     } else {
-      setCourseData((prev) => ({
+      setCourse((prev) => ({
         ...prev,
         [name]: value,
       }));
@@ -49,7 +53,7 @@ const AddCourse = () => {
   const handleEnumChange = (e) => {
     const selectedType = e.target.value;
 
-    setCourseData((prev) => {
+    setCourse((prev) => {
       let newPrice = prev.price;
 
       if (selectedType === "FREE") {
@@ -67,24 +71,55 @@ const AddCourse = () => {
   };
 
   const handleDescriptionChange = (value) => {
-    setCourseData((prev) => ({
+    setCourse((prev) => ({
       ...prev,
       description: value,
     }));
   };
-  
-  const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Lấy file ảnh đầu tiên người dùng chọn
+    if (file) {
+      setImg(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Sau khi đọc xong file, chúng ta gán kết quả vào state để hiển thị
+        setImgPreview(reader.result);
+      };
+
+      // Đọc file ảnh dưới dạng URL data
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", { autoClose: 1000 });
+
+    // Kiểm tra nếu đang loading hoặc đã submit rồi
+    if (loading || isSubmitted) return;
+
+    // Validate that all fields are filled
+    if (
+      !courseData.courseName ||
+      !courseData.description ||
+      !courseData.price ||
+      !courseData.courseEnum.trim() ||
+      !img
+    ) {
+      toast.error("❌ Vui lòng điền đầy đủ thông tin trước khi gửi.", {
+        autoClose: 1000,
+      });
       return;
     }
-  
+
+    if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
+      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", {
+        autoClose: 1000,
+      });
+      return;
+    }
+
     setLoading(true);
 
     const formData = new FormData();
@@ -92,31 +127,28 @@ const AddCourse = () => {
     if (img) {
       formData.append("img", img);
     }
-  
+
     // Thêm thông tin course dưới dạng JSON Blob
-    const courseJson = new Blob([JSON.stringify(courseData)], { type: "application/json" });
-    formData.append("course", courseJson);   
-    
+    const courseJson = new Blob([JSON.stringify(courseData)], {
+      type: "application/json",
+    });
+    formData.append("course", courseJson);
+
     console.log("courseData JSON:", JSON.stringify(courseData, null, 2));
     try {
-      const res = await axios.post(`${URL}/teacher/courses/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
-  
+      const result = await addCourse(courseData, img);
       toast.success("🎉 Thêm khóa học thành công!", { autoClose: 1000 });
+      setIsSubmitted(true);
       setTimeout(() => navigate(-1), 2000);
     } catch (error) {
       console.error("Submit Error:", error);
-      const message = error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
+      const message =
+        error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
       toast.error(`❌ ${message}`, { autoClose: 2000 });
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="h-full flex flex-col w-full">
@@ -134,9 +166,7 @@ const AddCourse = () => {
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">
-            Course Title:
-          </label>
+          <label className="w-1/4 font-medium">Course Title:</label>
           <input
             type="text"
             name="courseName"
@@ -170,17 +200,29 @@ const AddCourse = () => {
           />
         </div>
 
+        {/* Image Preview */}
+        {imgPreview && (
+          <div className="mt-4 text-center">
+            {" "}
+            {/* Thêm text-center để căn giữa */}
+            <h3 className="font-medium">Image Preview:</h3>
+            <img
+              src={imgPreview}
+              alt="Preview"
+              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+            />
+          </div>
+        )}
+
         {/* Description */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">
-            Description:
-          </label>
+          <label className="w-1/4 font-medium">Description:</label>
           <ReactQuill
             theme="snow"
             value={courseData.description}
             onChange={handleDescriptionChange}
             className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
-            style={{ minHeight: '300px' }}
+            style={{ minHeight: "300px" }}
           />
         </div>
 
@@ -208,14 +250,14 @@ const AddCourse = () => {
           </Link>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || isSubmitted}
             className={`px-6 py-2 rounded-lg ${
-              loading
+              loading || isSubmitted
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-scolor text-wcolor hover:bg-opacity-80"
             }`}
           >
-            {loading ? "Processing..." : "Submit"}
+            {loading ? "Processing..." : isSubmitted ? "Submitted" : "Submit"}
           </button>
         </div>
       </form>
