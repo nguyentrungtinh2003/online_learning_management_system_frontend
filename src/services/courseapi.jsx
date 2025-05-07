@@ -1,6 +1,9 @@
 import axios from "axios";
 import URL from "../config/URLconfig";
 
+// Sơ đồ API
+
+// 1.Get Course All
 export const getCourses = async () => {
   try {
     const response = await axios.get(`${URL}/courses/all`, {
@@ -16,7 +19,7 @@ export const getCourses = async () => {
   }
 };
 
-// 🟢 Lấy khóa học theo ID
+// 2.Get Course By Id
 export const getCourseById = async (courseId) => {
   try {
     const response = await axios.get(`${URL}/courses/${courseId}`, {
@@ -28,7 +31,8 @@ export const getCourseById = async (courseId) => {
     return null;
   }
 };
-// buy course
+
+// 3.Buy course
 export const buyCourse = async (courseId) => {
   try {
     const response = await axios.post(
@@ -51,14 +55,21 @@ export const buyCourse = async (courseId) => {
   }
 };
 
-// 🟡 Cập nhật khóa học
+// 4. Update Course
 export const updateCourse = async (id, courseData, file) => {
   try {
     // Tạo formData vì API yêu cầu "multipart/form-data"
     const formData = new FormData();
 
-    // Chuyển đổi courseData thành chuỗi JSON để gửi đi
-    formData.append("course", JSON.stringify(courseData));
+    // Xóa id khỏi dữ liệu (nếu có trong courseData)
+    const { id: courseId, ...newCourseData } = courseData;
+
+    // Thêm course dưới dạng JSON Blob để giữ đúng định dạng
+    const courseJson = new Blob([JSON.stringify(newCourseData)], {
+      type: "application/json",
+    });
+
+    formData.append("course", courseJson);
 
     // Nếu có ảnh mới, thêm vào FormData
     if (file) {
@@ -73,38 +84,20 @@ export const updateCourse = async (id, courseData, file) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      },
-      {
         withCredentials: true,
       }
     );
 
-    console.log("Cập nhật thành công:", response.data);
+    console.log("Course updated successfully:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Lỗi khi cập nhật khóa học:", error);
+    console.error("Error updating course:", error);
+    if (error.response) {
+      console.error("Response Data:", error.response.data);
+    }
     throw error;
   }
 };
-
-// export const addCourse =  async (courseData, imgFile) => {
-//     try {
-//         const formData = new FormData();
-//         formData.append("course", new Blob([JSON.stringify(courseData)],{ type: "application/json" }));
-//         if(imgFile) {
-//             formData.append("img",imgFile);
-//         }
-
-//         const response = await axios.post(`${API_BASE_URL}/courses/add`,formData,{
-//             headers: {"Content-Type":"multipart/form-data"},
-//         });
-//         return response.data;
-//     }
-//     catch(error){
-//         console.error("Error adding course:",error);
-//         throw error;
-//     }
-// };
 
 export const addCourse = async (courseData, imageFile) => {
   try {
@@ -113,22 +106,21 @@ export const addCourse = async (courseData, imageFile) => {
     // Xóa id nếu nó có trong dữ liệu để tránh lỗi
     const { id, ...newCourseData } = courseData;
 
-    formData.append("course", JSON.stringify(newCourseData));
+    // Thêm course dưới dạng JSON Blob để giữ đúng định dạng
+    const courseJson = new Blob([JSON.stringify(newCourseData)], {
+      type: "application/json",
+    });
+
+    formData.append("course", courseJson);
 
     if (imageFile) {
       formData.append("img", imageFile);
     }
 
-    const response = await axios.post(
-      `${URL}/teacher/courses/add`,
-      formData,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      },
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(`${URL}/teacher/courses/add`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      withCredentials: true,
+    });
 
     console.log("Course added successfully:", response.data);
     return response.data;
@@ -210,7 +202,6 @@ export const userEnroll = async (id) => {
     }
   }
 };
-
 
 // API Restore
 export const restoreCourse = async (id) => {

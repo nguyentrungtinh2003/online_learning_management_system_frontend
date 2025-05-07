@@ -2,11 +2,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
-import {
-  MdNavigateNext,
-  MdDeleteForever,
-  MdNavigateBefore,
-} from "react-icons/md";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link } from "react-router-dom";
 import {
   getCoursesByPage,
@@ -15,7 +11,7 @@ import {
   searchCourses,
 } from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
-import { FaLockOpen, FaLock } from "react-icons/fa";
+import { FaLockOpen, FaLock, FaTimes, FaCoins } from "react-icons/fa";
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([]);
@@ -31,7 +27,7 @@ export default function CourseManagement() {
   useEffect(() => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, filterType, statusFilter, search]);
+  }, []);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -65,9 +61,17 @@ export default function CourseManagement() {
 
       // Filter by status (Deleted/Not Deleted)
       if (statusFilter === "Deleted") {
-        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
-      } else if (statusFilter === "Active") {
         fetchedCourses = fetchedCourses.filter((course) => course.deleted);
+      } else if (statusFilter === "Active") {
+        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
+      }
+
+      // 🔔 Hiện thông báo nếu không tìm thấy kết quả
+      if (fetchedCourses.length === 0 && search.trim() !== "") {
+        toast.info("No courses found for your search.", {
+          position: "top-right",
+          autoClose: 1500,
+        });
       }
 
       // Pagination
@@ -168,13 +172,27 @@ export default function CourseManagement() {
         </div>
 
         <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
-          <input
-            type="text"
-            placeholder="Search courses..."
-            className="py-2 px-3 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
-            value={search}
-            onChange={handleSearchInput}
-          />
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder="Search courses..."
+              className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={search}
+              onChange={handleSearchInput}
+            />
+            {search && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                onClick={() => {
+                  setSearch("");
+                }}
+              >
+                <FaTimes size={18} />
+              </button>
+            )}
+          </div>
+
           <select
             value={filterType}
             onChange={(e) => {
@@ -187,11 +205,12 @@ export default function CourseManagement() {
             <option value="Free">Free</option>
             <option value="Paid">Paid</option>
           </select>
+
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
-              setCurrentPage(0); // Reset page when status filter changes
+              setCurrentPage(0);
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
@@ -199,6 +218,7 @@ export default function CourseManagement() {
             <option value="Deleted">Deleted</option>
             <option value="Active">Active</option>
           </select>
+
           <button
             type="submit"
             className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
@@ -238,9 +258,12 @@ export default function CourseManagement() {
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
                       <td className="p-2">{course.courseName || "N/A"}</td>
-                      <td className="p-2">
-                        {course.description || "No description"}
-                      </td>
+                      <td
+                        className="p-2"
+                        dangerouslySetInnerHTML={{
+                          __html: course.description || "No description",
+                        }}
+                      />
                       <td className="p-2">
                         {course.img ? (
                           <img
@@ -253,9 +276,14 @@ export default function CourseManagement() {
                         )}
                       </td>
                       <td className="p-2">
-                        {course.price === 0 || course.price === null
-                          ? "Free"
-                          : `${course.price} Coin`}
+                        {course.price === 0 || course.price === null ? (
+                          "Free"
+                        ) : (
+                          <>
+                            {course.price}{" "}
+                            <FaCoins className="inline text-yellow-500" />
+                          </>
+                        )}
                       </td>
                       <td className="p-2">
                         {course.date
@@ -274,7 +302,7 @@ export default function CourseManagement() {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {course.deleted ? "Unlock" : "Lock"}
+                        {course.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link

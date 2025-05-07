@@ -19,7 +19,7 @@ import UpdateCourse from "../pages/Course/EditCourse";
 import AddLesson from "../pages/Lesson/AddLessonByCourse";
 import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagementByLesson from "../pages/Quizz/QuizzManagementByLesson";
-import UpdateQuizz  from "../pages/Quizz/UpdateQuizz";
+import UpdateQuizz from "../pages/Quizz/UpdateQuizz";
 import QuestionManagementByQuiz from "../pages/Question/QuestionManagementByQuiz";
 import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
@@ -27,10 +27,11 @@ import AdminLayout from "../components/Layout/AdminLayout";
 import ManagementLesson from "../pages/Lesson/ManagementLesson";
 import AddLessonByCourse from "../pages/Lesson/AddLesson";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
-import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse"
+import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse";
 import AddQuizz from "../pages/Quizz/AddQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
-import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz"
+import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz";
+import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
 
 const AdminRoutes = () => {
   return (
@@ -39,7 +40,7 @@ const AdminRoutes = () => {
         path="/"
         element={
           <ProtectedRouter requiredRole="ADMIN">
-            <AdminLayout/>
+            <AdminLayout />
           </ProtectedRouter>
         }
       >
@@ -63,15 +64,36 @@ const AdminRoutes = () => {
         <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
-        <Route path="courses/:courseId/lessons" element={<ManagementlessonByCourse />} />
+        <Route
+          path="courses/:courseId/lessons"
+          element={<ManagementlessonByCourse />}
+        />
         <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
-        <Route path="courses/:courseId/lessons/edit/:lessonId" element={<EditLesson />} />
-        <Route path="lessons/:lessonId/quizzes" element={<QuizzManagementByLesson />} />
-        <Route path="lessons/:lessonId/quizzes/add" element={<AddQuizz />} />
-        <Route path="lessons/:lessonId/quizzes/edit/:quizId" element={<UpdateQuizz />} />
+        <Route
+          path="courses/:courseId/lessons/edit/:lessonId"
+          element={<EditLesson />}
+        />
+        <Route
+          path="lessons/:lessonId/quizzes"
+          element={<QuizzManagementByLesson />}
+        />
+        <Route
+          path="lessons/:lessonId/quizzes/add"
+          element={<AddQuizzByLesson />}
+        />
+        <Route
+          path="lessons/:lessonId/quizzes/edit/:quizId"
+          element={<UpdateQuizz />}
+        />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />
-        <Route path="quizzes/:quizId/questions" element={<QuestionManagementByQuiz />} />
-        <Route path="quizzes/:quizId/questions/add" element={<AddQuestionByQuiz />} />
+        <Route
+          path="quizzes/:quizId/questions"
+          element={<QuestionManagementByQuiz />}
+        />
+        <Route
+          path="quizzes/:quizId/questions/add"
+          element={<AddQuestionByQuiz />}
+        />
       </Route>
     </Routes>
   );

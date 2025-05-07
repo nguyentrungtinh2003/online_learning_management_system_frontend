@@ -68,10 +68,10 @@ const QuizzManagement = () => {
       }
 
       // Filter by status (Deleted/Not Deleted)
-      if (statusFilter === "Lock") {
-        fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
-      } else if (statusFilter === "Unlock") {
+      if (statusFilter === "Deleted") {
         fetchedQuizzes = fetchedQuizzes.filter((quiz) => quiz.deleted);
+      } else if (statusFilter === "Active") {
+        fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
       }
 
       // Phân trang
@@ -209,8 +209,8 @@ const QuizzManagement = () => {
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">All</option>
-            <option value="Lock">Lock</option>
-            <option value="Unlock">Unlock</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Active">Active</option>
           </select>
           <button
             type="submit"

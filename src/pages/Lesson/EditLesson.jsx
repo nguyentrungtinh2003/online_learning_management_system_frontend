@@ -18,7 +18,7 @@ const EditLesson = () => {
     courseId: courseId, // ID của khóa học
     isDeleted: false,
     img: "",
-    videoURL: ""
+    videoURL: "",
   });
 
   const [file, setFile] = useState(null);
@@ -58,9 +58,12 @@ const EditLesson = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const formData = new FormData();
-    formData.append("lesson", new Blob([JSON.stringify(lessons)], { type: "application/json" }));
+    formData.append(
+      "lesson",
+      new Blob([JSON.stringify(lessons)], { type: "application/json" })
+    );
     if (file) formData.append("img", file);
     if (video) formData.append("video", video);
 
@@ -80,9 +83,12 @@ const EditLesson = () => {
 
       setTimeout(() => {
         navigate(-1);
-      }, 2000);
+      }, 1500);
     } catch (err) {
-      console.error("Lỗi khi cập nhật bài học:", err.response?.data || err.message);
+      console.error(
+        "Lỗi khi cập nhật bài học:",
+        err.response?.data || err.message
+      );
       toast.error("Không thể cập nhật bài học!", {
         position: "top-right",
         autoClose: 1000,
@@ -104,19 +110,34 @@ const EditLesson = () => {
       <Form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
         <Form.Group className="mb-3" controlId="formLessonName">
           <Form.Label>Lesson Name</Form.Label>
-          <Form.Control type="text" name="lessonName" value={lessons.lessonName} onChange={handleChange} />
+          <Form.Control
+            type="text"
+            name="lessonName"
+            value={lessons.lessonName}
+            onChange={handleChange}
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formDescription">
           <Form.Label>Description</Form.Label>
-          <Form.Control as="textarea" rows={3} name="description" value={lessons.description} onChange={handleChange} />
+          <Form.Control
+            as="textarea"
+            rows={3}
+            name="description"
+            value={lessons.description}
+            onChange={handleChange}
+          />
         </Form.Group>
 
         {/* Hiển thị ảnh cũ nếu có */}
         <Form.Group className="mb-3" controlId="formImage">
           <Form.Label>Lesson Image</Form.Label>
           {lessons.img && (
-            <img src={lessons.img} alt="Lesson" className="w-40 h-40 object-cover rounded-md mb-2" />
+            <img
+              src={lessons.img}
+              alt="Lesson"
+              className="w-40 h-40 object-cover rounded-md mb-2"
+            />
           )}
           <Form.Control type="file" onChange={handleImageChange} />
         </Form.Group>
@@ -142,7 +163,11 @@ const EditLesson = () => {
           </Link>
           <button
             type="submit"
-            className={`px-6 py-2 rounded-lg ${loading ? "bg-gray-400" : "bg-scolor text-ficolor hover:bg-opacity-80"}`}
+            className={`px-6 py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400"
+                : "bg-scolor text-ficolor hover:bg-opacity-80"
+            }`}
             disabled={loading}
           >
             {loading ? "Processing..." : "Submit"}

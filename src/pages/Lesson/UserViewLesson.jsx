@@ -11,6 +11,8 @@ import { Client } from "@stomp/stompjs";
 import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import { getAllQuizzesByLessonId } from "../../services/quizapi";
+import { Link } from "react-router-dom";
 
 export default function UserViewLesson() {
   const navigate = useNavigate();
@@ -27,12 +29,32 @@ export default function UserViewLesson() {
   const [stompClient, setStompClient] = useState(null);
   const mainLayoutRef = useRef(null);
   const [mainRect, setMainRect] = useState(null);
+  const [quizzes, setQuizzes] = useState([]);
+  const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
 
   const userId = parseInt(localStorage.getItem("id"));
 
   const modules = {
     toolbar: [["bold", "italic", "underline"], [{ align: [] }]],
   };
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      if (currentLessonIndex !== null) {
+        const lessonId = lessons[currentLessonIndex].id;
+        const result = await getAllQuizzesByLessonId(lessonId);
+        if (result?.statusCode === 200) {
+          setQuizzes(result.data);
+          setHasQuiz(result.data.length > 0); // Kiểm tra nếu có quiz
+        } else {
+          setQuizzes([]);
+          setHasQuiz(false); // Không có quiz
+        }
+      }
+    };
+
+    fetchQuizzes();
+  }, [currentLessonIndex, lessons]); // Đảm bảo rằng quiz được load lại khi index bài học thay đổi
 
   useEffect(() => {
     if (mainLayoutRef.current) {
@@ -338,16 +360,47 @@ export default function UserViewLesson() {
             <div>
               <ul className="flex flex-col gap-2">
                 {lessons.map((lesson, index) => (
-                  <li
-                    key={lesson.id}
-                    onClick={() => setCurrentLessonIndex(index)}
-                    className={`cursor-pointer py-2 px-3 rounded-xl ${
-                      currentLessonIndex === index
-                        ? "bg-scolor text-white"
-                        : "hover:bg-gray-100 dark:hover:bg-darkBorder"
-                    }`}
-                  >
-                    {lesson.lessonName}
+                  <li key={lesson.id}>
+                    <div
+                      onClick={() => setCurrentLessonIndex(index)}
+                      className={`cursor-pointer py-2 px-3 rounded-xl ${
+                        currentLessonIndex === index
+                          ? "bg-scolor text-white shadow-lg"
+                          : "hover:bg-gray-100 dark:hover:bg-darkBorder"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{lesson.lessonName}</span>
+
+                        {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
+                        {lesson.quizzes && lesson.quizzes.length > 0 && (
+                          <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                            Quiz
+                          </span>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
+                    {currentLessonIndex === index &&
+                      lesson.quizzes &&
+                      lesson.quizzes.length > 0 && (
+                        <ul className="ml-6 mt-2 flex flex-col gap-1">
+                          {lesson.quizzes.map((quiz, qIndex) => (
+                            <Link
+                              to={`/view-quiz/${quiz.id}`}
+                              className="hover:text-blue-500"
+                            >
+                              <li
+                                key={quiz.id || qIndex}
+                                className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
+                              >
+                                📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                              </li>
+                            </Link>
+                          ))}
+                        </ul>
+                      )}
                   </li>
                 ))}
               </ul>

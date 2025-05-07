@@ -49,9 +49,9 @@ export default function ManagementLesson() {
         );
       }
 
-      if (statusFilter === "Lock") {
+      if (statusFilter === "Deleted") {
         fetchedLessons = fetchedLessons.filter((lesson) => lesson.deleted); // khóa
-      } else if (statusFilter === "Unlock") {
+      } else if (statusFilter === "Active") {
         fetchedLessons = fetchedLessons.filter((lesson) => !lesson.deleted); // chưa khóa
       }
 
@@ -167,8 +167,8 @@ export default function ManagementLesson() {
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">All</option>
-            <option value="Lock">Lock</option>
-            <option value="Unlock">Unlock</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Active">Active</option>
           </select>
           <button
             type="submit"
@@ -252,7 +252,7 @@ export default function ManagementLesson() {
                           )}
                         </td>
                         <td className="p-2">
-                          {lesson.deleted ? "Lock" : "Unlock"}
+                          {lesson.deleted ? "Deleted" : "Active"}
                         </td>
                         <td className="p-2 flex justify-center gap-1">
                           <Link
