@@ -27,6 +27,9 @@ import viPayment from "./locales/vi/payment.json";
 import enChatroom from "./locales/en/chatroom.json";
 import viChatroom from "./locales/vi/chatroom.json";
 
+import enDashboard from "./locales/en/dashboard.json";
+import viDashboard from "./locales/vi/dashboard.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -34,7 +37,8 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "vi"],
     debug: true,
-    ns: ["settings", "navbar", "sidebar", "blog", "ranking", "profile", "payment","chatroom",],// thêm 'ranking'
+    ns: ["settings", "navbar", "sidebar", "blog", "ranking",
+       "profile", "payment","chatroom","dashboard",],// thêm 'ranking'
     defaultNS: "settings",
     resources: {
       en: {
@@ -46,6 +50,7 @@ i18n
         profile: enProfile,
         payment: enPayment,
         chatroom: enChatroom,
+        dashboard: enDashboard,
       },
       vi: {
         settings: viSettings,
@@ -56,6 +61,7 @@ i18n
         profile: viProfile,
         payment: viPayment,
         chatroom: viChatroom,
+        dashboard: viDashboard,
       },
     },
     interpolation: {
