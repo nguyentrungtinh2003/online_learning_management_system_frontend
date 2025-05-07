@@ -19,8 +19,12 @@ import { Link } from "react-router-dom";
 import URLSocket from "../../config/URLsocket";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
+import { useTranslation } from "react-i18next";
+
 
 export default function Blog() {
+  const { t } = useTranslation("blog"); // assuming the namespace is "blog"
+
   const [data, setData] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -337,7 +341,7 @@ export default function Blog() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder dark:text-darkText p-4 rounded-xl w-[40%] shadow-lg">
             <h2 className="text-lg border-b dark:border-darkBorder font-semibold w-full text-center pb-2">
-              Tạo bài viết
+            {t("createPost")}
             </h2>
             <div className="flex items-center gap-2 py-2">
               <img
@@ -354,7 +358,7 @@ export default function Blog() {
                   {localStorage.getItem("username")}
                 </p>
                 <div className="flex items-center gap-1 text-sm dark:text-darkText text-gray-500">
-                  <PiGlobeThin /> <span>Công khai</span>
+                  <PiGlobeThin /> <span>{t("public")}</span>
                 </div>
               </div>
             </div>
@@ -364,17 +368,16 @@ export default function Blog() {
                 className="w-full border-none focus:outline-none bg-transparent"
                 name="blogName"
                 type="text"
-                placeholder="Nhập tiêu đề bài viết ?"
+                placeholder={t("placeholderTitle")}
                 value={newPostContent.blogName}
                 onChange={handleChange}
               ></input>
               <textarea
-                type="text"
                 name="description"
                 className="w-full border-none focus:outline-none bg-transparent"
-                placeholder={`${localStorage.getItem(
-                  "username"
-                )} ơi, bạn đang nghĩ gì thế ?`}
+                placeholder={t("placeholderDescription", {
+                  username: localStorage.getItem("username"),
+                })}
                 value={newPostContent.description}
                 onChange={handleChange}
               />
@@ -382,7 +385,7 @@ export default function Blog() {
             <div className="w-full border-1 dark:border-darkBorder p-4 rounded-lg flex items-center mt-2">
               <div className="flex flex-col items-center w-fit">
                 <PiImageDuotone size={25} />
-                <lable>Img</lable>
+                <lable>{t("image")}</lable>
                 <input
                   name="img"
                   type="file"
@@ -403,7 +406,7 @@ export default function Blog() {
                 className="px-4 py-2 bg-gray-300 dark:bg-darkSubbackground rounded-lg"
                 onClick={() => setIsCreatingPost(false)}
               >
-                Hủy
+               {t("cancel")}
               </button>
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -412,7 +415,7 @@ export default function Blog() {
                 {loading ? (
                   <Spinner animation="border" variant="blue" />
                 ) : (
-                  "Đăng"
+                  <p>{t("publish")}</p>
                 )}
               </button>
             </div>
@@ -432,9 +435,9 @@ export default function Blog() {
           />
           <input
             className="focus:outline-none placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
-            placeholder={`${localStorage.getItem(
-              "username"
-            )} đang nghĩ gì thế ?`}
+            placeholder={t("placeholderDescription", {
+              username: localStorage.getItem("username"),
+            })}
             onClick={() => setIsCreatingPost(true)}
           />
         </div>
@@ -443,13 +446,13 @@ export default function Blog() {
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
-            Ảnh / Video
+           {t("image")}/{t("video")}
           </button>
           <button
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
-            Cảm xúc / Hoạt động
+          {t("emotion")}
           </button>
         </div>
       </div>
@@ -495,7 +498,7 @@ export default function Blog() {
                             className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
                             onClick={() => reportPost(post.id)}
                           >
-                            Báo cáo bài viết
+                           {t("report")}
                           </button>
                         </div>
                       )}
@@ -520,7 +523,7 @@ export default function Blog() {
                     >
                       <PiHeartFill size={25} color={isLiked ? "red" : "gray"} />
                       <span>
-                        {likedUsersMap[post.id]?.length || 0} lượt thích
+                        {likedUsersMap[post.id]?.length || 0} {t("like")}
                       </span>
                     </button>
                     <button
@@ -547,7 +550,7 @@ export default function Blog() {
                         {comments.map((comment) => (
                           <div
                             key={comment.id}
-                            className="flex items-start gap-3 mb-4 p-3 bg-white rounded-lg shadow-sm"
+                            className="flex items-center gap-3 p-3 bg-wcolor dark:bg-darkSubbackground rounded-lg shadow-sm"
                           >
                             {/* Avatar hoặc icon mặc định */}
                             <img
@@ -559,7 +562,7 @@ export default function Blog() {
                             {/* Nội dung comment */}
                             <div className="flex-1">
                               <div className="flex items-center justify-between">
-                                <p className="text-sm font-semibold text-gray-800">
+                                <p className="text-sm dark:text-darkText font-semibold text-gray-800">
                                   {comment.username}
                                 </p>
                                 {comment.username ===
@@ -588,7 +591,7 @@ export default function Blog() {
                                 />
                               )}
 
-                              <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">
+                              <p className="text-sm text-gray-700 dark:text-darkSubtext mt-2 whitespace-pre-wrap">
                                 {comment.content}
                               </p>
                             </div>
@@ -601,19 +604,19 @@ export default function Blog() {
                             }
                             className="text-blue-500 text-sm mt-2"
                           >
-                            Xem thêm bình luận
+                           {t("moreComments")}
                           </button>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-2 border-t pt-2">
+                      <div className="flex dark:border-darkBorder items-center gap-2 mt-2 border-t pt-2">
                         <div className="w-8 h-8 bg-gray-300 rounded-full" />
                         <input
                           type="text"
                           name="comment"
                           value={content}
                           onChange={(e) => setcontent(e.target.value)}
-                          placeholder="Viết bình luận..."
-                          className="flex-1 px-3 py-2 border rounded-full focus:outline-none"
+                          placeholder={t("writeComment")}
+                          className="flex-1 px-3 py-2 dark:bg-darkSubbackground dark:border-darkBorder border-2 rounded-full focus:outline-none"
                         />
                         <PiPaperPlaneRightFill className="" size={25} />
                         <button
@@ -621,7 +624,7 @@ export default function Blog() {
                             addBlogComment(selectedPost, userId, content)
                           }
                         >
-                          Send
+                          {t("send")}
                         </button>
                       </div>
                     </div>
@@ -631,14 +634,14 @@ export default function Blog() {
                 <div className="px-4 py-3 border-1 dark:border-darkBorder dark:text-darkText flex justify-between items-center rounded-xl">
                   <span className="flex items-center gap-2">
                     <PiEyeClosed size={25} />
-                    Bài viết đã được ẩn
+                    {t("hiddenPost")}
                   </span>
                   <button
                     onClick={() => restorePost(post.id)}
                     className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
                   >
                     <PiArrowsClockwise size={25} />
-                    Hoàn tác
+                    {t("undo")}
                   </button>
                 </div>
               )}

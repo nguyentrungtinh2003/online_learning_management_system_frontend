@@ -228,7 +228,7 @@ export default function CourseManagement() {
         </form>
 
         <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
             <table className="w-full">
               <thead>
                 <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
