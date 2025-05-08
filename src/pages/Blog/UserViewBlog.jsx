@@ -34,7 +34,7 @@ export default function Blog() {
   const [newPostContent, setNewPostContent] = useState({
     blogName: "",
     description: "",
-    user: { id: localStorage.getItem("id") },
+    userId: parseInt(localStorage.getItem("id")),
   });
   const [newPostImage, setNewPostImage] = useState(null);
   const [newPostVideo, setNewPostVideo] = useState(null);
@@ -48,6 +48,10 @@ export default function Blog() {
 
   const userId = parseInt(localStorage.getItem("id"));
   console.log("User id " + userId);
+
+  useEffect(() => {
+    handleGetPosts();
+  }, []);
 
   useEffect(() => {
     handleGetPosts();
@@ -114,7 +118,7 @@ export default function Blog() {
     setStompClient(client);
 
     return () => client.deactivate();
-  }, []);
+  }, [selectedPost, currentLikePost]);
 
   const handleGetPosts = () => {
     axios
@@ -231,6 +235,7 @@ export default function Blog() {
       )
       .then((response) => {
         console.log("Delete blog comment success");
+        handleGetComments();
       })
       .catch((error) => {
         console.log("Error delete blog comment");
@@ -460,8 +465,10 @@ export default function Blog() {
       {Array.isArray(data) &&
         data.map((post) => {
           const currentUserId = parseInt(localStorage.getItem("id"));
-          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers || [];
+          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers;
           const isLiked = usersWhoLiked.includes(currentUserId);
+          console.log(isLiked);
+
           return (
             <div key={post.id}>
               {!hiddenPosts.includes(post.id) ? (
@@ -521,7 +528,14 @@ export default function Blog() {
                       className="flex items-center gap-2"
                       onClick={() => handleLike(post.id, post)}
                     >
-                      <PiHeartFill size={25} color={isLiked ? "red" : "gray"} />
+                      <PiHeartFill
+                        size={25}
+                        color={
+                          post.likedUsers.includes(currentUserId) || isLiked
+                            ? "red"
+                            : "gray"
+                        }
+                      />
                       <span>
                         {likedUsersMap[post.id]?.length || 0} {t("like")}
                       </span>

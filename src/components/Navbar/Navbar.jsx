@@ -203,28 +203,39 @@ export default function Navbar() {
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
       onConnect: () => {
-        stompClient.subscribe(
-          `/topic/user/${parseInt(localStorage.getItem("id"))}`,
-          (message) => {
-            const notification = JSON.parse(message.body);
-            setNotifications((prev) => [...prev, notification]);
-          }
-        );
-        stompClient.subscribe(
-          `/topic/user-info/${parseInt(localStorage.getItem("id"))}`,
-          async (message) => {
-            const userInfo = JSON.parse(message.body);
-            console.log("User websocket: ", userInfo);
-
-            setCoin(userInfo.coin);
-            setPoint(userInfo.point);
-          }
-        );
+        const userId = parseInt(localStorage.getItem("id"));
+        stompClient.subscribe(`/topic/user/${userId}`, (message) => {
+          const notification = JSON.parse(message.body);
+          setNotifications((prev) => [...prev, notification]);
+        });
       },
     });
 
     stompClient.activate();
     stompClientRef.current = stompClient;
+
+    return () => {
+      stompClient.deactivate();
+    };
+  }, []);
+
+  useEffect(() => {
+    const socket = new SockJS(`${URLSocket}/ws`);
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        const userId = parseInt(localStorage.getItem("id"));
+        stompClient.subscribe(`/topic/user-info/${userId}`, (message) => {
+          const userInfo = JSON.parse(message.body);
+          console.log("User websocket: ", userInfo);
+          setCoin(userInfo.coin);
+          setPoint(userInfo.point);
+        });
+      },
+    });
+
+    stompClient.activate();
 
     return () => {
       stompClient.deactivate();

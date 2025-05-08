@@ -17,7 +17,6 @@ import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
 
 export default function UserViewLesson() {
-  const navigate = useNavigate();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
@@ -185,29 +184,30 @@ export default function UserViewLesson() {
       )
       .then((response) => {
         console.log("Delete comment successfully!");
+        fetchComments();
       })
       .catch((err) => {
         console.error("Error delete comment:", err.message);
       });
   };
-
+  const fetchComments = () => {
+    const lessonId = lessons[currentLessonIndex]?.id;
+    axios
+      .get(`${URL}/lesson-comment/lesson/${lessonId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setComments(response.data.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching comments:", err.message);
+      });
+  };
   // Fetching comments for the current lesson
   useEffect(() => {
     const lessonId = lessons[currentLessonIndex]?.id;
     if (!lessonId) return; // Không gọi nếu chưa có ID hợp lệ
     console.log("LessonId in get comment : " + lessonId);
-    const fetchComments = () => {
-      axios
-        .get(`${URL}/lesson-comment/lesson/${lessonId}`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setComments(response.data.data);
-        })
-        .catch((err) => {
-          console.error("Error fetching comments:", err.message);
-        });
-    };
 
     fetchComments();
   }, [currentLessonIndex, lessons]);
