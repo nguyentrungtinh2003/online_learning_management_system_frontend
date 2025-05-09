@@ -206,7 +206,7 @@ export const savePointHistory = async (userId, point) => {
     const response = await axios.post(
       `${URL}/rankings/add`,
       {
-        user: { id: userId },
+        user: { id: userId }, // đúng tên field theo DTO
         point: point,
       },
       {

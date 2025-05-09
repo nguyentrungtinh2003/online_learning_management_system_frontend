@@ -244,12 +244,15 @@ export default function AdminBlogManagement() {
                   </td>
                 </tr>
               ) : (
-                blogs.map((blog) => (
+                blogs.map((blog, index) => (
                   <tr
                     key={blog.id}
                     className="text-center dark:text-darkSubtext"
                   >
-                    <td className="p-2">{blog.id}</td>
+                    <td className="p-2">
+                      {index + 1 + currentPage * blogsPerPage}{" "}
+                      {/* Hiển thị số thứ tự */}
+                    </td>
                     <td className="p-2">{blog.blogName}</td>
                     <td className="p-2 truncate max-w-xs">
                       {blog.description}
@@ -277,7 +280,7 @@ export default function AdminBlogManagement() {
                             year: "numeric",
                           })
                         : "N/A"}
-                    </td>{" "}
+                    </td>
                     <td className="p-2">{blog.likedUsers?.length || 0}</td>
                     <td className="p-2">{blog.user.username}</td>
                     <td className="p-2">
@@ -305,26 +308,26 @@ export default function AdminBlogManagement() {
         </div>
       </div>
       <div className="flex justify-between items-center text-white">
-          <p>
-            Page {currentPage + 1} of {totalPages}
-          </p>
-          <div className="flex gap-2">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 0}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
-            >
-              <MdNavigateBefore size={30} />
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages - 1}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
-            >
-              <MdNavigateNext size={30} />
-            </button>
-          </div>
+        <p>
+          Page {currentPage + 1} of {totalPages}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 0}
+            className="bg-scolor p-1 rounded disabled:opacity-50"
+          >
+            <MdNavigateBefore size={30} />
+          </button>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage >= totalPages - 1}
+            className="bg-scolor p-1 rounded disabled:opacity-50"
+          >
+            <MdNavigateNext size={30} />
+          </button>
         </div>
+      </div>
     </div>
   );
 }

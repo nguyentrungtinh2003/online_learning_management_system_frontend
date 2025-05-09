@@ -50,7 +50,7 @@ const UserRouter = () => {
         <Route path="user/payment/history" element={<PaymentHistory />} />
         <Route path="/chat" element={<ChatRoom />} />
         <Route path="user-course" element={<UserCourse />} />
-        <Route path="view-course/:courseId" element={<UserViewCourse />} />
+        <Route path="view-course/:id" element={<UserViewCourse />} />
         <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
         <Route path="view-quiz/:quizId" element={<UserQuizz />} />
         <Route path="blog" element={<UserViewBlog />} />

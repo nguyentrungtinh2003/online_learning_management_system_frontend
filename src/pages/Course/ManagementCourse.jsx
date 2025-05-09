@@ -27,7 +27,7 @@ export default function CourseManagement() {
   useEffect(() => {
     fetchCourses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentPage, search, statusFilter, filterType]);
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -351,18 +351,18 @@ export default function CourseManagement() {
           </p>
           <div className="space-x-2">
             <button
-               className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
-              <MdNavigateBefore fontSize={30}/>
+              <MdNavigateBefore fontSize={30} />
             </button>
             <button
-               className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
-              disabled={currentPage === totalPages - 1}
+              disabled={currentPage >= totalPages - 1}
             >
-              <MdNavigateNext fontSize={30}/>
+              <MdNavigateNext fontSize={30} />
             </button>
           </div>
         </div>
