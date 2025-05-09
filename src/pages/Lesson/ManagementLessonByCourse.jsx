@@ -15,10 +15,11 @@ import {
   restoreLesson,
 } from "../../services/lessonapi";
 import { FaLockOpen, FaLock, FaTimes, FaCoins } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
-import { MdQuiz } from "react-icons/md"; // nếu dùng Material Design icon cho quiz
 
 export default function ManagementLesson() {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const { courseId } = useParams();
 
@@ -201,233 +202,192 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-full">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-2">
-          <Link className="flex gap-2" onClick={() => navigate(-1)}>
-            <FaBuffer size={30} />
-            <MdNavigateBefore size={30} />
-            <h2 className="text-lg font-bold">Back</h2>
-          </Link>
-          <Link
-            to={`/admin/courses/${courseId}/lessons/add`}
-            className="hover:text-ficolor"
-          >
-            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-              <FaPlus size={30} />
-            </button>
-          </Link>
-        </div>
-
-        {/* Search & Filter */}
-        <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
-          <div className="relative w-full">
-            <input
-              type="text"
-              placeholder="Search lessons..."
-              className="py-2 px-3 pr-10 border-2 rounded w-full focus:outline-none dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext"
-              value={search}
-              onChange={handleSearchInput}
-            />
-            {search && (
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-                onClick={() => {
-                  setSearch("");
-                  fetchLessons(); // reset danh sách khi xóa tìm kiếm
+    <div className="h-full w-full dark:text-darkText">
+          <ToastContainer />
+          <div className="w-full flex flex-col h-full">
+            <div className="flex justify-between items-center mb-2">
+              <Link className="flex gap-2" onClick={() => navigate(-1)}>
+                <FaBuffer size={30} />
+                <MdNavigateBefore size={30} />
+                <h2 className="text-lg font-bold">{t("back")}</h2>
+              </Link>
+              <Link to={`/admin/lessons/add`}>
+                <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+                  <FaPlus size={30} />
+                </button>
+              </Link>
+            </div>
+    
+            <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
+              <input
+                type="text"
+                placeholder={t("searchPlaceholder")}
+                className="py-2 px-3 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+                value={search}
+                onChange={handleSearchInput}
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(0);
                 }}
+                className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
               >
-                <FaTimes size={18} />
+                <option value="All">{t("all")}</option>
+                <option value="Deleted">{t("deleted")}</option>
+                <option value="Active">{t("active")}</option>
+              </select>
+              <button
+                type="submit"
+                className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+              >
+                {t("search")}
               </button>
-            )}
-          </div>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(0);
-              fetchLessons();
-            }}
-            className="p-2 border-2 rounded dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder"
-          >
-            <option value="All">All</option>
-            <option value="Deleted">Deleted</option>
-            <option value="Active">Active</option>
-          </select>
-
-          <button
-            type="submit"
-            className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
-          >
-            Search
-          </button>
-        </form>
-
-        {/* Lesson List */}
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-white p-4 rounded-2xl">
-            {loading ? (
-              <p className="text-center">Loading lessons...</p>
-            ) : lessons.length === 0 ? (
-              <p className="text-center py-4">No lessons found</p>
-            ) : (
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="text-center font-bold">
-                    <th className="p-2">STT</th>
-                    <th className="p-2">Lesson Name</th>
-                    <th className="p-2">Description</th>
-                    <th className="p-2">Image</th>
-                    <th className="p-2">Created Date</th>
-                    <th className="p-2">Video URL</th>
-                    <th className="p-2">Status</th>
-                    <th className="p-2">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center border-t">
-                      <td className="p-2">
-                        {index + 1 + currentPage * lessonsPerPage}
-                      </td>
-                      <td className="p-2">{lesson.lessonName}</td>
-                      <td className="p-2 truncate max-w-[200px]">
-                        {lesson.description}
-                      </td>
-                      <td className="p-2">
-                        {<lesson className="img"></lesson> ? (
-                          <img
-                            src={lesson.img}
-                            alt="lesson"
-                            className="w-16 h-16 object-cover rounded mx-auto"
-                          />
+            </form>
+    
+            {/* Danh sách bài học + Pagination dưới bảng */}
+            <div className="flex-1 drop-shadow-lg">
+              <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
+                <table className="w-full">
+                      <thead>
+                        <tr className="text-center whitespace-nowrap font-bold">
+                          <th className="p-2">{t("stt")}</th>
+                          <th className="p-2">{t("lesson.name")}</th>
+                          <th className="p-2">{t("description")}</th>
+                          <th className="p-2">{t("image")}</th>
+                          <th className="p-2">{t("createdDate")}</th>
+                          <th className="p-2">{t("lesson.videoURL")}</th>
+                          <th className="p-2">{t("status")}</th>
+                          <th className="p-2">{t("action")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {loading ? (
+                            <DataTableSkeleton rows={6} cols={8} />
+                        ) : lessons.length === 0 ? (
+                            <tr>
+                              <td colSpan="8" className="text-center py-4">
+                                  {t("lesson.noLesson")}
+                              </td>
+                            </tr>
                         ) : (
-                          <span>No Image</span>
-                        )}
-                      </td>
-                      <td className="p-2">
-                        {lesson.date
-                          ? new Date(
-                              lesson.date[0],
-                              lesson.date[1] - 1,
-                              lesson.date[2],
-                              lesson.date[3],
-                              lesson.date[4],
-                              lesson.date[5]
-                            ).toLocaleDateString("vi-VN", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            })
-                          : "N/A"}
-                      </td>{" "}
-                      <td className="p-2">
-                        {lesson.videoUrl ? (
-                          <a
-                            href={lesson.videoURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline"
-                          >
-                            View Video
-                          </a>
-                        ) : (
-                          <span>No Video</span>
-                        )}
-                      </td>
-                      <td className="p-2 h-[44px]">
-                        <div className="flex items-center justify-center h-full min-h-[3rem]">
-                          {lesson.deleted ? (
-                            <span className="text-red-500 flex items-center gap-1">
-                              <FaLock /> Deleted
-                            </span>
-                          ) : (
-                            <span className="text-green-500 flex items-center gap-1">
-                              <FaLockOpen /> Active
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-2 h-[44px]">
-                        <div className="flex items-center justify-center gap-2 h-full">
-                          {!lesson.deleted ? (
-                            <>
-                              {/* Nút Thêm Quiz */}
+                        lessons.map((lesson, index) => (
+                          <tr key={lesson.id} className="text-center">
+                            <td className="p-2">
+                              {index + 1 + currentPage * lessonsPerPage}
+                            </td>
+                            <td className="p-2">{lesson.lessonName || "N/A"}</td>
+                            <td className="p-2">
+                              {lesson.description || "No description"}
+                            </td>
+                            <td className="p-2">
+                              {lesson.img ? (
+                                <img
+                                  src={lesson.img}
+                                  alt="lesson"
+                                  className="w-8 h-8 rounded mx-auto"
+                                />
+                              ) : (
+                                "No image"
+                              )}
+                            </td>
+                            <td className="p-2">
+                              {lesson.date
+                                ? new Date(
+                                    lesson.date[0],
+                                    lesson.date[1] - 1,
+                                    lesson.date[2],
+                                    lesson.date[3],
+                                    lesson.date[4],
+                                    lesson.date[5]
+                                  ).toLocaleDateString("vi-VN", {
+                                    day: "2-digit",
+                                    month: "2-digit",
+                                    year: "numeric",
+                                  })
+                                : "N/A"}
+                            </td>
+                            <td className="p-2">
+                              {lesson.videoURL ? (
+                                <a
+                                  href={lesson.videoURL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-500 underline"
+                                >
+                                  {t("viewVideo")}
+                                </a>
+                              ) : (
+                                <>{t("noVideo")}</>
+                              )}
+                            </td>
+                            <td className="p-2">
+                              {lesson.deleted ? "Deleted" : "Active"}
+                            </td>
+                            <td className="p-2 flex justify-center gap-1">
                               <Link
                                 to={`/admin/lessons/${lesson.id}/quizzes`}
-                                className="text-purple-500 hover:text-purple-700"
-                                title="Add Quiz"
+                                className="p-2 border rounded"
                               >
-                                <MdQuiz size={22} />{" "}
-                                {/* hoặc bạn dùng icon phù hợp */}
+                                <FaEye />
                               </Link>
-
-                              {/* Nút Sửa bài học */}
                               <Link
-                                to={`/admin/courses/${courseId}/lessons/edit/${lesson.id}`}
-                                className="text-blue-500 hover:text-blue-700"
-                                title="Edit Lesson"
+                                to={`/admin/lessons/edit/${lesson.id}`}
+                                className="p-2 border rounded"
                               >
-                                <FaEdit size={20} />
+                                <FaEdit />
                               </Link>
-
-                              {/* Nút Xóa bài học */}
-                              <button
-                                onClick={() =>
-                                  handleDelete(lesson.id, lesson.lessonName)
-                                }
-                                className="text-red-500 hover:text-red-700"
-                                title="Delete Lesson"
-                              >
-                                <MdDeleteForever size={24} />
-                              </button>
-                            </>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                handleRestore(lesson.id, lesson.lessonName)
-                              }
-                              className="text-green-500 hover:text-green-700"
-                              title="Restore Lesson"
-                            >
-                              Restore
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                              {lesson.deleted ? (
+                                <button
+                                  className="p-2 border rounded"
+                                  onClick={() =>
+                                    handleRestore(lesson.id, lesson.lessonName)
+                                  }
+                                >
+                                  <FaLockOpen />
+                                </button>
+                              ) : (
+                                <button
+                                  className="p-2 border rounded"
+                                  onClick={() =>
+                                    handleDelete(lesson.id, lesson.lessonName)
+                                  }
+                                >
+                                  <FaLock />
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                      </tbody>
+                    </table>
+              </div>
+            </div>
+            {/* Pagination gắn liền bên dưới */}
+            <div className="flex dark:text-darkText mt-2 items-center justify-between">
+              <p>
+              {t("page")} {currentPage + 1} {t("of")} {totalPages}
+              </p>
+              <div className="space-x-2">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 0}
+                className="bg-scolor p-1 rounded disabled:opacity-50"
+              >
+                <MdNavigateNext size={30} />
+              </button>
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage >= totalPages - 1}
+                className="bg-scolor p-1 rounded disabled:opacity-50"
+              >
+                <MdNavigateNext size={30} />
+              </button>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {/* Pagination */}
-        <div className="mt-4 flex justify-center items-center gap-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          >
-            Prev
-          </button>
-          <span>
-            Page {currentPage + 1} of {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-      <ToastContainer />
     </div>
   );
 }

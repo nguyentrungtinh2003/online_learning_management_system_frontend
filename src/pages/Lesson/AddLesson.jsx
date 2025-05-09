@@ -6,9 +6,11 @@ import axios from "axios";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"
+import "react-quill/dist/quill.snow.css";
+import { useTranslation } from "react-i18next";
 
 const AddLesson = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
   const [lessonData, setLessonData] = useState({
@@ -81,7 +83,7 @@ const AddLesson = () => {
           withCredentials: true,
         }
       );
-      toast.success("Thêm bài học thành công!", {
+      toast.success(<p>{t("addLesson.success")}</p> , {
         position: "top-right",
         autoClose: 1000,
       });
@@ -91,7 +93,7 @@ const AddLesson = () => {
       }, 2000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
-      toast.error("Không thể thêm bài học!", {
+      toast.error(<p>{t("addLesson.error")}</p> , {
         position: "top-right",
         autoClose: 1000,
       });
@@ -105,15 +107,15 @@ const AddLesson = () => {
       <div className="flex gap-2 dark:text-darkText">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Lesson Management</h2>
+        <h2 className="text-lg font-bold mb-4">{t("addLesson.main")}</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Add New Lesson</h2>
+        <h2 className="text-lg font-bold mb-4">{t("addLesson.add")}</h2>
       </div>
       <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow">
         <div className="space-y-4">
           {/* Chọn khoá học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">Select Course:</label>
+            <label className="w-1/4 font-medium">{t("addLesson.selectCourse")}</label>
             <select
               name="courseId"
               value={lessonData.courseId}
@@ -121,7 +123,7 @@ const AddLesson = () => {
               className="flex-1 px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               required
             >
-              <option value="">-- Chọn khoá học --</option>
+              <option value="">{t("addLesson.selectCoursePlaceholder")}</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.courseName}
@@ -132,7 +134,7 @@ const AddLesson = () => {
 
           {/* Các trường nhập bài học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">Lesson Title:</label>
+            <label className="w-1/4 font-medium">{t("addLesson.lessonTitle")}</label>
             <input
               type="text"
               name="lessonName"
@@ -144,7 +146,7 @@ const AddLesson = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">Image:</label>
+            <label className="w-1/4 font-medium">{t("image")}</label>
             <input
               type="file"
               onChange={handleImageChange}
@@ -153,7 +155,7 @@ const AddLesson = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">Video:</label>
+            <label className="w-1/4 font-medium">{t("video")}</label>
             <input
               type="file"
               onChange={handleVideoChange}
@@ -162,7 +164,7 @@ const AddLesson = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Description:</label>
+            <label className="w-1/4 font-medium">{t("description")}</label>
             <ReactQuill
               theme="snow"
               value={lessonData.description}
@@ -178,7 +180,7 @@ const AddLesson = () => {
             onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor dark:text-darkText text-ficolor rounded-lg hover:bg-opacity-80"
           >
-            Cancel
+           {t("cancel")}
           </button>
           <button
             type="submit"
@@ -189,7 +191,7 @@ const AddLesson = () => {
             }`}
             disabled={loading}
           >
-            {loading ? "Processing..." : "Submit"}
+            {loading ? <p>{t("processing")}</p> :<p>{t("submit")}</p> }
           </button>
         </div>
       </form>

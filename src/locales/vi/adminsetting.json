@@ -1,0 +1,38 @@
+{
+  "title": "Cài đặt Quản trị",
+  "tabs": {
+    "general": "Chung",
+    "account": "Cài đặt Tài khoản",
+    "configuration": "Cấu hình"
+  },
+  "labels": {
+    "systemName": "Tên Website",
+    "slogan": "Slogan",
+    "logo": "Logo",
+    "address": "Địa chỉ",
+    "phoneNumber": "Số điện thoại",
+    "email": "Email",
+    "socialMediaURL": "URL Mạng xã hội",
+    "description": "Mô tả",
+    "avatar": "Ảnh đại diện",
+    "name": "Tên",
+    "password": "Mật khẩu",
+    "darkMode": "Chế độ tối",
+    "language": "Ngôn ngữ"
+  },
+  "placeholders": {
+    "systemName": "Code Arena",
+    "slogan": "Học lập trình, chinh phục Code Arena!",
+    "address": "123 Đường Lập Trình, TP.HCM",
+    "phone": "0123 456 789",
+    "email": "admin@codearena.com",
+    "social": "https://facebook.com/codearena",
+    "description": "Giới thiệu về Code Arena..."
+  },
+  "buttons": {
+    "save": "Lưu"
+  },
+  "alert": {
+    "updated": "Cập nhật thông tin hệ thống thành công!"
+  }
+}

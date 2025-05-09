@@ -7,9 +7,11 @@ import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"
+import "react-quill/dist/quill.snow.css";
+import { useTranslation } from "react-i18next";
 
 const AddQuizz = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
   const [quizData, setQuizData] = useState({
@@ -106,7 +108,7 @@ const AddQuizz = () => {
   
     // Kiểm tra xem lessonId có được chọn chưa
     if (!quizData.lessonId) {
-      toast.error("Please select a lesson!");
+      toast.error(<p>{t("addQuiz.toastNoLesson")}</p>);
       return;
     }
 
@@ -130,7 +132,7 @@ const AddQuizz = () => {
         withCredentials: true,
       });
   
-      toast.success("Quiz added successfully!", {
+      toast.success(<p>{t("addQuiz.toastSuccess")}</p>, {
         position: "top-right",
         autoClose: 1000,
       });
@@ -140,7 +142,7 @@ const AddQuizz = () => {
       }, 2000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
-      toast.error("Unable to add quiz!", {
+      toast.error(<p>{t("addQuiz.toastError")}</p>, {
         position: "top-right",
         autoClose: 1000,
       });
@@ -163,22 +165,22 @@ const AddQuizz = () => {
       <div className="flex dark:text-darkText mb-2 items-center gap-2">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Quiz Management</h2>
+        <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Add New Quiz</h2>
+        <h2 className="text-lg font-bold">{t("addQuiz.title")}</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4">
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Course:</label>
+          <label className="w-1/4 font-medium">{t("addQuiz.course")}</label>
           <select
             name="courseId"
             value={quizData.courseId}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
           >
-            <option value="">-- Select Course --</option>
+            <option value="">{t("addQuiz.selectCourse")}</option>
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.courseName}
@@ -189,16 +191,16 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Lesson:</label>
+          <label className="w-1/4 font-medium">{t("addQuiz.lesson")}</label>
           <select
             name="lessonId"
             value={quizData.lessonId}
             onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+            className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
             required
             disabled={!selectedCourseId}
           >
-            <option value="">-- Select Lesson --</option>
+            <option value="">{t("addQuiz.selectLesson")}</option>
             {lessons.map((lesson) => (
               <option key={lesson.id} value={lesson.id}>
                 {lesson.lessonName}
@@ -208,7 +210,7 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Quiz Name:</label>
+          <label className="w-1/4 font-medium">{t("addQuiz.quizName")}</label>
           <input
             type="text"
             name="quizName"
@@ -220,7 +222,7 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Price:</label>
+          <label className="w-1/4 font-medium">{t("price")}</label>
           <input
             type="number"
             name="price"
@@ -232,7 +234,7 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Image:</label>
+          <label className="w-1/4 font-medium">{t("image")}</label>
           <input
             type="file"
             accept="image/*"
@@ -242,7 +244,7 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Description:</label>
+          <label className="w-1/4 font-medium">{t("description")}</label>
           <ReactQuill
             theme="snow"
             value={quizData.description}
@@ -253,15 +255,15 @@ const AddQuizz = () => {
         </div>
 
         <div className="flex items-center">
-          <label className="w-1/4 font-medium">Type:</label>
+          <label className="w-1/4 font-medium">{t("type")}</label>
           <select
             name="quizEnum"
             value={quizData.quizEnum}
             onChange={handleChange}
             className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
           >
-            <option value="FREE">Free</option>
-            <option value="PAID">Paid</option>
+            <option value="FREE">{t("free")}</option>
+            <option value="PAID">{t("paid")}</option>
           </select>
         </div>
 
@@ -277,7 +279,7 @@ const AddQuizz = () => {
             disabled={loading}
             className={`px-6 py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
           >
-            {loading ? "Processing..." : "Submit"}
+            {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
           </button>
         </div>
       </form>

@@ -326,7 +326,7 @@ export default function Navbar() {
               ? localStorage.getItem("systemImg")
               : "/logo.png"
           }
-          className="rounded-full w-16 h-16 cursor-pointer object-cover h-10 mx-2"
+          className="rounded-full w-12 h-12 cursor-pointer object-cover h-10 mx-2"
           alt="logo"
         />
         <div className="flex-1 flex justify-end pr-32 w-full ml-4">
