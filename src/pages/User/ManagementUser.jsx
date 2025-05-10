@@ -17,8 +17,10 @@ import {
   MdDeleteForever,
   MdNavigateBefore,
 } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 export default function UserManagement() {
+  const { t } = useTranslation("adminmanagement");
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,14 +91,14 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full w-full gap-2 flex flex-col">
       <ToastContainer />
 
       <div className="flex items-center justify-between">
         <div className="flex gap-2 dark:text-darkText items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">User Management</h2>
+          <h2 className="text-lg font-bold">{t("user.title")}</h2>
         </div>
         <Link
           className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
@@ -112,14 +114,14 @@ export default function UserManagement() {
           <table className="w-full">
             <thead>
               <tr className="text-center dark:text-darkText font-bold">
-                <th className="p-2">ID</th>
-                <th className="p-2">Username</th>
-                <th className="p-2">Email</th>
-                <th className="p-2">Phone</th>
-                <th className="p-2">Point</th>
-                <th className="p-2">Rank</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Action</th>
+                <th className="p-2">{t("stt")}</th>
+                <th className="p-2">{t("user.username")}</th>
+                <th className="p-2">{t("user.email")}</th>
+                <th className="p-2">{t("user.phone")}</th>
+                <th className="p-2">{t("user.point")}</th>
+                <th className="p-2">{t("user.rank")}</th>
+                <th className="p-2">{t("status")}</th>
+                <th className="p-2">{t("action")}</th>
               </tr>
             </thead>
             <tbody>
@@ -130,7 +132,7 @@ export default function UserManagement() {
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">
-                    No users found
+                    {t("user.noUserFound")}
                   </td>
                 </tr>
               ) : (
@@ -183,7 +185,7 @@ export default function UserManagement() {
       </div>
       <div className="flex dark:text-darkText items-center justify-between">
         <p>
-          Page {currentPage + 1} of {totalPages}
+          {t("page")} {currentPage + 1} {t("of")} {totalPages}
         </p>
         <div className="space-x-2">
           <button

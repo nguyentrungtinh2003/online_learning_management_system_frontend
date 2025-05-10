@@ -17,8 +17,10 @@ import {
   getBlogsByPage,
   restoreBlog,
 } from "../../services/blogapi";
+import { useTranslation } from "react-i18next";
 
 export default function AdminBlogManagement() {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
   const [blogs, setBlogs] = useState([]);
@@ -167,7 +169,7 @@ export default function AdminBlogManagement() {
           <div className="flex gap-2 dark:text-darkText items-center">
             <MdForum size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-xl font-bold">Blog Management</h2>
+            <h2 className="text-xl font-bold">{t("blog.title")}</h2>
           </div>
           <Link
             to="/admin/blog/add-blog"
@@ -186,7 +188,7 @@ export default function AdminBlogManagement() {
         >
           <input
             type="text"
-            placeholder="Search quizzes..."
+            placeholder={t("searchPlaceholder")}
             className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
@@ -202,15 +204,15 @@ export default function AdminBlogManagement() {
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-            <option value="All">All</option>
-            <option value="Deleted">Deleted</option>
-            <option value="Active">Active</option>
+            <option value="All">{t("all")}</option>
+            <option value="Deleted">{t("deleted")}</option>
+            <option value="Active">{t("active")}</option>
           </select>
           <button
             type="submit"
-            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+            className="bg-fcolor whitespace-nowrap text-white p-2 rounded hover:scale-105"
           >
-            Search
+            {t("search")}
           </button>
         </form>
 
@@ -218,16 +220,16 @@ export default function AdminBlogManagement() {
           <table className="w-full">
             <thead className="dark:text-darkText">
               <tr className="text-center font-bold">
-                <th className="p-2">ID</th>
-                <th className="p-2">Title</th>
-                <th className="p-2">Description</th>
-                <th className="p-2">Image</th>
-                <th className="p-2">Video</th>
-                <th className="p-2 whitespace-nowrap">Created Date</th>
-                <th className="p-2">Like</th>
-                <th className="p-2">Author</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Action</th>
+                <th className="p-2">{t("stt")}</th>
+                <th className="p-2">{t("blog.blogTitle")}</th>
+                <th className="p-2">{t("description")}</th>
+                <th className="p-2">{t("image")}</th>
+                <th className="p-2">{t("video")}</th>
+                <th className="p-2 whitespace-nowrap">{t("createdDate")}</th>
+                <th className="p-2">{t("blog.like")}</th>
+                <th className="p-2">{t("blog.author")}</th>
+                <th className="p-2">{t("status")}</th>
+                <th className="p-2">{t("action")}</th>
               </tr>
             </thead>
             <tbody>
@@ -240,7 +242,7 @@ export default function AdminBlogManagement() {
               ) : blogs.length === 0 ? (
                 <tr>
                   <td colSpan="10" className="text-center py-4">
-                    Không có blog nào.
+                    {t("blog.noBlog")}
                   </td>
                 </tr>
               ) : (

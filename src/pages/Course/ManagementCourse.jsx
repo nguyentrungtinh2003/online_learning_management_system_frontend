@@ -8,12 +8,13 @@ import {
   getCoursesByPage,
   deleteCourse,
   restoreCourse,
-  searchCourses,
 } from "../../services/courseapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock, FaTimes, FaCoins } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function CourseManagement() {
+  const { t } = useTranslation("adminmanagement");
   const [courses, setCourses] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -162,7 +163,7 @@ export default function CourseManagement() {
           <div className="flex gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold">Course Management</h2>
+            <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -175,7 +176,7 @@ export default function CourseManagement() {
           <div className="relative w-full">
             <input
               type="text"
-              placeholder="Search courses..."
+              placeholder={t("searchPlaceholder")}
               className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
               value={search}
               onChange={handleSearchInput}
@@ -201,9 +202,9 @@ export default function CourseManagement() {
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-            <option value="All">All</option>
-            <option value="Free">Free</option>
-            <option value="Paid">Paid</option>
+            <option value="All">{t("all")}</option>
+            <option value="Free">{t("free")}</option>
+            <option value="Paid">{t("paid")}</option>
           </select>
 
           <select
@@ -214,16 +215,16 @@ export default function CourseManagement() {
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-            <option value="All">All</option>
-            <option value="Deleted">Deleted</option>
-            <option value="Active">Active</option>
+            <option value="All">{t("all")}</option>
+            <option value="Deleted">{t("deleted")}</option>
+            <option value="Active">{t("active")}</option>
           </select>
 
           <button
             type="submit"
-            className="bg-fcolor text-white px-4 py-2 rounded hover:scale-105"
+            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
           >
-            Search
+            {t("search")}
           </button>
         </form>
 
@@ -232,14 +233,14 @@ export default function CourseManagement() {
             <table className="w-full">
               <thead>
                 <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
-                  <th className="p-2">STT</th>
-                  <th className="p-2">Course Name</th>
-                  <th className="p-2">Description</th>
-                  <th className="p-2">Image</th>
-                  <th className="p-2">Price</th>
-                  <th className="p-2">Created Date</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">Action</th>
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("courseName")}</th>
+                  <th className="p-2">{t("description")}</th>
+                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("price")}</th>
+                  <th className="p-2">{t("createdDate")}</th>
+                  <th className="p-2">{t("status")}</th>
+                  <th className="p-2">{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -248,7 +249,7 @@ export default function CourseManagement() {
                 ) : courses.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center py-4">
-                      No courses available
+                    {t("noCourse")}
                     </td>
                   </tr>
                 ) : (
@@ -345,9 +346,9 @@ export default function CourseManagement() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center mt-2 justify-between">
           <p>
-            Page {currentPage + 1} of {totalPages}
+          {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button

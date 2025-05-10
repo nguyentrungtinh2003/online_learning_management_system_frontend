@@ -21,7 +21,6 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useTranslation } from "react-i18next";
 
-
 export default function Blog() {
   const { t } = useTranslation("blog"); // assuming the namespace is "blog"
 
@@ -35,7 +34,7 @@ export default function Blog() {
   const [newPostContent, setNewPostContent] = useState({
     blogName: "",
     description: "",
-    user: { id: localStorage.getItem("id") },
+    userId: parseInt(localStorage.getItem("id")),
   });
   const [newPostImage, setNewPostImage] = useState(null);
   const [newPostVideo, setNewPostVideo] = useState(null);
@@ -48,6 +47,11 @@ export default function Blog() {
   const [likedUsersMap, setLikedUsersMap] = useState({});
 
   const userId = parseInt(localStorage.getItem("id"));
+  console.log("User id " + userId);
+
+  useEffect(() => {
+    handleGetPosts();
+  }, []);
 
   useEffect(() => {
     handleGetPosts();
@@ -114,7 +118,7 @@ export default function Blog() {
     setStompClient(client);
 
     return () => client.deactivate();
-  }, []);
+  }, [selectedPost, currentLikePost]);
 
   const handleGetPosts = () => {
     axios
@@ -222,15 +226,16 @@ export default function Blog() {
       });
   };
 
-  const deleteBlogComment = (blogCommentId) => {
+  const deleteBlogComment = (blogCommentId, userId) => {
     axios
       .delete(
-        `${URL}/blog-comments/delete/${blogCommentId}`,
+        `${URL}/blog-comments/delete/${blogCommentId}/${parseInt(userId)}`,
 
         { withCredentials: true }
       )
       .then((response) => {
         console.log("Delete blog comment success");
+        handleGetComments();
       })
       .catch((error) => {
         console.log("Error delete blog comment");
@@ -341,7 +346,7 @@ export default function Blog() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder dark:text-darkText p-4 rounded-xl w-[40%] shadow-lg">
             <h2 className="text-lg border-b dark:border-darkBorder font-semibold w-full text-center pb-2">
-            {t("createPost")}
+              {t("createPost")}
             </h2>
             <div className="flex items-center gap-2 py-2">
               <img
@@ -406,7 +411,7 @@ export default function Blog() {
                 className="px-4 py-2 bg-gray-300 dark:bg-darkSubbackground rounded-lg"
                 onClick={() => setIsCreatingPost(false)}
               >
-               {t("cancel")}
+                {t("cancel")}
               </button>
               <button
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
@@ -434,7 +439,7 @@ export default function Blog() {
             className="w-10 h-10 rounded-full"
           />
           <input
-            className="focus:outline-none placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
+            className="focus:outline-none dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
               username: localStorage.getItem("username"),
             })}
@@ -446,13 +451,13 @@ export default function Blog() {
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
-           {t("image")}/{t("video")}
+            {t("image")}/{t("video")}
           </button>
           <button
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => setIsCreatingPost(true)}
           >
-          {t("emotion")}
+            {t("emotion")}
           </button>
         </div>
       </div>
@@ -460,8 +465,10 @@ export default function Blog() {
       {Array.isArray(data) &&
         data.map((post) => {
           const currentUserId = parseInt(localStorage.getItem("id"));
-          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers || [];
+          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers;
           const isLiked = usersWhoLiked.includes(currentUserId);
+          console.log(isLiked);
+
           return (
             <div key={post.id}>
               {!hiddenPosts.includes(post.id) ? (
@@ -498,7 +505,7 @@ export default function Blog() {
                             className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
                             onClick={() => reportPost(post.id)}
                           >
-                           {t("report")}
+                            {t("report")}
                           </button>
                         </div>
                       )}
@@ -521,7 +528,14 @@ export default function Blog() {
                       className="flex items-center gap-2"
                       onClick={() => handleLike(post.id, post)}
                     >
-                      <PiHeartFill size={25} color={isLiked ? "red" : "gray"} />
+                      <PiHeartFill
+                        size={25}
+                        color={
+                          post.likedUsers.includes(currentUserId) || isLiked
+                            ? "red"
+                            : "gray"
+                        }
+                      />
                       <span>
                         {likedUsersMap[post.id]?.length || 0} {t("like")}
                       </span>
@@ -535,7 +549,9 @@ export default function Blog() {
                       }
                     >
                       <PiChatCircle size={25} />
-                      <span>{post.blogComments ? post.blogComments : 0}</span>
+                      <span>
+                        {post.blogComments ? post.blogComments.length : 0}
+                      </span>
                     </button>
                     <button className="flex items-center space-x-1">
                       <PiShareFatLight size={25} />
@@ -570,7 +586,10 @@ export default function Blog() {
                                   <>
                                     <button
                                       onClick={() =>
-                                        deleteChat(parseInt(msg.id))
+                                        deleteBlogComment(
+                                          parseInt(comment.id),
+                                          localStorage.getItem("id")
+                                        )
                                       }
                                       className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
                                     >
@@ -604,11 +623,11 @@ export default function Blog() {
                             }
                             className="text-blue-500 text-sm mt-2"
                           >
-                           {t("moreComments")}
+                            {t("moreComments")}
                           </button>
                         )}
                       </div>
-                      <div className="flex dark:border-darkBorder items-center gap-2 mt-2 border-t pt-2">
+                      <div className="flex items-center gap-2 mt-2 border-t pt-2">
                         <div className="w-8 h-8 bg-gray-300 rounded-full" />
                         <input
                           type="text"

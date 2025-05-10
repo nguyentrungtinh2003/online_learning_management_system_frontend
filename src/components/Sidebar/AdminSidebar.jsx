@@ -35,7 +35,7 @@ export default function Sidebar() {
     {
       id: "Dashboard",
 
-      label: "Dashboard",
+      label: t("dashboard"),
 
       icon: <MdDashboardCustomize size={25} />,
       path: "/admin/",
@@ -43,7 +43,7 @@ export default function Sidebar() {
     {
       id: "Courses",
 
-      label: "Courses",
+      label: t("courses"),
 
       icon: <FaBuffer size={25} />,
       path: "/admin/courses",
@@ -51,7 +51,7 @@ export default function Sidebar() {
     {
       id: "Lessons",
 
-      label: "Lessons",
+      label: t("lessons"),
 
       icon: <FaVideo size={25} />,
       path: "/admin/lessons",
@@ -59,7 +59,7 @@ export default function Sidebar() {
     {
       id: "Quizzes",
 
-      label: "Quizzes",
+      label: t("quizzes"),
       icon: <FaClipboardList size={25} />,
       path: "/admin/quizzes",
     },
@@ -71,7 +71,7 @@ export default function Sidebar() {
     // },
     {
       id: "Users",
-      label: "Users",
+      label: t("users"),
 
       icon: <FaUsers size={25} />,
       path: "/admin/users",
@@ -79,14 +79,14 @@ export default function Sidebar() {
     {
       id: "Blog",
 
-      label: "Blog",
+      label: t("blog"),
 
       icon: <MdForum size={25} />,
       path: "/admin/blog",
     },
     {
       id: "Settings",
-      label: "Setting",
+      label: t("settings"),
 
       icon: <MdSettingsSuggest size={25} />,
       path: "/admin/settings",
@@ -171,7 +171,7 @@ export default function Sidebar() {
           {/* Only show the "Code Arena" title when sidebar is expanded and not animating */}
           {!isCollapsed && !isAnimating && (
             <h2 className="flex-1 text-center text-xl font-bold text-fcolor">
-              Code Arena
+              {localStorage.getItem("systemName")}
             </h2>
           )}
           <button

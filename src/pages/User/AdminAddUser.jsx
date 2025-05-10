@@ -5,8 +5,10 @@ import URL from "../../config/URLconfig";
 import { FaUsers } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { ToastContainer, toast, Slide } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const AdminAddUser = () => {
+  const { t } = useTranslation("adminmanagement");
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -45,7 +47,7 @@ const AdminAddUser = () => {
     await axios
       .post(`${URL}/api/auth/admin-register-user`, data)
       .then(() => {
-        toast.success("User added successfully!", {
+        toast.success(<p>{t("addUser.success")}</p>, {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
@@ -55,7 +57,7 @@ const AdminAddUser = () => {
         }, 3000);
       })
       .catch(() => {
-        toast.error("Failed to add user!", {
+        toast.error(<p>{t("addUser.error")}</p>, {
           position: "top-right",
           autoClose: 3000,
           transition: Slide,
@@ -69,9 +71,9 @@ const AdminAddUser = () => {
         <div className="flex gap-2 dark:text-darkText items-center mb-2">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">User Management</h2>
+          <h2 className="text-lg font-bold">{t("user.title")}</h2>
           <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold ">Add New User</h2>
+          <h2 className="text-lg font-bold ">{t("addUser.title")}</h2>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -79,16 +81,16 @@ const AdminAddUser = () => {
         >
           <div className="space-y-4">
             {[
-              { label: "Username", name: "username", type: "text" },
-              { label: "Password", name: "password", type: "password" },
+              { label: <p>{t("addUser.username")}</p>, name: "username", type: "text" },
+              { label: <p>{t("addUser.password")}</p>, name: "password", type: "password" },
               { label: "Email", name: "email", type: "email" },
-              { label: "Phone Number", name: "phoneNumber", type: "text" },
-              { label: "Birth Day", name: "birthDay", type: "date" },
-              { label: "Address", name: "address", type: "text" },
+              { label: <p>{t("addUser.phoneNumber")}</p>, name: "phoneNumber", type: "text" },
+              { label: <p>{t("addUser.birthDay")}</p>, name: "birthDay", type: "date" },
+              { label: <p>{t("addUser.address")}</p>, name: "address", type: "text" },
             ].map((field) => (
               <div key={field.name} className="flex items-center space-x-4">
                 <label className="w-1/4 font-medium">
-                  {field.label}:
+                  {field.label}
                 </label>
                 <input
                   type={field.type}
@@ -102,21 +104,21 @@ const AdminAddUser = () => {
             ))}
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">Role:</label>
+              <label className="w-1/4 font-medium"><p>{t("addUser.role")}</p></label>
               <select
                 name="roleEnum"
                 value={formData.roleEnum}
                 onChange={handleInputChange}
                 className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               >
-                <option value="STUDENT">STUDENT</option>
-                <option value="TEACHER">LECTURE</option>
+                <option value="STUDENT"><p>{t("addUser.student")}</p></option>
+                <option value="TEACHER"><p>{t("addUser.teacher")}</p></option>
               </select>
             </div>
 
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                Profile Image:
+                <p>{t("addUser.profileImage")}</p>
               </label>
               <input
                 type="file"
@@ -131,13 +133,13 @@ const AdminAddUser = () => {
               to="/admin/users"
               className="px-6 py-2 dark:text-darkText border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
             >
-              Cancel
+              <p>{t("cancel")}</p>
             </Link>
             <button
               type="submit"
               className="px-6 py-2 bg-scolor text-wcolor rounded-lg hover:bg-opacity-80"
             >
-              Submit
+              <p>{t("submit")}</p>
             </button>
           </div>
         </form>

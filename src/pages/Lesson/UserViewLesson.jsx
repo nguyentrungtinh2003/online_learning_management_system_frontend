@@ -17,7 +17,6 @@ import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
 
 export default function UserViewLesson() {
-  const navigate = useNavigate();
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
@@ -176,38 +175,39 @@ export default function UserViewLesson() {
   };
 
   //
-  const deleteLessonComment = (lessonCommentId) => {
+  const deleteLessonComment = (lessonCommentId, userId) => {
     axios
       .delete(
-        `${URL}/lesson-comment/delete/${lessonCommentId}`,
+        `${URL}/lesson-comment/delete/${lessonCommentId}/${parseInt(userId)}`,
 
         { withCredentials: true }
       )
       .then((response) => {
         console.log("Delete comment successfully!");
+        fetchComments();
       })
       .catch((err) => {
         console.error("Error delete comment:", err.message);
       });
   };
-
+  const fetchComments = () => {
+    const lessonId = lessons[currentLessonIndex]?.id;
+    axios
+      .get(`${URL}/lesson-comment/lesson/${lessonId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setComments(response.data.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching comments:", err.message);
+      });
+  };
   // Fetching comments for the current lesson
   useEffect(() => {
     const lessonId = lessons[currentLessonIndex]?.id;
     if (!lessonId) return; // Không gọi nếu chưa có ID hợp lệ
     console.log("LessonId in get comment : " + lessonId);
-    const fetchComments = () => {
-      axios
-        .get(`${URL}/lesson-comment/lesson/${lessonId}`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setComments(response.data.data);
-        })
-        .catch((err) => {
-          console.error("Error fetching comments:", err.message);
-        });
-    };
 
     fetchComments();
   }, [currentLessonIndex, lessons]);
@@ -283,7 +283,12 @@ export default function UserViewLesson() {
                   {cmt.username === localStorage.getItem("username") ? (
                     <>
                       <button
-                        onClick={() => deleteChat(parseInt(msg.id))}
+                        onClick={() =>
+                          deleteLessonComment(
+                            parseInt(cmt.id),
+                            localStorage.getItem("id")
+                          )
+                        }
                         className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
                       >
                         X

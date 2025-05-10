@@ -19,7 +19,8 @@ export default function Footer() {
     introduce: language === "vi" ? "Giới thiệu" : "Introduce",
     services: language === "vi" ? "Sản phẩm & Dịch vụ" : "Products & Services",
     qa: language === "vi" ? "Hỏi & Đáp" : "Q&A",
-    terms: language === "vi" ? "Điều khoản & Điều kiện" : "Terms and Conditions",
+    terms:
+      language === "vi" ? "Điều khoản & Điều kiện" : "Terms and Conditions",
     follow: language === "vi" ? "Theo dõi chúng tôi" : "Follow Us",
     phone: language === "vi" ? "Điện thoại" : "Phone",
     email: language === "vi" ? "Email" : "Email",
@@ -37,17 +38,29 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex text-2xl font-bold items-center">
               <img
-                className="h-14 mr-4"
+                className="h-14 w-14  mr-4"
                 style={{ filter: "invert(1)" }}
-                src={logoCode}
+                src={
+                  localStorage.getItem("systemImg") !== "null"
+                    ? localStorage.getItem("systemImg")
+                    : "/logo.png"
+                }
                 alt="Logo"
               />
-              <h3 className="text-xl font-bold text-white">Code Arena</h3>
+              <h3 className="text-xl font-bold text-white">
+                {localStorage.getItem("systemName")}
+              </h3>
             </div>
             <ul>
-              <li>{text.phone}: 0334023469</li>
-              <li>{text.email}: contact@codearena.edu.com</li>
-              <li>{text.address}: {text.address_detail}</li>
+              <li>
+                {text.phone}: {localStorage.getItem("phoneNumber")}
+              </li>
+              <li>
+                {text.email}: {localStorage.getItem("systemEmail")}
+              </li>
+              <li>
+                {text.address}: {localStorage.getItem("address")}
+              </li>
             </ul>
           </div>
           <div className="space-y-4">

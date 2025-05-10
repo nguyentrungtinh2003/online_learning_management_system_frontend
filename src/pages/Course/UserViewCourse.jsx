@@ -20,7 +20,8 @@ export default function UserViewCourse() {
       try {
         setLoading(true);
         setError(null);
-        const response = await getCourseById(id);
+        console.log("id course " + id);
+        const response = await getCourseById(parseInt(id));
         if (response && response.statusCode === 200) {
           setCourse(response.data);
           setLessons(response.data.lessons || []);
@@ -48,7 +49,8 @@ export default function UserViewCourse() {
         video.src = lesson.videoURL;
 
         return new Promise((resolve) => {
-          video.onloadedmetadata = () => resolve({ index: i, duration: video.duration });
+          video.onloadedmetadata = () =>
+            resolve({ index: i, duration: video.duration });
           video.onerror = () => resolve({ index: i, duration: 0 });
         });
       });
@@ -66,8 +68,12 @@ export default function UserViewCourse() {
 
   const formatDuration = (duration) => {
     if (!duration || isNaN(duration)) return "Loading...";
-    const minutes = Math.floor(duration / 60).toString().padStart(2, "0");
-    const seconds = Math.floor(duration % 60).toString().padStart(2, "0");
+    const minutes = Math.floor(duration / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = Math.floor(duration % 60)
+      .toString()
+      .padStart(2, "0");
     return `${minutes}:${seconds}`;
   };
 
@@ -128,24 +134,31 @@ export default function UserViewCourse() {
         <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">
           {/* Course Title */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
-            <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">{course.courseName}</h1>
+            <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">
+              {course.courseName}
+            </h1>
             <p className="text-lg">{course.description}</p>
           </div>
           {/* Instructor */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
-             <h2 className="text-xl font-semibold text-gray-800 dark:text-darkText">Instructor</h2>
-             <div className="flex items-center gap-4">
-               {/* Instructor Image */}
-               <img
-                 src="https://randomuser.me/api/portraits/men/44.jpg"  // Replace with actual instructor image
-                 alt="Instructor"
-                 className="w-16 h-16 rounded-full object-cover"
-               />
-               <div>
-                 <p className="font-semibold dark:text-darkText">Nguyen Trung Tinh</p>
-                 <p className="text-sm text-gray-600 dark:text-darkSubtext">
-                   Experienced instructor with over 10 years of teaching in the field of web development and software engineering.
-                 </p>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-darkText">
+              Instructor
+            </h2>
+            <div className="flex items-center gap-4">
+              {/* Instructor Image */}
+              <img
+                src="https://randomuser.me/api/portraits/men/44.jpg" // Replace with actual instructor image
+                alt="Instructor"
+                className="w-16 h-16 rounded-full object-cover"
+              />
+              <div>
+                <p className="font-semibold dark:text-darkText">
+                  Nguyen Trung Tinh
+                </p>
+                <p className="text-sm text-gray-600 dark:text-darkSubtext">
+                  Experienced instructor with over 10 years of teaching in the
+                  field of web development and software engineering.
+                </p>
                 <p className="text-sm text-gray-500">Courses taught: 120+</p>
               </div>
             </div>
@@ -153,61 +166,78 @@ export default function UserViewCourse() {
 
           {/* Course Content */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
-             <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">Course Content</h2>
-             {lessonsToDisplay.length === 0 ? (
-               <p>No lessons available.</p>
-             ) : (
-               <ul className="space-y-4">
-                 {lessonsToDisplay.map((lesson, index) => (
-                   <li
-                     key={lesson._id || index}
-                     className="flex items-center justify-between border-b pb-3"
-                   >
-                     <div>
-                       <p className="font-semibold">{lesson.lessonName}</p>
-                       <p className="text-sm text-gray-500">
-                         {lesson.videoURL ? formatDuration(videoDurations[index]) : "No video link"}
-                       </p>
-                     </div>
-                   </li>
-                 ))}
-               </ul>
-             )}
-             {lessons.length > 4 && !showAllLessons && (
-               <button
-                 onClick={toggleShowAllLessons}
-                 className="text-blue-600 hover:underline mt-4"
-               >
-                 See All
-               </button>
-             )}
-           </div>
-         </div>
- 
-         {/* Right Sidebar */}
-         <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
-           {/* Course Details */}
-           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
-             {/* Course Image */}
-             <div>
-               <div className="relative w-auto h-32 mb-6">
-                 <img
-                   src={course.img}
-                   alt={course.courseName}
-                   className="absolute inset-0 w-full h-full object-cover rounded-lg"
-                 />
-               </div>
-               <h2 className="text-xl font-semibold text-gray-800">Course Details</h2>
-               <p><strong>Price:</strong> {course.coin !== undefined ? `${course.coin} Coins` : "Free"}</p>
-               <p><strong>Lessons:</strong> {lessons.length}</p>
-               <p><strong>Instructor:</strong> Nguyen Trung Tinh</p>
+            <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">
+              Course Content
+            </h2>
+            {lessonsToDisplay.length === 0 ? (
+              <p>No lessons available.</p>
+            ) : (
+              <ul className="space-y-4">
+                {lessonsToDisplay.map((lesson, index) => (
+                  <li
+                    key={lesson._id || index}
+                    className="flex items-center justify-between border-b pb-3"
+                  >
+                    <div>
+                      <p className="font-semibold">{lesson.lessonName}</p>
+                      <p className="text-sm text-gray-500">
+                        {lesson.videoURL
+                          ? formatDuration(videoDurations[index])
+                          : "No video link"}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {lessons.length > 4 && !showAllLessons && (
+              <button
+                onClick={toggleShowAllLessons}
+                className="text-blue-600 hover:underline mt-4"
+              >
+                See All
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
+          {/* Course Details */}
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
+            {/* Course Image */}
+            <div>
+              <div className="relative w-auto h-32 mb-6">
+                <img
+                  src={course.img}
+                  alt={course.courseName}
+                  className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Course Details
+              </h2>
+              <p>
+                <strong>Price:</strong>{" "}
+                {course.coin !== undefined ? `${course.coin} Coins` : "Free"}
+              </p>
+              <p>
+                <strong>Lessons:</strong> {lessons.length}
+              </p>
+              <p>
+                <strong>Instructor:</strong> Nguyen Trung Tinh
+              </p>
             </div>
             <div className="flex justify-end mt-6">
               <button
                 onClick={() => buyCourse(id)}
                 className="bg-fcolor hover:bg-scolor text-white font-semibold py-3 px-8 rounded-lg transition-colors"
               >
-                {buyLoading ? <Spinner animation="border" size="sm" /> : "Enroll Now"}
+                {buyLoading ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Enroll Now"
+                )}
               </button>
             </div>
           </div>
