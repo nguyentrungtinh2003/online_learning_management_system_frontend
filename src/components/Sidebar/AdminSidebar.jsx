@@ -77,6 +77,13 @@ export default function Sidebar() {
       path: "/admin/users",
     },
     {
+      id: "Payments",
+      label: "Payments",
+
+      icon: <FaUsers size={25} />,
+      path: "/admin/payment",
+    },
+    {
       id: "Blog",
 
       label: t("blog"),

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import URL from "../../config/URLconfig";
 
 export default function UserRanking() {
   // Dữ liệu top
