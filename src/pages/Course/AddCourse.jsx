@@ -21,7 +21,7 @@ const AddCourse = () => {
     courseName: "",
     description: "",
     img: "",
-    price: "",
+    price: "0",
     courseEnum: "FREE",
     isDeleted: false,
     userId: localStorage.getItem("id"),
@@ -98,54 +98,68 @@ const AddCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra nếu đang loading hoặc đã submit rồi
     if (loading || isSubmitted) return;
 
-    // Validate that all fields are filled
+    const missingFields = [];
+
+    if (!courseData.courseName.trim()) missingFields.push(t("courseName"));
+    if (!courseData.description.trim()) missingFields.push(t("description"));
+    if (!courseData.courseEnum.trim()) missingFields.push(t("courseType"));
+    if (!img) missingFields.push(t("image"));
     if (
-      !courseData.courseName ||
-      !courseData.description ||
-      !courseData.price ||
-      !courseData.courseEnum.trim() ||
-      !img
+      courseData.courseEnum === "PAID" &&
+      (!courseData.price || parseFloat(courseData.price) <= 0)
     ) {
-      toast.error(<p>{t("toastMissingFields")}</p>, {
-        autoClose: 1000,
-      });
-      return;
+      missingFields.push(t("validPrice"));
     }
 
-    if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-      toast.error(<p>{t("toastPriceError")}</p>, {
-        autoClose: 1000,
-      });
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 2000 }
+      );
       return;
     }
 
     setLoading(true);
 
     const formData = new FormData();
+    if (img) formData.append("img", img);
 
-    if (img) {
-      formData.append("img", img);
-    }
-
-    // Thêm thông tin course dưới dạng JSON Blob
     const courseJson = new Blob([JSON.stringify(courseData)], {
       type: "application/json",
     });
     formData.append("course", courseJson);
 
-    console.log("courseData JSON:", JSON.stringify(courseData, null, 2));
     try {
       const result = await addCourse(courseData, img);
-      toast.success(<p>{t("toastSuccess")}</p>, { autoClose: 1000 });
+      // ✅ Lưu khóa học mới vào localStorage để CourseManagement có thể nhận
+      const newCourse = {
+        id: result.id,
+        courseName: result.courseName,
+        price: result.price,
+        deleted: result.deleted,
+        img: result.img,
+        courseEnum: result.courseEnum,
+      };
+
+      const existing = JSON.parse(localStorage.getItem("newCourses") || "[]");
+      existing.push(newCourse);
+      localStorage.setItem("newCourses", JSON.stringify(existing));
+
+      toast.success(t("toastSuccess"), { autoClose: 1000 });
       setIsSubmitted(true);
       setTimeout(() => navigate(-1), 2000);
     } catch (error) {
       console.error("Submit Error:", error);
-      const message =
-        error?.response?.data?.message || <p>{t("toastError")}</p>;
+      const message = error?.response?.data?.message || t("toastError");
       toast.error(`❌ ${message}`, { autoClose: 2000 });
     } finally {
       setLoading(false);
@@ -168,12 +182,15 @@ const AddCourse = () => {
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">{t("addCourse.courseName")}</label>
+          <label className="w-1/4 font-medium">
+            {t("addCourse.courseName")}
+          </label>
           <input
             type="text"
             name="courseName"
             value={courseData.courseName}
             onChange={handleChange}
+            placeholder="Enter Course Name"
             className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
             required
           />
@@ -223,6 +240,7 @@ const AddCourse = () => {
             theme="snow"
             value={courseData.description}
             onChange={handleDescriptionChange}
+            placeholder={t("Enter Description")}
             className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
             style={{ minHeight: "300px" }}
           />
@@ -244,12 +262,13 @@ const AddCourse = () => {
 
         {/* Buttons */}
         <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer"
+          <button
+            onClick={() => !loading && navigate(-1)}
+            disabled={loading}
+            className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-           {t("cancel")}
-          </Link>
+            {t("cancel")}
+          </button>
           <button
             type="submit"
             disabled={loading || isSubmitted}
@@ -259,7 +278,13 @@ const AddCourse = () => {
                 : "bg-scolor text-wcolor hover:bg-opacity-80"
             }`}
           >
-            {loading ? <p>{t("processing")}</p> : isSubmitted ? <p>{t("submitted")}</p> : <p>{t("submit")}</p>}
+            {loading ? (
+              <p>{t("processing")}</p>
+            ) : isSubmitted ? (
+              <p>{t("submitted")}</p>
+            ) : (
+              <p>{t("submit")}</p>
+            )}
           </button>
         </div>
       </form>

@@ -20,54 +20,187 @@ export default function CourseManagement() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [cache, setCache] = useState(new Map());
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const coursesPerPage = 6;
 
   useEffect(() => {
-    fetchCourses();
+    const savedCache = localStorage.getItem("courseCache");
+    const savedNewCourses = localStorage.getItem("newCourses");
+
+    if (savedCache) {
+      const parsedCache = new Map(JSON.parse(savedCache));
+
+      if (savedNewCourses) {
+        const newCourses = JSON.parse(savedNewCourses);
+        const key = `${search.trim()}-${filterType}-${statusFilter}`;
+
+        const updatedCourses = [...(parsedCache.get(key) || []), ...newCourses];
+        parsedCache.set(key, updatedCourses);
+
+        // Ghi lại cache mới vào localStorage
+        localStorage.setItem(
+          "courseCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+
+        // Xóa courses mới đã dùng
+        localStorage.removeItem("newCourses");
+      }
+
+      setCache(parsedCache);
+    }
+  }, []);
+
+  // Khi cache đã sẵn sàng thì mới fetch
+  useEffect(() => {
+    if (cache.size > 0 || localStorage.getItem("courseCache")) {
+      fetchCourses();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, search, statusFilter, filterType]);
+  }, [cache, currentPage]);
+
+  useEffect(() => {
+    const savedSearch = localStorage.getItem("search");
+    const savedFilterType = localStorage.getItem("filterType");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+
+    if (savedSearch) setSearch(savedSearch);
+    if (savedFilterType) setFilterType(savedFilterType);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+  }, []); // Chạy một lần khi trang load lần đầu
+
+  useEffect(() => {
+    if (cache.size > 0 || localStorage.getItem("courseCache")) {
+      fetchCourses();
+    }
+  }, [cache, search, filterType, statusFilter, currentPage]); // Đảm bảo gọi lại fetchCourses khi có thay đổi bộ lọc
+
+  // Lưu lại khi có sự thay đổi trong search, filterType, hoặc statusFilter
+  useEffect(() => {
+    localStorage.setItem("search", search);
+    localStorage.setItem("filterType", filterType);
+    localStorage.setItem("statusFilter", statusFilter);
+  }, [search, filterType, statusFilter]);
+
+  useEffect(() => {
+    if (!cache.has("ALL-DATA")) return;
+
+    let filteredCourses = cache.get("ALL-DATA");
+
+    // Lọc theo search
+    if (search.trim() !== "") {
+      filteredCourses = filteredCourses.filter((course) =>
+        course.courseName.toLowerCase().includes(search.trim().toLowerCase())
+      );
+    }
+
+    // Lọc theo giá
+    if (filterType === "Free") {
+      filteredCourses = filteredCourses.filter(
+        (course) => course.price === 0 || course.price === null
+      );
+    } else if (filterType === "Paid") {
+      filteredCourses = filteredCourses.filter(
+        (course) => course.price !== null && course.price > 0
+      );
+    }
+
+    // Lọc theo trạng thái
+    if (statusFilter === "Deleted") {
+      filteredCourses = filteredCourses.filter((course) => course.deleted);
+    } else if (statusFilter === "Active") {
+      filteredCourses = filteredCourses.filter((course) => !course.deleted);
+    }
+
+    // Pagination
+    const startIndex = currentPage * coursesPerPage;
+    const endIndex = startIndex + coursesPerPage;
+    const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
+
+    setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
+    setTotalPages(Math.ceil(filteredCourses.length / coursesPerPage));
+    setLoading(false);
+  }, [cache, search, filterType, statusFilter, currentPage]);
 
   const fetchCourses = async () => {
     setLoading(true);
     try {
-      let data;
-      // Fetch all courses once
-      data = await getCoursesByPage(0, 1000); // Get more than 6 courses, e.g., 1000 courses
+      const cacheKey = `${search.trim()}-${filterType}-${statusFilter}`;
+      console.log("CacheKey:", cacheKey);
 
-      if (!data || !data.data || !data.data.content) {
-        throw new Error("Invalid API Response");
-      }
+      let fetchedCourses;
 
-      let fetchedCourses = data.data.content;
+      // ⚡ Nếu đã cache rồi thì dùng lại
+      if (cache.has(cacheKey)) {
+        console.log("Using cache...");
+        fetchedCourses = cache.get(cacheKey);
+      } else {
+        // Gọi API
+        const data = await getCoursesByPage(0, 1000);
 
-      // Client-side search filter
-      if (search.trim() !== "") {
-        fetchedCourses = fetchedCourses.filter((course) =>
-          course.courseName.toLowerCase().includes(search.trim().toLowerCase())
+        if (!data || !data.data || !data.data.content) {
+          throw new Error("Invalid API Response");
+        }
+
+        fetchedCourses = data.data.content;
+        console.log("Fetched Courses from API:", fetchedCourses);
+
+        // Lọc theo search
+        if (search.trim() !== "") {
+          fetchedCourses = fetchedCourses.filter((course) =>
+            course.courseName
+              .toLowerCase()
+              .includes(search.trim().toLowerCase())
+          );
+        }
+
+        const ALL_KEY = "ALL-DATA";
+
+        if (!cache.has(ALL_KEY)) {
+          const data = await getCoursesByPage(0, 1000);
+
+          if (!data?.data?.content) throw new Error("Invalid API Response");
+
+          const allCourses = data.data.content;
+
+          const newCache = new Map(cache.set(ALL_KEY, allCourses));
+          setCache(newCache);
+          localStorage.setItem(
+            "courseCache",
+            JSON.stringify(Array.from(newCache.entries()))
+          );
+        }
+
+        // Lọc theo giá
+        if (filterType === "Free") {
+          fetchedCourses = fetchedCourses.filter(
+            (course) => course.price === 0 || course.price === null
+          );
+        } else if (filterType === "Paid") {
+          fetchedCourses = fetchedCourses.filter(
+            (course) => course.price !== null && course.price > 0
+          );
+        }
+
+        // Lọc theo trạng thái
+        if (statusFilter === "Deleted") {
+          fetchedCourses = fetchedCourses.filter((course) => course.deleted);
+        } else if (statusFilter === "Active") {
+          fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
+        }
+
+        const newCache = new Map(cache.set(cacheKey, fetchedCourses));
+        setCache(newCache);
+        localStorage.setItem(
+          "courseCache",
+          JSON.stringify(Array.from(newCache.entries()))
         );
       }
 
-      if (filterType === "Free") {
-        fetchedCourses = fetchedCourses.filter(
-          (course) => course.price === 0 || course.price === null
-        );
-      } else if (filterType === "Paid") {
-        fetchedCourses = fetchedCourses.filter(
-          (course) => course.price !== null && course.price > 0
-        );
-      }
-
-      // Filter by status (Deleted/Not Deleted)
-      if (statusFilter === "Deleted") {
-        fetchedCourses = fetchedCourses.filter((course) => course.deleted);
-      } else if (statusFilter === "Active") {
-        fetchedCourses = fetchedCourses.filter((course) => !course.deleted);
-      }
-
-      // 🔔 Hiện thông báo nếu không tìm thấy kết quả
+      // Kiểm tra nếu không có kết quả
       if (fetchedCourses.length === 0 && search.trim() !== "") {
         toast.info("No courses found for your search.", {
           position: "top-right",
@@ -80,6 +213,7 @@ export default function CourseManagement() {
       const endIndex = startIndex + coursesPerPage;
       const paginatedCourses = fetchedCourses.slice(startIndex, endIndex);
 
+      console.log("Paginated Courses:", paginatedCourses);
       setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedCourses.length / coursesPerPage));
     } catch (error) {
@@ -249,7 +383,7 @@ export default function CourseManagement() {
                 ) : courses.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center py-4">
-                    {t("noCourse")}
+                      {t("noCourse")}
                     </td>
                   </tr>
                 ) : (
@@ -348,20 +482,23 @@ export default function CourseManagement() {
 
         <div className="flex items-center mt-2 justify-between">
           <p>
-          {t("page")} {currentPage + 1} {t("of")} {totalPages}
+            {loading
+              ? t("Page Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
           </p>
           <div className="space-x-2">
             <button
               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
-              disabled={currentPage === 0}
+              disabled={currentPage === 0 || loading}
             >
               <MdNavigateBefore fontSize={30} />
             </button>
             <button
               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
-              disabled={currentPage >= totalPages - 1}
+              disabled={currentPage >= totalPages - 1 || loading}
             >
               <MdNavigateNext fontSize={30} />
             </button>
