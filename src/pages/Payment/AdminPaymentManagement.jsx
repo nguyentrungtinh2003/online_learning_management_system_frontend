@@ -1,18 +1,36 @@
 import { useEffect, useState } from "react";
 import { Edit, Trash2, Eye } from "lucide-react";
-import { FaLock, FaLockOpen } from "react-icons/fa";
+import { FaLock,FaPlus, FaLockOpen } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
-import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import { MdNavigateNext, MdNavigateBefore, MdPayment } from "react-icons/md";
 import { ToastContainer } from "react-toastify";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 export default function TransactionAdmin() {
+  const { t } = useTranslation("adminmanagement");
   const [transactions, setTransactions] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [keyword, setKeyword] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const usersPerPage = 6;
+  
+    const handleNextPage = () => {
+      if (currentPage < totalPages - 1) {
+        setCurrentPage(currentPage + 1);
+      }
+    };
+  
+    const handlePrePage = () => {
+      if (currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+      }
+    };
 
   // const filteredTransactions = transactions.filter((t) => {
   //   const matchesSearch = t.user.username
@@ -88,57 +106,61 @@ export default function TransactionAdmin() {
   };
 
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full w-full flex flex-col">
       <ToastContainer />
-      <div className="flex justify-between mb-4 items-center">
-        <h2 className="text-xl font-bold">Transaction Management</h2>
+      <div className="flex mb-2 items-center justify-between">
+        <div className="flex gap-2 dark:text-darkText items-center">
+          <MdPayment fontSize={30}/>
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">{t("payment.title")}</h2>
+        </div>
         <Link to="/admin/transactions/add">
-          <button className="bg-green-600 text-white px-4 py-2 rounded hover:scale-105">
-            Add Transaction
+          <button className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+            <FaPlus size={30} />
           </button>
         </Link>
       </div>
-
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-2">
         <input
           type="text"
-          placeholder="Search by username..."
-          className="border px-3 py-2 rounded w-full"
+          placeholder={t("searchPlaceholder")}
+          className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
         <select
           // value={statusFilter}
           // onChange={(e) => setStatusFilter(e.target.value)}
-          className="border px-3 py-2 rounded"
+          className="border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText px-3 py-2 rounded"
         >
-          <option value="All">All</option>
-          <option value="Deleted">Deleted</option>
-          <option value="Active">Active</option>
+          <option value="All">{t("all")}</option>
+          <option value="Deleted">{t("deleted")}</option>
+          <option value="Active">{t("active")}</option>
         </select>
       </div>
 
-      <div className="bg-white dark:bg-darkSubbackground rounded-xl p-4 shadow">
+      <div className="flex-1 drop-shadow-lg">
+        <div className="bg-wcolor dark:border dark:text-darkSubtext dark:border-darkBorder dark:bg-darkSubbackground  p-4 rounded-2xl">
         {transactions?.length === 0 ? (
-          <p className="text-center">No transactions found.</p>
+          <p className="text-center">{t("payment.noTransaction")}</p>
         ) : (
           <table className="w-full table-auto text-center">
             <thead>
-              <tr className="font-bold border-b">
-                <th className="p-2">ID</th>
-                <th className="p-2">Username</th>
-                <th className="p-2">Amount (VNĐ)</th>
-                <th className="p-2">Coin Amount</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Date</th>
-                <th className="p-2">Deleted</th>
-                <th className="p-2">Actions</th>
+              <tr className="font-bold dark:text-darkText">
+                <th className="p-2">{t("stt")}</th>
+                <th className="p-2">{t("user.username")}</th>
+                <th className="p-2">{t("payment.amount")} (VNĐ)</th>
+                <th className="p-2">{t("payment.coin")}</th>
+                <th className="p-2">{t("status")}</th>
+                <th className="p-2">{t("createdDate")}</th>
+                <th className="p-2">{t("deleted")}</th>
+                <th className="p-2">{t("action")}</th>
               </tr>
             </thead>
             <tbody>
               {Array.isArray(transactions) &&
                 transactions.map((t) => (
-                  <tr key={t.id} className="border-b hover:bg-gray-50">
+                  <tr key={t.id} className="text-center dark:text-darkSubtext">
                     <td className="p-2">{t.id}</td>
                     <td className="p-2">{t.user?.username || "Unknown"}</td>
                     <td className="p-2">{t.amount.toLocaleString()}₫</td>
@@ -167,6 +189,28 @@ export default function TransactionAdmin() {
             </tbody>
           </table>
         )}
+      </div>
+      </div>
+      <div className="flex dark:text-darkText items-center justify-between">
+              <p>
+                {t("page")} {currentPage + 1} {t("of")} {totalPages}
+              </p>
+              <div className="space-x-2">
+                <button
+                   className="bg-scolor p-1 rounded disabled:opacity-50"
+                  onClick={handlePrePage}
+                  disabled={currentPage === 0}
+                >
+                  <MdNavigateBefore size={30} />
+                </button>
+                <button
+                   className="bg-scolor p-1 rounded disabled:opacity-50"
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages - 1}
+                >
+                  <MdNavigateNext size={30} />
+                </button>
+              </div>
       </div>
     </div>
   );

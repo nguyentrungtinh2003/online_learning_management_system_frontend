@@ -135,5 +135,11 @@
     "like": "Likes",
     "author": "Author",
     "noBlog": "No Blog Available"
+  },
+  "payment": {
+    "title": "Transaction Management",
+    "amount": "Amount",
+    "coin": "Coin",
+    "noTransaction": "No Transactions Found"
   }
 }

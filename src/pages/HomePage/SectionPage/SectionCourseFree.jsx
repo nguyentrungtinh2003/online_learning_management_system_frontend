@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
+import { PiArrowFatLinesDown } from "react-icons/pi";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 
 export default function SectionCourseFree() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCourses, setVisibleCourses] = useState(4);
   const [language, setLanguage] = useState("en");
 
   useEffect(() => {
@@ -31,25 +33,8 @@ export default function SectionCourseFree() {
       });
   }, []);
 
-  const buyCourse = (courseId) => {
-    const userId = localStorage.getItem("id");
-    if (!userId) {
-      alert(
-        language === "vi"
-          ? "Bạn cần đăng nhập để mua khóa học!"
-          : "You need to log in to buy the course!"
-      );
-      return;
-    }
-
-    axios
-      .post(`${URL}/courses/buy/${userId}/${courseId}`)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log("Error " + error.message);
-      });
+  const handleShowMore = () => {
+    setVisibleCourses((prev) => prev + 4);
   };
 
   const CourseCard = ({ course }) => (
@@ -79,7 +64,6 @@ export default function SectionCourseFree() {
             {course.user?.username || "Nguyen Trung Tinh"}
           </span>
         </p>
-
         <a href={`/view-course/${course.id}`}>
           <button className="mt-4 w-full bg-scolor text-white text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
             {language === "vi" ? "Xem khoá học" : "View Course"}
@@ -96,13 +80,14 @@ export default function SectionCourseFree() {
           ? "Khoá học miễn phí – Không cần thanh toán!"
           : "Top Courses – No Payment Needed!"}
       </h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {loading ? (
           <div className="col-span-full">
             <SkeletonSection />
           </div>
         ) : courses.length > 0 ? (
-          courses.map((course) => (
+          courses.slice(0, visibleCourses).map((course) => (
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
@@ -113,6 +98,21 @@ export default function SectionCourseFree() {
           </div>
         )}
       </div>
+
+      {/* Nút xem thêm */}
+      {!loading && visibleCourses < courses.length && (
+        <div className="w-full justify-center items-center mt-12 flex">
+          <button
+            onClick={handleShowMore}
+            className="font-semibold text-gray-500 flex flex-col items-center hover:text-fcolor transition duration-300"
+          >
+            <PiArrowFatLinesDown size={25} />
+            <p>
+              {language === "vi" ? "Xem thêm khoá học" : "Show more courses"}
+            </p>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

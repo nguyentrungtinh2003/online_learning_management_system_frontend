@@ -121,6 +121,12 @@
   "addBlog": {
     "title": "Thêm Bài Viết Mới",
     "blogTitle": "Tiêu Đề Bài Viết"
+  },
+  "payment": {
+    "title": "Quản Lí Giao Dịch",
+    "amount": "Số Lượng",
+    "coin": "Xu",
+    "noTransaction": "Không Tìm Thấy Giao Dịch Nào"
   }
 }
   

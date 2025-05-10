@@ -91,10 +91,9 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full w-full gap-2 flex flex-col">
+    <div className="h-full w-full flex flex-col">
       <ToastContainer />
-
-      <div className="flex items-center justify-between">
+      <div className="flex mb-2 items-center justify-between">
         <div className="flex gap-2 dark:text-darkText items-center">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
@@ -107,7 +106,6 @@ export default function UserManagement() {
           <FaUserPlus size={30} />
         </Link>
       </div>
-
       {/* User Table */}
       <div className="flex-1 drop-shadow-lg">
         <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-4 rounded-2xl">
