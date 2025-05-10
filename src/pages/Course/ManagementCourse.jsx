@@ -21,47 +21,13 @@ export default function CourseManagement() {
   const [filterType, setFilterType] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [cache, setCache] = useState(new Map());
-
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const coursesPerPage = 6;
+  const [reloadTrigger, setReloadTrigger] = useState(false);
 
-  useEffect(() => {
-    const savedCache = localStorage.getItem("courseCache");
-    const savedNewCourses = localStorage.getItem("newCourses");
-
-    if (savedCache) {
-      const parsedCache = new Map(JSON.parse(savedCache));
-
-      if (savedNewCourses) {
-        const newCourses = JSON.parse(savedNewCourses);
-        const key = `${search.trim()}-${filterType}-${statusFilter}`;
-
-        const updatedCourses = [...(parsedCache.get(key) || []), ...newCourses];
-        parsedCache.set(key, updatedCourses);
-
-        // Ghi lại cache mới vào localStorage
-        localStorage.setItem(
-          "courseCache",
-          JSON.stringify(Array.from(parsedCache.entries()))
-        );
-
-        // Xóa courses mới đã dùng
-        localStorage.removeItem("newCourses");
-      }
-
-      setCache(parsedCache);
-    }
-  }, []);
-
-  // Khi cache đã sẵn sàng thì mới fetch
-  useEffect(() => {
-    if (cache.size > 0 || localStorage.getItem("courseCache")) {
-      fetchCourses();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cache, currentPage]);
-
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
     const savedSearch = localStorage.getItem("search");
     const savedFilterType = localStorage.getItem("filterType");
@@ -72,19 +38,21 @@ export default function CourseManagement() {
     if (savedStatusFilter) setStatusFilter(savedStatusFilter);
   }, []); // Chạy một lần khi trang load lần đầu
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerCourseReload**
   useEffect(() => {
-    if (cache.size > 0 || localStorage.getItem("courseCache")) {
-      fetchCourses();
-    }
-  }, [cache, search, filterType, statusFilter, currentPage]); // Đảm bảo gọi lại fetchCourses khi có thay đổi bộ lọc
+    const handleReload = () => {
+      triggerReload(); // Gọi trigger để re-fetch cache và courses
+    };
+    window.addEventListener("triggerCourseReload", handleReload);
 
-  // Lưu lại khi có sự thay đổi trong search, filterType, hoặc statusFilter
-  useEffect(() => {
-    localStorage.setItem("search", search);
-    localStorage.setItem("filterType", filterType);
-    localStorage.setItem("statusFilter", statusFilter);
-  }, [search, filterType, statusFilter]);
+    return () => {
+      window.removeEventListener("triggerCourseReload", handleReload);
+    };
+  }, []); // Lắng nghe sự kiện reload từ các trang khác
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 3: Lọc khóa học từ cache và phân trang khi cache thay đổi**
   useEffect(() => {
     if (!cache.has("ALL-DATA")) return;
 
@@ -115,7 +83,7 @@ export default function CourseManagement() {
       filteredCourses = filteredCourses.filter((course) => !course.deleted);
     }
 
-    // Pagination
+    // Phân trang
     const startIndex = currentPage * coursesPerPage;
     const endIndex = startIndex + coursesPerPage;
     const paginatedCourses = filteredCourses.slice(startIndex, endIndex);
@@ -123,13 +91,18 @@ export default function CourseManagement() {
     setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredCourses.length / coursesPerPage));
     setLoading(false);
-  }, [cache, search, filterType, statusFilter, currentPage]);
+  }, [cache, search, filterType, statusFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
+  useEffect(() => {
+    fetchCourses();
+  }, [cache, currentPage, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
 
   const fetchCourses = async () => {
     setLoading(true);
     try {
       const cacheKey = `${search.trim()}-${filterType}-${statusFilter}`;
-      console.log("CacheKey:", cacheKey);
 
       let fetchedCourses;
 
@@ -146,7 +119,6 @@ export default function CourseManagement() {
         }
 
         fetchedCourses = data.data.content;
-        console.log("Fetched Courses from API:", fetchedCourses);
 
         // Lọc theo search
         if (search.trim() !== "") {
@@ -158,7 +130,6 @@ export default function CourseManagement() {
         }
 
         const ALL_KEY = "ALL-DATA";
-
         if (!cache.has(ALL_KEY)) {
           const data = await getCoursesByPage(0, 1000);
 
@@ -208,12 +179,11 @@ export default function CourseManagement() {
         });
       }
 
-      // Pagination
+      // Phân trang
       const startIndex = currentPage * coursesPerPage;
       const endIndex = startIndex + coursesPerPage;
       const paginatedCourses = fetchedCourses.slice(startIndex, endIndex);
 
-      console.log("Paginated Courses:", paginatedCourses);
       setCourses(paginatedCourses.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedCourses.length / coursesPerPage));
     } catch (error) {
@@ -223,6 +193,44 @@ export default function CourseManagement() {
       setLoading(false);
     }
   };
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 5: Lưu lại các giá trị của search, filterType, và statusFilter vào localStorage**
+  // Gọi cái này sau khi add/edit/delete course
+  useEffect(() => {
+    localStorage.setItem("search", search);
+    localStorage.setItem("filterType", filterType);
+    localStorage.setItem("statusFilter", statusFilter);
+  }, [search, filterType, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
+  useEffect(() => {
+    const savedCache = localStorage.getItem("courseCache");
+    const savedNewCourses = localStorage.getItem("newCourses");
+
+    if (savedCache) {
+      const parsedCache = new Map(JSON.parse(savedCache));
+
+      if (savedNewCourses) {
+        const newCourses = JSON.parse(savedNewCourses);
+        const key = `${search.trim()}-${filterType}-${statusFilter}`;
+
+        const updatedCourses = [...(parsedCache.get(key) || []), ...newCourses];
+        parsedCache.set(key, updatedCourses);
+
+        // Lưu lại cache mới vào localStorage
+        localStorage.setItem(
+          "courseCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+
+        // Xóa courses mới đã dùng
+        localStorage.removeItem("newCourses");
+      }
+
+      setCache(parsedCache);
+    }
+  }, [reloadTrigger]); // Chạy một lần khi trang được load lần đầu tiên
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value);
@@ -241,11 +249,32 @@ export default function CourseManagement() {
     if (isConfirmed) {
       try {
         await deleteCourse(id);
+
+        // ✅ Cập nhật cache trong localStorage
+        const savedCache = localStorage.getItem("courseCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc tuỳ bộ lọc hiện tại
+          const existingCourses = parsedCache.get(key) || [];
+
+          const updatedCourses = existingCourses.filter(
+            (course) => course.id !== id
+          );
+          parsedCache.set(key, updatedCourses);
+
+          localStorage.setItem(
+            "courseCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi event để các useEffect khác reload
+        window.dispatchEvent(new Event("triggerCourseReload"));
+
         toast.success("Course deleted successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
-        fetchCourses();
       } catch (error) {
         console.error("Error deleting course:", error);
         toast.error("Failed to delete course!", {
@@ -263,11 +292,34 @@ export default function CourseManagement() {
     if (isConfirmed) {
       try {
         await restoreCourse(id);
+
+        // ✅ Cập nhật courseCache trong localStorage nếu có
+        const savedCache = localStorage.getItem("courseCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc key tương ứng với filter hiện tại
+
+          const existingCourses = parsedCache.get(key) || [];
+
+          const updatedCourses = existingCourses.map((course) =>
+            course.id === id ? { ...course, deleted: false } : course
+          );
+
+          parsedCache.set(key, updatedCourses);
+
+          localStorage.setItem(
+            "courseCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi sự kiện để các component khác reload nếu cần
+        window.dispatchEvent(new Event("triggerCourseReload"));
+
         toast.success("Course restored successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
-        fetchCourses(); // Reload courses list
       } catch (error) {
         console.error("Error restoring course:", error);
         toast.error("Failed to restore course!", {

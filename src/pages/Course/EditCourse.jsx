@@ -9,17 +9,22 @@ import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { getCourseById, updateCourse } from "../../services/courseapi";
 import URL from "../../config/URLconfig";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { useTranslation } from "react-i18next";
 
 const EditCourse = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const { id } = useParams();
+  const [reloadTrigger, setReloadTrigger] = useState(false);
 
-  const [course, setCourse] = useState({
+  const [courseData, setCourse] = useState({
     courseName: "",
     description: "",
     price: "",
     img: "",
-    courseEnum: "FREE",
+    courseEnum: "",
     userId: localStorage.getItem("id"),
   });
 
@@ -28,29 +33,30 @@ const EditCourse = () => {
     description: "",
     price: "",
     img: "",
-    courseEnum: "FREE",
+    courseEnum: "",
     userId: localStorage.getItem("id"),
   });
 
-  const [file, setFile] = useState(null);
+  const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const courseData = await getCourseById(id);
+        const response = await getCourseById(id);
         // console.log("Fetched Course Data:", courseData); // In dữ liệu nhận được từ API
 
-        if (courseData && courseData.data) {
+        if (response && response.data) {
           const formattedData = {
-            courseName: courseData.data.courseName || "",
-            description: courseData.data.description || "",
-            price: courseData.data.price || "0",
-            img: courseData.data.img || "",
-            courseEnum: courseData.data.courseEnum || "FREE",
-            userId: courseData.data.user?.id || localStorage.getItem("id"),
+            courseName: response.data.courseName || "",
+            description: response.data.description || "",
+            price: response.data.price || "0",
+            img: response.data.img || "",
+            courseEnum: response.data.courseEnum || "FREE",
+            userId: response.data.user?.id || localStorage.getItem("id"),
           };
 
           setCourse(formattedData);
@@ -106,7 +112,32 @@ const EditCourse = () => {
     });
   };
 
-  const handleImageChange = (e) => setFile(e.target.files[0]);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Lấy file ảnh đầu tiên người dùng chọn
+    if (file) {
+      setImg(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Sau khi đọc xong file, chúng ta gán kết quả vào state để hiển thị
+        setImgPreview(reader.result);
+      };
+
+      // Đọc file ảnh dưới dạng URL data
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDescriptionChange = (value) => {
+    setCourse((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+
+  const handleReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,11 +147,12 @@ const EditCourse = () => {
 
     // Kiểm tra xem dữ liệu có thay đổi không
     const isDataUnchanged =
-      course.courseName === initialCourse.courseName &&
-      course.description === initialCourse.description &&
-      course.price === initialCourse.price &&
-      course.courseEnum === initialCourse.courseEnum &&
-      course.img === initialCourse.img;
+      courseData.courseName === initialCourse.courseName &&
+      courseData.description === initialCourse.description &&
+      courseData.price === initialCourse.price &&
+      courseData.courseEnum === initialCourse.courseEnum &&
+      courseData.img === initialCourse.img &&
+      !img;
 
     // Nếu dữ liệu không thay đổi, chỉ cần quay lại
     if (isDataUnchanged) {
@@ -128,31 +160,91 @@ const EditCourse = () => {
       return;
     }
 
-    // Kiểm tra giá cho khóa học trả phí
-    if (parseFloat(course.price) <= 0 && course.courseEnum === "PAID") {
-      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", {
-        autoClose: 1000,
-      });
+    const missingFields = [];
+
+    // Kiểm tra các trường bắt buộc
+    if (!courseData.courseName.trim()) missingFields.push(t("courseName"));
+    if (!courseData.description.trim()) missingFields.push(t("description"));
+    if (!courseData.courseEnum.trim()) missingFields.push(t("courseType"));
+    if (!img && !courseData.img) missingFields.push(t("image"));
+    if (
+      courseData.courseEnum === "PAID" &&
+      (!courseData.price || parseFloat(courseData.price) <= 0)
+    ) {
+      missingFields.push(t("validPrice"));
+    }
+
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 1000 }
+      );
       return;
     }
 
     setLoading(true);
 
     const formData = new FormData();
+    if (img) formData.append("img", img);
     formData.append(
       "course",
-      new Blob([JSON.stringify(course)], { type: "application/json" })
+      new Blob([JSON.stringify(courseData)], { type: "application/json" })
     );
-    if (file) formData.append("img", file);
 
     try {
-      await updateCourse(id, course, file);
+      const result = await updateCourse(id, courseData, img);
+
+      // ✅ Cập nhật localStorage nếu có khóa học trong cache
+      const savedCache = localStorage.getItem("courseCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+
+        const key = `--ALL--ALL`; // hoặc tùy theo bộ lọc thực tế đang dùng
+        const existingCourses = parsedCache.get(key) || [];
+
+        // Cập nhật khóa học trong danh sách
+        const updatedCourses = existingCourses.map((course) =>
+          course.id === id
+            ? {
+                ...course,
+                courseName: courseData.courseName,
+                price: courseData.price,
+                img: result.img || course.img,
+                courseEnum: courseData.courseEnum,
+              }
+            : course
+        );
+
+        parsedCache.set(key, updatedCourses);
+
+        localStorage.setItem(
+          "courseCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+      }
+
+      // Dùng cho trường hợp API chạy quá chậm
+      // Xóa cache
+      // localStorage.removeItem("courseCache");
+      window.dispatchEvent(new Event("triggerCourseReload"));
+
       toast.success("Cập nhật khóa học thành công!", {
         autoClose: 1000,
         position: "top-right",
       });
       setIsSubmitted(true);
-      setTimeout(() => navigate(-1), 1500);
+
+      handleReload();
+      setTimeout(() => {
+        navigate("/admin/courses", { state: { reload: true } });
+      }, 1000);
     } catch (err) {
       console.error("Lỗi khi cập nhật khóa học:", err);
       toast.error("Không thể cập nhật khóa học!", {
@@ -165,80 +257,118 @@ const EditCourse = () => {
   };
 
   return (
-    <div className="w-full flex flex-col h-full">
-      <div className="flex gap-2 dark:text-darkText">
+    <div className="h-full flex flex-col w-full">
+      <div className="flex dark:text-darkText gap-2 items-center mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Course Management</h2>
+        <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Edit Course</h2>
+        <h2 className="text-lg font-bold">{t("editCourse.title")}</h2>
       </div>
 
-      <Form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-        <Form.Group className="mb-3" controlId="formCourseName">
-          <Form.Label>Course Title</Form.Label>
-          <Form.Control
+      <form
+        onSubmit={handleSubmit}
+        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border-2 dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
+      >
+        {/* Course Name & Price */}
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">
+            {t("editCourse.courseName")}
+          </label>
+          <input
             type="text"
             name="courseName"
-            value={course.courseName}
+            value={courseData.courseName}
             onChange={handleChange}
+            placeholder="Enter Course Name"
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group className="mb-3" controlId="formDescription">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={3}
-            name="description"
-            value={course.description}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="formPrice">
-          <Form.Label>Price</Form.Label>
-          <Form.Control
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">{t("price")}</label>
+          <input
             type="number"
             name="price"
-            value={course.price}
+            placeholder="Price"
+            value={courseData.price}
             onChange={handleChange}
-            min={0}
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+            min="0"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group className="mb-3" controlId="formCourseEnum">
-          <Form.Label>Course Type</Form.Label>
-          <Form.Select
+        {/* Image Upload */}
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">{t("image")}</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+          />
+        </div>
+
+        {/* Current Image */}
+        {courseData.img && !imgPreview && (
+          <div className="mt-4 text-center">
+            <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
+            <img
+              src={courseData.img}
+              alt="Current Image"
+              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+            />
+          </div>
+        )}
+
+        {/* Image Preview */}
+        {imgPreview && (
+          <div className="mt-4 text-center">
+            <h3 className="font-medium">{t("editCourse.imagePreview")}</h3>
+            <img
+              src={imgPreview}
+              alt="Preview"
+              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+            />
+          </div>
+        )}
+
+        {/* Description */}
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">{t("description")}</label>
+          <ReactQuill
+            theme="snow"
+            value={courseData.description}
+            onChange={handleDescriptionChange}
+            placeholder={t("Enter Description")}
+            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+          />
+        </div>
+
+        {/* Course Type */}
+        <div className="flex items-center space-x-4">
+          <label className="w-1/4 font-medium">{t("type")}</label>
+          <select
             name="courseEnum"
-            value={course.courseEnum}
+            value={courseData.courseEnum}
             onChange={handleEnumChange}
+            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="FREE">Free</option>
             <option value="PAID">Paid</option>
-          </Form.Select>
-        </Form.Group>
+          </select>
+        </div>
 
-        {/* Hiển thị ảnh cũ nếu có */}
-        <Form.Group className="mb-3" controlId="formImage">
-          <Form.Label>Course Image</Form.Label>
-          {course.img && (
-            <img
-              src={course.img}
-              alt="Course"
-              className="w-40 h-40 object-cover rounded-md mb-2"
-            />
-          )}
-          <Form.Control type="file" onChange={handleImageChange} />
-        </Form.Group>
-
+        {/* Submit Button */}
         <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+          <button
+            onClick={() => !loading && navigate(-1)}
+            disabled={loading || isSubmitted}
+            className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            Cancel
-          </Link>
+            {t("cancel")}
+          </button>
           <button
             type="submit"
             className={`px-6 py-2 rounded-lg ${
@@ -248,10 +378,14 @@ const EditCourse = () => {
             }`}
             disabled={loading || isSubmitted}
           >
-            {loading ? "Processing..." : isSubmitted ? "Submitted" : "Submit"}
+            {loading
+              ? t("processing")
+              : isSubmitted
+              ? t("submitted")
+              : t("submit")}
           </button>
         </div>
-      </Form>
+      </form>
       <ToastContainer />
     </div>
   );

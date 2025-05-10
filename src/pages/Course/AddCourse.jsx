@@ -27,6 +27,7 @@ const AddCourse = () => {
     userId: localStorage.getItem("id"),
   });
 
+  const [reloadTrigger, setReloadTrigger] = useState(false);
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -50,6 +51,10 @@ const AddCourse = () => {
         [name]: value,
       }));
     }
+  };
+
+  const handleReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect
   };
 
   const handleEnumChange = (e) => {
@@ -123,7 +128,7 @@ const AddCourse = () => {
             ))}
           </ul>
         </div>,
-        { autoClose: 2000 }
+        { autoClose: 1000 }
       );
       return;
     }
@@ -150,17 +155,44 @@ const AddCourse = () => {
         courseEnum: result.courseEnum,
       };
 
-      const existing = JSON.parse(localStorage.getItem("newCourses") || "[]");
-      existing.push(newCourse);
-      localStorage.setItem("newCourses", JSON.stringify(existing));
+      // Đọc cache từ localStorage
+      const savedCache = localStorage.getItem("courseCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
 
-      toast.success(t("toastSuccess"), { autoClose: 1000 });
+        // Xác định key phù hợp dựa theo bộ lọc hiện tại (giống trong CourseManagement)
+        const key = `--ALL--ALL`; // Nếu bạn đang để mặc định là All, bạn có thể điều chỉnh theo search/filter thực tế
+        const existingCourses = parsedCache.get(key) || [];
+
+        // Thêm khóa học mới vào danh sách hiện tại
+        const updatedCourses = [...existingCourses, newCourse];
+        parsedCache.set(key, updatedCourses);
+
+        // Lưu lại vào localStorage
+        localStorage.setItem(
+          "courseCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+      }
+
+      // Dùng cho trường hợp API chạy quá chậm
+      // Xóa cache
+      // localStorage.removeItem("courseCache");
+
+      // Nếu cần, trigger lại reload để tái tạo lại cache trong CourseManagement
+      window.dispatchEvent(new Event("triggerCourseReload"));
+
+      toast.success(t("Success!"), { autoClose: 1000 });
       setIsSubmitted(true);
-      setTimeout(() => navigate(-1), 2000);
+
+      handleReload();
+      setTimeout(() => {
+        navigate("/admin/courses", { state: { reload: true } });
+      }, 1000);
     } catch (error) {
       console.error("Submit Error:", error);
-      const message = error?.response?.data?.message || t("toastError");
-      toast.error(`❌ ${message}`, { autoClose: 2000 });
+      const message = error?.response?.data?.message || t("Error!");
+      toast.error(`❌ ${message}`, { autoClose: 1000 });
     } finally {
       setLoading(false);
     }
@@ -201,6 +233,7 @@ const AddCourse = () => {
           <input
             type="number"
             name="price"
+            placeholder="Price"
             value={courseData.price}
             onChange={handleChange}
             className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -264,7 +297,7 @@ const AddCourse = () => {
         <div className="flex justify-end space-x-2 mt-6">
           <button
             onClick={() => !loading && navigate(-1)}
-            disabled={loading}
+            disabled={loading || isSubmitted}
             className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {t("cancel")}
