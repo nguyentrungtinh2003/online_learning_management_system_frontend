@@ -6,8 +6,10 @@ import { MdNavigateNext, MdDeleteForever, MdNavigateBefore } from "react-icons/m
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuizzesByLessonIdAndPage, deleteQuiz } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import { useTranslation } from "react-i18next";
 
 const QuizzManagement = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const { lessonId } = useParams();
 
@@ -120,7 +122,7 @@ const QuizzManagement = () => {
           <div className="flex gap-2 items-center dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold">Quizz Management</h2>
+            <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
           </div>
           <Link to={`/admin/lessons/${lessonId}/quizzes/add`}>
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">

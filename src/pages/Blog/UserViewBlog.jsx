@@ -439,7 +439,7 @@ export default function Blog() {
             className="w-10 h-10 rounded-full"
           />
           <input
-            className="focus:outline-none placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
+            className="focus:outline-none dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
               username: localStorage.getItem("username"),
             })}

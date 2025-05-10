@@ -11,8 +11,10 @@ import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { addCourse } from "../../services/courseapi";
+import { useTranslation } from "react-i18next";
 
 const AddCourse = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
   const [courseData, setCourse] = useState({
@@ -107,14 +109,14 @@ const AddCourse = () => {
       !courseData.courseEnum.trim() ||
       !img
     ) {
-      toast.error("❌ Vui lòng điền đầy đủ thông tin trước khi gửi.", {
+      toast.error(<p>{t("toastMissingFields")}</p>, {
         autoClose: 1000,
       });
       return;
     }
 
     if (courseData.courseEnum === "PAID" && parseFloat(courseData.price) <= 0) {
-      toast.error("❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.", {
+      toast.error(<p>{t("toastPriceError")}</p>, {
         autoClose: 1000,
       });
       return;
@@ -137,13 +139,13 @@ const AddCourse = () => {
     console.log("courseData JSON:", JSON.stringify(courseData, null, 2));
     try {
       const result = await addCourse(courseData, img);
-      toast.success("🎉 Thêm khóa học thành công!", { autoClose: 1000 });
+      toast.success(<p>{t("toastSuccess")}</p>, { autoClose: 1000 });
       setIsSubmitted(true);
       setTimeout(() => navigate(-1), 2000);
     } catch (error) {
       console.error("Submit Error:", error);
       const message =
-        error?.response?.data?.message || "Đã xảy ra lỗi khi thêm khóa học.";
+        error?.response?.data?.message || <p>{t("toastError")}</p>;
       toast.error(`❌ ${message}`, { autoClose: 2000 });
     } finally {
       setLoading(false);
@@ -155,9 +157,9 @@ const AddCourse = () => {
       <div className="flex dark:text-darkText gap-2 items-center mb-4">
         <FaBuffer size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Course Management</h2>
+        <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Add New Course</h2>
+        <h2 className="text-lg font-bold">{t("addCourse.title")}</h2>
       </div>
 
       <form
@@ -166,7 +168,7 @@ const AddCourse = () => {
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">Course Title:</label>
+          <label className="w-1/4 font-medium">{t("addCourse.courseName")}</label>
           <input
             type="text"
             name="courseName"
@@ -178,7 +180,7 @@ const AddCourse = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">Price:</label>
+          <label className="w-1/4 font-medium">{t("price")}</label>
           <input
             type="number"
             name="price"
@@ -191,7 +193,7 @@ const AddCourse = () => {
 
         {/* Image Upload */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">Image:</label>
+          <label className="w-1/4 font-medium">{t("image")}</label>
           <input
             type="file"
             accept="image/*"
@@ -205,7 +207,7 @@ const AddCourse = () => {
           <div className="mt-4 text-center">
             {" "}
             {/* Thêm text-center để căn giữa */}
-            <h3 className="font-medium">Image Preview:</h3>
+            <h3 className="font-medium">{t("addCourse.imagePreview")}</h3>
             <img
               src={imgPreview}
               alt="Preview"
@@ -216,7 +218,7 @@ const AddCourse = () => {
 
         {/* Description */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">Description:</label>
+          <label className="w-1/4 font-medium">{t("description")}</label>
           <ReactQuill
             theme="snow"
             value={courseData.description}
@@ -228,15 +230,15 @@ const AddCourse = () => {
 
         {/* Course Type */}
         <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">Type:</label>
+          <label className="w-1/4 font-medium">{t("type")}</label>
           <select
             name="courseEnum"
             value={courseData.courseEnum}
             onChange={handleEnumChange}
             className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
           >
-            <option value="FREE">Free</option>
-            <option value="PAID">Paid</option>
+            <option value="FREE">{t("free")}</option>
+            <option value="PAID">{t("paid")}</option>
           </select>
         </div>
 
@@ -246,7 +248,7 @@ const AddCourse = () => {
             onClick={() => navigate(-1)}
             className="px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer"
           >
-            Cancel
+           {t("cancel")}
           </Link>
           <button
             type="submit"
@@ -257,7 +259,7 @@ const AddCourse = () => {
                 : "bg-scolor text-wcolor hover:bg-opacity-80"
             }`}
           >
-            {loading ? "Processing..." : isSubmitted ? "Submitted" : "Submit"}
+            {loading ? <p>{t("processing")}</p> : isSubmitted ? <p>{t("submitted")}</p> : <p>{t("submit")}</p>}
           </button>
         </div>
       </form>

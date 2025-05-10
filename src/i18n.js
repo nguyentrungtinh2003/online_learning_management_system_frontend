@@ -30,6 +30,12 @@ import viChatroom from "./locales/vi/chatroom.json";
 import enDashboard from "./locales/en/dashboard.json";
 import viDashboard from "./locales/vi/dashboard.json";
 
+import enAdminManagement from "./locales/en/adminmanagement.json";
+import viAdminManagement from "./locales/vi/adminmanagement.json";
+
+import enAdminSetting from "./locales/en/adminsetting.json";
+import viAdminSetting from "./locales/vi/adminsetting.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -38,7 +44,8 @@ i18n
     supportedLngs: ["en", "vi"],
     debug: true,
     ns: ["settings", "navbar", "sidebar", "blog", "ranking",
-       "profile", "payment","chatroom","dashboard",],// thêm 'ranking'
+       "profile", "payment","chatroom","dashboard","adminmanagement",
+      "adminsetting",],// thêm 'ranking'
     defaultNS: "settings",
     resources: {
       en: {
@@ -51,6 +58,8 @@ i18n
         payment: enPayment,
         chatroom: enChatroom,
         dashboard: enDashboard,
+        adminmanagement: enAdminManagement,
+        adminsetting: enAdminSetting,
       },
       vi: {
         settings: viSettings,
@@ -62,6 +71,8 @@ i18n
         payment: viPayment,
         chatroom: viChatroom,
         dashboard: viDashboard,
+        adminmanagement: viAdminManagement,
+        adminsetting: viAdminSetting,
       },
     },
     interpolation: {

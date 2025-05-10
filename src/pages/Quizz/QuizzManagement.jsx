@@ -15,8 +15,10 @@ import {
 } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const QuizzManagement = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const { lessonId } = useParams();
 
@@ -162,7 +164,7 @@ const QuizzManagement = () => {
           <div className="flex gap-2 dark:text-darkText items-center">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold">Quizz Management</h2>
+            <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
           </div>
           <Link to={`/admin/quizzes/add`}>
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
@@ -180,7 +182,7 @@ const QuizzManagement = () => {
         >
           <input
             type="text"
-            placeholder="Search quizzes..."
+            placeholder={t("searchPlaceholder")}
             className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
@@ -196,9 +198,9 @@ const QuizzManagement = () => {
             }}
             className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText rounded"
           >
-            <option value="All">All</option>
-            <option value="Free">Free</option>
-            <option value="Paid">Paid</option>
+            <option value="All">{t("all")}</option>
+            <option value="Free">{t("free")}</option>
+            <option value="Paid">{t("paid")}</option>
           </select>
           <select
             value={statusFilter}
@@ -208,15 +210,15 @@ const QuizzManagement = () => {
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-            <option value="All">All</option>
-            <option value="Deleted">Deleted</option>
-            <option value="Active">Active</option>
+            <option value="All">{t("all")}</option>
+            <option value="Deleted">{t("deleted")}</option>
+            <option value="Active">{t("active")}</option>
           </select>
           <button
             type="submit"
-            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+            className="bg-fcolor whitespace-nowrap text-white p-2 rounded hover:scale-105"
           >
-            Search
+            {t("search")}
           </button>
         </form>
 
@@ -225,14 +227,14 @@ const QuizzManagement = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-center dark:text-darkText font-bold">
-                  <th className="p-2">STT</th>
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Description</th>
-                  <th className="p-2">Price</th>
-                  <th className="p-2">Image</th>
-                  <th className="p-2">Date</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">Action</th>
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("quizz.name")}</th>
+                  <th className="p-2">{t("description")}</th>
+                  <th className="p-2">{t("price")}</th>
+                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("quizz.date")}</th>
+                  <th className="p-2">{t("status")}</th>
+                  <th className="p-2">{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -241,7 +243,7 @@ const QuizzManagement = () => {
                 ) : quizzes.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="text-center py-4">
-                      Không có quiz nào
+                     {t("quizz.noQuiz")}
                     </td>
                   </tr>
                 ) : (
@@ -254,8 +256,8 @@ const QuizzManagement = () => {
                       <td className="p-2">{quiz.description || "N/A"}</td>
                       <td className="p-2">
                         {quiz.price === 0 || quiz.price === null
-                          ? "Free"
-                          : `${quiz.price} VND`}
+                          ? <p>{t("free")}</p>
+                          : `${quiz.price} Coin`}
                       </td>
                       <td className="p-2">
                         {quiz.img ? (
@@ -265,7 +267,7 @@ const QuizzManagement = () => {
                             className="w-8 h-8 rounded mx-auto"
                           />
                         ) : (
-                          "No image"
+                          <p>{t("quizz.noImage")}</p>
                         )}
                       </td>
                       <td className="p-2">
@@ -285,7 +287,7 @@ const QuizzManagement = () => {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {quiz.deleted ? "Unlock" : "Lock"}
+                        {quiz.deleted ? <p>{t("unlock")}</p> : <p>{t("lock")}</p>}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
@@ -326,9 +328,9 @@ const QuizzManagement = () => {
           </div>
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex mt-2 justify-between items-center">
           <p>
-            Page {currentPage + 1} of {totalPages}
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button
