@@ -23,6 +23,7 @@ export default function CourseManagement() {
   const [cache, setCache] = useState(new Map());
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
   const coursesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
 
@@ -193,6 +194,7 @@ export default function CourseManagement() {
       setLoading(false);
     }
   };
+
   // ---------------------------------------------------------------------------------------------------
   // **Effect 5: Lưu lại các giá trị của search, filterType, và statusFilter vào localStorage**
   // Gọi cái này sau khi add/edit/delete course
@@ -231,6 +233,14 @@ export default function CourseManagement() {
       setCache(parsedCache);
     }
   }, [reloadTrigger]); // Chạy một lần khi trang được load lần đầu tiên
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 7: Reset lessonSearch khi có sự thay đổi từ trang khác
+  useEffect(() => {
+    if (location.pathname.includes("course")) {
+      setSearch(""); // Reset khi chuyển sang trang lesson
+    }
+  }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
 
   const handleSearchInput = (e) => {
     setSearch(e.target.value);

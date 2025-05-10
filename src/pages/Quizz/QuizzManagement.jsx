@@ -20,10 +20,9 @@ import { useTranslation } from "react-i18next";
 const QuizzManagement = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
-  const { lessonId } = useParams();
 
   const [quizzes, setQuizzes] = useState([]);
-  const [search, setSearch] = useState("");
+  const [quizSearch, setQuizSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [filterType, setFilterType] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -31,49 +30,138 @@ const QuizzManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const quizzesPerPage = 6;
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [cache, setCache] = useState(new Map());
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
+  useEffect(() => {
+    const savedSearch = localStorage.getItem("quizSearch");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+
+    if (savedSearch) setQuizSearch(savedSearch);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+  }, []);
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerQuizReload**
+  useEffect(() => {
+    const handleReload = () => {
+      fetchQuizzes(); // Gọi trigger để re-fetch quizzes
+    };
+    window.addEventListener("triggerQuizReload", handleReload);
+
+    return () => {
+      window.removeEventListener("triggerQuizReload", handleReload);
+    };
+  }, []);
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 3: Lọc quiz và phân trang
+  useEffect(() => {
+    if (!cache.has("ALL-QUIZZES")) return;
+
+    let filteredQuizzes = cache.get("ALL-QUIZZES");
+
+    // Lọc theo quizSearch
+    if (quizSearch.trim() !== "") {
+      filteredQuizzes = filteredQuizzes.filter((quiz) =>
+        quiz.quizName.toLowerCase().includes(quizSearch.trim().toLowerCase())
+      );
+    }
+
+    // Lọc theo trạng thái
+    if (statusFilter === "Deleted") {
+      filteredQuizzes = filteredQuizzes.filter((quiz) => quiz.deleted);
+    } else if (statusFilter === "Active") {
+      filteredQuizzes = filteredQuizzes.filter((quiz) => !quiz.deleted);
+    }
+
+    // Phân trang
+    const startIndex = currentPage * quizzesPerPage;
+    const endIndex = startIndex + quizzesPerPage;
+    const paginatedQuizzes = filteredQuizzes.slice(startIndex, endIndex);
+
+    setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
+    setTotalPages(Math.ceil(filteredQuizzes.length / quizzesPerPage));
+    setLoading(false);
+  }, [cache, statusFilter, currentPage]);
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 4: Fetch quizzes from API or cache**
   useEffect(() => {
     fetchQuizzes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lessonId, search, filterType, statusFilter, currentPage]);
+  }, [cache, filterType, statusFilter, currentPage, reloadTrigger]);
 
+  // ---------------------------------------------------------------------------------------------------
+  // Fetch quizzes
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const res = await getQuizzesByPage(currentPage, quizzesPerPage); // lấy toàn bộ quiz của bài học
+      const cacheKey = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
 
-      if (!res || !res.data || !res.data.content) {
-        throw new Error("Invalid API Response");
-      }
+      let fetchedQuizzes;
 
-      let fetchedQuizzes = res.data.content;
+      // ⚡ Nếu đã cache rồi thì dùng lại
+      if (cache.has(cacheKey)) {
+        console.log("Using cache...");
+        fetchedQuizzes = cache.get(cacheKey);
+      } else {
+        // Gọi API
+        const data = await getQuizzesByPage(0, 1000);
 
-      // Tìm kiếm
-      if (search.trim() !== "") {
-        const keyword = search.trim().toLowerCase();
-        fetchedQuizzes = fetchedQuizzes.filter(
-          (quiz) =>
-            quiz.quizName?.toLowerCase().includes(keyword) ||
-            quiz.description?.toLowerCase().includes(keyword)
+        if (!data || !data.data || !data.data.content) {
+          throw new Error("Invalid API Response");
+        }
+
+        fetchedQuizzes = data.data.content;
+
+        // Lọc theo lessonSearch
+        if (quizSearch.trim() !== "") {
+          fetchedQuizzes = fetchedQuizzes.filter((quiz) =>
+            quiz.quizName
+              .toLowerCase()
+              .includes(quizSearch.trim().toLowerCase())
+          );
+        }
+
+        const ALL_KEY = "ALL-QUIZZES";
+        if (!cache.has(ALL_KEY)) {
+          const data = await getQuizzesByPage(0, 1000);
+
+          if (!data?.data?.content) throw new Error("Invalid API Response");
+
+          const allQuizzes = data.data.content;
+
+          const newCache = new Map(cache.set(ALL_KEY, allQuizzes));
+          setCache(newCache);
+          localStorage.setItem(
+            "quizCache",
+            JSON.stringify(Array.from(newCache.entries()))
+          );
+        }
+
+        // Lọc theo trạng thái
+        if (statusFilter === "Deleted") {
+          fetchedQuizzes = fetchedQuizzes.filter((quiz) => quiz.deleted);
+        } else if (statusFilter === "Active") {
+          fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
+        }
+
+        const newCache = new Map(cache.set(cacheKey, fetchedQuizzes));
+        setCache(newCache);
+        localStorage.setItem(
+          "quizCache",
+          JSON.stringify(Array.from(newCache.entries()))
         );
       }
 
-      // Lọc theo loại Free / Paid
-      if (filterType === "Free") {
-        fetchedQuizzes = fetchedQuizzes.filter(
-          (quiz) => quiz.price === 0 || quiz.price === null
-        );
-      } else if (filterType === "Paid") {
-        fetchedQuizzes = fetchedQuizzes.filter(
-          (quiz) => quiz.price !== null && quiz.price > 0
-        );
-      }
-
-      // Filter by status (Deleted/Not Deleted)
-      if (statusFilter === "Deleted") {
-        fetchedQuizzes = fetchedQuizzes.filter((quiz) => quiz.deleted);
-      } else if (statusFilter === "Active") {
-        fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
+      // Kiểm tra nếu không có kết quả
+      if (fetchedQuizzes.length === 0 && fetchedQuizzes.trim() !== "") {
+        toast.info("No quizzes found for your search.", {
+          position: "top-right",
+          autoClose: 1500,
+        });
       }
 
       // Phân trang
@@ -83,27 +171,33 @@ const QuizzManagement = () => {
 
       setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedQuizzes.length / quizzesPerPage));
-    } catch (err) {
-      console.error("Lỗi lấy quiz:", err);
+    } catch (error) {
+      console.error("Lỗi tải quiz:", error);
       setQuizzes([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // Handle Search Input Change
   const handleSearchInput = (e) => {
-    setSearch(e.target.value);
-    setCurrentPage(0);
+    setQuizSearch(e.target.value);
+    setCurrentPage(0); // Reset to first page when search changes
   };
 
-  const handleSearchSubmit = async (e) => {
+  // ---------------------------------------------------------------------------------------------------
+  // Handle Search Submit
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchQuizzes();
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // Handle Delete
   const handleDelete = async (id, name) => {
     const isConfirmed = window.confirm(
-      `Bạn có chắc muốn xóa khóa học "${name}" không?`
+      `Bạn có chắc muốn xóa quiz "${name}" không?`
     );
     if (isConfirmed) {
       try {
@@ -123,21 +217,23 @@ const QuizzManagement = () => {
     }
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // Handle Restore
   const handleRestore = async (id, name) => {
     const isConfirmed = window.confirm(
-      `Are you sure you want to restore quiz "${name}"?`
+      `Bạn có chắc muốn khôi phục quiz "${name}" không?`
     );
     if (isConfirmed) {
       try {
         await restoreQuiz(id);
-        toast.success("Course restored successfully!", {
+        toast.success("Khôi phục quiz thành công!", {
           position: "top-right",
           autoClose: 1000,
         });
         fetchQuizzes(); // Reload quiz list
       } catch (error) {
-        console.error("Error restoring quiz:", error);
-        toast.error("Failed to restore quiz!", {
+        console.error("Lỗi khi khôi phục quiz:", error);
+        toast.error("Không thể khôi phục quiz!", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -145,6 +241,8 @@ const QuizzManagement = () => {
     }
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // Handle Pagination
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
@@ -184,7 +282,7 @@ const QuizzManagement = () => {
             type="text"
             placeholder={t("searchPlaceholder")}
             className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
-            value={search}
+            value={quizSearch}
             onChange={(e) => {
               setSearch(e.target.value);
               setCurrentPage(0);
@@ -243,7 +341,7 @@ const QuizzManagement = () => {
                 ) : quizzes.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="text-center py-4">
-                     {t("quizz.noQuiz")}
+                      {t("quizz.noQuiz")}
                     </td>
                   </tr>
                 ) : (
@@ -255,9 +353,11 @@ const QuizzManagement = () => {
                       <td className="p-2">{quiz.quizName || "N/A"}</td>
                       <td className="p-2">{quiz.description || "N/A"}</td>
                       <td className="p-2">
-                        {quiz.price === 0 || quiz.price === null
-                          ? <p>{t("free")}</p>
-                          : `${quiz.price} Coin`}
+                        {quiz.price === 0 || quiz.price === null ? (
+                          <p>{t("free")}</p>
+                        ) : (
+                          `${quiz.price} Coin`
+                        )}
                       </td>
                       <td className="p-2">
                         {quiz.img ? (
@@ -287,7 +387,11 @@ const QuizzManagement = () => {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {quiz.deleted ? <p>{t("unlock")}</p> : <p>{t("lock")}</p>}
+                        {quiz.deleted ? (
+                          <p>{t("unlock")}</p>
+                        ) : (
+                          <p>{t("lock")}</p>
+                        )}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
@@ -297,7 +401,7 @@ const QuizzManagement = () => {
                           <FaEye />
                         </Link>
                         <Link
-                          to={`/admin/lessons/${lessonId}/edit/${quiz.id}`}
+                          // to={`/admin/lessons/${lessonId}/edit/${quiz.id}`}
                           className="p-2 border rounded"
                         >
                           <FaEdit />
@@ -334,7 +438,7 @@ const QuizzManagement = () => {
           </p>
           <div className="space-x-2">
             <button
-               className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >

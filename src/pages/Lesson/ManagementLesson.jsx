@@ -8,11 +8,9 @@ import {
   FaPlus,
   FaLockOpen,
   FaLock,
+  FaTimes,
 } from "react-icons/fa";
-import {
-  MdNavigateNext,
-  MdNavigateBefore,
-} from "react-icons/md";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import {
   deleteLesson,
@@ -28,34 +26,146 @@ export default function ManagementLesson() {
 
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [lessonSearch, setLessonSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const lessonsPerPage = 6;
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [cache, setCache] = useState(new Map());
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
+  useEffect(() => {
+    const savedSearch = localStorage.getItem("lessonSearch");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+
+    if (savedSearch) setLessonSearch(savedSearch);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+  }, []); // Chạy một lần khi trang load lần đầu
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerLLessonReload**
+  useEffect(() => {
+    const handleReload = () => {
+      triggerReload(); // Gọi trigger để re-fetch cache và lesson
+    };
+    window.addEventListener("triggerLessonReload", handleReload);
+
+    return () => {
+      window.removeEventListener("triggerLessonReload", handleReload);
+    };
+  }, []); // Lắng nghe sự kiện reload từ các trang khác
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 3: Lọc bài học từ cache và phân trang khi cache thay đổi
+  useEffect(() => {
+    if (!cache.has("ALL-LESSONS")) return;
+
+    let filteredLessons = cache.get("ALL-LESSONS");
+
+    // Lọc theo lessonSearch
+    if (lessonSearch.trim() !== "") {
+      filteredLessons = filteredLessons.filter((lesson) =>
+        lesson.lessonName
+          .toLowerCase()
+          .includes(lessonSearch.trim().toLowerCase())
+      );
+    }
+
+    // Lọc theo trạng thái
+    if (statusFilter === "Deleted") {
+      filteredLessons = filteredLessons.filter((lesson) => lesson.deleted);
+    } else if (statusFilter === "Active") {
+      filteredLessons = filteredLessons.filter((lesson) => !lesson.deleted);
+    }
+
+    // Phân trang
+    const startIndex = currentPage * lessonsPerPage;
+    const endIndex = startIndex + lessonsPerPage;
+    const paginatedLessons = filteredLessons.slice(startIndex, endIndex);
+
+    setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
+    setTotalPages(Math.ceil(filteredLessons.length / lessonsPerPage));
+    setLoading(false);
+  }, [cache, statusFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
+  useEffect(() => {
+    fetchLessons();
+  }, [cache, currentPage, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
 
   const fetchLessons = async () => {
     setLoading(true);
     try {
-      let data = await getLessonByPage(0, 1000);
-      if (!data || !data.data || !data.data.content) {
-        throw new Error("Invalid API Response");
-      }
+      const cacheKey = `${lessonSearch.trim()}-${statusFilter}`;
 
-      let fetchedLessons = data.data.content;
+      let fetchedLessons;
 
-      if (search.trim() !== "") {
-        fetchedLessons = fetchedLessons.filter((lesson) =>
-          lesson.lessonName.toLowerCase().includes(search.trim().toLowerCase())
+      // ⚡ Nếu đã cache rồi thì dùng lại
+      if (cache.has(cacheKey)) {
+        console.log("Using cache...");
+        fetchedLessons = cache.get(cacheKey);
+      } else {
+        // Gọi API
+        const data = await getLessonByPage(0, 1000);
+
+        if (!data || !data.data || !data.data.content) {
+          throw new Error("Invalid API Response");
+        }
+
+        fetchedLessons = data.data.content;
+
+        // Lọc theo lessonSearch
+        if (lessonSearch.trim() !== "") {
+          fetchedLessons = fetchedLessons.filter((lesson) =>
+            lesson.lessonName
+              .toLowerCase()
+              .includes(lessonSearch.trim().toLowerCase())
+          );
+        }
+
+        const ALL_KEY = "ALL-LESSONS";
+        if (!cache.has(ALL_KEY)) {
+          const data = await getLessonByPage(0, 1000);
+
+          if (!data?.data?.content) throw new Error("Invalid API Response");
+
+          const allLessons = data.data.content;
+
+          const newCache = new Map(cache.set(ALL_KEY, allLessons));
+          setCache(newCache);
+          localStorage.setItem(
+            "lessonCache",
+            JSON.stringify(Array.from(newCache.entries()))
+          );
+        }
+
+        // Lọc theo trạng thái
+        if (statusFilter === "Deleted") {
+          fetchedLessons = fetchedLessons.filter((lesson) => lesson.deleted);
+        } else if (statusFilter === "Active") {
+          fetchedLessons = fetchedLessons.filter((lesson) => !lesson.deleted);
+        }
+
+        const newCache = new Map(cache.set(cacheKey, fetchedLessons));
+        setCache(newCache);
+        localStorage.setItem(
+          "lessonCache",
+          JSON.stringify(Array.from(newCache.entries()))
         );
       }
 
-      if (statusFilter === "Deleted") {
-        fetchedLessons = fetchedLessons.filter((lesson) => lesson.deleted); // khóa
-      } else if (statusFilter === "Active") {
-        fetchedLessons = fetchedLessons.filter((lesson) => !lesson.deleted); // chưa khóa
+      // Kiểm tra nếu không có kết quả
+      if (fetchedLessons.length === 0 && lessonSearch.trim() !== "") {
+        toast.info("No lessons found for your search.", {
+          position: "top-right",
+          autoClose: 1500,
+        });
       }
 
+      // Phân trang
       const startIndex = currentPage * lessonsPerPage;
       const endIndex = startIndex + lessonsPerPage;
       const paginatedLessons = fetchedLessons.slice(startIndex, endIndex);
@@ -70,12 +180,53 @@ export default function ManagementLesson() {
     }
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 5: Lưu lại các giá trị của lessonSearch, filterType, và statusFilter vào localStorage**
   useEffect(() => {
-    fetchLessons();
-  }, [currentPage, search, statusFilter]);
+    localStorage.setItem("lessonSearch", lessonSearch);
+    localStorage.setItem("lessonStatusFilter", statusFilter);
+  }, [lessonSearch, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
+  useEffect(() => {
+    const savedCache = localStorage.getItem("lessonCache");
+    const savedNewLessons = localStorage.getItem("newLessons");
+
+    if (savedCache) {
+      const parsedCache = new Map(JSON.parse(savedCache));
+
+      if (savedNewLessons) {
+        const newLessons = JSON.parse(savedNewLessons);
+        const key = `${lessonSearch.trim()}-${statusFilter}`;
+
+        const updatedLessons = [...(parsedCache.get(key) || []), ...newLessons];
+        parsedCache.set(key, updatedLessons);
+
+        // Lưu lại cache mới vào localStorage
+        localStorage.setItem(
+          "lessonCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+
+        // Xóa lessons mới đã dùng
+        localStorage.removeItem("newLessons");
+      }
+
+      setCache(parsedCache);
+    }
+  }, [reloadTrigger]); // Chạy một lần khi trang được load lần đầu tiên
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 7: Reset lessonSearch khi có sự thay đổi từ trang khác
+  useEffect(() => {
+    if (location.pathname.includes("lesson")) {
+      setLessonSearch(""); // Reset khi chuyển sang trang lesson
+    }
+  }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
 
   const handleSearchInput = (e) => {
-    setSearch(e.target.value);
+    setLessonSearch(e.target.value);
     setCurrentPage(0);
   };
 
@@ -86,19 +237,39 @@ export default function ManagementLesson() {
 
   const handleDelete = async (id, name) => {
     const isConfirmed = window.confirm(
-      `Bạn có chắc muốn khóa bài học "${name}" không?`
+      `Are you sure you want to delete lesson "${name}"?`
     );
     if (isConfirmed) {
       try {
         await deleteLesson(id);
-        toast.success("Khóa bài học thành công!", {
+        // ✅ Cập nhật cache trong localStorage
+        const savedCache = localStorage.getItem("lessonCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc tuỳ bộ lọc hiện tại
+          const existingLessons = parsedCache.get(key) || [];
+
+          const updatedLessons = existingLessons.filter(
+            (lesson) => lesson.id !== id
+          );
+          parsedCache.set(key, updatedLessons);
+
+          localStorage.setItem(
+            "lessonCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi event để các useEffect khác reload
+        window.dispatchEvent(new Event("triggerLessonReload"));
+
+        toast.success("Lesson deleted successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
-        fetchLessons();
       } catch (error) {
-        console.error("Lỗi khi khóa bài học:", error);
-        toast.error("Không thể khóa bài học!", {
+        console.error("Error deleting lesson:", error);
+        toast.error("Failed to delete lesson!", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -107,22 +278,47 @@ export default function ManagementLesson() {
   };
 
   const handleRestore = async (id, name) => {
-    if (!window.confirm(`Bạn có chắc muốn mở khóa bài học "${name}" không?`))
-      return;
+    const isConfirmed = window.confirm(
+      `Are you sure you want to restore lesson "${name}"?`
+    );
+    if (isConfirmed) {
+      try {
+        await restoreLesson(id);
 
-    try {
-      await restoreLesson(id);
-      toast.success("Mở khóa bài học thành công!", {
-        position: "top-right",
-        autoClose: 1000,
-      });
-      fetchLessons();
-    } catch (error) {
-      console.error("Lỗi khi mở khóa bài học:", error);
-      toast.error("Không thể mở khóa bài học!", {
-        position: "top-right",
-        autoClose: 1000,
-      });
+        // ✅ Cập nhật courseCache trong localStorage nếu có
+        const savedCache = localStorage.getItem("lessonCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc key tương ứng với filter hiện tại
+
+          const existingLessons = parsedCache.get(key) || [];
+
+          const updatedLessons = existingLessons.map((lesson) =>
+            lesson.id === id ? { ...lesson, deleted: false } : lesson
+          );
+
+          parsedCache.set(key, updatedLessons);
+
+          localStorage.setItem(
+            "lessonCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi sự kiện để các component khác reload nếu cần
+        window.dispatchEvent(new Event("triggerLessonReload"));
+
+        toast.success("Lesson restored successfully!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+      } catch (error) {
+        console.error("Error restoring lesson:", error);
+        toast.error("Failed to restore lesson!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+      }
     }
   };
 
@@ -152,13 +348,27 @@ export default function ManagementLesson() {
         </div>
 
         <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
-          <input
-            type="text"
-            placeholder={t("searchPlaceholder")}
-            className="py-2 px-3 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
-            value={search}
-            onChange={handleSearchInput}
-          />
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder={t("searchPlaceholder")}
+              className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={lessonSearch}
+              onChange={handleSearchInput}
+            />
+            {lessonSearch && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                onClick={() => {
+                  setLessonSearch("");
+                }}
+              >
+                <FaTimes size={18} />
+              </button>
+            )}
+          </div>
+
           <select
             value={statusFilter}
             onChange={(e) => {
@@ -183,141 +393,141 @@ export default function ManagementLesson() {
         <div className="flex-1 drop-shadow-lg">
           <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
             <table className="w-full">
-                  <thead>
-                    <tr className="text-center whitespace-nowrap font-bold">
-                      <th className="p-2">{t("stt")}</th>
-                      <th className="p-2">{t("lesson.name")}</th>
-                      <th className="p-2">{t("description")}</th>
-                      <th className="p-2">{t("image")}</th>
-                      <th className="p-2">{t("createdDate")}</th>
-                      <th className="p-2">{t("lesson.videoURL")}</th>
-                      <th className="p-2">{t("status")}</th>
-                      <th className="p-2">{t("action")}</th>
+              <thead>
+                <tr className="text-center whitespace-nowrap font-bold">
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("lesson.name")}</th>
+                  <th className="p-2">{t("description")}</th>
+                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("createdDate")}</th>
+                  <th className="p-2">{t("lesson.videoURL")}</th>
+                  <th className="p-2">{t("status")}</th>
+                  <th className="p-2">{t("action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <DataTableSkeleton rows={6} cols={8} />
+                ) : lessons.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      {t("lesson.noLesson")}
+                    </td>
+                  </tr>
+                ) : (
+                  lessons.map((lesson, index) => (
+                    <tr key={lesson.id} className="text-center">
+                      <td className="p-2">
+                        {index + 1 + currentPage * lessonsPerPage}
+                      </td>
+                      <td className="p-2">{lesson.lessonName || "N/A"}</td>
+                      <td className="p-2">
+                        {lesson.description || "No description"}
+                      </td>
+                      <td className="p-2">
+                        {lesson.img ? (
+                          <img
+                            src={lesson.img}
+                            alt="lesson"
+                            className="w-8 h-8 rounded mx-auto"
+                          />
+                        ) : (
+                          "No image"
+                        )}
+                      </td>
+                      <td className="p-2">
+                        {lesson.date
+                          ? new Date(
+                              lesson.date[0],
+                              lesson.date[1] - 1,
+                              lesson.date[2],
+                              lesson.date[3],
+                              lesson.date[4],
+                              lesson.date[5]
+                            ).toLocaleDateString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : "N/A"}
+                      </td>
+                      <td className="p-2">
+                        {lesson.videoURL ? (
+                          <a
+                            href={lesson.videoURL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 underline"
+                          >
+                            {t("viewVideo")}
+                          </a>
+                        ) : (
+                          <>{t("noVideo")}</>
+                        )}
+                      </td>
+                      <td className="p-2">
+                        {lesson.deleted ? "Deleted" : "Active"}
+                      </td>
+                      <td className="p-2 flex justify-center gap-1">
+                        <Link
+                          to={`/admin/lessons/${lesson.id}/quizzes`}
+                          className="p-2 border rounded"
+                        >
+                          <FaEye />
+                        </Link>
+                        <Link
+                          to={`/admin/lessons/edit/${lesson.id}`}
+                          className="p-2 border rounded"
+                        >
+                          <FaEdit />
+                        </Link>
+                        {lesson.deleted ? (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() =>
+                              handleRestore(lesson.id, lesson.lessonName)
+                            }
+                          >
+                            <FaLockOpen />
+                          </button>
+                        ) : (
+                          <button
+                            className="p-2 border rounded"
+                            onClick={() =>
+                              handleDelete(lesson.id, lesson.lessonName)
+                            }
+                          >
+                            <FaLock />
+                          </button>
+                        )}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                        <DataTableSkeleton rows={6} cols={8} />
-                    ) : lessons.length === 0 ? (
-                        <tr>
-                          <td colSpan="8" className="text-center py-4">
-                              {t("lesson.noLesson")}
-                          </td>
-                        </tr>
-                    ) : (
-                    lessons.map((lesson, index) => (
-                      <tr key={lesson.id} className="text-center">
-                        <td className="p-2">
-                          {index + 1 + currentPage * lessonsPerPage}
-                        </td>
-                        <td className="p-2">{lesson.lessonName || "N/A"}</td>
-                        <td className="p-2">
-                          {lesson.description || "No description"}
-                        </td>
-                        <td className="p-2">
-                          {lesson.img ? (
-                            <img
-                              src={lesson.img}
-                              alt="lesson"
-                              className="w-8 h-8 rounded mx-auto"
-                            />
-                          ) : (
-                            "No image"
-                          )}
-                        </td>
-                        <td className="p-2">
-                          {lesson.date
-                            ? new Date(
-                                lesson.date[0],
-                                lesson.date[1] - 1,
-                                lesson.date[2],
-                                lesson.date[3],
-                                lesson.date[4],
-                                lesson.date[5]
-                              ).toLocaleDateString("vi-VN", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })
-                            : "N/A"}
-                        </td>
-                        <td className="p-2">
-                          {lesson.videoURL ? (
-                            <a
-                              href={lesson.videoURL}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 underline"
-                            >
-                              {t("viewVideo")}
-                            </a>
-                          ) : (
-                            <>{t("noVideo")}</>
-                          )}
-                        </td>
-                        <td className="p-2">
-                          {lesson.deleted ? "Deleted" : "Active"}
-                        </td>
-                        <td className="p-2 flex justify-center gap-1">
-                          <Link
-                            to={`/admin/lessons/${lesson.id}/quizzes`}
-                            className="p-2 border rounded"
-                          >
-                            <FaEye />
-                          </Link>
-                          <Link
-                            to={`/admin/lessons/edit/${lesson.id}`}
-                            className="p-2 border rounded"
-                          >
-                            <FaEdit />
-                          </Link>
-                          {lesson.deleted ? (
-                            <button
-                              className="p-2 border rounded"
-                              onClick={() =>
-                                handleRestore(lesson.id, lesson.lessonName)
-                              }
-                            >
-                              <FaLockOpen />
-                            </button>
-                          ) : (
-                            <button
-                              className="p-2 border rounded"
-                              onClick={() =>
-                                handleDelete(lesson.id, lesson.lessonName)
-                              }
-                            >
-                              <FaLock />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                  </tbody>
-                </table>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText mt-2 items-center justify-between">
           <p>
-          {t("page")} {currentPage + 1} {t("of")} {totalPages}
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className="bg-scolor p-1 rounded disabled:opacity-50"
-          >
-            <MdNavigateNext size={30} />
-          </button>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
-            className="bg-scolor p-1 rounded disabled:opacity-50"
-          >
-            <MdNavigateNext size={30} />
-          </button>
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 0}
+              className="bg-scolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateBefore size={30} />
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1}
+              className="bg-scolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateNext size={30} />
+            </button>
           </div>
         </div>
       </div>

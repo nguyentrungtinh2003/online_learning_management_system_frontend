@@ -8,6 +8,7 @@ import { MdNavigateNext } from "react-icons/md";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 const AddLesson = () => {
   const { t } = useTranslation("adminmanagement");
@@ -20,33 +21,77 @@ const AddLesson = () => {
     courseId: "", // gán sau khi chọn
     isDeleted: false,
   });
+
+  const [reloadTrigger, setReloadTrigger] = useState(false);
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
   const [video, setVideo] = useState(null);
   const [courses, setCourses] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      minHeight: "48px",
+      fontSize: "16px",
+      padding: "4px 8px",
+      width: "800px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999, // đảm bảo hiển thị trên cùng
+    }),
+  };
+
+  const handleReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect
+  };
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const res = await axios.get("https://codearena-backend-dev.onrender.com/api/courses/all", {
-          withCredentials: true,
-        });
-        setCourses(res.data?.data || []);
-        console.log("Courses API response:", res.data);
-      } catch (error) {
-        console.error("Lỗi lấy danh sách khoá học:", error);
-      }
-    };
-
-    fetchCourses();
+    // Kiểm tra xem có danh sách khóa học trong localStorage không
+    const cachedCourses = JSON.parse(localStorage.getItem("listCourse"));
+    if (cachedCourses) {
+      setCourses(cachedCourses);
+    } else {
+      fetchCourses();
+    }
   }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const res = await axios.get(
+        "https://codearena-backend-dev.onrender.com/api/courses/all",
+        {
+          withCredentials: true,
+        }
+      );
+      setCourses(res.data?.data || []);
+      localStorage.setItem("listCourse", JSON.stringify(res.data?.data || []));
+    } catch (error) {
+      console.error("Lỗi lấy danh sách khoá học:", error);
+    }
+  };
 
   const handleChange = (e) => {
     setLessonData({ ...lessonData, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Lấy file ảnh đầu tiên người dùng chọn
+    if (file) {
+      setImg(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Sau khi đọc xong file, chúng ta gán kết quả vào state để hiển thị
+        setImgPreview(reader.result);
+      };
+
+      // Đọc file ảnh dưới dạng URL data
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleVideoChange = (e) => {
@@ -54,23 +99,48 @@ const AddLesson = () => {
   };
 
   const handleDescriptionChange = (value) => {
-    setCourseData((prev) => ({
+    setLessonData((prev) => ({
       ...prev,
       description: value,
     }));
   };
-  
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (loading || isSubmitted) return;
+
+    const missingFields = [];
+
+    if (!lessonData.lessonName.trim()) missingFields.push(t("lessonName"));
+    if (!lessonData.description.trim()) missingFields.push(t("description"));
+    if (!video) missingFields.push(t("video"));
+    if (!img) missingFields.push(t("image"));
+
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 1000 }
+      );
+      return;
+    }
+
     setLoading(true);
 
     const formData = new FormData();
+    if (img) formData.append("img", img);
+    if (video) formData.append("video", video);
+
     formData.append(
       "lesson",
       new Blob([JSON.stringify(lessonData)], { type: "application/json" })
     );
-    if (img) formData.append("img", img);
-    if (video) formData.append("video", video);
 
     try {
       const response = await axios.post(
@@ -83,17 +153,57 @@ const AddLesson = () => {
           withCredentials: true,
         }
       );
-      toast.success(<p>{t("addLesson.success")}</p> , {
+
+      // ✅ Lưu bài học mới vào localStorage để LessonManagement có thể nhận
+      const newLesson = {
+        id: result.id,
+        lessonName: result.lessonName,
+        deleted: result.deleted,
+        img: result.img,
+        description: result.description,
+        video: result.video,
+      };
+
+      // Đọc cache từ localStorage
+      const savedCache = localStorage.getItem("lessonCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+
+        // Xác định key phù hợp dựa theo bộ lọc hiện tại (giống trong CourseManagement)
+        const key = `--ALL--ALL`; // Nếu bạn đang để mặc định là All, bạn có thể điều chỉnh theo search/filter thực tế
+        const existingLessons = parsedCache.get(key) || [];
+
+        // Thêm khóa học mới vào danh sách hiện tại
+        const updatedLessons = [...existingLessons, newCourse];
+        parsedCache.set(key, updatedLessons);
+
+        // Lưu lại vào localStorage
+        localStorage.setItem(
+          "lessonCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+      }
+
+      // Dùng cho trường hợp API chạy quá chậm
+      // Xóa cache
+      // localStorage.removeItem("lessonCache");
+
+      // Nếu cần, trigger lại reload để tái tạo lại cache trong LessonManagement
+      window.dispatchEvent(new Event("triggerLessonReload"));
+
+      toast.success(<p>{t("addLesson.success")}</p>, {
         position: "top-right",
         autoClose: 1000,
       });
+      setIsSubmitted(true);
+      handleReload();
 
       setTimeout(() => {
-        navigate(-1);
-      }, 2000);
+        navigate("/admin/lessons", { state: { reload: true } });
+      }, 1000);
     } catch (error) {
       console.error("Lỗi:", error.response?.data || error.message);
-      toast.error(<p>{t("addLesson.error")}</p> , {
+      toast.error(<p>{t("addLesson.error")}</p>, {
         position: "top-right",
         autoClose: 1000,
       });
@@ -101,6 +211,10 @@ const AddLesson = () => {
       setLoading(false);
     }
   };
+
+  const filteredCourses = courses.filter((course) =>
+    course.courseName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="w-full flex flex-col h-full">
@@ -111,35 +225,45 @@ const AddLesson = () => {
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">{t("addLesson.add")}</h2>
       </div>
-      <form onSubmit={handleSubmit} className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow"
+      >
         <div className="space-y-4">
           {/* Chọn khoá học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">{t("addLesson.selectCourse")}</label>
-            <select
-              name="courseId"
-              value={lessonData.courseId}
-              onChange={handleChange}
-              className="flex-1 px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-              required
-            >
-              <option value="">{t("addLesson.selectCoursePlaceholder")}</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>
-                  {course.courseName}
-                </option>
-              ))}
-            </select>
+            <label className="w-1/4 font-medium">
+              {t("addLesson.selectCourse")}
+            </label>
+            <Select
+              styles={customStyles}
+              options={filteredCourses.map((course) => ({
+                value: course.id,
+                label: course.courseName,
+              }))}
+              onChange={(selectedOption) =>
+                setLessonData((prev) => ({
+                  ...prev,
+                  courseId: selectedOption ? selectedOption.value : null,
+                }))
+              }
+              isClearable={true}
+              placeholder="Select Course..."
+              isSearchable
+            />
           </div>
 
           {/* Các trường nhập bài học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">{t("addLesson.lessonTitle")}</label>
+            <label className="w-1/4 font-medium">
+              {t("addLesson.lessonTitle")}
+            </label>
             <input
               type="text"
               name="lessonName"
               value={lessonData.lessonName}
               onChange={handleChange}
+              placeholder="Enter Lesson Name"
               className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               required
             />
@@ -169,18 +293,20 @@ const AddLesson = () => {
               theme="snow"
               value={lessonData.description}
               onChange={handleDescriptionChange}
+              placeholder={t("Enter Description")}
               className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
-              style={{ minHeight: '300px' }}
+              style={{ minHeight: "300px" }}
             />
           </div>
         </div>
 
         <div className="flex justify-end space-x-2 mt-6">
           <button
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor dark:text-darkText text-ficolor rounded-lg hover:bg-opacity-80"
+            onClick={() => !loading && navigate(-1)}
+            disabled={loading || isSubmitted}
+            className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-           {t("cancel")}
+            {t("cancel")}
           </button>
           <button
             type="submit"
@@ -191,7 +317,13 @@ const AddLesson = () => {
             }`}
             disabled={loading}
           >
-            {loading ? <p>{t("processing")}</p> :<p>{t("submit")}</p> }
+            {loading ? (
+              <p>{t("processing")}</p>
+            ) : isSubmitted ? (
+              <p>{t("submitted")}</p>
+            ) : (
+              <p>{t("submit")}</p>
+            )}{" "}
           </button>
         </div>
       </form>

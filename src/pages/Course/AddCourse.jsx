@@ -152,6 +152,7 @@ const AddCourse = () => {
         price: result.price,
         deleted: result.deleted,
         img: result.img,
+        description: result.description,
         courseEnum: result.courseEnum,
       };
 
