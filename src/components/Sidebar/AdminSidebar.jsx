@@ -7,6 +7,7 @@ import {
   MdMenu,
   MdOutlineKeyboardDoubleArrowLeft,
   MdMessage,
+  MdPayment,
 } from "react-icons/md";
 import {
   FaBuffer,
@@ -17,7 +18,6 @@ import {
   FaVideo,
   FaWallet,
   FaClipboardList,
-  FaQuestion,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 
@@ -78,9 +78,9 @@ export default function Sidebar() {
     },
     {
       id: "Payments",
-      label: "Payments",
+      label: t("payments"),
 
-      icon: <FaUsers size={25} />,
+      icon: <MdPayment size={25} />,
       path: "/admin/payment",
     },
     {

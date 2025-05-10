@@ -143,7 +143,7 @@ const QuestionManagement = () => {
            
            
                    <div className="flex-1 drop-shadow-lg">
-                     <div className="bg-wcolor dark:border dark:text-Subtext dark:border-darkBorder dark:bg-darkSubbackground  p-4 rounded-2xl">
+                     <div className="bg-wcolor dark:border dark:text-darkSubtext dark:border-darkBorder dark:bg-darkSubbackground  p-4 rounded-2xl">
                        {loading ? ( 
                          <p className="text-center">Loading question...</p>
                        ) : (
