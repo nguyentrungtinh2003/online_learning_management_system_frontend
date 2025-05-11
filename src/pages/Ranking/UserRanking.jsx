@@ -1,68 +1,34 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import URL from "../../config/URLconfig";
+import { useTranslation } from "react-i18next";
 
 export default function UserRanking() {
-  // Dữ liệu top
-  const topDaily = [
-    { rank: 1, name: "Van Tan", points: 520 },
-    { rank: 2, name: "Tinh Nguyen", points: 510 },
-    { rank: 3, name: "Hieu Nguyen", points: 500 },
-    { rank: 4, name: "Ngoc Le", points: 495 },
-    { rank: 5, name: "Minh Tran", points: 490 },
-    { rank: 6, name: "Anh Pham", points: 485 },
-    { rank: 7, name: "Quang Do", points: 482 },
-    { rank: 8, name: "Duc Hoang", points: 478 },
-    { rank: 9, name: "Linh Nguyen", points: 475 },
-    { rank: 10, name: "Bao Chau", points: 470 },
-    { rank: 11, name: "Tuan Vo", points: 468 },
-    { rank: 12, name: "Phuong Mai", points: 465 },
-    { rank: 13, name: "Khoa Bui", points: 460 },
-  ];
+  const { t } = useTranslation("ranking");
 
-  const topWeekly = [
-    { rank: 1, name: "Tinh Nguyen", points: 1500 },
-    { rank: 2, name: "Van Tan", points: 1480 },
-    { rank: 3, name: "Hieu Nguyen", points: 1450 },
-    { rank: 4, name: "Bao Chau", points: 1400 },
-    { rank: 5, name: "Ngoc Le", points: 1350 },
-    { rank: 6, name: "Anh Pham", points: 1320 },
-    { rank: 7, name: "Linh Nguyen", points: 1280 },
-    { rank: 8, name: "Phuong Mai", points: 1270 },
-    { rank: 9, name: "Khoa Bui", points: 1250 },
-    { rank: 10, name: "Tuan Vo", points: 1240 },
-  ];
-
-  const topMonthly = [
-    { rank: 1, name: "Hieu Nguyen", points: 3200 },
-    { rank: 2, name: "Van Tan", points: 3100 },
-    { rank: 3, name: "Tinh Nguyen", points: 3050 },
-    { rank: 4, name: "Ngoc Le", points: 2900 },
-    { rank: 5, name: "Minh Tran", points: 2800 },
-    { rank: 6, name: "Quang Do", points: 2750 },
-    { rank: 7, name: "Bao Chau", points: 2700 },
-    { rank: 8, name: "Duc Hoang", points: 2600 },
-    { rank: 9, name: "Tuan Vo", points: 2500 },
-    { rank: 10, name: "Phuong Mai", points: 2400 },
-  ];
-
+  const [topDaily, setTopDaily] = useState([]);
+  const [topWeekly, setTopWeekly] = useState([]);
+  const [topMonthly, setTopMonthly] = useState([]);
   const [selectedTop, setSelectedTop] = useState("day");
 
-  const users =
-    selectedTop === "day"
-      ? topDaily
-      : selectedTop === "week"
-      ? topWeekly
-      : topMonthly;
-
-  const currentUser = users.find((user) => user.name === "Hieu Nguyen") || {
-    rank: "-",
-    name: "Hieu Nguyen",
-    points: "-",
-  };
-
   useEffect(() => {
+    const today = new Date();
+    const date = today.toISOString().split("T")[0];
+
+    const day = today.getDay(); // 0 (Sun) -> 6 (Sat)
+    const start = new Date(today);
+    start.setDate(today.getDate() - day + (day === 0 ? -6 : 1)); // Monday
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6); // Sunday
+
+    const startDate = start.toISOString().split("T")[0];
+    const endDate = end.toISOString().split("T")[0];
+
+    const month = today.getMonth() + 1; // 1-12
+    const year = today.getFullYear();
+
     fetchTopDate(date);
-    fetchTopWeek(start, end);
+    fetchTopWeek(startDate, endDate);
     fetchTopMonth(month, year);
   }, []);
 
@@ -70,11 +36,10 @@ export default function UserRanking() {
     axios
       .get(`${URL}/rankings/day?date=${date}`, { withCredentials: true })
       .then((response) => {
-        console.log("Get top date success");
         setTopDaily(response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top date ", error.message);
       });
   };
 
@@ -84,11 +49,10 @@ export default function UserRanking() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log("Get top week success");
         setTopWeekly(response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top week ", error.message);
       });
   };
 
@@ -98,13 +62,26 @@ export default function UserRanking() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log("Get top week success");
         setTopMonthly(response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top month ", error.message);
       });
   };
+
+  const users =
+    selectedTop === "day"
+      ? topDaily
+      : selectedTop === "week"
+      ? topWeekly
+      : topMonthly;
+
+  const currentUser =
+    users.find((user) => user.name === "Hieu Nguyen") || {
+      rank: "-",
+      name: "Hieu Nguyen",
+      points: "-",
+    };
 
   return (
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">

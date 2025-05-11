@@ -122,7 +122,7 @@ const Profile = () => {
     <div className="h-full overflow-y-auto shadow flex-1">
       <ToastContainer />
       {/* Header Section */}
-      <div className="relative h-[50%]">
+      <div className="relative h-fit mb-32">
         <div className="bg-gradient-to-b from-cyan-300 to-blue-500 h-60 rounded-2xl m-2"></div>
 
         <div className="absolute top-40 left-10 z-10 flex items-center">

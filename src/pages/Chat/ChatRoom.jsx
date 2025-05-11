@@ -205,7 +205,8 @@ const ChatRoom = () => {
   }, [messages, teachers.length, user1Id]);
 
   return (
-    <div className="w-full flex gap-1">
+    <div className="flex-1 h-full lg:items-start items-center flex">
+      <div className="w-full lg:h-full h-[70%] flex gap-1">
       {/* Danh sách giảng viên */}
       <div className="w-64 bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder p-4 border-2 rounded-lg shadow-lg">
         <input
@@ -380,6 +381,7 @@ const ChatRoom = () => {
           </>
         )}
       </div>
+    </div>
     </div>
   );
 };

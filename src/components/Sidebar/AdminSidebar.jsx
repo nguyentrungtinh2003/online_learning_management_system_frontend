@@ -83,13 +83,13 @@ export default function Sidebar() {
   // Sidebar dạng NẰM NGANG ở mobile
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-16">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-24">
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center justify-center gap-1 text-xs ${
-              activeItem === item.id ? "text-wcolor font-bold" : "text-fcolor"
+              activeItem === item.id ? "bg-scolor text-wcolor px-4 py-2 rounded font-bold" : "px-4 py-2 text-fcolor"
             }`}
           >
             {item.icon}
