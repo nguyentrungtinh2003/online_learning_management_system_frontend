@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../config/URLconfig";
 
+import { useTranslation } from "react-i18next";
+
 export default function UserRanking() {
+  const { t } = useTranslation();
   // Dữ liệu top
   const topDaily = [
     { rank: 1, name: "Van Tan", points: 520 },
