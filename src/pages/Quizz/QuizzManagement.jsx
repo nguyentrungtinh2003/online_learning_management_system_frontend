@@ -276,7 +276,7 @@ const QuizzManagement = () => {
             e.preventDefault();
             fetchQuizzes();
           }}
-          className="mb-4 flex gap-2"
+          className="mb-2 flex gap-2"
         >
           <input
             type="text"

@@ -89,7 +89,7 @@ export default function Sidebar() {
             key={item.id}
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center justify-center gap-1 text-xs ${
-              activeItem === item.id ? "text-scolor font-bold" : "text-fcolor"
+              activeItem === item.id ? "text-wcolor font-bold" : "text-fcolor"
             }`}
           >
             {item.icon}
