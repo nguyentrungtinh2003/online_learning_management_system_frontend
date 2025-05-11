@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 
 export default function UserRanking() {
   const { t } = useTranslation("ranking");
-
   const [topDaily, setTopDaily] = useState([]);
   const [topWeekly, setTopWeekly] = useState([]);
   const [topMonthly, setTopMonthly] = useState([]);

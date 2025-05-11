@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   PiDotsThreeBold,
   PiBackspace,
@@ -15,7 +15,7 @@ import URL from "../../config/URLconfig";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import URLSocket from "../../config/URLsocket";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
@@ -47,6 +47,11 @@ export default function Blog() {
   const [likedUsersMap, setLikedUsersMap] = useState({});
 
   const userId = parseInt(localStorage.getItem("id"));
+  const [searchParams] = useSearchParams();
+  const scrollToId = searchParams.get("scrollTo");
+
+  // Tạo map để lưu ref cho từng post
+  const postRefs = useRef({});
   console.log("User id " + userId);
 
   useEffect(() => {
@@ -119,6 +124,16 @@ export default function Blog() {
 
     return () => client.deactivate();
   }, [selectedPost, currentLikePost]);
+
+  //scrollToId
+  useEffect(() => {
+    if (scrollToId && postRefs.current[scrollToId]) {
+      postRefs.current[scrollToId].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [data, scrollToId]);
 
   const handleGetPosts = () => {
     axios
@@ -470,7 +485,7 @@ export default function Blog() {
           console.log(isLiked);
 
           return (
-            <div key={post.id}>
+            <div key={post.id} ref={(el) => (postRefs.current[post.id] = el)}>
               {!hiddenPosts.includes(post.id) ? (
                 <div className="pt-4 px-4 pb-2 mt-2 border-1 dark:border-darkBorder rounded-2xl">
                   <div className="flex justify-between dark:text-darkText">
