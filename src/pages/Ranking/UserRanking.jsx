@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { useTranslation } from "react-i18next";
+import unknowAva from "../../assets/unknownAvatar.png";
 
 export default function UserRanking() {
   const { t } = useTranslation("ranking");
@@ -87,6 +88,14 @@ export default function UserRanking() {
     user: { username: `Bạn không ở trong Top` },
     point: "0",
   };
+  const paddedListUser = [...listUser];
+  while (paddedListUser.length < 3) {
+    paddedListUser.push({
+      rankEnum: "-",
+      user: { username: "Unknown", avatar: unknowAva },
+      point: "0",
+    });
+  }
 
   return (
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
@@ -133,15 +142,15 @@ export default function UserRanking() {
         <div className="relative h-full justify-center items-center">
           <div className="flex justify-center items-end ml-8 mt-20 gap-24">
             {/* Second */}
-            {listUser[1] && (
+            {paddedListUser[1] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[1].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{listUser[1].user.username}</p>
+                  <p className="font-bold">{paddedListUser[1].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -157,17 +166,15 @@ export default function UserRanking() {
             )}
 
             {/* First */}
-            {listUser[0] && (
+            {paddedListUser[0] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[0].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold overflow-x-hidden w-full">
-                    {listUser[0].user.username}
-                  </p>
+                  <p className="font-bold">{paddedListUser[0].user.username }</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -183,15 +190,15 @@ export default function UserRanking() {
             )}
 
             {/* Third */}
-            {listUser[2] && (
+            {paddedListUser[2] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[2].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{listUser[2].user.username}</p>
+                  <p className="font-bold">{paddedListUser[2].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -237,7 +244,7 @@ export default function UserRanking() {
                       } border-b dark:border-darkBorder hover:bg-sicolor`}
                     >
                       <td className="p-2 px-4 font-medium">
-                        {item.user.rankEnum}
+                        {index + 1}
                       </td>
                       <td className="p-2">
                         <img
