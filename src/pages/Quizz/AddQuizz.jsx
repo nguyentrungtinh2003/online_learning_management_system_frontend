@@ -9,6 +9,7 @@ import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
+import Select from "react-select";
 
 const AddQuizz = () => {
   const { t } = useTranslation("adminmanagement");
@@ -17,64 +18,122 @@ const AddQuizz = () => {
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",
-    price: "",
+    price: "0",
     img: "",
     date: "",
-    quizEnum: "",
+    quizEnum: "FREE",
     isDeleted: false,
     lessonId: "",
   });
 
   const [selectedCourseId, setSelectedCourseId] = useState("");
-  const [selectedLessonId, setSelectedLessonId] = useState(null); // Trạng thái lưu ID bài học
+  const [selectedLessonId, setSelectedLessonId] = useState(null);
   const [img, setImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
   const [lessons, setLessons] = useState([]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [imgPreview, setImgPreview] = useState(null);
 
+  const customStyles = {
+    control: (provided) => ({
+      ...provided,
+      minHeight: "48px",
+      fontSize: "16px",
+      padding: "4px 8px",
+      width: "1218px",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+  };
+
+  // State để kích hoạt re-render khi cần reload
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+
+  // Hàm xử lý khi có sự kiện "triggerCourseReload" từ component khác
+  const handleReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect reload dữ liệu
+  };
+  // === Trigger reload khi có sự kiện bên ngoài gửi tới
+  useEffect(() => {
+    const reloadHandler = () => {
+      setReloadTrigger((prev) => !prev);
+    };
+
+    window.addEventListener("triggerCourseReload", reloadHandler);
+    window.addEventListener("triggerLessonReload", reloadHandler); // cả 2 sự kiện đều reload
+
+    return () => {
+      window.removeEventListener("triggerCourseReload", reloadHandler);
+      window.removeEventListener("triggerLessonReload", reloadHandler);
+    };
+  }, []);
+
+  // === Tải lại danh sách course mỗi khi reloadTrigger thay đổi
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get(`${URL}/courses/all`, { withCredentials: true });
-        console.log(res.data);
-        setCourses(res.data?.data || []);
+        const res = await axios.get(`${URL}/courses/all`, {
+          withCredentials: true,
+        });
+        const courseData = res.data?.data || [];
+        setCourses(courseData);
+        localStorage.setItem("courses", JSON.stringify(courseData));
       } catch (err) {
         console.error("Error fetching courses:", err);
       }
     };
-    fetchCourses();
-  }, []);
 
+    const storedCourses = localStorage.getItem("courses");
+    if (storedCourses) {
+      setCourses(JSON.parse(storedCourses));
+    } else {
+      fetchCourses();
+    }
+    fetchCourses();
+  }, [reloadTrigger]);
+
+  // === Tải lại danh sách lessons mỗi khi selectedCourseId hoặc reloadTrigger thay đổi
   useEffect(() => {
     if (!selectedCourseId) {
       setLessons([]);
       return;
     }
-  
+
     const fetchLessons = async () => {
       try {
-        const res = await axios.get(`${URL}/teacher/lessons/courses/${selectedCourseId}/all`, {
-          withCredentials: true,
-        });
-  
-        if (res.data?.data) {
-          setLessons(res.data.data);
-        } else {
-          setLessons([]);
-        }
+        const res = await axios.get(
+          `${URL}/teacher/lessons/courses/${selectedCourseId}/all`,
+          {
+            withCredentials: true,
+          }
+        );
+        const lessonData = res.data?.data || [];
+        setLessons(lessonData);
+        localStorage.setItem(
+          `lessons-${selectedCourseId}`,
+          JSON.stringify(lessonData)
+        );
       } catch (error) {
         console.error("Error fetching lessons:", error);
         setLessons([]);
       }
     };
-  
+
+    const storedLessons = localStorage.getItem(`lessons-${selectedCourseId}`);
+    if (storedLessons) {
+      setLessons(JSON.parse(storedLessons));
+    } else {
+      fetchLessons();
+    }
     fetchLessons();
-  }, [selectedCourseId]);
-  
-  
+  }, [selectedCourseId, reloadTrigger]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
+
     if (name === "courseId") {
       setSelectedCourseId(value);
       setQuizData((prev) => ({ ...prev, lessonId: "", courseId: value }));
@@ -87,59 +146,134 @@ const AddQuizz = () => {
     } else if (name === "lessonId") {
       setQuizData((prev) => ({ ...prev, lessonId: value }));
     } else if (name === "price") {
-      let sanitized = value.replace(/^0+(?=\d)/, "");
-      if (quizData.quizEnum === "FREE") sanitized = "0";
-      else if (parseInt(sanitized) < 1 || isNaN(parseInt(sanitized))) sanitized = "1";
-  
-      setQuizData((prev) => ({ ...prev, price: sanitized }));
+      let sanitized = value.replace(/^0+(?=\d)/, ""); // bỏ số 0 ở đầu
+
+      if (sanitized === "") sanitized = "0"; // nếu xóa hết thì thành 0
+      else if (parseInt(sanitized) < 1 || isNaN(parseInt(sanitized)))
+        sanitized = "1";
+
+      const priceValue = parseFloat(sanitized);
+      const quizEnumValue = priceValue === 0 ? "FREE" : "PAID";
+
+      setQuizData((prev) => ({
+        ...prev,
+        price: sanitized,
+        quizEnum: quizEnumValue,
+      }));
     } else {
       setQuizData((prev) => ({ ...prev, [name]: value }));
     }
   };
-  
-  
 
-  const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Lấy file ảnh đầu tiên người dùng chọn
+    if (file) {
+      setImg(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Sau khi đọc xong file, chúng ta gán kết quả vào state để hiển thị
+        setImgPreview(reader.result);
+      };
+
+      // Đọc file ảnh dưới dạng URL data
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Kiểm tra xem lessonId có được chọn chưa
-    if (!quizData.lessonId) {
-      toast.error(<p>{t("addQuiz.toastNoLesson")}</p>);
+    if (loading || isSubmitted) return;
+
+    const missingFields = [];
+
+    if (!quizData.quizName.trim()) missingFields.push(t("quizName"));
+    if (!quizData.description.trim()) missingFields.push(t("description"));
+    if (!quizData.courseId) missingFields.push(t("addQuiz.selectCourse"));
+    if (!quizData.courseId) missingFields.push(t("addQuiz.selectLesson"));
+
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 1000 }
+      );
       return;
     }
 
-    console.log("quizData.lessonId:", quizData.lessonId);
-
     setLoading(true);
-  
-    // Kiểm tra và đảm bảo lessonId được set đúng
-    const updatedQuizData = {...quizData};
 
-    // In ra đối tượng updatedQuizData để kiểm tra giá trị của lessonId
-    console.log("Updated Quiz Data:", updatedQuizData);
-  
+    const updatedQuizData = { ...quizData };
+
     const formData = new FormData();
-    formData.append("quiz", new Blob([JSON.stringify(updatedQuizData)], { type: "application/json" }));
+    formData.append(
+      "quiz",
+      new Blob([JSON.stringify(updatedQuizData)], { type: "application/json" })
+    );
     if (img) formData.append("img", img);
-  
+
     try {
-      await axios.post(`${URL}/teacher/quizzes/add`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-  
+      const response = await axios.post(
+        `${URL}/teacher/quizzes/add`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
+
+      const result = response.data?.data;
+
+      // ✅ Tạo lesson mới từ kết quả API
+      const newQuiz = {
+        id: result.id,
+        quizName: result.quizName,
+        deleted: result.deleted,
+        img: result.img,
+        description: result.description,
+      };
+
+      // ✅ Xử lý localStorage dạng Map cho lesson cache
+      const savedCache = localStorage.getItem("quizCache");
+      const parsedCache = savedCache
+        ? new Map(JSON.parse(savedCache))
+        : new Map();
+
+      // ✅ Key theo courseId (thay vì "--ALL--ALL")
+      const key = `${selectedCourseId || "--ALL"}--${
+        selectedLessonId || "--ALL"
+      }`;
+      const existingQuizzes = parsedCache.get(key) || [];
+
+      // ✅ Thêm bài học mới
+      const updatedQuizzes = [...existingQuizzes, newQuiz];
+      parsedCache.set(key, updatedQuizzes);
+
+      // ✅ Lưu lại vào localStorage
+      localStorage.setItem(
+        "quizCache",
+        JSON.stringify(Array.from(parsedCache.entries()))
+      );
+
+      // ✅ Trigger reload để các component như LessonManagement cập nhật lại
+      window.dispatchEvent(new Event("triggerQuizReload"));
+
       toast.success(<p>{t("addQuiz.toastSuccess")}</p>, {
         position: "top-right",
         autoClose: 1000,
       });
-  
+      setIsSubmitted(true);
+      handleReload();
+
       setTimeout(() => {
-        navigate(-1);
-      }, 2000);
+        navigate("/admin/quizzes", { state: { reload: true } });
+      }, 1000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       toast.error(<p>{t("addQuiz.toastError")}</p>, {
@@ -150,7 +284,6 @@ const AddQuizz = () => {
       setLoading(false);
     }
   };
-  
 
   const handleDescriptionChange = (value) => {
     setQuizData((prev) => ({
@@ -158,7 +291,6 @@ const AddQuizz = () => {
       description: value,
     }));
   };
-  
 
   return (
     <div className="flex w-full flex-col h-full">
@@ -170,43 +302,74 @@ const AddQuizz = () => {
         <h2 className="text-lg font-bold">{t("addQuiz.title")}</h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4"
+      >
         <div className="flex items-center">
           <label className="w-1/4 font-medium">{t("addQuiz.course")}</label>
-          <select
-            name="courseId"
-            value={quizData.courseId}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            required
-          >
-            <option value="">{t("addQuiz.selectCourse")}</option>
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.courseName}
-              </option>
-            ))}
-          </select>
-
+          <div className="flex-1">
+            <Select
+              styles={customStyles}
+              options={courses.map((course) => ({
+                value: course.id,
+                label: course.courseName,
+              }))}
+              onChange={(selectedOption) => {
+                const courseId = selectedOption ? selectedOption.value : "";
+                setQuizData((prev) => ({
+                  ...prev,
+                  courseId,
+                  lessonId: "", // reset lesson khi chọn course khác
+                }));
+                setSelectedCourseId(courseId); // để load lại lessons theo courseId
+              }}
+              isClearable
+              placeholder={t("addQuiz.selectCourse")}
+              value={
+                quizData.courseId
+                  ? {
+                      value: quizData.courseId,
+                      label:
+                        courses.find((c) => c.id === quizData.courseId)
+                          ?.courseName || "",
+                    }
+                  : null
+              }
+            />
+          </div>
         </div>
-
-        <div className="flex items-center">
+        <div className="flex items-center mt-4">
           <label className="w-1/4 font-medium">{t("addQuiz.lesson")}</label>
-          <select
-            name="lessonId"
-            value={quizData.lessonId}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border-2 dark:bg-darkSubbackground dark:border-darkBorder rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            required
-            disabled={!selectedCourseId}
-          >
-            <option value="">{t("addQuiz.selectLesson")}</option>
-            {lessons.map((lesson) => (
-              <option key={lesson.id} value={lesson.id}>
-                {lesson.lessonName}
-              </option>
-            ))}
-          </select>
+          <div className="flex-1">
+            <Select
+              styles={customStyles}
+              options={lessons.map((lesson) => ({
+                value: lesson.id,
+                label: lesson.lessonName,
+              }))}
+              onChange={(selectedOption) => {
+                const lessonId = selectedOption ? selectedOption.value : "";
+                setQuizData((prev) => ({
+                  ...prev,
+                  lessonId,
+                }));
+              }}
+              isClearable
+              isDisabled={!selectedCourseId}
+              placeholder={t("addQuiz.selectLesson")}
+              value={
+                quizData.lessonId
+                  ? {
+                      value: quizData.lessonId,
+                      label:
+                        lessons.find((l) => l.id === quizData.lessonId)
+                          ?.lessonName || "",
+                    }
+                  : null
+              }
+            />
+          </div>
         </div>
 
         <div className="flex items-center">
@@ -243,14 +406,30 @@ const AddQuizz = () => {
           />
         </div>
 
+        {/* Image Preview */}
+        {imgPreview && (
+          <div className="mt-4 text-center">
+            {" "}
+            {/* Thêm text-center để căn giữa */}
+            <h3 className="font-medium">{t("addQuiz.imagePreview")}</h3>
+            <img
+              src={imgPreview}
+              alt="Preview"
+              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+            />
+          </div>
+        )}
+
         <div className="flex items-center">
           <label className="w-1/4 font-medium">{t("description")}</label>
           <ReactQuill
             theme="snow"
             value={quizData.description}
-            onChange={handleChange}
+            onChange={handleDescriptionChange}
+            placeholder={t("Enter Description")}
             rows={3}
-            className="flex-1 p-2 border rounded"
+            style={{ minHeight: "300px" }}
+            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
           />
         </div>
 
@@ -277,7 +456,9 @@ const AddQuizz = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`px-6 py-2 rounded text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"}`}
+            className={`px-6 py-2 rounded text-white ${
+              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
             {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
           </button>
