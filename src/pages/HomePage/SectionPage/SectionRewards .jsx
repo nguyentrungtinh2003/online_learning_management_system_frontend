@@ -101,7 +101,7 @@ const SectionRewards = () => {
 
   return (
     <div className="p-6 rounded-lg">
-      <h2 className="text-3xl font-bold text-center mb-8 text-blue-600">
+      <h2 className="lg:text-3xl lg:py-0 py-4 text-4xl font-bold text-center mb-8 text-blue-600">
         {language === "vi"
           ? "Hệ thống phần thưởng & điểm số"
           : "Rewards & Points System"}
