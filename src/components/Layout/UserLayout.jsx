@@ -7,7 +7,7 @@ export default function UserLayout() {
     <div className="flex h-screen dark:bg-darkBackground">
       <div className="flex flex-col flex-1">
       <Navbar/>
-      <div className="flex flex-1 gap-2 p-2 h-full mb-[90px] lg:mb-0 overflow-y-auto">
+      <div className="flex flex-1 gap-2 p-2 h-full mb-36 lg:mb-0 overflow-y-auto">
         <AdminSidebar />
         <main className="h-full w-full flex overflow-y-auto">
           <Outlet />

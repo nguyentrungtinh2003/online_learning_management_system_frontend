@@ -328,11 +328,11 @@ export default function Navbar() {
               ? localStorage.getItem("systemImg")
               : "/logo.png"
           }
-          className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-8 w-8 mx-2"
+          className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
           alt="logo"
         />
-        <div className="flex-1 flex lg:justify-end pr-32 w-full ml-4">
-          <div className="flex lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+        <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
+          <div className="flex lg:h-8 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
@@ -385,12 +385,12 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span>{point}</span>
-                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 20} />
+                <span className="lg:text-md text-2xl">{point}</span>
+                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
               </div>
               <div className="flex items-center gap-2">
-                <span>{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 20} />
+                <span className="lg:text-md text-2xl">{coin}</span>
+                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -398,11 +398,11 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={isLargeScreen ? 40 : 25}
+                    size={isLargeScreen ? 40 : 40}
                     className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
-                    <span className="absolute lg:top-4 lg:left-6 top-3 left-4 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                    <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
                   )}
@@ -419,9 +419,9 @@ export default function Navbar() {
                       : "/user.png"
                   }
                   alt="User"
-                  className="lg:w-10 lg:h-10 w-6 h-6 rounded-full object-cover"
+                  className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
                 />
-                <span className="lg:text-lg text-sm whitespace-nowrap w-34 overflow-hidden">
+                <span className="lg:text-lg text-xl whitespace-nowrap w-34 overflow-hidden">
                   {localStorage.getItem("username")}
                 </span>
                 {isDropdownOpen && (

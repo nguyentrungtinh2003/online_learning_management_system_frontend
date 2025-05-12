@@ -137,7 +137,7 @@ export default function UserRanking() {
       </div>
 
       {/* Main content */}
-      <div className="flex h-full overflow-auto w-full flex-1 gap-14 pl-6">
+      <div className="flex h-full lg:flex-row flex-col overflow-auto w-full flex-1 gap-14">
         {/* Podium */}
         <div className="relative h-full justify-center items-center">
           <div className="flex justify-center items-end ml-8 mt-20 gap-24">
@@ -216,7 +216,7 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="flex-1 border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+        <div className="lg:flex-1 h-full border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
@@ -263,15 +263,15 @@ export default function UserRanking() {
 
           {/* Dòng "bản thân" nổi ở cuối bảng */}
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
-            <div className="relative flex justify-around pr-32 gap-12 items-center pl-4">
+            <div className="relative flex justify-around items-center">
               <span className="font-semibold">{currentUser.rankEnum}</span>
-              <div className="flex items-center space-x-24 w-full pl-24">
+              <div className="flex items-center space-x-24 w-full">
                 <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
-                <span className="mr-64 whitespace-nowrap">
+                <span className="whitespace-nowrap">
                   {currentUser?.user.username}
                 </span>
               </div>
-              <span className="font-semibold">{currentUser.point}</span>
+              <span className="font-semibold mr-4">{currentUser.point}</span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
