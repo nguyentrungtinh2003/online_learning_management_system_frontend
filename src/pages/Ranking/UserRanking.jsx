@@ -83,9 +83,9 @@ export default function UserRanking() {
   const currentUser = listUser.find(
     (user) => user.user.id === parseInt(localStorage.getItem("id"))
   ) || {
-    rank: "-",
-    name: "Hieu Nguyen",
-    points: "-",
+    rankEnum: "-",
+    user: { username: `Bạn không ở trong Top` },
+    point: "0",
   };
 
   return (
@@ -141,7 +141,7 @@ export default function UserRanking() {
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{listUser[1].username}</p>
+                  <p className="font-bold">{listUser[1].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -223,15 +223,15 @@ export default function UserRanking() {
               <tbody>
                 {listUser &&
                   listUser.length > 0 &&
-                  listUser.map((item) => (
+                  listUser.map((item, index) => (
                     <tr
-                      key={item.id}
+                      key={index}
                       className={`${
-                        item.id === 1
+                        index === 0
                           ? "bg-yellow-100 dark:text-darkBackground"
-                          : item.id === 2
+                          : index === 1
                           ? "bg-blue-100 dark:text-darkBackground"
-                          : item.id === 3
+                          : index === 2
                           ? "bg-orange-100 dark:text-darkBackground"
                           : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
                       } border-b dark:border-darkBorder hover:bg-sicolor`}
@@ -261,7 +261,7 @@ export default function UserRanking() {
               <div className="flex items-center space-x-24 w-full pl-24">
                 <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
                 <span className="mr-64 whitespace-nowrap">
-                  {currentUser?.user?.username}
+                  {currentUser?.user.username}
                 </span>
               </div>
               <span className="font-semibold">{currentUser.point}</span>
