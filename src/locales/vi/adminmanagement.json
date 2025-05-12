@@ -59,6 +59,7 @@
         "add": "Thêm bài học mới",
         "selectCourse": "Chọn khoá học:",
         "selectCoursePlaceholder": "-- Chọn khoá học --",
+        "enterLesson": "Nhập Tiêu Đề Bài Viết",
         "lessonTitle": "Tiêu đề bài học:",
         "success": "Thêm bài học thành công!",
         "error":  "Không thể thêm bài học!"

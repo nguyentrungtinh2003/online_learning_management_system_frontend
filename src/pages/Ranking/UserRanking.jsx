@@ -1,68 +1,34 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import URL from "../../config/URLconfig";
+import { useTranslation } from "react-i18next";
+import unknowAva from "../../assets/unknownAvatar.png";
 
 export default function UserRanking() {
-  // Dữ liệu top
-  const topDaily = [
-    { rank: 1, name: "Van Tan", points: 520 },
-    { rank: 2, name: "Tinh Nguyen", points: 510 },
-    { rank: 3, name: "Hieu Nguyen", points: 500 },
-    { rank: 4, name: "Ngoc Le", points: 495 },
-    { rank: 5, name: "Minh Tran", points: 490 },
-    { rank: 6, name: "Anh Pham", points: 485 },
-    { rank: 7, name: "Quang Do", points: 482 },
-    { rank: 8, name: "Duc Hoang", points: 478 },
-    { rank: 9, name: "Linh Nguyen", points: 475 },
-    { rank: 10, name: "Bao Chau", points: 470 },
-    { rank: 11, name: "Tuan Vo", points: 468 },
-    { rank: 12, name: "Phuong Mai", points: 465 },
-    { rank: 13, name: "Khoa Bui", points: 460 },
-  ];
-
-  const topWeekly = [
-    { rank: 1, name: "Tinh Nguyen", points: 1500 },
-    { rank: 2, name: "Van Tan", points: 1480 },
-    { rank: 3, name: "Hieu Nguyen", points: 1450 },
-    { rank: 4, name: "Bao Chau", points: 1400 },
-    { rank: 5, name: "Ngoc Le", points: 1350 },
-    { rank: 6, name: "Anh Pham", points: 1320 },
-    { rank: 7, name: "Linh Nguyen", points: 1280 },
-    { rank: 8, name: "Phuong Mai", points: 1270 },
-    { rank: 9, name: "Khoa Bui", points: 1250 },
-    { rank: 10, name: "Tuan Vo", points: 1240 },
-  ];
-
-  const topMonthly = [
-    { rank: 1, name: "Hieu Nguyen", points: 3200 },
-    { rank: 2, name: "Van Tan", points: 3100 },
-    { rank: 3, name: "Tinh Nguyen", points: 3050 },
-    { rank: 4, name: "Ngoc Le", points: 2900 },
-    { rank: 5, name: "Minh Tran", points: 2800 },
-    { rank: 6, name: "Quang Do", points: 2750 },
-    { rank: 7, name: "Bao Chau", points: 2700 },
-    { rank: 8, name: "Duc Hoang", points: 2600 },
-    { rank: 9, name: "Tuan Vo", points: 2500 },
-    { rank: 10, name: "Phuong Mai", points: 2400 },
-  ];
-
+  const { t } = useTranslation("ranking");
+  const [topDaily, setTopDaily] = useState([]);
+  const [topWeekly, setTopWeekly] = useState([]);
+  const [topMonthly, setTopMonthly] = useState([]);
   const [selectedTop, setSelectedTop] = useState("day");
 
-  const users =
-    selectedTop === "day"
-      ? topDaily
-      : selectedTop === "week"
-      ? topWeekly
-      : topMonthly;
-
-  const currentUser = users.find((user) => user.name === "Hieu Nguyen") || {
-    rank: "-",
-    name: "Hieu Nguyen",
-    points: "-",
-  };
-
   useEffect(() => {
+    const today = new Date();
+    const date = today.toISOString().split("T")[0];
+
+    const day = today.getDay(); // 0 (Sun) -> 6 (Sat)
+    const start = new Date(today);
+    start.setDate(today.getDate() - day + (day === 0 ? -6 : 1)); // Monday
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6); // Sunday
+
+    const startDate = start.toISOString().split("T")[0];
+    const endDate = end.toISOString().split("T")[0];
+
+    const month = today.getMonth() + 1; // 1-12
+    const year = today.getFullYear();
+
     fetchTopDate(date);
-    fetchTopWeek(start, end);
+    fetchTopWeek(startDate, endDate);
     fetchTopMonth(month, year);
   }, []);
 
@@ -70,11 +36,11 @@ export default function UserRanking() {
     axios
       .get(`${URL}/rankings/day?date=${date}`, { withCredentials: true })
       .then((response) => {
-        console.log("Get top date success");
         setTopDaily(response.data.data);
+        console.log("Date : " + response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top date ", error.message);
       });
   };
 
@@ -84,11 +50,11 @@ export default function UserRanking() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log("Get top week success");
         setTopWeekly(response.data.data);
+        console.log("week : " + response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top week ", error.message);
       });
   };
 
@@ -98,13 +64,38 @@ export default function UserRanking() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log("Get top week success");
         setTopMonthly(response.data.data);
+        console.log("month : " + response.data.data);
       })
       .catch((error) => {
-        console.log("Error get top date ", error.message);
+        console.error("Error get top month ", error.message);
       });
   };
+
+  const listUser =
+    selectedTop === "day"
+      ? topDaily
+      : selectedTop === "week"
+      ? topWeekly
+      : topMonthly;
+
+  console.log(JSON.stringify(listUser, null, 2));
+
+  const currentUser = listUser.find(
+    (user) => user.user.id === parseInt(localStorage.getItem("id"))
+  ) || {
+    rankEnum: "-",
+    user: { username: `Bạn không ở trong Top` },
+    point: "0",
+  };
+  const paddedListUser = [...listUser];
+  while (paddedListUser.length < 3) {
+    paddedListUser.push({
+      rankEnum: "-",
+      user: { username: "Unknown", avatar: unknowAva },
+      point: "0",
+    });
+  }
 
   return (
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
@@ -146,20 +137,20 @@ export default function UserRanking() {
       </div>
 
       {/* Main content */}
-      <div className="flex h-full overflow-auto w-full flex-1 gap-14 pl-6">
+      <div className="flex h-full lg:flex-row flex-col overflow-auto w-full flex-1 gap-14">
         {/* Podium */}
         <div className="relative h-full justify-center items-center">
           <div className="flex justify-center items-end ml-8 mt-20 gap-24">
             {/* Second */}
-            {users[1] && (
+            {paddedListUser[1] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[1].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{users[1].name}</p>
+                  <p className="font-bold">{paddedListUser[1].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -175,17 +166,15 @@ export default function UserRanking() {
             )}
 
             {/* First */}
-            {users[0] && (
+            {paddedListUser[0] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[0].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold overflow-x-hidden w-full">
-                    {users[0].name}
-                  </p>
+                  <p className="font-bold">{paddedListUser[0].user.username }</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -201,15 +190,15 @@ export default function UserRanking() {
             )}
 
             {/* Third */}
-            {users[2] && (
+            {paddedListUser[2] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src="/user.png"
+                    src={paddedListUser[2].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{users[2].name}</p>
+                  <p className="font-bold">{paddedListUser[2].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -227,7 +216,7 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="flex-1 border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+        <div className="lg:flex-1 h-full border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
               <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
@@ -239,46 +228,50 @@ export default function UserRanking() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr
-                    key={user.rank}
-                    className={`${
-                      user.rank === 1
-                        ? "bg-yellow-100 dark:text-darkBackground"
-                        : user.rank === 2
-                        ? "bg-blue-100 dark:text-darkBackground"
-                        : user.rank === 3
-                        ? "bg-orange-100 dark:text-darkBackground"
-                        : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
-                    } border-b dark:border-darkBorder hover:bg-sicolor`}
-                  >
-                    <td className="p-2 px-4 font-medium">{user.rank}</td>
-                    <td className="p-2">
-                      <img
-                        src="/user.png"
-                        alt=""
-                        className="w-8 rounded-2xl h-8"
-                      />
-                    </td>
-                    <td className="p-2">{user.name}</td>
-                    <td className="p-2">{user.points}</td>
-                  </tr>
-                ))}
+                {listUser &&
+                  listUser.length > 0 &&
+                  listUser.map((item, index) => (
+                    <tr
+                      key={index}
+                      className={`${
+                        index === 0
+                          ? "bg-yellow-100 dark:text-darkBackground"
+                          : index === 1
+                          ? "bg-blue-100 dark:text-darkBackground"
+                          : index === 2
+                          ? "bg-orange-100 dark:text-darkBackground"
+                          : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
+                      } border-b dark:border-darkBorder hover:bg-sicolor`}
+                    >
+                      <td className="p-2 px-4 font-medium">
+                        {index + 1}
+                      </td>
+                      <td className="p-2">
+                        <img
+                          src="/user.png"
+                          alt=""
+                          className="w-8 rounded-2xl h-8"
+                        />
+                      </td>
+                      <td className="p-2">{item.user.username}</td>
+                      <td className="p-2">{item.point}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
 
           {/* Dòng "bản thân" nổi ở cuối bảng */}
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
-            <div className="relative flex justify-around pr-32 gap-12 items-center pl-4">
-              <span className="font-semibold">{currentUser.rank}</span>
-              <div className="flex items-center space-x-24 w-full pl-24">
+            <div className="relative flex justify-around items-center">
+              <span className="font-semibold">{currentUser.rankEnum}</span>
+              <div className="flex items-center space-x-24 w-full">
                 <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
-                <span className="mr-64 whitespace-nowrap">
-                  {currentUser.name}
+                <span className="whitespace-nowrap">
+                  {currentUser?.user.username}
                 </span>
               </div>
-              <span className="font-semibold">{currentUser.points}</span>
+              <span className="font-semibold mr-4">{currentUser.point}</span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">

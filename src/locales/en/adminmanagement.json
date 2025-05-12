@@ -72,6 +72,7 @@
     "imagePreview": "Image Preview",
     "selectCourse": "Select Course:",
     "selectCoursePlaceholder": "-- Choose a course --",
+    "enterLesson": "Enter Lesson Title",
     "lessonTitle": "Lesson Title:",
     "success": "Lesson added successfully!",
     "error": "Failed to add lesson!"

@@ -184,7 +184,7 @@ export default function AdminBlogManagement() {
             e.preventDefault();
             fetchBlogs();
           }}
-          className="mb-4 flex gap-2"
+          className="mb-2 flex gap-2"
         >
           <input
             type="text"

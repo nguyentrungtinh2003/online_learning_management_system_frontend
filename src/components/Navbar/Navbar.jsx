@@ -12,8 +12,10 @@ import englishFlag from "../../assets/english.png";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import URLSocket from "../../config/URLsocket";
+import { useMediaQuery } from "react-responsive";
 
 export default function Navbar() {
+  const isLargeScreen = useMediaQuery({ minWidth: 1024 });
   const languageOptions = [
     {
       value: "en",
@@ -24,7 +26,7 @@ export default function Navbar() {
             alt="English"
             className="h-6 w-6 object-cover"
           />
-          <span>EN</span>
+          <span className="lg:block hidden">EN</span>
         </div>
       ),
     },
@@ -37,7 +39,7 @@ export default function Navbar() {
             alt="Vietnamese"
             className="h-6 w-6 object-cover"
           />
-          <span>VI</span>
+          <span className="lg:block hidden">VI</span>
         </div>
       ),
     },
@@ -326,11 +328,11 @@ export default function Navbar() {
               ? localStorage.getItem("systemImg")
               : "/logo.png"
           }
-          className="rounded-full w-12 h-12 cursor-pointer object-cover h-10 mx-2"
+          className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
           alt="logo"
         />
-        <div className="flex-1 flex justify-end pr-32 w-full ml-4">
-          <div className="flex w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+        <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
+          <div className="flex lg:h-8 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
@@ -339,7 +341,7 @@ export default function Navbar() {
               onChange={handleSearchChange}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              className="w-full text-sm dark:bg-darkBackground dark:text-darkSubtext focus:outline-none"
+              className="lg:w-full w-32 lg:placeholder:text-gray-400 placeholder:text-transparent  text-sm dark:bg-darkBackground dark:text-darkSubtext focus:outline-none"
             />
             {(showSuggestions || searchQuery.length > 0) && (
               <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
@@ -383,12 +385,12 @@ export default function Navbar() {
           {localStorage.getItem("username") ? (
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
-                <span>{point}</span>
-                <FaStar style={{ color: "gold" }} size={30} />
+                <span className="lg:text-md text-2xl">{point}</span>
+                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
               </div>
               <div className="flex items-center gap-2">
-                <span>{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={30} />
+                <span className="lg:text-md text-2xl">{coin}</span>
+                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -396,8 +398,8 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={40}
-                    className="hover:bg-focolor dark:hover:bg-darkBorder p-1 rounded-xl"
+                    size={isLargeScreen ? 40 : 40}
+                    className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
                     <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
@@ -417,9 +419,9 @@ export default function Navbar() {
                       : "/user.png"
                   }
                   alt="User"
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
                 />
-                <span className="text-lg w-34 overflow-hidden">
+                <span className="lg:text-lg text-xl whitespace-nowrap w-34 overflow-hidden">
                   {localStorage.getItem("username")}
                 </span>
                 {isDropdownOpen && (

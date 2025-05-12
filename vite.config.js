@@ -10,4 +10,7 @@ export default defineConfig({
   define: {
     global: "globalThis", // giả lập `global` dùng `globalThis`
   },
+  optimizeDeps: {
+    include: ["react-responsive"],
+  },
 });

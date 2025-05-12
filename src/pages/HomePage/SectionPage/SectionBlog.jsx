@@ -34,9 +34,11 @@ const BlogCard = ({ blog, language }) => (
         </p>
       </div>
 
-      <button className="w-full mt-4 py-2 bg-scolor text-white text-xl font-semibold rounded-lg hover:bg-fcolor transition duration-300">
-        {language === "vi" ? "Đọc thêm" : "Read More"}
-      </button>
+      <a href={`/blog?scrollTo=${blog.id}`}>
+        <button className="w-full mt-4 py-2 bg-scolor text-white text-xl font-semibold rounded-lg hover:bg-fcolor transition duration-300">
+          {language === "vi" ? "Đọc thêm" : "Read More"}
+        </button>
+      </a>
     </div>
   </div>
 );

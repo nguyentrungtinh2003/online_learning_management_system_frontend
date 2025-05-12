@@ -8,7 +8,6 @@ import { MdNavigateNext } from "react-icons/md";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
-import Select from "react-select";
 
 const AddLesson = () => {
   const { t } = useTranslation("adminmanagement");
@@ -266,25 +265,21 @@ const AddLesson = () => {
         <div className="space-y-4">
           {/* Chọn khoá học */}
           <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">
-              {t("addLesson.selectCourse")}
-            </label>
-            <Select
-              styles={customStyles}
-              options={filteredCourses.map((course) => ({
-                value: course.id,
-                label: course.courseName,
-              }))}
-              onChange={(selectedOption) =>
-                setLessonData((prev) => ({
-                  ...prev,
-                  courseId: selectedOption ? selectedOption.value : null,
-                }))
-              }
-              isClearable={true}
-              placeholder="Select Course..."
-              isSearchable
-            />
+            <label className="w-1/4 font-medium">{t("addLesson.selectCourse")}</label>
+            <select
+              name="courseId"
+              value={lessonData.courseId}
+              onChange={handleChange}
+              className="flex-1 px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            >
+              <option value="">{t("addLesson.selectCoursePlaceholder")}</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.courseName}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Các trường nhập bài học */}
@@ -297,7 +292,7 @@ const AddLesson = () => {
               name="lessonName"
               value={lessonData.lessonName}
               onChange={handleChange}
-              placeholder="Enter Lesson Name"
+              placeholder={t("addLesson.enterLesson")}
               className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               required
             />
