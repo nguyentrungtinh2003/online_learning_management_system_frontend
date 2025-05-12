@@ -65,6 +65,9 @@
     "viewVideo": "View Video",
     "noVideo": "No Video"
   },
+  "editLesson": {
+    "title": "Edit Lesson"
+  },
   "addLesson": {
     "main": "Lesson Management",
     "add": "Add New Lesson",

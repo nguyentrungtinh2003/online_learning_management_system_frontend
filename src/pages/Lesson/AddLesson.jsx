@@ -3,7 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FaBuffer } from "react-icons/fa";
+import { FaVideo } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -252,7 +252,7 @@ const AddLesson = () => {
   return (
     <div className="w-full flex flex-col h-full">
       <div className="flex gap-2 dark:text-darkText">
-        <FaBuffer size={30} />
+        <FaVideo size={30} />
         <MdNavigateNext size={30} />
         <h2 className="text-lg font-bold mb-4">{t("addLesson.main")}</h2>
         <MdNavigateNext size={30} />

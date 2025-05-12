@@ -383,14 +383,14 @@ export default function Navbar() {
 
         <div ref={dropdownRef} className="relative items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center ml-2 space-x-3">
               <div className="flex items-center gap-2">
-                <span className="lg:text-md text-2xl">{point}</span>
-                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <span className="lg:text-lg text-2xl">{point}</span>
+                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
               </div>
               <div className="flex items-center gap-2">
-                <span className="lg:text-md text-2xl">{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <span className="lg:text-lg text-2xl">{coin}</span>
+                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -398,11 +398,11 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={isLargeScreen ? 40 : 40}
+                    size={isLargeScreen ? 30 : 40}
                     className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
-                    <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                    <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
                   )}

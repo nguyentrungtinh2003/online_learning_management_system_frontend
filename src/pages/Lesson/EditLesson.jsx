@@ -6,8 +6,11 @@ import { Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { MdNavigateNext } from "react-icons/md";
+import { FaVideo} from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const EditLesson = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const { courseId, lessonId } = useParams(); // Lấy cả courseId từ URL
 
@@ -101,37 +104,40 @@ const EditLesson = () => {
   return (
     <div className="w-full flex flex-col h-full">
       <div className="flex gap-2 dark:text-darkText">
+        <FaVideo size={30} />
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Lesson Management</h2>
+        <h2 className="text-lg font-bold mb-4">{t("addLesson.main")}</h2>
         <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold mb-4">Edit Lesson</h2>
+        <h2 className="text-lg font-bold mb-4">{t("editLesson.title")}</h2>
       </div>
 
-      <Form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+      <Form onSubmit={handleSubmit} className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText p-6 rounded-lg shadow">
         <Form.Group className="mb-3" controlId="formLessonName">
-          <Form.Label>Lesson Name</Form.Label>
+          <Form.Label>{t("lesson.name")}</Form.Label>
           <Form.Control
             type="text"
             name="lessonName"
             value={lessons.lessonName}
             onChange={handleChange}
+            className="dark:bg-darkSubbackground dark:border-darkBorder dark:text-darkText"
           />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formDescription">
-          <Form.Label>Description</Form.Label>
+          <Form.Label>{t("description")}</Form.Label>
           <Form.Control
             as="textarea"
             rows={3}
             name="description"
             value={lessons.description}
             onChange={handleChange}
+            className="dark:bg-darkSubbackground dark:border-darkBorder dark:text-darkText"
           />
         </Form.Group>
 
         {/* Hiển thị ảnh cũ nếu có */}
         <Form.Group className="mb-3" controlId="formImage">
-          <Form.Label>Lesson Image</Form.Label>
+          <Form.Label>{t("image")}</Form.Label>
           {lessons.img && (
             <img
               src={lessons.img}
@@ -139,27 +145,27 @@ const EditLesson = () => {
               className="w-40 h-40 object-cover rounded-md mb-2"
             />
           )}
-          <Form.Control type="file" onChange={handleImageChange} />
+          <Form.Control className="file:dark:bg-darkBackground file:dark:text-darkText dark:bg-darkSubbackground dark:border-darkBorder dark:text-darkText" type="file" onChange={handleImageChange} />
         </Form.Group>
 
         {/* Hiển thị video cũ nếu có */}
         <Form.Group className="mb-3" controlId="formVideo">
-          <Form.Label>Lesson Video</Form.Label>
+          <Form.Label>{t("video")}</Form.Label>
           {lessons.videoURL && (
             <video controls className="w-64 h-40 mb-2">
               <source src={lessons.videoURL} type="video/mp4" />
               Trình duyệt của bạn không hỗ trợ video.
             </video>
           )}
-          <Form.Control type="file" onChange={handleVideoChange} />
+          <Form.Control className="file:dark:bg-darkBackground file:dark:text-darkText dark:bg-darkSubbackground dark:border-darkBorder dark:text-darkText" type="file" onChange={handleVideoChange} />
         </Form.Group>
 
         <div className="flex justify-end space-x-2 mt-6">
           <Link
             onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+            className="px-6 dark:text-darkText py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
           >
-            Cancel
+            {t("cancel")}
           </Link>
           <button
             type="submit"
@@ -170,7 +176,7 @@ const EditLesson = () => {
             }`}
             disabled={loading}
           >
-            {loading ? "Processing..." : "Submit"}
+            {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p> }
           </button>
         </div>
       </Form>
