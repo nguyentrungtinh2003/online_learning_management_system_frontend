@@ -64,15 +64,13 @@ const AdminRoutes = () => {
         <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
+
         <Route
           path="courses/:courseId/lessons"
           element={<ManagementlessonByCourse />}
         />
         <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
-        <Route
-          path="courses/:courseId/lessons/edit/:lessonId"
-          element={<EditLesson />}
-        />
+        <Route path="lessons/edit/:lessonId" element={<EditLesson />} />
         <Route
           path="lessons/:lessonId/quizzes"
           element={<QuizzManagementByLesson />}

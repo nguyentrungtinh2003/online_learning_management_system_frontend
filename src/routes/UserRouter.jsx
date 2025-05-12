@@ -24,6 +24,7 @@ import UserLayout from "../components/Layout/UserLayout";
 import ChatRoom from "../pages/Chat/ChatRoom";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
+import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 
 const UserRouter = () => {
   return (
@@ -52,6 +53,10 @@ const UserRouter = () => {
         <Route path="user-course" element={<UserCourse />} />
         <Route path="view-course/:id" element={<UserViewCourse />} />
         <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
+        <Route
+          path="view-lesson-detail/:lessonId"
+          element={<ViewLessonDetail />}
+        />
         <Route path="view-quiz/:quizId" element={<UserQuizz />} />
         <Route path="blog" element={<UserViewBlog />} />
         <Route path="quiz" element={<QuizzManagement />} />

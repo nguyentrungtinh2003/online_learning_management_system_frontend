@@ -19,11 +19,13 @@ import {
 } from "../../services/lessonapi";
 import { useTranslation } from "react-i18next";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import { useLocation } from "react-router-dom";
 
 export default function ManagementLesson() {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
+  const location = useLocation();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lessonSearch, setLessonSearch] = useState("");
@@ -470,7 +472,7 @@ export default function ManagementLesson() {
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
-                          to={`/admin/lessons/${lesson.id}/quizzes`}
+                          to={`/view-lesson-detail/${lesson.id}`}
                           className="p-2 border rounded"
                         >
                           <FaEye />

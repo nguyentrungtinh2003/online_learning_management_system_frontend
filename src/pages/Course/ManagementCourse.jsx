@@ -503,20 +503,20 @@ export default function CourseManagement() {
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
-                          to={`/admin/courses/${course.id}/lessons`}
-                          className="p-2 border rounded"
+                          to={`/view-course/${course.id}`}
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
                         >
                           <FaEye />
                         </Link>
                         <Link
                           to={`/admin/courses/edit-course/${course.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-blue-300 hover:bg-blue-200 text-white"
                         >
                           <FaEdit />
                         </Link>
                         {course.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleRestore(course.id, course.courseName)
                             }
@@ -525,7 +525,7 @@ export default function CourseManagement() {
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded  bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(course.id, course.courseName)
                             }
