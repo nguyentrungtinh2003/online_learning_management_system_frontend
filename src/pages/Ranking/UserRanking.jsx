@@ -36,6 +36,7 @@ export default function UserRanking() {
       .get(`${URL}/rankings/day?date=${date}`, { withCredentials: true })
       .then((response) => {
         setTopDaily(response.data.data);
+        console.log("Date : " + response.data.data);
       })
       .catch((error) => {
         console.error("Error get top date ", error.message);
@@ -49,6 +50,7 @@ export default function UserRanking() {
       })
       .then((response) => {
         setTopWeekly(response.data.data);
+        console.log("week : " + response.data.data);
       })
       .catch((error) => {
         console.error("Error get top week ", error.message);
@@ -62,25 +64,29 @@ export default function UserRanking() {
       })
       .then((response) => {
         setTopMonthly(response.data.data);
+        console.log("month : " + response.data.data);
       })
       .catch((error) => {
         console.error("Error get top month ", error.message);
       });
   };
 
-  const users =
+  const listUser =
     selectedTop === "day"
       ? topDaily
       : selectedTop === "week"
       ? topWeekly
       : topMonthly;
 
-  const currentUser =
-    users.find((user) => user.name === "Hieu Nguyen") || {
-      rank: "-",
-      name: "Hieu Nguyen",
-      points: "-",
-    };
+  console.log(JSON.stringify(listUser, null, 2));
+
+  const currentUser = listUser.find(
+    (user) => user.user.id === parseInt(localStorage.getItem("id"))
+  ) || {
+    rank: "-",
+    name: "Hieu Nguyen",
+    points: "-",
+  };
 
   return (
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
@@ -127,7 +133,7 @@ export default function UserRanking() {
         <div className="relative h-full justify-center items-center">
           <div className="flex justify-center items-end ml-8 mt-20 gap-24">
             {/* Second */}
-            {users[1] && (
+            {listUser[1] && (
               <div className="flex flex-col items-center">
                 <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
@@ -135,7 +141,7 @@ export default function UserRanking() {
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{users[1].name}</p>
+                  <p className="font-bold">{listUser[1].username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -151,7 +157,7 @@ export default function UserRanking() {
             )}
 
             {/* First */}
-            {users[0] && (
+            {listUser[0] && (
               <div className="flex flex-col items-center">
                 <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
@@ -160,7 +166,7 @@ export default function UserRanking() {
                     className="w-20 h-20 rounded-full"
                   />
                   <p className="font-bold overflow-x-hidden w-full">
-                    {users[0].name}
+                    {listUser[0].user.username}
                   </p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
@@ -177,7 +183,7 @@ export default function UserRanking() {
             )}
 
             {/* Third */}
-            {users[2] && (
+            {listUser[2] && (
               <div className="flex flex-col items-center">
                 <div className="translate-x-1 drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
@@ -185,7 +191,7 @@ export default function UserRanking() {
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{users[2].name}</p>
+                  <p className="font-bold">{listUser[2].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -215,31 +221,35 @@ export default function UserRanking() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr
-                    key={user.rank}
-                    className={`${
-                      user.rank === 1
-                        ? "bg-yellow-100 dark:text-darkBackground"
-                        : user.rank === 2
-                        ? "bg-blue-100 dark:text-darkBackground"
-                        : user.rank === 3
-                        ? "bg-orange-100 dark:text-darkBackground"
-                        : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
-                    } border-b dark:border-darkBorder hover:bg-sicolor`}
-                  >
-                    <td className="p-2 px-4 font-medium">{user.rank}</td>
-                    <td className="p-2">
-                      <img
-                        src="/user.png"
-                        alt=""
-                        className="w-8 rounded-2xl h-8"
-                      />
-                    </td>
-                    <td className="p-2">{user.name}</td>
-                    <td className="p-2">{user.points}</td>
-                  </tr>
-                ))}
+                {listUser &&
+                  listUser.length > 0 &&
+                  listUser.map((item) => (
+                    <tr
+                      key={item.id}
+                      className={`${
+                        item.id === 1
+                          ? "bg-yellow-100 dark:text-darkBackground"
+                          : item.id === 2
+                          ? "bg-blue-100 dark:text-darkBackground"
+                          : item.id === 3
+                          ? "bg-orange-100 dark:text-darkBackground"
+                          : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
+                      } border-b dark:border-darkBorder hover:bg-sicolor`}
+                    >
+                      <td className="p-2 px-4 font-medium">
+                        {item.user.rankEnum}
+                      </td>
+                      <td className="p-2">
+                        <img
+                          src="/user.png"
+                          alt=""
+                          className="w-8 rounded-2xl h-8"
+                        />
+                      </td>
+                      <td className="p-2">{item.user.username}</td>
+                      <td className="p-2">{item.point}</td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -247,14 +257,14 @@ export default function UserRanking() {
           {/* Dòng "bản thân" nổi ở cuối bảng */}
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
             <div className="relative flex justify-around pr-32 gap-12 items-center pl-4">
-              <span className="font-semibold">{currentUser.rank}</span>
+              <span className="font-semibold">{currentUser.rankEnum}</span>
               <div className="flex items-center space-x-24 w-full pl-24">
                 <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
                 <span className="mr-64 whitespace-nowrap">
-                  {currentUser.name}
+                  {currentUser?.user?.username}
                 </span>
               </div>
-              <span className="font-semibold">{currentUser.points}</span>
+              <span className="font-semibold">{currentUser.point}</span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
               <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
