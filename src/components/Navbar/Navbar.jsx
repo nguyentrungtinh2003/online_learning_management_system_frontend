@@ -383,14 +383,14 @@ export default function Navbar() {
 
         <div ref={dropdownRef} className="relative items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center ml-2 space-x-3">
               <div className="flex items-center gap-2">
-                <span className="lg:text-md text-2xl">{point}</span>
-                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <span className="lg:text-lg text-2xl">{point}</span>
+                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
               </div>
               <div className="flex items-center gap-2">
-                <span className="lg:text-md text-2xl">{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <span className="lg:text-lg text-2xl">{coin}</span>
+                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -398,11 +398,11 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={isLargeScreen ? 40 : 40}
+                    size={isLargeScreen ? 30 : 40}
                     className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
-                    <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                    <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
                   )}
@@ -475,17 +475,17 @@ export default function Navbar() {
 
           {isNotificationOpen && (
             <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
-              <h3 className="text-lg w-full text-center font-semibold border-b dark:border-darkBorder pb-2">
+              <h3 className="text-lg w-full dark:text-darkText text-center font-semibold border-b dark:border-darkBorder pb-2">
                 {t("notifications")}
               </h3>
               <ul className="py-2 h-[40%] overflow-auto">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
-                    <div key={notification.id}>
+                    <div key={notification.id} className="flex items-center">
                       <li
                         className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
                           !notification.read
-                            ? "font-bold text-black dark:text-darkText"
+                            ? "font-bold text-gray-600 dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"
                         }`}
                       >
@@ -495,7 +495,7 @@ export default function Navbar() {
                         onClick={() =>
                           readNotifications(parseInt(notification.id))
                         }
-                        className="btn btn-primary"
+                        className="btn btn-primary text-sm"
                       >
                         Read
                       </button>

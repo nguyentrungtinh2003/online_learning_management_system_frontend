@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ytblogo from "../../assets/youtube.svg";
 import fblogo from "../../assets/facebook-ico.svg";
-import logoCode from "../../assets/logoCode.png";
 
 export default function Footer() {
   const [language, setLanguage] = useState("en");
@@ -34,11 +33,11 @@ export default function Footer() {
   return (
     <div>
       <div className="bg-slate-900 dark:border-t dark:border-gray-700 dark:bg-darkBackground text-lg font-bold text-slate-300 h-fit">
-        <div className="p-16 flex justify-between items-top flex-wrap gap-8">
+        <div className="px-20 py-8 lg:p-16 flex justify-between items-top flex-wrap flex-col gap-16 lg:flex-row lg:gap-8">
           <div className="space-y-4">
-            <div className="flex text-2xl font-bold items-center">
+            <div className="flex text-5xl lg:text-2xl font-bold items-center">
               <img
-                className="h-14 w-14  mr-4"
+                className="lg:h-14 lg:w-14 h-24 w-24 mr-4"
                 style={{ filter: "invert(1)" }}
                 src={
                   localStorage.getItem("systemImg") !== "null"
@@ -47,11 +46,11 @@ export default function Footer() {
                 }
                 alt="Logo"
               />
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="font-bold text-white">
                 {localStorage.getItem("systemName")}
               </h3>
             </div>
-            <ul>
+            <ul className="text-4xl lg:text-xl">
               <li>
                 {text.phone}: {localStorage.getItem("phoneNumber")}
               </li>
@@ -64,23 +63,23 @@ export default function Footer() {
             </ul>
           </div>
           <div className="space-y-4">
-            <p className="font-bold text-2xl">{text.about_us}</p>
-            <ul>
+            <p className="font-bold text-6xl lg:text-2xl">{text.about_us}</p>
+            <ul className="text-4xl lg:text-xl">
               <li>{text.introduce}</li>
               <li>{text.services}</li>
               <li>{text.qa}</li>
               <li>{text.terms}</li>
             </ul>
           </div>
-          <div className="space-y-4 mx-10">
-            <p className="font-bold text-2xl">{text.follow}</p>
+          <div className="space-y-4">
+            <p className="font-bold text-6xl lg:text-2xl">{text.follow}</p>
             <ul>
-              <li className="flex items-center">
-                <img className="h-10 mr-2" src={ytblogo} alt="Youtube" />
+              <li className="flex text-4xl lg:text-xl items-center">
+                <img className="h-20 lg:h-10 mr-2" src={ytblogo} alt="Youtube" />
                 Youtube
               </li>
-              <li className="flex items-center">
-                <img className="h-10 mr-2" src={fblogo} alt="Facebook" />
+              <li className="flex text-4xl lg:text-xl items-center">
+                <img className="h-20 lg:h-10 mr-2" src={fblogo} alt="Facebook" />
                 Facebook
               </li>
             </ul>

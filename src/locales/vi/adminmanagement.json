@@ -54,6 +54,9 @@
         "viewVideo": "Xem bài giảng",
         "noVideo": "Không có bản ghi hình"
     },
+    "editLesson": {
+      "title": "Chỉnh Sửa Bài Học"
+  },
     "addLesson":{
         "main": "Quản Lý Bài Học",
         "add": "Thêm bài học mới",

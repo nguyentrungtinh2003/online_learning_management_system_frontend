@@ -2,7 +2,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import {
-  FaBuffer,
+  FaVideo,
   FaEdit,
   FaEye,
   FaPlus,
@@ -338,9 +338,9 @@ export default function ManagementLesson() {
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
           <Link className="flex gap-2" onClick={() => navigate(-1)}>
-            <FaBuffer size={30} />
-            <MdNavigateBefore size={30} />
-            <h2 className="text-lg font-bold">{t("back")}</h2>
+            <FaVideo size={30} />
+            <MdNavigateNext size={30} />
+            <h2 className="text-lg font-bold">{t("addLesson.main")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
             <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
