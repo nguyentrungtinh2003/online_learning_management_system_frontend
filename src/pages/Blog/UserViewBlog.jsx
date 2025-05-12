@@ -585,7 +585,7 @@ export default function Blog() {
                           >
                             {/* Avatar hoặc icon mặc định */}
                             <img
-                              src="/user.png"
+                              src={comment.img}
                               alt="avatar"
                               className="w-10 h-10 rounded-full object-cover border"
                             />
@@ -616,14 +616,14 @@ export default function Blog() {
                                 )}
                               </div>
 
-                              {/* Nếu có ảnh trong comment */}
+                              {/* Nếu có ảnh trong comment
                               {comment.img && (
                                 <img
                                   src={comment.img}
                                   alt="Comment"
                                   className="w-28 h-28 mt-2 object-cover rounded-lg border"
                                 />
-                              )}
+                              )} */}
 
                               <p className="text-sm text-gray-700 dark:text-darkSubtext mt-2 whitespace-pre-wrap">
                                 {comment.content}

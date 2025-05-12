@@ -69,11 +69,11 @@ const PaymentSuccess = () => {
   if (loading) {
     return (
       <>
-        <ToastContainer />
         <Container
           className="d-flex justify-content-center align-items-center"
           style={{ height: "100vh" }}
         >
+          <ToastContainer />
           <div className="text-center">
             <p className="mt-3">
               <Spinner animation="border" variant="white" className="me-2" />

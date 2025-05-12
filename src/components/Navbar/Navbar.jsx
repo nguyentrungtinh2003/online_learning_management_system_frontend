@@ -386,11 +386,17 @@ export default function Navbar() {
             <div className="flex items-center space-x-3">
               <div className="flex items-center gap-2">
                 <span className="lg:text-md text-2xl">{point}</span>
-                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <FaStar
+                  style={{ color: "gold" }}
+                  size={isLargeScreen ? 30 : 30}
+                />
               </div>
               <div className="flex items-center gap-2">
                 <span className="lg:text-md text-2xl">{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 30 : 30} />
+                <FaCoins
+                  style={{ color: "gold" }}
+                  size={isLargeScreen ? 30 : 30}
+                />
               </div>
               <div ref={notificationRef} className="relative">
                 <div
@@ -483,14 +489,16 @@ export default function Navbar() {
                   notifications.map((notification) => (
                     <div key={notification.id}>
                       <li
-                        className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
-                          !notification.read
-                            ? "font-bold text-black dark:text-darkText"
-                            : "text-gray-700 dark:text-darkSubtext"
-                        }`}
+                        className={`text-black dark:text-gray-600 px-4 py-2 cursor-pointer break-words
+    ${
+      !notification.read
+        ? "font-bold text-black dark:text-white"
+        : "text-gray-700 dark:text-white"
+    }`}
                       >
                         {notification.message}
                       </li>
+
                       <button
                         onClick={() =>
                           readNotifications(parseInt(notification.id))
