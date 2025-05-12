@@ -21,7 +21,7 @@ const AddLesson = () => {
     isDeleted: false,
   });
 
-  const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [imgPreview, setImgPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
   const [video, setVideo] = useState(null);
@@ -44,12 +44,45 @@ const AddLesson = () => {
     }),
   };
 
+  // State để kích hoạt re-render khi cần reload
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+
+  // Hàm xử lý khi có sự kiện "triggerCourseReload" từ component khác
   const handleReload = () => {
-    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect reload dữ liệu
   };
 
+  const filteredCourses = courses.filter((course) =>
+    course.courseName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  // /// EFFECT 1: Đăng ký lắng nghe sự kiện reload từ nơi khác trong app
   useEffect(() => {
-    // Kiểm tra xem có danh sách khóa học trong localStorage không
+    const handleReload = () => {
+      triggerReload((prev) => !prev);
+    };
+    window.addEventListener("triggerCourseReload", handleReload);
+    return () =>
+      window.removeEventListener("triggerCourseReload", handleReload);
+  }, []);
+
+  // /// Hàm: Load danh sách khóa học từ localStorage (nếu có)
+  const loadCoursesFromCache = () => {
+    const cachedCourses = JSON.parse(localStorage.getItem("listCourse"));
+    if (cachedCourses) {
+      setCourses(cachedCourses);
+    }
+  };
+
+  // /// EFFECT 2: Khi reloadTrigger thay đổi => load lại danh sách khóa học từ cache
+  useEffect(() => {
+    loadCoursesFromCache();
+    fetchCourses();
+  }, [reloadTrigger]);
+
+  // /// EFFECT 3: Khi component mount lần đầu => lấy danh sách khóa học
+  // Ưu tiên từ localStorage, nếu không có thì gọi API fetchCourses()
+  useEffect(() => {
     const cachedCourses = JSON.parse(localStorage.getItem("listCourse"));
     if (cachedCourses) {
       setCourses(cachedCourses);
@@ -57,6 +90,8 @@ const AddLesson = () => {
       fetchCourses();
     }
   }, []);
+  console.log(courses); // Kiểm tra xem courses có chứa khóa học mới không
+  console.log(filteredCourses); // Kiểm tra filteredCourses sau khi lọc
 
   const fetchCourses = async () => {
     try {
@@ -114,6 +149,7 @@ const AddLesson = () => {
     if (!lessonData.description.trim()) missingFields.push(t("description"));
     if (!video) missingFields.push(t("video"));
     if (!img) missingFields.push(t("image"));
+    if (!lessonData.courseId) missingFields.push(t("addLesson.selectCourse"));
 
     if (missingFields.length > 0) {
       toast.error(
@@ -153,6 +189,8 @@ const AddLesson = () => {
         }
       );
 
+      const result = response.data?.data;
+
       // ✅ Lưu bài học mới vào localStorage để LessonManagement có thể nhận
       const newLesson = {
         id: result.id,
@@ -173,7 +211,7 @@ const AddLesson = () => {
         const existingLessons = parsedCache.get(key) || [];
 
         // Thêm khóa học mới vào danh sách hiện tại
-        const updatedLessons = [...existingLessons, newCourse];
+        const updatedLessons = [...existingLessons, newLesson];
         parsedCache.set(key, updatedLessons);
 
         // Lưu lại vào localStorage
@@ -188,7 +226,7 @@ const AddLesson = () => {
       // localStorage.removeItem("lessonCache");
 
       // Nếu cần, trigger lại reload để tái tạo lại cache trong LessonManagement
-      window.dispatchEvent(new Event("triggerLessonReload"));
+      window.dispatchEvent(new Event("triggerCourseReload"));
 
       toast.success(<p>{t("addLesson.success")}</p>, {
         position: "top-right",
@@ -210,10 +248,6 @@ const AddLesson = () => {
       setLoading(false);
     }
   };
-
-  const filteredCourses = courses.filter((course) =>
-    course.courseName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="w-full flex flex-col h-full">
@@ -272,6 +306,20 @@ const AddLesson = () => {
               className="flex-1 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
             />
           </div>
+
+          {/* Image Preview */}
+          {imgPreview && (
+            <div className="mt-4 text-center">
+              {" "}
+              {/* Thêm text-center để căn giữa */}
+              <h3 className="font-medium">{t("addLesson.imagePreview")}</h3>
+              <img
+                src={imgPreview}
+                alt="Preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            </div>
+          )}
 
           <div className="flex items-center space-x-4">
             <label className="w-1/4 font-medium">{t("video")}</label>
