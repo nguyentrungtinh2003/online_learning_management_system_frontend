@@ -4,6 +4,7 @@ import URL from "../../config/URLconfig";
 import { getCourseById } from "../../services/courseapi";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
+import { Link } from "react-router-dom";
 
 export default function UserViewCourse() {
   const { id } = useParams();
@@ -14,6 +15,8 @@ export default function UserViewCourse() {
   const [error, setError] = useState(null);
   const [videoDurations, setVideoDurations] = useState({});
   const [showAllLessons, setShowAllLessons] = useState(false);
+
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -169,27 +172,26 @@ export default function UserViewCourse() {
             <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">
               Course Content
             </h2>
-            {lessonsToDisplay.length === 0 ? (
-              <p>No lessons available.</p>
-            ) : (
-              <ul className="space-y-4">
-                {lessonsToDisplay.map((lesson, index) => (
-                  <li
-                    key={lesson._id || index}
-                    className="flex items-center justify-between border-b pb-3"
+            {lessonsToDisplay.map((lesson, index) => (
+              <li
+                key={lesson._id || index}
+                className="flex items-center justify-between border-b pb-3"
+              >
+                <div>
+                  <Link
+                    to={`/lesson/${lesson._id}`}
+                    className="font-semibold hover:underline text-blue-600"
                   >
-                    <div>
-                      <p className="font-semibold">{lesson.lessonName}</p>
-                      <p className="text-sm text-gray-500">
-                        {lesson.videoURL
-                          ? formatDuration(videoDurations[index])
-                          : "No video link"}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                    {lesson.lessonName}
+                  </Link>
+                  <p className="text-sm text-gray-500">
+                    {lesson.videoURL
+                      ? formatDuration(videoDurations[index])
+                      : "No video link"}
+                  </p>
+                </div>
+              </li>
+            ))}
             {lessons.length > 4 && !showAllLessons && (
               <button
                 onClick={toggleShowAllLessons}
@@ -228,18 +230,22 @@ export default function UserViewCourse() {
                 <strong>Instructor:</strong> Nguyen Trung Tinh
               </p>
             </div>
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => buyCourse(id)}
-                className="bg-fcolor hover:bg-scolor text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-              >
-                {buyLoading ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  "Enroll Now"
-                )}
-              </button>
-            </div>
+
+            {/* Button Enroll Course */}
+            {role !== "ADMIN" && (
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => buyCourse(id)}
+                  className="bg-fcolor hover:bg-scolor text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                >
+                  {buyLoading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Enroll Now"
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

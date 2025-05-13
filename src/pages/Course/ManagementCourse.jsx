@@ -1,7 +1,14 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import {
+  FaUsers,
+  FaBuffer,
+  FaEdit,
+  FaEye,
+  FaPlus,
+  FaArrowRight,
+} from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link } from "react-router-dom";
 import {
@@ -352,6 +359,12 @@ export default function CourseManagement() {
     }
   };
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   return (
     <div className="h-full w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
@@ -432,7 +445,7 @@ export default function CourseManagement() {
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("instructor")}</th>
                   <th className="p-2">{t("price")}</th>
                   <th className="p-2">{t("createdDate")}</th>
                   <th className="p-2">{t("status")}</th>
@@ -454,25 +467,25 @@ export default function CourseManagement() {
                       <td className="p-2">
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
-                      <td className="p-2">{course.courseName || "N/A"}</td>
-                      <td
-                        className="p-2"
-                        dangerouslySetInnerHTML={{
-                          __html: course.description || "No description",
-                        }}
-                      />
-                      <td className="p-2">
-                        {course.img ? (
-                          <img
-                            src={course.img}
-                            alt="course"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          "No image"
-                        )}
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {course.courseName?.length > 20
+                          ? course.courseName.slice(0, 20) + "..."
+                          : course.courseName || "N/A"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {course.description
+                          ? stripHtml(course.description).slice(0, 20) +
+                            (stripHtml(course.description).length > 20
+                              ? "..."
+                              : "")
+                          : "No description"}
+                      </td>
+
+                      <td className="p-2 text-center w-48">
+                        {course.user?.username || "No username"}
+                      </td>
+                      <td className="p-2 w-32">
                         {course.price === 0 || course.price === null ? (
                           "Free"
                         ) : (
@@ -498,37 +511,55 @@ export default function CourseManagement() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 w-32">
                         {course.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
+                        {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+
+                        {/* Xem chi tiết */}
+                        <Link
+                          to={`/view-course/${course.id}`}
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
+                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/courses/edit-course/${course.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
+                        {/* Khóa hoặc Khôi phục */}
                         {course.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded text-white bg-blue-600 hover:bg-blue-500"
                             onClick={() =>
                               handleRestore(course.id, course.courseName)
                             }
+                            title="Khôi phục khóa học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(course.id, course.courseName)
                             }
+                            title="Khóa khóa học"
                           >
                             <FaLock />
                           </button>
