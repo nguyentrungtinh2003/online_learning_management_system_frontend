@@ -103,7 +103,7 @@ export default function Sidebar() {
   // Sidebar DỌC cho desktop như cũ
   return (
     <div
-      className={`h-full border-box shadow rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
+      className={`h-full bg-wcolor dark:bg-darkBackground border-box rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
         isCollapsed ? "w-[90px]" : "w-56"
       }`}
     >
@@ -114,7 +114,7 @@ export default function Sidebar() {
           </h2>
         )}
         <button
-          className="p-2 rounded-md text-fcolor hover:bg-tcolor"
+          className="p-2 rounded-md text-fcolor hover:bg-tcolor dark:hover:bg-darkHover"
           onClick={handleCollapseToggle}
         >
           {isCollapsed ? (
@@ -133,15 +133,15 @@ export default function Sidebar() {
         {menuItems.map((item) => (
           <li
             key={item.id}
-            className={`p-2 rounded font-bold cursor-pointer flex items-center gap-2 transition-all duration-500 relative 
-              ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`}
+            className={`p-2 font-bold ${isCollapsed === true ?"border-none":""} cursor-pointer flex items-center gap-2 duration-100 relative 
+              ${activeItem === item.id ? "border-r-4 border-cyan-400 text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-r dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"}`}
             onClick={() => handleNavigate(item.id, item.path)}
             onMouseEnter={() => setHoveredItem(item.id)}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <span
               className={`${
-                activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                activeItem === item.id ? "" : ""
               }`}
             >
               {item.icon}
@@ -149,7 +149,7 @@ export default function Sidebar() {
             {!isCollapsed && !isAnimating && (
               <span
                 className={`duration-1000 lg:text-sm ${
-                  activeItem === item.id ? "!text-wcolor" : "text-fcolor"
+                  activeItem === item.id ? "" : ""
                 }`}
               >
                 {item.label}
@@ -157,7 +157,7 @@ export default function Sidebar() {
             )}
             {isCollapsed && (
               <div
-                className={`absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-wcolor whitespace-nowrap text-sm border-2 rounded-md py-2 px-3 
+                className={`absolute left-full top-1/2 -translate-y-1/2 ml-2 bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground whitespace-nowrap text-sm border-2 rounded-md py-2 px-3 
                 transition-all duration-300 z-50 ${
                   hoveredItem === item.id
                     ? "opacity-100 scale-100 pointer-events-auto"

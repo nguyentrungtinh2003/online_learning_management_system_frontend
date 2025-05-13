@@ -5,17 +5,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        fcolor: "#3674B5", // Màu chủ đạo
+        fcolor: "#06b6d4", // Màu chủ đạo
         scolor: "#578FCA", // Màu phụ
-        tcolor: "#A1E3F9", // Màu nền khi hover
+        tcolor: "#e5e7eb", // Màu nền khi hover
         focolor: "#f9f9f9", // Màu nền background
         wcolor: "#ffffff",
         ficolor: "#01201B", // Màu đen chủ đạ o
-        sicolor: "#C2C2C2", // Màu viền (border)
+        sicolor: "#C1C1C1", // Màu viền (border)
         gcolor: "#00BCD4", // Màu nhấn
         rcolor: "#FF0105", // Màu đen chủ đạo
         ycolor: "#FFFF00", // Màu nền chính
+        lightText: "#475569",
+        lightSubtext: "#64748b",
         darkBackground: "#181818",
+        darkHover: "#334155",
         darkSubbackground: "#1e293b",
         darkText: "#e2e8f0",
         darkSubtext: "#94a3b8",

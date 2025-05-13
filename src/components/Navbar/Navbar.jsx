@@ -320,7 +320,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-darkText">
+    <nav className="px-4 bg-wcolor py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
         <img
           src={
@@ -448,7 +448,7 @@ export default function Navbar() {
 
               <button
                 onClick={toggleDarkMode}
-                className="text-gray-600 dark:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="text-fcolor dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
               </button>
