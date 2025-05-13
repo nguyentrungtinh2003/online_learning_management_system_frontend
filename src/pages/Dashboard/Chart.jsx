@@ -102,18 +102,18 @@ const Chart = () => {
   };
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
+      <div className="flex lg:flex-row flex-col gap-2">
         {/* Line Chart - Revenue */}
         <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText shadow-lg rounded-lg p-4">
           <ReactECharts option={lineChartOption} style={{ height: 300, filter: 'invert(1)'  }} />
         </div>
 
         {/* Pie Chart - Course Enrollments */}
-        <div className="w-1/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+        <div className="lg:w-1/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <ReactECharts option={pieChartOption} style={{ height: 300, filter: 'invert(1)' }} />
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex lg:flex-row flex-col gap-2">
         {/* Bar Chart - User Points by Course */}
         <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <ReactECharts option={barChartOption} style={{ height: 300, filter: 'invert(1)' }} />

@@ -68,6 +68,8 @@
   "addLesson": {
     "main": "Lesson Management",
     "add": "Add New Lesson",
+    "course": "Course:",
+    "imagePreview": "Image Preview",
     "selectCourse": "Select Course:",
     "selectCoursePlaceholder": "-- Choose a course --",
     "enterLesson": "Enter Lesson Title",

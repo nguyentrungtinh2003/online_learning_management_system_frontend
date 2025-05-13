@@ -10,7 +10,7 @@ export default function RankLevel() {
     { name: "MASTER", color: "#ff4500", points: 1500 },
   ];
 
-  const [currentPoints, setCurrentPoints] = useState(440); // Use state for dynamic updates
+  const [currentPoints, setCurrentPoints] = useState(340); // Use state for dynamic updates
 
   const handlePointUpdate = (newPoints) => {
     setCurrentPoints(newPoints);

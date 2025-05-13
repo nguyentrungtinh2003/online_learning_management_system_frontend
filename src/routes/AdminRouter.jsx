@@ -70,7 +70,7 @@ const AdminRoutes = () => {
         />
         <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
         <Route
-          path="courses/:courseId/lessons/edit/:lessonId"
+          path="lessons/edit/:lessonId"
           element={<EditLesson />}
         />
         <Route

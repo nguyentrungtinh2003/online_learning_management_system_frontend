@@ -62,7 +62,7 @@ export default function UserCourse() {
         </div>
       ) : (
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl font-bold text-blue-700 mb-6 text-center">
+          <h1 className="lg:text-3xl lg:py-0 pb-4 text-4xl font-bold text-blue-700 text-center">
             {t.enrolledCourses}
           </h1>
 

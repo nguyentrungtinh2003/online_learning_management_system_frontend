@@ -443,7 +443,7 @@ export default function Blog() {
         </div>
       )}
       <div className="flex p-4 rounded-xl space-y-4 border-1 dark:border-darkBorder flex-col">
-        <div className="flex gap-2">
+        <div className="flex lg:h-12 h-16 items-center gap-2">
           <img
             src={
               localStorage.getItem("img") !== "null"
@@ -454,7 +454,7 @@ export default function Blog() {
             className="w-10 h-10 rounded-full"
           />
           <input
-            className="focus:outline-none dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
+            className="focus:outline-none h-10 dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
               username: localStorage.getItem("username"),
             })}
@@ -535,7 +535,7 @@ export default function Blog() {
                     <img
                       src={post.img}
                       alt="Post"
-                      className="w-full h-60 object-cover rounded-lg mb-2"
+                      className="w-full lg:h-60 h-96 object-cover rounded-lg mb-2"
                     />
                   )}
                   <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
@@ -643,7 +643,11 @@ export default function Blog() {
                         )}
                       </div>
                       <div className="flex items-center gap-2 mt-2 border-t pt-2">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full" />
+                        <img
+                          src={localStorage.getItem("img") || "/user.png"}
+                          alt="avatar"
+                          className="w-10 h-10 rounded-full object-cover border"
+                        />
                         <input
                           type="text"
                           name="comment"

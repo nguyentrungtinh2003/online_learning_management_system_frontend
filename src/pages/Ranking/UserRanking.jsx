@@ -84,7 +84,7 @@ export default function UserRanking() {
   const currentUser = listUser.find(
     (user) => user.user.id === parseInt(localStorage.getItem("id"))
   ) || {
-    rankEnum: "-",
+    rankEnum: "",
     user: { username: `Bạn không ở trong Top` },
     point: "0",
   };
@@ -101,10 +101,10 @@ export default function UserRanking() {
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <p className="text-2xl font-bold">{t("title")}</p>
+        <p className="lg:text-2xl text-5xl font-bold">{t("title")}</p>
         <div className="flex gap-2 font-semibold">
           <button
-            className={`border-2 rounded-xl px-4 py-2 ${
+            className={`border-2 h-16 lg:h-12 text-xl lg:text-md rounded-xl px-4 py-2 ${
               selectedTop === "day"
                 ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
                 : ""
@@ -144,7 +144,7 @@ export default function UserRanking() {
             {/* Second */}
             {paddedListUser[1] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 lg:text-lg text-2xl flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
                     src={paddedListUser[1].user.img || "/user.png"}
                     alt=""
@@ -168,7 +168,7 @@ export default function UserRanking() {
             {/* First */}
             {paddedListUser[0] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
+                <div className="translate-x-1 lg:text-lg text-2xl drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
                   <img
                     src={paddedListUser[0].user.img || "/user.png"}
                     alt=""
@@ -192,7 +192,7 @@ export default function UserRanking() {
             {/* Third */}
             {paddedListUser[2] && (
               <div className="flex flex-col items-center">
-                <div className="translate-x-1 flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
+                <div className="translate-x-1 lg:text-lg text-2xl flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
                     src={paddedListUser[2].user.img || "/user.png"}
                     alt=""
@@ -219,7 +219,7 @@ export default function UserRanking() {
         <div className="lg:flex-1 h-full border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
-              <thead className="bg-wcolor dark:bg-darkBackground sticky top-0 z-10">
+              <thead className="bg-wcolor lg:text-lg text-2xl dark:bg-darkBackground sticky top-0 z-10">
                 <tr>
                   <th className="text-left p-2">{t("columnRank")}</th>
                   <th className="text-left p-2">{t("columnAvatar")}</th>
@@ -241,7 +241,7 @@ export default function UserRanking() {
                           : index === 2
                           ? "bg-orange-100 dark:text-darkBackground"
                           : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
-                      } border-b dark:border-darkBorder hover:bg-sicolor`}
+                      } border-b lg:text-lg text-2xl dark:border-darkBorder hover:bg-sicolor`}
                     >
                       <td className="p-2 px-4 font-medium">{index + 1}</td>
                       <td className="p-2">
@@ -261,8 +261,9 @@ export default function UserRanking() {
 
           {/* Dòng "bản thân" nổi ở cuối bảng */}
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
-            <div className="relative flex justify-around items-center">
-              <span className="font-semibold">{currentUser.index}</span>
+            <div className="relative flex lg:text-lg text-2xl justify-around items-center">
+              <span className="font-semibold">{currentUser.rankEnum}</span>
+
               <div className="flex items-center space-x-24 w-full">
                 <img
                   src={currentUser.user.img || "/user.png"}
@@ -276,7 +277,7 @@ export default function UserRanking() {
               <span className="font-semibold mr-4">{currentUser.point}</span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
-              <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
+              <span className="absolute -top-6 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
                 {t("you")}
               </span>
             </div>

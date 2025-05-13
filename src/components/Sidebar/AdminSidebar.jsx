@@ -37,24 +37,24 @@ export default function Sidebar() {
   }, []);
 
   const adminItems = [
-    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={25} />, path: "/admin/" },
-    { id: "Courses", label: t("courses"), icon: <FaBuffer size={25} />, path: "/admin/courses" },
-    { id: "Lessons", label: t("lessons"), icon: <FaVideo size={25} />, path: "/admin/lessons" },
-    { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={25} />, path: "/admin/quizzes" },
-    { id: "Users", label: t("users"), icon: <FaUsers size={25} />, path: "/admin/users" },
-    { id: "Payments", label: t("payments"), icon: <MdPayment size={25} />, path: "/admin/payment" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/admin/blog" },
-    { id: "Settings", label: t("settings"), icon: <MdSettingsSuggest size={25} />, path: "/admin/settings" },
+    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={isMobile ? 35 : 25} />, path: "/admin/" },
+    { id: "Courses", label: t("courses"), icon: <FaBuffer size={isMobile ? 35 : 25} />, path: "/admin/courses" },
+    { id: "Lessons", label: t("lessons"), icon: <FaVideo size={isMobile ? 35 : 25} />, path: "/admin/lessons" },
+    { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={isMobile ? 35 : 25} />, path: "/admin/quizzes" },
+    { id: "Users", label: t("users"), icon: <FaUsers size={isMobile ? 35 : 25} />, path: "/admin/users" },
+    { id: "Payments", label: t("payments"), icon: <MdPayment size={isMobile ? 35 : 25} />, path: "/admin/payment" },
+    { id: "Blog", label: t("blog"), icon: <MdForum size={isMobile ? 35 : 25} />, path: "/admin/blog" },
+    { id: "Settings", label: t("settings"), icon: <MdSettingsSuggest size={isMobile ? 35 : 25} />, path: "/admin/settings" },
   ];
 
   const userItems = [
-    { id: "Home", label: t("home"), icon: <FaHome size={25} />, path: "/" },
-    { id: "MyCourses", label: t("myCourses"), icon: <FaBuffer size={25} />, path: "/user-course" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={25} />, path: "/blog" },
-    { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={25} />, path: "/ranking" },
-    { id: "Profile", label: t("profile"), icon: <FaUser size={25} />, path: "/profile" },
-    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={25} />, path: "/user/payment" },
-    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={25} />, path: "/chat" },
+    { id: "Home", label: t("home"), icon: <FaHome size={isMobile ? 35 : 25}/>, path: "/" },
+    { id: "MyCourses", label: t("myCourses"), icon: <FaBuffer size={isMobile ? 35 : 25} />, path: "/user-course" },
+    { id: "Blog", label: t("blog"), icon: <MdForum size={isMobile ? 35 : 25} />, path: "/blog" },
+    { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={isMobile ? 35 : 25} />, path: "/ranking" },
+    { id: "Profile", label: t("profile"), icon: <FaUser size={isMobile ? 35 : 25} />, path: "/profile" },
+    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={isMobile ? 35 : 25} />, path: "/user/payment" },
+    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={isMobile ? 35 : 25} />, path: "/chat" },
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");
@@ -83,13 +83,13 @@ export default function Sidebar() {
   // Sidebar dạng NẰM NGANG ở mobile
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 py-3 right-0 z-50 bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-36">
+      <div className="fixed bottom-0 left-0 py-2 right-0 z-50 bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-36">
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => handleNavigate(item.id, item.path)}
-            className={`flex flex-col items-center w-full h-full justify-center gap-1 text-xl ${
-              activeItem === item.id ? "bg-scolor text-wcolor px-4 py-2 rounded font-bold" : "px-4 py-2 text-fcolor"
+            className={`flex flex-col items-center w-full h-full items-center pt-8 h-[2.5rem] gap-1 text-xl ${
+              activeItem === item.id ? "bg-scolor text-wcolor rounded-2xl font-bold" : "text-fcolor rounded-2xl border"
             }`}
           >
             {item.icon}

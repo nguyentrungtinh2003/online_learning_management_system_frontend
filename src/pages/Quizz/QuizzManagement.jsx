@@ -1,7 +1,15 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
-import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import {
+  FaBuffer,
+  FaEdit,
+  FaEye,
+  FaPlus,
+  FaTimes,
+  FaCoins,
+  FaImage,
+} from "react-icons/fa";
 import {
   MdNavigateNext,
   MdDeleteForever,
@@ -12,10 +20,12 @@ import {
   getQuizzesByPage,
   deleteQuiz,
   restoreQuiz,
+  searchQuiz,
 } from "../../services/quizapi";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import noImage from "../../assets/noImage.png";
 
 const QuizzManagement = () => {
   const { t } = useTranslation("adminmanagement");
@@ -31,42 +41,44 @@ const QuizzManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const quizzesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
-  const [cache, setCache] = useState(new Map());
+  const [quizCache, setquizCache] = useState(new Map());
 
   // ---------------------------------------------------------------------------------------------------
-  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
+  // Effect 1: Listen for reload events
   useEffect(() => {
-    const savedSearch = localStorage.getItem("quizSearch");
-    const savedStatusFilter = localStorage.getItem("statusFilter");
-
-    if (savedSearch) setQuizSearch(savedSearch);
-    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
-  }, []);
-
-  // ---------------------------------------------------------------------------------------------------
-  // **Effect 2: Lắng nghe sự kiện triggerQuizReload**
-  useEffect(() => {
-    const handleReload = () => {
-      fetchQuizzes(); // Gọi trigger để re-fetch quizzes
-    };
+    const handleReload = () => setReloadTrigger((prev) => !prev);
     window.addEventListener("triggerQuizReload", handleReload);
-
-    return () => {
-      window.removeEventListener("triggerQuizReload", handleReload);
-    };
+    return () => window.removeEventListener("triggerQuizReload", handleReload);
   }, []);
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 2: Refetch quizzes on dependencies change
+  useEffect(() => {
+    fetchQuizzes();
+  }, [quizSearch, filterType, statusFilter, currentPage, reloadTrigger]);
 
   // ---------------------------------------------------------------------------------------------------
   // Effect 3: Lọc quiz và phân trang
   useEffect(() => {
-    if (!cache.has("ALL-QUIZZES")) return;
+    if (!quizCache.has("ALL-QUIZZES")) return;
 
-    let filteredQuizzes = cache.get("ALL-QUIZZES");
+    let filteredQuizzes = quizCache.get("ALL-QUIZZES");
 
     // Lọc theo quizSearch
     if (quizSearch.trim() !== "") {
       filteredQuizzes = filteredQuizzes.filter((quiz) =>
         quiz.quizName.toLowerCase().includes(quizSearch.trim().toLowerCase())
+      );
+    }
+
+    // Lọc theo giá
+    if (filterType === "Free") {
+      filteredQuizzes = filteredQuizzes.filter(
+        (quiz) => quiz.price === 0 || quiz.price === null
+      );
+    } else if (filterType === "Paid") {
+      filteredQuizzes = filteredQuizzes.filter(
+        (quiz) => quiz.price !== null && quiz.price > 0
       );
     }
 
@@ -85,13 +97,13 @@ const QuizzManagement = () => {
     setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredQuizzes.length / quizzesPerPage));
     setLoading(false);
-  }, [cache, statusFilter, currentPage]);
+  }, [quizCache, quizSearch, filterType, statusFilter, currentPage]);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch quizzes from API or cache**
   useEffect(() => {
     fetchQuizzes();
-  }, [cache, filterType, statusFilter, currentPage, reloadTrigger]);
+  }, [currentPage, reloadTrigger]);
 
   // ---------------------------------------------------------------------------------------------------
   // Fetch quizzes
@@ -103,9 +115,9 @@ const QuizzManagement = () => {
       let fetchedQuizzes;
 
       // ⚡ Nếu đã cache rồi thì dùng lại
-      if (cache.has(cacheKey)) {
+      if (quizCache.has(cacheKey)) {
         console.log("Using cache...");
-        fetchedQuizzes = cache.get(cacheKey);
+        fetchedQuizzes = quizCache.get(cacheKey);
       } else {
         // Gọi API
         const data = await getQuizzesByPage(0, 1000);
@@ -126,18 +138,29 @@ const QuizzManagement = () => {
         }
 
         const ALL_KEY = "ALL-QUIZZES";
-        if (!cache.has(ALL_KEY)) {
+        if (!quizCache.has(ALL_KEY)) {
           const data = await getQuizzesByPage(0, 1000);
 
           if (!data?.data?.content) throw new Error("Invalid API Response");
 
           const allQuizzes = data.data.content;
 
-          const newCache = new Map(cache.set(ALL_KEY, allQuizzes));
-          setCache(newCache);
+          const newCache = new Map(quizCache.set(ALL_KEY, allQuizzes));
+          setquizCache(newCache);
           localStorage.setItem(
             "quizCache",
             JSON.stringify(Array.from(newCache.entries()))
+          );
+        }
+
+        // Lọc theo giá
+        if (filterType === "Free") {
+          fetchedQuizzes = fetchedQuizzes.filter(
+            (quiz) => quiz.price === 0 || quiz.price === null
+          );
+        } else if (filterType === "Paid") {
+          fetchedQuizzes = fetchedQuizzes.filter(
+            (quiz) => quiz.price !== null && quiz.price > 0
           );
         }
 
@@ -148,8 +171,8 @@ const QuizzManagement = () => {
           fetchedQuizzes = fetchedQuizzes.filter((quiz) => !quiz.deleted);
         }
 
-        const newCache = new Map(cache.set(cacheKey, fetchedQuizzes));
-        setCache(newCache);
+        const newCache = new Map(quizCache.set(cacheKey, fetchedQuizzes));
+        setquizCache(newCache);
         localStorage.setItem(
           "quizCache",
           JSON.stringify(Array.from(newCache.entries()))
@@ -157,7 +180,7 @@ const QuizzManagement = () => {
       }
 
       // Kiểm tra nếu không có kết quả
-      if (fetchedQuizzes.length === 0 && fetchedQuizzes.trim() !== "") {
+      if (fetchedQuizzes.length === 0 && quizSearch.trim() !== "") {
         toast.info("No quizzes found for your search.", {
           position: "top-right",
           autoClose: 1500,
@@ -180,6 +203,52 @@ const QuizzManagement = () => {
   };
 
   // ---------------------------------------------------------------------------------------------------
+  // **Effect 5: Lưu lại các giá trị của search, filterType, và statusFilter vào localStorage**
+  // Gọi cái này sau khi add/edit/delete course
+  useEffect(() => {
+    localStorage.setItem("quizSearch", quizSearch);
+    localStorage.setItem("filterType", filterType);
+    localStorage.setItem("statusFilter", statusFilter);
+  }, [quizSearch, filterType, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
+  useEffect(() => {
+    const savedCache = localStorage.getItem("quizCache");
+    const savedNewQuizzes = localStorage.getItem("newQuizzes");
+
+    if (savedCache) {
+      const parsedCache = new Map(JSON.parse(savedCache));
+
+      if (savedNewQuizzes) {
+        const newQuizzes = JSON.parse(savedNewQuizzes);
+        const key = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
+        const updatedQuizzes = [...(parsedCache.get(key) || []), ...newQuizzes];
+        parsedCache.set(key, updatedQuizzes);
+
+        // Lưu lại cache mới vào localStorage
+        localStorage.setItem(
+          "quizCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+
+        // Xóa courses mới đã dùng
+        localStorage.removeItem("newQuizzes");
+      }
+
+      setquizCache(parsedCache);
+    }
+  }, [reloadTrigger]); // Chạy một lần khi trang được load lần đầu tiên
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 7: Reset lessonSearch khi có sự thay đổi từ trang khác
+  useEffect(() => {
+    if (!location.pathname.includes("quiz")) {
+      setQuizSearch(""); // Reset khi chuyển sang trang lesson
+    }
+  }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
+
+  // ---------------------------------------------------------------------------------------------------
   // Handle Search Input Change
   const handleSearchInput = (e) => {
     setQuizSearch(e.target.value);
@@ -196,20 +265,43 @@ const QuizzManagement = () => {
   // ---------------------------------------------------------------------------------------------------
   // Handle Delete
   const handleDelete = async (id, name) => {
+    // ✅ Sửa lỗi confirm với template string
     const isConfirmed = window.confirm(
-      `Bạn có chắc muốn xóa quiz "${name}" không?`
+      `Are you sure you want to delete quiz "${name}"?`
     );
     if (isConfirmed) {
       try {
         await deleteQuiz(id);
-        toast.success("Xóa quiz thành công!", {
+
+        // ✅ Cập nhật cache trong localStorage
+        const savedCache = localStorage.getItem("quizCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc tùy theo bộ lọc hiện tại
+          const existingQuizzes = parsedCache.get(key) || [];
+
+          const updatedQuizzes = existingQuizzes.filter(
+            (quiz) => quiz.id !== id
+          );
+          parsedCache.set(key, updatedQuizzes);
+
+          localStorage.setItem(
+            "quizCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi event để các useEffect khác reload
+        window.dispatchEvent(new Event("triggerQuizReload"));
+
+        toast.success("Quiz deleted successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
         fetchQuizzes();
       } catch (error) {
-        console.error("Lỗi khi xóa quiz:", error);
-        toast.error("Không thể xóa quiz!", {
+        console.error("Error deleting quiz:", error);
+        toast.error("Failed to delete quiz!", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -221,19 +313,43 @@ const QuizzManagement = () => {
   // Handle Restore
   const handleRestore = async (id, name) => {
     const isConfirmed = window.confirm(
-      `Bạn có chắc muốn khôi phục quiz "${name}" không?`
+      `Are you sure you want to restore quiz "${name}"?`
     );
     if (isConfirmed) {
       try {
         await restoreQuiz(id);
-        toast.success("Khôi phục quiz thành công!", {
+
+        // ✅ Cập nhật courseCache trong localStorage nếu có
+        const savedCache = localStorage.getItem("quizCache");
+        if (savedCache) {
+          const parsedCache = new Map(JSON.parse(savedCache));
+          const key = `--ALL--ALL`; // hoặc tùy theo bộ lọc hiện tại
+
+          const existingQuizzes = parsedCache.get(key) || [];
+
+          const updatedQuizzes = existingQuizzes.map((quiz) =>
+            quiz.id === id ? { ...quiz, deleted: false } : quiz
+          );
+
+          parsedCache.set(key, updatedQuizzes);
+
+          localStorage.setItem(
+            "quizCache",
+            JSON.stringify(Array.from(parsedCache.entries()))
+          );
+        }
+
+        // ✅ Gửi sự kiện để các component khác reload nếu cần
+        window.dispatchEvent(new Event("triggerQuizReload"));
+
+        toast.success("Quiz restored successfully!", {
           position: "top-right",
           autoClose: 1000,
         });
         fetchQuizzes(); // Reload quiz list
       } catch (error) {
-        console.error("Lỗi khi khôi phục quiz:", error);
-        toast.error("Không thể khôi phục quiz!", {
+        console.error("Error restoring quiz:", error);
+        toast.error("Failed to restore quiz!", {
           position: "top-right",
           autoClose: 1000,
         });
@@ -264,47 +380,53 @@ const QuizzManagement = () => {
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
           </div>
-          <Link to={`/admin/quizzes/add`}>
+          <Link to="/admin/quizzes/add">
             <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
               <FaPlus size={30} color="white" />
             </button>
           </Link>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            fetchQuizzes();
-          }}
-          className="mb-2 flex gap-2"
-        >
-          <input
-            type="text"
-            placeholder={t("searchPlaceholder")}
-            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
-            value={quizSearch}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(0);
-            }}
-          />
+        <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
+          <div className="relative w-full">
+            <input
+              type="text"
+              placeholder={t("searchPlaceholder")}
+              className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={quizSearch}
+              onChange={handleSearchInput}
+            />
+            {quizSearch && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                onClick={() => {
+                  setQuizSearch("");
+                }}
+              >
+                <FaTimes size={18} />
+              </button>
+            )}
+          </div>
+
           <select
             value={filterType}
             onChange={(e) => {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText rounded"
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">{t("all")}</option>
             <option value="Free">{t("free")}</option>
             <option value="Paid">{t("paid")}</option>
           </select>
+
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
-              setCurrentPage(0); // Reset page when status filter changes
+              setCurrentPage(0);
             }}
             className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
@@ -312,9 +434,10 @@ const QuizzManagement = () => {
             <option value="Deleted">{t("deleted")}</option>
             <option value="Active">{t("active")}</option>
           </select>
+
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white p-2 rounded hover:scale-105"
+            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
@@ -351,25 +474,33 @@ const QuizzManagement = () => {
                         {index + 1 + currentPage * quizzesPerPage}
                       </td>
                       <td className="p-2">{quiz.quizName || "N/A"}</td>
-                      <td className="p-2">{quiz.description || "N/A"}</td>
+                      <td
+                        className="p-2"
+                        dangerouslySetInnerHTML={{
+                          __html: quiz.description || "No description",
+                        }}
+                      />
                       <td className="p-2">
                         {quiz.price === 0 || quiz.price === null ? (
                           <p>{t("free")}</p>
                         ) : (
-                          `${quiz.price} Coin`
+                          <span>
+                            {quiz.price}{" "}
+                            <FaCoins
+                              size={20}
+                              className="inline-block ml-1 text-yellow-500"
+                            />
+                          </span>
                         )}
                       </td>
                       <td className="p-2">
-                        {quiz.img ? (
-                          <img
-                            src={quiz.img}
-                            alt="quiz"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          <p>{t("quizz.noImage")}</p>
-                        )}
+                        <img
+                          src={quiz.img || noImage}
+                          alt="quiz"
+                          className="w-8 h-8 rounded mx-auto"
+                        />
                       </td>
+
                       <td className="p-2">
                         {quiz.date
                           ? new Date(
@@ -387,11 +518,7 @@ const QuizzManagement = () => {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {quiz.deleted ? (
-                          <p>{t("unlock")}</p>
-                        ) : (
-                          <p>{t("lock")}</p>
-                        )}
+                        {quiz.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
                         <Link
@@ -401,7 +528,7 @@ const QuizzManagement = () => {
                           <FaEye />
                         </Link>
                         <Link
-                          // to={`/admin/lessons/${lessonId}/edit/${quiz.id}`}
+                          to={`/admin/quizzes/${quiz.id}/edit`} // <-- bạn có thể sửa theo đúng URL edit nếu có
                           className="p-2 border rounded"
                         >
                           <FaEdit />
@@ -440,14 +567,14 @@ const QuizzManagement = () => {
             <button
               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
-              disabled={currentPage === 0}
+              disabled={currentPage === 0 || loading}
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
               className="bg-scolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
-              disabled={currentPage === totalPages - 1}
+              disabled={currentPage >= totalPages - 1 || loading}
             >
               <MdNavigateNext size={30} />
             </button>

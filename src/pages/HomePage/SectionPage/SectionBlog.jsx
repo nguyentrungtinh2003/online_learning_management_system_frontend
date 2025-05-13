@@ -73,7 +73,7 @@ const SectionBlog = () => {
 
   return (
     <div className="w-full mx-auto px-4 py-4 sm:px-6 lg:px-8">
-      <h2 className="text-3xl font-bold text-center text-fcolor mb-8">
+      <h2 className="lg:text-3xl lg:py-0 py-4 text-4xl font-bold text-center text-fcolor mb-8">
         {language === "vi"
           ? "Bài viết & Góc nhìn lập trình"
           : "Tech Talks & Programming Perspectives"}
