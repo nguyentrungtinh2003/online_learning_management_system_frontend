@@ -35,15 +35,27 @@ export default function ManagementLesson() {
   const lessonsPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [cache, setCache] = useState(new Map());
+  const [courseIdFilter, setCourseIdFilter] = useState("All");
 
+  const stored = localStorage.getItem("courseCache");
+  const courseMap = stored ? new Map(JSON.parse(stored)) : new Map();
+
+  // Lấy danh sách khóa học tổng hợp (dùng trong Lesson)
+  const courseList = courseMap.get("ALL-DATA") || [];
+
+  const selectedCourse = courseList.find(
+    (c) => String(c.id) === String(courseIdFilter)
+  );
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
     const savedSearch = localStorage.getItem("lessonSearch");
     const savedStatusFilter = localStorage.getItem("statusFilter");
+    const savedCourseFilter = localStorage.getItem("lessonCourseIdFilter");
 
     if (savedSearch) setLessonSearch(savedSearch);
     if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+    if (savedCourseFilter) setCourseIdFilter(savedCourseFilter);
   }, []); // Chạy một lần khi trang load lần đầu
 
   // ---------------------------------------------------------------------------------------------------
@@ -82,6 +94,13 @@ export default function ManagementLesson() {
       filteredLessons = filteredLessons.filter((lesson) => !lesson.deleted);
     }
 
+    // Lọc theo Course Id
+    if (courseIdFilter !== "All") {
+      filteredLessons = filteredLessons.filter(
+        (lesson) => lesson.courseId === parseInt(courseIdFilter)
+      );
+    }
+
     // Phân trang
     const startIndex = currentPage * lessonsPerPage;
     const endIndex = startIndex + lessonsPerPage;
@@ -90,7 +109,7 @@ export default function ManagementLesson() {
     setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredLessons.length / lessonsPerPage));
     setLoading(false);
-  }, [cache, statusFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+  }, [cache, statusFilter, courseIdFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
@@ -101,7 +120,7 @@ export default function ManagementLesson() {
   const fetchLessons = async () => {
     setLoading(true);
     try {
-      const cacheKey = `${lessonSearch.trim()}-${statusFilter}`;
+      const cacheKey = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
 
       let fetchedLessons;
 
@@ -187,7 +206,8 @@ export default function ManagementLesson() {
   useEffect(() => {
     localStorage.setItem("lessonSearch", lessonSearch);
     localStorage.setItem("lessonStatusFilter", statusFilter);
-  }, [lessonSearch, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+    localStorage.setItem("lessonCourseIdFilter", courseIdFilter);
+  }, [lessonSearch, statusFilter, courseIdFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
@@ -200,7 +220,7 @@ export default function ManagementLesson() {
 
       if (savedNewLessons) {
         const newLessons = JSON.parse(savedNewLessons);
-        const key = `${lessonSearch.trim()}-${statusFilter}`;
+        const key = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
 
         const updatedLessons = [...(parsedCache.get(key) || []), ...newLessons];
         parsedCache.set(key, updatedLessons);
@@ -372,6 +392,22 @@ export default function ManagementLesson() {
           </div>
 
           <select
+            value={courseIdFilter}
+            onChange={(e) => {
+              setCurrentPage(0);
+              setCourseIdFilter(e.target.value);
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
+          >
+            <option value="All">All Courses</option>
+            {courseList.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.courseName}
+              </option>
+            ))}
+          </select>
+
+          <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
@@ -400,9 +436,8 @@ export default function ManagementLesson() {
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("createdDate")}</th>
-                  <th className="p-2">{t("lesson.videoURL")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
                 </tr>
@@ -426,17 +461,10 @@ export default function ManagementLesson() {
                       <td className="p-2">
                         {lesson.description || "No description"}
                       </td>
-                      <td className="p-2">
-                        {lesson.img ? (
-                          <img
-                            src={lesson.img}
-                            alt="lesson"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          "No image"
-                        )}
+                      <td className="p-2 text-center">
+                        {lesson.courseName || "No course"}
                       </td>
+
                       <td className="p-2">
                         {lesson.date
                           ? new Date(
@@ -452,20 +480,6 @@ export default function ManagementLesson() {
                               year: "numeric",
                             })
                           : "N/A"}
-                      </td>
-                      <td className="p-2">
-                        {lesson.videoURL ? (
-                          <a
-                            href={lesson.videoURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline"
-                          >
-                            {t("viewVideo")}
-                          </a>
-                        ) : (
-                          <>{t("noVideo")}</>
-                        )}
                       </td>
                       <td className="p-2">
                         {lesson.deleted ? "Deleted" : "Active"}

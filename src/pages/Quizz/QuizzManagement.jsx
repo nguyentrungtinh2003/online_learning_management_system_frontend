@@ -452,7 +452,7 @@ const QuizzManagement = () => {
                   <th className="p-2">{t("quizz.name")}</th>
                   <th className="p-2">{t("description")}</th>
                   <th className="p-2">{t("price")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("lessonId")}</th>
                   <th className="p-2">{t("quizz.date")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -493,12 +493,8 @@ const QuizzManagement = () => {
                           </span>
                         )}
                       </td>
-                      <td className="p-2">
-                        <img
-                          src={quiz.img || noImage}
-                          alt="quiz"
-                          className="w-8 h-8 rounded mx-auto"
-                        />
+                      <td className="p-2 text-center">
+                        {quiz.lessonId || "No quiz"}
                       </td>
 
                       <td className="p-2">
