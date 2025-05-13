@@ -134,7 +134,7 @@ export default function UserViewCourse() {
     <div className="flex flex-col w-full h-full dark:bg-darkBackground dark:text-darkSubtext">
       <div className="flex flex-col h-full gap-2 lg:flex-row mx-auto w-full">
         {/* Left content */}
-        <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">
+        <div className="flex-1 space-y-2 h-full overflow-y-auto">
           {/* Course Title */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
             <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">
@@ -204,7 +204,7 @@ export default function UserViewCourse() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
+        <div className="w-full h-full lg:w-[350px] flex flex-col gap-6">
           {/* Course Details */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
             {/* Course Image */}

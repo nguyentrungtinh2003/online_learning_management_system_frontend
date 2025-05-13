@@ -139,8 +139,8 @@ export default function UserRanking() {
       {/* Main content */}
       <div className="flex h-full lg:flex-row flex-col overflow-auto w-full flex-1 gap-14">
         {/* Podium */}
-        <div className="relative h-full justify-center items-center">
-          <div className="flex justify-center items-end ml-8 mt-20 gap-24">
+        <div className="relative flex flex-1 h-full justify-center items-center">
+          <div className="flex w-fit justify-center items-end ml-8 mt-20 gap-24">
             {/* Second */}
             {paddedListUser[1] && (
               <div className="flex flex-col items-center">
@@ -150,7 +150,7 @@ export default function UserRanking() {
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{paddedListUser[1].user.username}</p>
+                  <p className="font-bold whitespace-nowrap">{paddedListUser[1].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -167,14 +167,14 @@ export default function UserRanking() {
 
             {/* First */}
             {paddedListUser[0] && (
-              <div className="flex flex-col items-center">
+              <div className="flex w-fit flex-col items-center">
                 <div className="translate-x-1 lg:text-lg text-2xl drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
                   <img
                     src={paddedListUser[0].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{paddedListUser[0].user.username }</p>
+                  <p className="font-bold whitespace-nowrap">{paddedListUser[0].user.username }</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -191,14 +191,14 @@ export default function UserRanking() {
 
             {/* Third */}
             {paddedListUser[2] && (
-              <div className="flex flex-col items-center">
+              <div className="flex w-fit flex-col items-center">
                 <div className="translate-x-1 lg:text-lg text-2xl flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
                     src={paddedListUser[2].user.avatar || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold">{paddedListUser[2].user.username}</p>
+                  <p className="font-bold whitespace-nowrap">{paddedListUser[2].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -216,7 +216,7 @@ export default function UserRanking() {
         </div>
 
         {/* Ranking Table */}
-        <div className="lg:flex-1 h-full border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
+        <div className="lg:w-[500px] h-full border-2 dark:border-darkBorder mb-2 rounded-md shadow dark:bg-darkBackground bg-wcolor relative">
           <div className="h-full overflow-y-auto pb-10">
             <table className="w-full">
               <thead className="bg-wcolor lg:text-lg text-2xl dark:bg-darkBackground sticky top-0 z-10">
