@@ -25,7 +25,6 @@ import {
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import noImage from "../../assets/noImage.png";
 
 const QuizzManagement = () => {
   const { t } = useTranslation("adminmanagement");
@@ -42,20 +41,44 @@ const QuizzManagement = () => {
   const quizzesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [quizCache, setquizCache] = useState(new Map());
+  const [lessonIdFilter, setLessonIdFilter] = useState("All");
+
+  const stored = localStorage.getItem("lessonCache");
+  const lessonMap = stored ? new Map(JSON.parse(stored)) : new Map();
+
+  // Lấy danh sách bài học tổng hợp (dùng trong Lesson)
+  const lessonList = lessonMap.get("ALL-LESSONS") || [];
+
+  const selectedLesson = lessonList.find(
+    (c) => String(c.id) === String(lessonIdFilter)
+  );
 
   // ---------------------------------------------------------------------------------------------------
-  // Effect 1: Listen for reload events
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
-    const handleReload = () => setReloadTrigger((prev) => !prev);
+    const savedSearch = localStorage.getItem("quizSearch");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+    const savedFilterType = localStorage.getItem("filterType");
+    const savedLessonFilter = localStorage.getItem("quizLessonIdFilter");
+
+    if (savedSearch) setLessonSearch(savedSearch);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+    if (savedFilterType) setLessonIdFilter(savedFilterType);
+    if (savedLessonFilter) setLessonIdFilter(savedLessonFilter);
+  }, []); // Chạy một lần khi trang load lần đầu
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerLLessonReload**
+  useEffect(() => {
+    const handleReload = () => {
+      triggerReload(); // Gọi trigger để re-fetch cache và lesson
+    };
     window.addEventListener("triggerQuizReload", handleReload);
-    return () => window.removeEventListener("triggerQuizReload", handleReload);
-  }, []);
 
-  // ---------------------------------------------------------------------------------------------------
-  // Effect 2: Refetch quizzes on dependencies change
-  useEffect(() => {
-    fetchQuizzes();
-  }, [quizSearch, filterType, statusFilter, currentPage, reloadTrigger]);
+    return () => {
+      window.removeEventListener("triggerQuizReload", handleReload);
+    };
+  }, []); // Lắng nghe sự kiện reload từ các trang khác
 
   // ---------------------------------------------------------------------------------------------------
   // Effect 3: Lọc quiz và phân trang
@@ -89,6 +112,13 @@ const QuizzManagement = () => {
       filteredQuizzes = filteredQuizzes.filter((quiz) => !quiz.deleted);
     }
 
+    // Lọc theo Lesson Id
+    if (lessonIdFilter !== "All") {
+      filteredQuizzes = filteredQuizzes.filter(
+        (quiz) => quiz.lessonId === parseInt(lessonIdFilter)
+      );
+    }
+
     // Phân trang
     const startIndex = currentPage * quizzesPerPage;
     const endIndex = startIndex + quizzesPerPage;
@@ -97,20 +127,25 @@ const QuizzManagement = () => {
     setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredQuizzes.length / quizzesPerPage));
     setLoading(false);
-  }, [quizCache, quizSearch, filterType, statusFilter, currentPage]);
+  }, [
+    quizCache,
+    quizSearch,
+    filterType,
+    statusFilter,
+    lessonIdFilter,
+    currentPage,
+  ]);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch quizzes from API or cache**
   useEffect(() => {
     fetchQuizzes();
-  }, [currentPage, reloadTrigger]);
+  }, [quizCache, currentPage, reloadTrigger]);
 
-  // ---------------------------------------------------------------------------------------------------
-  // Fetch quizzes
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const cacheKey = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
+      const cacheKey = `${quizSearch.trim()}-${filterType}-${statusFilter}-${lessonIdFilter}`;
 
       let fetchedQuizzes;
 
@@ -209,7 +244,8 @@ const QuizzManagement = () => {
     localStorage.setItem("quizSearch", quizSearch);
     localStorage.setItem("filterType", filterType);
     localStorage.setItem("statusFilter", statusFilter);
-  }, [quizSearch, filterType, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+    localStorage.setItem("quizLessonIdFilter", lessonIdFilter);
+  }, [quizSearch, filterType, statusFilter, lessonIdFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
@@ -222,7 +258,8 @@ const QuizzManagement = () => {
 
       if (savedNewQuizzes) {
         const newQuizzes = JSON.parse(savedNewQuizzes);
-        const key = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
+        const key = `${quizSearch.trim()}-${filterType}-${lessonIdFilter}`;
+
         const updatedQuizzes = [...(parsedCache.get(key) || []), ...newQuizzes];
         parsedCache.set(key, updatedQuizzes);
 
@@ -410,6 +447,22 @@ const QuizzManagement = () => {
           </div>
 
           <select
+            value={lessonIdFilter}
+            onChange={(e) => {
+              setCurrentPage(0);
+              setLessonIdFilter(e.target.value);
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
+          >
+            <option value="All">All Lessons</option>
+            {lessonList.map((lesson) => (
+              <option key={lesson.id} value={lesson.id}>
+                {lesson.lessonName}
+              </option>
+            ))}
+          </select>
+
+          <select
             value={filterType}
             onChange={(e) => {
               setFilterType(e.target.value);
@@ -452,7 +505,7 @@ const QuizzManagement = () => {
                   <th className="p-2">{t("quizz.name")}</th>
                   <th className="p-2">{t("description")}</th>
                   <th className="p-2">{t("price")}</th>
-                  <th className="p-2">{t("lessonId")}</th>
+                  <th className="p-2">{t("lessonName Chỉnh lại")}</th>
                   <th className="p-2">{t("quizz.date")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -494,7 +547,7 @@ const QuizzManagement = () => {
                         )}
                       </td>
                       <td className="p-2 text-center">
-                        {quiz.lessonId || "No quiz"}
+                        {quiz.lessonName || "No quiz"}
                       </td>
 
                       <td className="p-2">

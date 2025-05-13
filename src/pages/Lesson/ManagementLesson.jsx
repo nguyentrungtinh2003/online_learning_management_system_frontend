@@ -9,6 +9,7 @@ import {
   FaLockOpen,
   FaLock,
   FaTimes,
+  FaArrowRight,
 } from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,6 +47,7 @@ export default function ManagementLesson() {
   const selectedCourse = courseList.find(
     (c) => String(c.id) === String(courseIdFilter)
   );
+
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
@@ -109,7 +111,7 @@ export default function ManagementLesson() {
     setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredLessons.length / lessonsPerPage));
     setLoading(false);
-  }, [cache, statusFilter, courseIdFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+  }, [cache, statusFilter, courseIdFilter, currentPage, lessonSearch]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
@@ -485,33 +487,50 @@ export default function ManagementLesson() {
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
+                        {/* Điều hướng đến danh sách phụ */}
+                        <Link
+                          to={`/admin/lessons/${lesson.id}/quizzes`}
+                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+                        {/* Xem chi tiết */}
                         <Link
                           to={`/view-lesson-detail/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
+                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
+                        {/* Khóa hoặc Khôi phục */}
                         {lesson.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-blue-600 hover:bg-blue-500 text-white"
                             onClick={() =>
                               handleRestore(lesson.id, lesson.lessonName)
                             }
+                            title="Khôi phục bài học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(lesson.id, lesson.lessonName)
                             }
+                            title="Khóa bài học"
                           >
                             <FaLock />
                           </button>
