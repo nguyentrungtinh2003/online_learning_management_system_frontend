@@ -133,7 +133,7 @@ export default function Sidebar() {
         {menuItems.map((item) => (
           <li
             key={item.id}
-            className={`p-2 rounded font-bold cursor-pointer flex items-center gap-3 transition-all duration-500 relative 
+            className={`p-2 rounded font-bold cursor-pointer flex items-center gap-2 transition-all duration-500 relative 
               ${activeItem === item.id ? "bg-scolor" : "hover:bg-tcolor"}`}
             onClick={() => handleNavigate(item.id, item.path)}
             onMouseEnter={() => setHoveredItem(item.id)}
@@ -148,7 +148,7 @@ export default function Sidebar() {
             </span>
             {!isCollapsed && !isAnimating && (
               <span
-                className={`duration-1000 ${
+                className={`duration-1000 lg:text-sm ${
                   activeItem === item.id ? "!text-wcolor" : "text-fcolor"
                 }`}
               >

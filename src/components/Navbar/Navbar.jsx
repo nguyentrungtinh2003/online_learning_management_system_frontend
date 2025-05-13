@@ -332,7 +332,7 @@ export default function Navbar() {
           alt="logo"
         />
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
-          <div className="flex lg:h-8 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+          <div className="flex lg:h-10 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"

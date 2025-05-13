@@ -40,12 +40,12 @@ module.exports = {
         "slide-in-from-right": "slideInFromRight 1s ease-in-out",
         "slide-in-from-left": "slideInFromLeft 1s ease-in-out",
         pulse: "pulse 1s",
-        blink: 'blink 0.7s step-start infinite',
+        blink: 'blink 3s step-start infinite',
       },
       keyframes: {
         blink: {
-          '0%, 100%': { color: '#ffffff' },
-          '50%':     { color: '#67e8f9' }, // tương ứng cyan-400
+          '0%, 45%': { color: '#ffffff' },
+          '5%,10%,15%,20%,25%,30%,35%,40%,70%,100%':  { color: '#67e8f9' }, // tương ứng cyan-400
         },
         firework: {
           "0%": { transform: "scale(0.5)", opacity: "1" },
