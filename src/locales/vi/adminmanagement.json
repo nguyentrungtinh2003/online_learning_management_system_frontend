@@ -74,7 +74,7 @@
     "title": "Quản Lý Quiz",
     "name": "Tên",
     "date": "Ngày",
-    "noQuiz": "Không có quiz nào",
+    "noQuiz": "Không có câu đố nào",
     "noImage": "Không có ảnh",
     "deleteConfirm": "Bạn có chắc muốn xóa quiz \"{{name}}\" không?",
     "deleteSuccess": "Xóa quiz thành công!",

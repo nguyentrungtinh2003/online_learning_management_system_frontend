@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 export default function TransactionAdmin() {
   const { t } = useTranslation("adminmanagement");
+  const [loading, setLoading] = useState(true);
   const [transactions, setTransactions] = useState([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -106,16 +107,17 @@ export default function TransactionAdmin() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
-      <div className="flex mb-2 items-center justify-between">
-        <div className="flex gap-2 dark:text-darkText items-center">
+      <div className="flex-1 flex flex-col h-full">
+        <div className="flex mb-2 items-center justify-between">
+        <div className="flex mx-2 gap-2 dark:text-darkText">
           <MdPayment fontSize={30}/>
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">{t("payment.title")}</h2>
         </div>
         <Link to="/admin/transactions/add">
-          <button className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+          <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
             <FaPlus size={30} />
           </button>
         </Link>
@@ -139,14 +141,14 @@ export default function TransactionAdmin() {
         </select>
       </div>
 
-      <div className="flex-1 drop-shadow-lg">
-        <div className="bg-wcolor dark:border dark:text-darkSubtext dark:border-darkBorder dark:bg-darkSubbackground  p-4 rounded-2xl">
+      <div className="flex-1 py-2">
+        <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
         {transactions?.length === 0 ? (
           <p className="text-center">{t("payment.noTransaction")}</p>
         ) : (
-          <table className="w-full table-auto text-center">
+          <table className="w-full">
             <thead>
-              <tr className="font-bold dark:text-darkText">
+              <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                 <th className="p-2">{t("stt")}</th>
                 <th className="p-2">{t("user.username")}</th>
                 <th className="p-2">{t("payment.amount")} (VNĐ)</th>
@@ -192,25 +194,29 @@ export default function TransactionAdmin() {
       </div>
       </div>
       <div className="flex dark:text-darkText items-center justify-between">
-              <p>
-                {t("page")} {currentPage + 1} {t("of")} {totalPages}
-              </p>
+              <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
               <div className="space-x-2">
                 <button
-                   className="bg-scolor p-1 rounded disabled:opacity-50"
+                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
                   onClick={handlePrePage}
                   disabled={currentPage === 0}
                 >
                   <MdNavigateBefore size={30} />
                 </button>
                 <button
-                   className="bg-scolor p-1 rounded disabled:opacity-50"
+                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages - 1}
                 >
                   <MdNavigateNext size={30} />
                 </button>
               </div>
+      </div>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   FaLockOpen,
   FaLock,
   FaTimes,
+  FaArrowRight,
 } from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -46,6 +47,7 @@ export default function ManagementLesson() {
   const selectedCourse = courseList.find(
     (c) => String(c.id) === String(courseIdFilter)
   );
+
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
@@ -109,7 +111,7 @@ export default function ManagementLesson() {
     setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredLessons.length / lessonsPerPage));
     setLoading(false);
-  }, [cache, statusFilter, courseIdFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+  }, [cache, statusFilter, courseIdFilter, currentPage, lessonSearch]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
@@ -353,17 +355,17 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex gap-2" onClick={() => navigate(-1)}>
+          <Link className="flex mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
             <FaVideo size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">{t("addLesson.main")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
-            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
               <FaPlus size={30} />
             </button>
           </Link>
@@ -421,18 +423,18 @@ export default function ManagementLesson() {
           </select>
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
         {/* Danh sách bài học + Pagination dưới bảng */}
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center whitespace-nowrap font-bold">
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
@@ -453,7 +455,7 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center">
+                    <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
@@ -485,33 +487,50 @@ export default function ManagementLesson() {
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
+                        {/* Điều hướng đến danh sách phụ */}
+                        <Link
+                          to={`/admin/lessons/${lesson.id}/quizzes`}
+                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+                        {/* Xem chi tiết */}
                         <Link
                           to={`/view-lesson-detail/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
+                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
+                        {/* Khóa hoặc Khôi phục */}
                         {lesson.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-blue-600 hover:bg-blue-500 text-white"
                             onClick={() =>
                               handleRestore(lesson.id, lesson.lessonName)
                             }
+                            title="Khôi phục bài học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(lesson.id, lesson.lessonName)
                             }
+                            title="Khóa bài học"
                           >
                             <FaLock />
                           </button>
@@ -526,21 +545,21 @@ export default function ManagementLesson() {
         </div>
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText mt-2 items-center justify-between">
-          <p>
+          <p className="mx-2">
             {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 0}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateNext size={30} />
             </button>

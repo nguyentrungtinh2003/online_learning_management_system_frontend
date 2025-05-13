@@ -91,27 +91,28 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
-      <div className="flex mb-2 items-center justify-between">
-        <div className="flex gap-2 dark:text-darkText items-center">
+      <div className="flex-1 flex flex-col h-full">
+        <div className="flex mb-2 items-center justify-between">
+        <div className="flex mx-2 gap-2 dark:text-darkText">
           <FaUsers size={30} />
           <MdNavigateNext size={30} />
           <h2 className="text-lg font-bold">{t("user.title")}</h2>
         </div>
         <Link
-          className="cursor-pointer hover:text-wcolor text-wcolor bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl"
+          className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
           to="/admin/users/add-user"
         >
           <FaUserPlus size={30} />
         </Link>
       </div>
       {/* User Table */}
-      <div className="flex-1 drop-shadow-lg">
-        <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-4 rounded-2xl">
+      <div className="flex-1 py-2">
+       <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
           <table className="w-full">
             <thead>
-              <tr className="text-center dark:text-darkText font-bold">
+              <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                 <th className="p-2">{t("stt")}</th>
                 <th className="p-2">{t("user.username")}</th>
                 <th className="p-2">{t("user.email")}</th>
@@ -137,7 +138,7 @@ export default function UserManagement() {
                 filteredUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className="text-center dark:text-darkSubtext"
+                    className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover"
                   >
                     <td className="p-2">{user.id}</td>
                     <td className="p-2">{user.username}</td>
@@ -182,25 +183,29 @@ export default function UserManagement() {
         </div>
       </div>
       <div className="flex dark:text-darkText items-center justify-between">
-        <p>
-          {t("page")} {currentPage + 1} {t("of")} {totalPages}
-        </p>
+        <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
         <div className="space-x-2">
           <button
-             className="bg-scolor p-1 rounded disabled:opacity-50"
+            className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             onClick={handlePrePage}
             disabled={currentPage === 0}
           >
             <MdNavigateBefore size={30} />
           </button>
           <button
-             className="bg-scolor p-1 rounded disabled:opacity-50"
+            className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             onClick={handleNextPage}
             disabled={currentPage === totalPages - 1}
           >
             <MdNavigateNext size={30} />
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

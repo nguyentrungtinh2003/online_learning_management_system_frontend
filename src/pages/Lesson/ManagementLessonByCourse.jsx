@@ -334,17 +334,17 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex gap-2" onClick={() => navigate(-1)}>
+          <Link className="flex mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
             <FaBuffer size={30} />
             <MdNavigateBefore size={30} />
             <h2 className="text-lg font-bold">{t("back")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
-            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
               <FaPlus size={30} />
             </button>
           </Link>
@@ -385,18 +385,18 @@ export default function ManagementLesson() {
           </select>
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+             className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
         {/* Danh sách bài học + Pagination dưới bảng */}
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center whitespace-nowrap font-bold">
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
@@ -418,7 +418,7 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center">
+                    <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
@@ -512,21 +512,24 @@ export default function ManagementLesson() {
         </div>
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText mt-2 items-center justify-between">
-          <p>
-            {t("page")} {currentPage + 1} {t("of")} {totalPages}
+          <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
           </p>
           <div className="space-x-2">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 0}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
-              <MdNavigateNext size={30} />
+              <MdNavigateBefore size={30} />
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateNext size={30} />
             </button>

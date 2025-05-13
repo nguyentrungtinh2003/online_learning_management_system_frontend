@@ -116,17 +116,17 @@ const QuizzManagement = () => {
   
 
   return (
-    <div className="w-full h-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex justify-between mb-2">
-          <div className="flex gap-2 items-center dark:text-darkText">
+           <div className="flex mx-2 gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
           </div>
           <Link to={`/admin/lessons/${lessonId}/quizzes/add`}>
-            <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-              <FaPlus size={30} color="white" />
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
+              <FaPlus size={30}/>
             </button>
           </Link>
         </div>
@@ -148,33 +148,33 @@ const QuizzManagement = () => {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText rounded"
+            className="p-2 dark:border-darkBorder border-2 dark:bg-darkSubbackground dark:text-darkText rounded"
           >
-            <option value="All">All</option>
-            <option value="Free">Free</option>
-            <option value="Paid">Paid</option>
+            <option value="All">{t("all")}</option>
+            <option value="Free">{t("free")}</option>
+            <option value="Paid">{t("paid")}</option>
           </select>
           <button
             type="submit"
-            className="bg-fcolor text-white p-2 rounded hover:scale-105"
+            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
-            Search
+            {t("search")}
           </button>
         </form>
 
 
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder dark:border dark:text-darkText p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+         <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center font-bold">
-                  <th className="p-2">STT</th>
-                  <th className="p-2">Name</th>
-                  <th className="p-2">Description</th>
-                  <th className="p-2">Price</th>
-                  <th className="p-2">Image</th>
-                  <th className="p-2">Date</th>
-                  <th className="p-2">Action</th>
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("quizz.name")}</th>
+                  <th className="p-2">{t("description")}</th>
+                  <th className="p-2">{t("price")}</th>
+                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("createdDate")}</th>
+                  <th className="p-2">{t("action")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -183,12 +183,12 @@ const QuizzManagement = () => {
                 ) : quizzes.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="text-center py-4">
-                      Không có quiz nào
+                      {t("quizz.noQuiz")}
                     </td>
                   </tr>
                 ) : (
                   quizzes.map((quiz, index) => (
-                    <tr key={quiz.id} className="text-center">
+                    <tr key={quiz.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">{index + 1 + currentPage * quizzesPerPage}</td>
                       <td className="p-2">{quiz.quizName || "N/A"}</td>
                       <td className="p-2">{quiz.description || "N/A"}</td>
@@ -254,17 +254,22 @@ const QuizzManagement = () => {
         </div>
 
         <div className="flex justify-between mt-4">
-          <p>Page {currentPage + 1} of {totalPages}</p>
+          <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0}
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
-              className="bg-scolor text-wcolor p-1 hover:scale-105 duration-500"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage === totalPages - 1}
             >
