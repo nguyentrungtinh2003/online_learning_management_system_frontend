@@ -162,7 +162,7 @@ export default function AdminBlogManagement() {
   };
 
   return (
-    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
       <div className="flex-1 flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">

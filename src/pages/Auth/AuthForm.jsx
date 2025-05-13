@@ -8,8 +8,10 @@ import { ToastContainer, toast, Slide } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
 import gglogo from "../../assets/google-color.svg";
 import URLSocket from "../../config/URLsocket";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthForm() {
+  const navigate = useNavigate();
   const [fromLogin, setFromLogin] = useState({
     username: "",
     password: "",
@@ -97,8 +99,12 @@ export default function AuthForm() {
         });
 
         setTimeout(() => {
+        if (userData.roleEnum === "ADMIN") {
+          window.location.replace("/admin");
+        } else {
           window.location.replace("/");
-        }, 1000);
+        }
+      }, 1000);
       })
       .catch((error) => {
         setLoginLoading(false);

@@ -29,7 +29,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="w-full h-full">
+    <div className="flex-1 h-full">
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full">
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
         </div>
 
         {/* Sales Analytics Chart */}
-        <div className="flex-1 gap-4">
+        <div className="w-full gap-4">
           <Chart />
         </div>
       </div>

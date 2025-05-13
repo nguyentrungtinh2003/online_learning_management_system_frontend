@@ -29,44 +29,45 @@ import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 const UserRouter = () => {
   return (
     <Routes>
-      {/* Route không có layout */}
-      <Route path="/login" element={<AuthForm />} />
-      <Route path="/payment-success" element={<PaymentSuccessPayPal />} />
-      <Route path="/vnpay-return" element={<VNPaySuccess />} />
-      <Route path="/effect" element={<UpLevelEffect />} />
-      <Route path="*" element={<NotFound />} />
+    {/* Route không có layout */}
+    <Route path="/login" element={<AuthForm />} />
+    <Route path="/payment-success" element={<PaymentSuccessPayPal />} />
+    <Route path="/vnpay-return" element={<VNPaySuccess />} />
+    <Route path="/effect" element={<UpLevelEffect />} />
+    <Route path="*" element={<NotFound />} />
 
-      {/* Route có layout (dùng ProtectedRouter bọc ngoài) */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
-            <UserLayout />
-          </ProtectedRouter>
-        }
-      >
-        <Route index element={<HomePage />} />
-        <Route path="user/process" element={<LearningProgress />} />
-        <Route path="user/payment" element={<PaymentPage />} />
-        <Route path="user/payment/history" element={<PaymentHistory />} />
-        <Route path="/chat" element={<ChatRoom />} />
-        <Route path="user-course" element={<UserCourse />} />
-        <Route path="view-course/:id" element={<UserViewCourse />} />
-        <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
-        <Route
-          path="view-lesson-detail/:lessonId"
-          element={<ViewLessonDetail />}
-        />
-        <Route path="view-quiz/:quizId" element={<UserQuizz />} />
-        <Route path="blog" element={<UserViewBlog />} />
-        <Route path="quiz" element={<QuizzManagement />} />
-        <Route path="view-result/:quizId" element={<UserQuizzResult />} />
-        <Route path="lesson" element={<ManagementLesson />} />
-        <Route path="question" element={<ManagementQuestion />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="ranking" element={<UserRanking />} />
-      </Route>
-    </Routes>
+    {/* Route trang chủ: KHÔNG CẦN login */}
+    <Route path="/" element={<UserLayout />}>
+      <Route index element={<HomePage />} />
+    </Route>
+
+    {/* Các route cần login */}
+    <Route
+      element={
+        <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
+          <UserLayout />
+        </ProtectedRouter>
+      }
+    >
+      <Route path="user/process" element={<LearningProgress />} />
+      <Route path="user/payment" element={<PaymentPage />} />
+      <Route path="user/payment/history" element={<PaymentHistory />} />
+      <Route path="/chat" element={<ChatRoom />} />
+      <Route path="user-course" element={<UserCourse />} />
+      <Route path="view-course/:id" element={<UserViewCourse />} />
+      <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
+      <Route path="view-lesson-detail/:lessonId" element={<ViewLessonDetail />} />
+      <Route path="view-quiz/:quizId" element={<UserQuizz />} />
+      <Route path="blog" element={<UserViewBlog />} />
+      <Route path="quiz" element={<QuizzManagement />} />
+      <Route path="view-result/:quizId" element={<UserQuizzResult />} />
+      <Route path="lesson" element={<ManagementLesson />} />
+      <Route path="question" element={<ManagementQuestion />} />
+      <Route path="profile" element={<Profile />} />
+      <Route path="ranking" element={<UserRanking />} />
+    </Route>
+  </Routes>
+
   );
 };
 

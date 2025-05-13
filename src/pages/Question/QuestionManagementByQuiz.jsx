@@ -114,7 +114,7 @@ const QuestionManagement = () => {
           };
 
   return (
-               <div className="h-full w-full dark:text-darkText">
+               <div className="h-full dark:border-darkBorder dark:border w-full dark:text-darkText">
                  <div className="flex-1 flex flex-col h-full">
                    <div className="flex justify-between items-center mb-2">
                      <Link className="flex gap-2" onClick={() => navigate(-1)}>

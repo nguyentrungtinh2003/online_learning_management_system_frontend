@@ -317,6 +317,10 @@ export default function Navbar() {
 
   const handleBlur = () => {
     setShowSuggestions(false);
+    setTimeout(() => {
+    setSearchQuery("");       // Reset input
+    setSuggestions([]);       // Ẩn suggestions
+  }, 1000);
   };
 
   return (
@@ -332,7 +336,7 @@ export default function Navbar() {
           alt="logo"
         />
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
-          <div className="flex lg:h-10 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+          <div className="flex lg:h-10 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:bg-darkSubbackground dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
@@ -341,15 +345,15 @@ export default function Navbar() {
               onChange={handleSearchChange}
               onFocus={handleFocus}
               onBlur={handleBlur}
-              className="lg:w-full w-32 lg:placeholder:text-gray-400 placeholder:text-transparent  text-sm dark:bg-darkBackground dark:text-darkSubtext focus:outline-none"
+              className="lg:w-full w-32 lg:placeholder:text-gray-400 placeholder:text-transparent  text-sm bg-transparent dark:text-darkSubtext focus:outline-none"
             />
-            {(showSuggestions || searchQuery.length > 0) && (
-              <div className="absolute top-full left-0 w-full bg-white border rounded-xl shadow-lg py-2 z-10">
+            {searchQuery.length > 0 && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 w-full bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 rounded-xl shadow-lg py-2 z-10">
                 <ul className="max-h-60 overflow-auto">
                   {suggestions.map((suggestion) => (
                     <li
                       key={suggestion.id}
-                      className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
+                      className="hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 cursor-pointer"
                     >
                       <Link
                         to={`/view-course/${suggestion.id}`}
@@ -365,10 +369,10 @@ export default function Navbar() {
                           className="w-12 h-12 rounded object-cover"
                         />
                         <div className="flex flex-col">
-                          <span className="font-medium text-gray-800">
+                          <span className="font-medium text-lightText dark:text-darkText">
                             {suggestion.courseName}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-lightSubtext dark:text-darkSubtext">
                             {suggestion.price} Coin
                           </span>
                         </div>
@@ -399,7 +403,7 @@ export default function Navbar() {
                 >
                   <PiBellRinging
                     size={isLargeScreen ? 30 : 40}
-                    className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
+                    className="hover:bg-tcolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
                     <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
@@ -483,7 +487,7 @@ export default function Navbar() {
                   notifications.map((notification) => (
                     <div key={notification.id} className="flex items-center">
                       <li
-                        className={`hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 cursor-pointer break-words ${
+                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 cursor-pointer break-words ${
                           !notification.read
                             ? "font-bold text-gray-600 dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"
@@ -502,7 +506,7 @@ export default function Navbar() {
                     </div>
                   ))
                 ) : (
-                  <li className="hover:bg-gray-100 dark:hover:bg-darkBorder px-4 py-2 text-gray-500 dark:text-darkText break-words">
+                  <li className="hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 text-gray-500 dark:text-darkText break-words">
                     {t("noNotifications")}
                   </li>
                 )}

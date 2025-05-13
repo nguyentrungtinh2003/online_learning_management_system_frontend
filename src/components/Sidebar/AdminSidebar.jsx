@@ -37,7 +37,7 @@ export default function Sidebar() {
   }, []);
 
   const adminItems = [
-    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={isMobile ? 35 : 25} />, path: "/admin/" },
+    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={isMobile ? 35 : 25} />, path: "/admin" },
     { id: "Courses", label: t("courses"), icon: <FaBuffer size={isMobile ? 35 : 25} />, path: "/admin/courses" },
     { id: "Lessons", label: t("lessons"), icon: <FaVideo size={isMobile ? 35 : 25} />, path: "/admin/lessons" },
     { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={isMobile ? 35 : 25} />, path: "/admin/quizzes" },
@@ -89,7 +89,7 @@ export default function Sidebar() {
             key={item.id}
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center w-full h-full items-center pt-8 h-[2.5rem] gap-1 text-xl ${
-              activeItem === item.id ? "bg-scolor text-wcolor rounded-2xl font-bold" : "text-fcolor rounded-2xl border"
+              activeItem === item.id ? "border-b-4 border-cyan-400 bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-b dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
             }`}
           >
             {item.icon}
@@ -103,7 +103,7 @@ export default function Sidebar() {
   // Sidebar DỌC cho desktop như cũ
   return (
     <div
-      className={`h-full bg-wcolor dark:bg-darkBackground border-box rounded-2xl dark:border-2 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
+      className={`h-full bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
         isCollapsed ? "w-[90px]" : "w-56"
       }`}
     >
@@ -133,8 +133,8 @@ export default function Sidebar() {
         {menuItems.map((item) => (
           <li
             key={item.id}
-            className={`p-2 font-bold ${isCollapsed === true ?"border-none":""} cursor-pointer flex items-center gap-2 duration-100 relative 
-              ${activeItem === item.id ? "border-r-4 border-cyan-400 text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-r dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"}`}
+            className={`p-2 font-bold ${isCollapsed === true ?"border-none bg-none":""} cursor-pointer flex items-center gap-2 duration-100 relative 
+              ${activeItem === item.id ? "border-r-4 border-cyan-400 bg-gradient-to-r from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-r dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"}`}
             onClick={() => handleNavigate(item.id, item.path)}
             onMouseEnter={() => setHoveredItem(item.id)}
             onMouseLeave={() => setHoveredItem(null)}
@@ -148,7 +148,7 @@ export default function Sidebar() {
             </span>
             {!isCollapsed && !isAnimating && (
               <span
-                className={`duration-1000 lg:text-sm ${
+                className={`duration-1000 lg:text-base ${
                   activeItem === item.id ? "" : ""
                 }`}
               >

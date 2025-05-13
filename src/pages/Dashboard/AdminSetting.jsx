@@ -60,14 +60,15 @@ const AdminSettings = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex-1 flex flex-col h-fit">
-        <div className="flex gap-2 items-center dark:text-darkText mb-2">
+      <div className="h-full bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+        <div className="flex mb-4 flex-1 items-center justify-between">
+          <div className="flex mx-2 gap-2 dark:text-darkText">
           <FaCog size={30} />
           <h2 className="text-lg font-bold">{t("title")}</h2>
         </div>
 
         {/* Tabs */}
-        <div className="flex w-full justify-center dark:border-darkBorder gap-4 border-b pb-2">
+        <div className="flex justify-center gap-2">
           {[
             { key: "general", icon: <FaCog />, label: t("tabs.general") },
             { key: "account", icon: <FaUserShield />, label: t("tabs.account") },
@@ -76,21 +77,22 @@ const AdminSettings = () => {
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+              className={`flex items-center gap-2 cursor-pointer text-gray-600 px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText py-2 rounded-xl ${
                 activeTab === tab.key
-                  ? "font-bold bg-scolor text-white"
-                  : "hover:bg-gray-100 dark:border dark:border-darkBorder dark:text-darkText dark:hover:bg-darkSubbackground"
+                  ? "font-bold bg-ficolor text-wcolor"
+                  : "hover:scale-105 hover:text-gray-900 hover:bg-tcolor dark:hover:bg-darkHover"
               }`}
             >
               {tab.icon} {tab.label}
             </button>
           ))}
         </div>
+        </div>
 
         {/* Content */}
-        <div className="mt-2 bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow-xl space-y-4">
+        <div className="rounded py-2 bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground px-6 space-y-4">
           {activeTab === "general" && (
-            <div className="p-6 space-y-4">
+            <div className="px-6 space-y-4">
               {[
                 ["systemName", "placeholders.systemName"],
                 ["slogan", "placeholders.slogan"],
