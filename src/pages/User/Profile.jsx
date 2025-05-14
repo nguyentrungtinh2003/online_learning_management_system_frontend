@@ -27,6 +27,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [userHistory, setUserHistory] = useState([]);
 
   const userId = localStorage.getItem("id");
   const { t } = useTranslation("profile");
@@ -36,6 +37,12 @@ const Profile = () => {
       setUser(response.data.data);
       setPreviewImage(response.data.data.img);
       setLoading(false);
+    });
+  };
+
+  const fetchUserHistory = () => {
+    axios.get(`${URL}/user-point-history/${userId}`).then((response) => {
+      setUserHistory(response.data.data);
     });
   };
 
@@ -98,6 +105,7 @@ const Profile = () => {
 
     fetchUserInfo();
     fetchUserEnroll();
+    fetchUserHistory();
   }, [tab]);
 
   const handleImageChange = (event) => {
@@ -328,13 +336,16 @@ const Profile = () => {
                 {t("activityLog")}
               </p>
               <ul className="space-y-4">
-                {[...Array(5)].map((_, index) => (
+                {userHistory.map((uh, index) => (
                   <li
                     key={index}
                     className="w-full flex items-center border-l-8 border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
                   >
                     <span className="text-gray-600 dark:text-darkSubtext font-medium">
-                      {t("activityItem")}
+                      Point {uh.point}
+                    </span>{" "}
+                    <span className="m-2 text-gray-600 dark:text-darkSubtext font-medium">
+                      Date {uh.date}
                     </span>
                   </li>
                 ))}

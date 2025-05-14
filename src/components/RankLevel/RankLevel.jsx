@@ -11,8 +11,7 @@ export default function RankLevel() {
   ];
 
   const [currentPoints, setCurrentPoints] = useState(
-    // localStorage.getItem("point") || 0
-    499
+    localStorage.getItem("point") || 0
   ); // Use state for dynamic updates
 
   const handlePointUpdate = (newPoints) => {
