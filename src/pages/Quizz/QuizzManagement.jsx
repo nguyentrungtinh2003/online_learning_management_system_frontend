@@ -25,7 +25,6 @@ import {
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import noImage from "../../assets/noImage.png";
 
 const QuizzManagement = () => {
   const { t } = useTranslation("adminmanagement");
@@ -42,20 +41,44 @@ const QuizzManagement = () => {
   const quizzesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [quizCache, setquizCache] = useState(new Map());
+  const [lessonIdFilter, setLessonIdFilter] = useState("All");
+
+  const stored = localStorage.getItem("lessonCache");
+  const lessonMap = stored ? new Map(JSON.parse(stored)) : new Map();
+
+  // Lấy danh sách bài học tổng hợp (dùng trong Lesson)
+  const lessonList = lessonMap.get("ALL-LESSONS") || [];
+
+  const selectedLesson = lessonList.find(
+    (c) => String(c.id) === String(lessonIdFilter)
+  );
 
   // ---------------------------------------------------------------------------------------------------
-  // Effect 1: Listen for reload events
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
-    const handleReload = () => setReloadTrigger((prev) => !prev);
+    const savedSearch = localStorage.getItem("quizSearch");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
+    const savedFilterType = localStorage.getItem("filterType");
+    const savedLessonFilter = localStorage.getItem("quizLessonIdFilter");
+
+    if (savedSearch) setLessonSearch(savedSearch);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+    if (savedFilterType) setLessonIdFilter(savedFilterType);
+    if (savedLessonFilter) setLessonIdFilter(savedLessonFilter);
+  }, []); // Chạy một lần khi trang load lần đầu
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerLLessonReload**
+  useEffect(() => {
+    const handleReload = () => {
+      triggerReload(); // Gọi trigger để re-fetch cache và lesson
+    };
     window.addEventListener("triggerQuizReload", handleReload);
-    return () => window.removeEventListener("triggerQuizReload", handleReload);
-  }, []);
 
-  // ---------------------------------------------------------------------------------------------------
-  // Effect 2: Refetch quizzes on dependencies change
-  useEffect(() => {
-    fetchQuizzes();
-  }, [quizSearch, filterType, statusFilter, currentPage, reloadTrigger]);
+    return () => {
+      window.removeEventListener("triggerQuizReload", handleReload);
+    };
+  }, []); // Lắng nghe sự kiện reload từ các trang khác
 
   // ---------------------------------------------------------------------------------------------------
   // Effect 3: Lọc quiz và phân trang
@@ -89,6 +112,13 @@ const QuizzManagement = () => {
       filteredQuizzes = filteredQuizzes.filter((quiz) => !quiz.deleted);
     }
 
+    // Lọc theo Lesson Id
+    if (lessonIdFilter !== "All") {
+      filteredQuizzes = filteredQuizzes.filter(
+        (quiz) => quiz.lessonId === parseInt(lessonIdFilter)
+      );
+    }
+
     // Phân trang
     const startIndex = currentPage * quizzesPerPage;
     const endIndex = startIndex + quizzesPerPage;
@@ -97,20 +127,25 @@ const QuizzManagement = () => {
     setQuizzes(paginatedQuizzes.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredQuizzes.length / quizzesPerPage));
     setLoading(false);
-  }, [quizCache, quizSearch, filterType, statusFilter, currentPage]);
+  }, [
+    quizCache,
+    quizSearch,
+    filterType,
+    statusFilter,
+    lessonIdFilter,
+    currentPage,
+  ]);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch quizzes from API or cache**
   useEffect(() => {
     fetchQuizzes();
-  }, [currentPage, reloadTrigger]);
+  }, [quizCache, currentPage, reloadTrigger]);
 
-  // ---------------------------------------------------------------------------------------------------
-  // Fetch quizzes
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const cacheKey = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
+      const cacheKey = `${quizSearch.trim()}-${filterType}-${statusFilter}-${lessonIdFilter}`;
 
       let fetchedQuizzes;
 
@@ -209,7 +244,8 @@ const QuizzManagement = () => {
     localStorage.setItem("quizSearch", quizSearch);
     localStorage.setItem("filterType", filterType);
     localStorage.setItem("statusFilter", statusFilter);
-  }, [quizSearch, filterType, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+    localStorage.setItem("quizLessonIdFilter", lessonIdFilter);
+  }, [quizSearch, filterType, statusFilter, lessonIdFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
@@ -222,7 +258,8 @@ const QuizzManagement = () => {
 
       if (savedNewQuizzes) {
         const newQuizzes = JSON.parse(savedNewQuizzes);
-        const key = `${quizSearch.trim()}-${filterType}-${statusFilter}`;
+        const key = `${quizSearch.trim()}-${filterType}-${lessonIdFilter}`;
+
         const updatedQuizzes = [...(parsedCache.get(key) || []), ...newQuizzes];
         parsedCache.set(key, updatedQuizzes);
 
@@ -372,17 +409,17 @@ const QuizzManagement = () => {
   };
 
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-2">
-          <div className="flex gap-2 dark:text-darkText items-center">
+          <div className="flex mx-2 gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
           </div>
           <Link to="/admin/quizzes/add">
-            <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-              <FaPlus size={30} color="white" />
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
+              <FaPlus size={30}/>
             </button>
           </Link>
         </div>
@@ -408,6 +445,22 @@ const QuizzManagement = () => {
               </button>
             )}
           </div>
+
+          <select
+            value={lessonIdFilter}
+            onChange={(e) => {
+              setCurrentPage(0);
+              setLessonIdFilter(e.target.value);
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
+          >
+            <option value="All">All Lessons</option>
+            {lessonList.map((lesson) => (
+              <option key={lesson.id} value={lesson.id}>
+                {lesson.lessonName}
+              </option>
+            ))}
+          </select>
 
           <select
             value={filterType}
@@ -437,22 +490,22 @@ const QuizzManagement = () => {
 
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center dark:text-darkText font-bold">
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("quizz.name")}</th>
                   <th className="p-2">{t("description")}</th>
                   <th className="p-2">{t("price")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("lessonName Chỉnh lại")}</th>
                   <th className="p-2">{t("quizz.date")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -469,7 +522,7 @@ const QuizzManagement = () => {
                   </tr>
                 ) : (
                   quizzes.map((quiz, index) => (
-                    <tr key={quiz.id} className="text-center">
+                    <tr key={quiz.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * quizzesPerPage}
                       </td>
@@ -493,12 +546,8 @@ const QuizzManagement = () => {
                           </span>
                         )}
                       </td>
-                      <td className="p-2">
-                        <img
-                          src={quiz.img || noImage}
-                          alt="quiz"
-                          className="w-8 h-8 rounded mx-auto"
-                        />
+                      <td className="p-2 text-center">
+                        {quiz.lessonName || "No quiz"}
                       </td>
 
                       <td className="p-2">
@@ -560,19 +609,22 @@ const QuizzManagement = () => {
         </div>
 
         <div className="flex mt-2 justify-between items-center">
-          <p>
-            {t("page")} {currentPage + 1} {t("of")} {totalPages}
+          <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0 || loading}
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1 || loading}
             >

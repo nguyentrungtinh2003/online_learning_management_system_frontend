@@ -4,7 +4,6 @@ import URL from "../../config/URLconfig";
 import { getCourseById } from "../../services/courseapi";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-import { FaCoins } from "react-icons/fa";
 
 export default function UserViewCourse() {
   const { id } = useParams();
@@ -15,6 +14,8 @@ export default function UserViewCourse() {
   const [error, setError] = useState(null);
   const [videoDurations, setVideoDurations] = useState({});
   const [showAllLessons, setShowAllLessons] = useState(false);
+
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -132,7 +133,7 @@ export default function UserViewCourse() {
     <div className="flex flex-col w-full h-full dark:bg-darkBackground dark:text-darkSubtext">
       <div className="flex flex-col h-full gap-2 lg:flex-row mx-auto w-full">
         {/* Left content */}
-        <div className="flex-1 pr-2 space-y-2 h-full overflow-y-auto">
+        <div className="flex-1 space-y-2 h-full overflow-y-auto">
           {/* Course Title */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-6 rounded-lg shadow space-y-4">
             <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">
@@ -170,27 +171,26 @@ export default function UserViewCourse() {
             <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">
               Course Content
             </h2>
-            {lessonsToDisplay.length === 0 ? (
-              <p>No lessons available.</p>
-            ) : (
-              <ul className="space-y-4">
-                {lessonsToDisplay.map((lesson, index) => (
-                  <li
-                    key={lesson._id || index}
-                    className="flex items-center justify-between border-b pb-3"
+            {lessonsToDisplay.map((lesson, index) => (
+              <li
+                key={lesson._id || index}
+                className="flex items-center justify-between border-b pb-3"
+              >
+                <div>
+                  <Link
+                    to={`/lesson/${lesson._id}`}
+                    className="font-semibold hover:underline text-blue-600"
                   >
-                    <div>
-                      <p className="font-semibold">{lesson.lessonName}</p>
-                      <p className="text-sm text-gray-500">
-                        {lesson.videoURL
-                          ? formatDuration(videoDurations[index])
-                          : "No video link"}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+                    {lesson.lessonName}
+                  </Link>
+                  <p className="text-sm text-gray-500">
+                    {lesson.videoURL
+                      ? formatDuration(videoDurations[index])
+                      : "No video link"}
+                  </p>
+                </div>
+              </li>
+            ))}
             {lessons.length > 4 && !showAllLessons && (
               <button
                 onClick={toggleShowAllLessons}
@@ -203,7 +203,7 @@ export default function UserViewCourse() {
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-full h-full py-2 lg:w-[350px] flex flex-col gap-6">
+        <div className="w-full h-full lg:w-[350px] flex flex-col gap-6">
           {/* Course Details */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-6 rounded-lg shadow space-y-6">
             {/* Course Image */}
@@ -231,18 +231,22 @@ export default function UserViewCourse() {
                 <strong>Instructor:</strong> {course.user.username}
               </p>
             </div>
-            <div className="flex justify-end mt-6">
-              <button
-                onClick={() => buyCourse(id)}
-                className="bg-fcolor hover:bg-scolor text-white font-semibold py-3 px-8 rounded-lg transition-colors"
-              >
-                {buyLoading ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  "Enroll Now"
-                )}
-              </button>
-            </div>
+
+            {/* Button Enroll Course */}
+            {role !== "ADMIN" && (
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => buyCourse(id)}
+                  className="bg-fcolor hover:bg-scolor text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+                >
+                  {buyLoading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Enroll Now"
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

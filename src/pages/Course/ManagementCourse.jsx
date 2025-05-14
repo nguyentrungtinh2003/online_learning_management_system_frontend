@@ -1,7 +1,14 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import {
+  FaUsers,
+  FaBuffer,
+  FaEdit,
+  FaEye,
+  FaPlus,
+  FaArrowRight,
+} from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link } from "react-router-dom";
 import {
@@ -352,18 +359,24 @@ export default function CourseManagement() {
     }
   };
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
-          <div className="flex gap-2 dark:text-darkText">
+          <div className="flex mx-2 gap-2 dark:text-darkText">
             <FaBuffer size={30} />
             <MdNavigateNext size={30} />
             <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
-            <button className="cursor-pointer bg-fcolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
-              <FaPlus size={30} color="white" />
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
+              <FaPlus size={30} />
             </button>
           </Link>
         </div>
@@ -418,21 +431,21 @@ export default function CourseManagement() {
 
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center dark:text-darkText whitespace-nowrap font-bold">
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("instructor")}</th>
                   <th className="p-2">{t("price")}</th>
                   <th className="p-2">{t("createdDate")}</th>
                   <th className="p-2">{t("status")}</th>
@@ -450,29 +463,29 @@ export default function CourseManagement() {
                   </tr>
                 ) : (
                   courses.map((course, index) => (
-                    <tr key={course.id} className="text-center">
+                    <tr key={course.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
-                      <td className="p-2">{course.courseName || "N/A"}</td>
-                      <td
-                        className="p-2"
-                        dangerouslySetInnerHTML={{
-                          __html: course.description || "No description",
-                        }}
-                      />
-                      <td className="p-2">
-                        {course.img ? (
-                          <img
-                            src={course.img}
-                            alt="course"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          "No image"
-                        )}
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {course.courseName?.length > 20
+                          ? course.courseName.slice(0, 20) + "..."
+                          : course.courseName || "N/A"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {course.description
+                          ? stripHtml(course.description).slice(0, 20) +
+                            (stripHtml(course.description).length > 20
+                              ? "..."
+                              : "")
+                          : "No description"}
+                      </td>
+
+                      <td className="p-2 text-center w-48">
+                        {course.user?.username || "No username"}
+                      </td>
+                      <td className="p-2 w-32">
                         {course.price === 0 || course.price === null ? (
                           "Free"
                         ) : (
@@ -498,37 +511,55 @@ export default function CourseManagement() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 w-32">
                         {course.deleted ? "Deleted" : "Active"}
                       </td>
-                      <td className="p-2 flex justify-center gap-1">
+                      <td className="p-2 flex flex-1 justify-center gap-1">
+                        {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+
+                        {/* Xem chi tiết */}
+                        <Link
+                          to={`/view-course/${course.id}`}
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
+                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/courses/edit-course/${course.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
+                        {/* Khóa hoặc Khôi phục */}
                         {course.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded text-white bg-blue-600 hover:bg-blue-500"
                             onClick={() =>
                               handleRestore(course.id, course.courseName)
                             }
+                            title="Khôi phục khóa học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(course.id, course.courseName)
                             }
+                            title="Khóa khóa học"
                           >
                             <FaLock />
                           </button>
@@ -542,23 +573,23 @@ export default function CourseManagement() {
           </div>
         </div>
 
-        <div className="flex items-center mt-2 justify-between">
-          <p>
+        <div className="flex items-center justify-between">
+          <p className="mx-2">
             {loading
-              ? t("Page Loading") // Hiển thị "Loading..." nếu đang tải
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
               : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
             {/* Nếu không phải loading, hiển thị thông tin page */}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
               onClick={handlePrePage}
               disabled={currentPage === 0 || loading}
             >
               <MdNavigateBefore fontSize={30} />
             </button>
             <button
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1 || loading}
             >

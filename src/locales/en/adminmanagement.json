@@ -14,10 +14,13 @@
   "description": "Description",
   "image": "Image",
   "video": "Video",
+  "lessonId": "Lesson Id",
   "price": "Price",
+  "courseId": "Course Id",
   "createdDate": "Created Date",
   "status": "Status",
   "action": "Action",
+  "instructor": "Instructor",
   "noCourse": "No courses available",
   "deleteCourseConfirm": "Are you sure you want to delete course \"{name}\"?",
   "restoreCourseConfirm": "Are you sure you want to restore course \"{name}\"?",
@@ -64,6 +67,9 @@
     "title": "Add New Course",
     "viewVideo": "View Video",
     "noVideo": "No Video"
+  },
+  "editLesson": {
+    "title": "Edit Lesson"
   },
   "addLesson": {
     "main": "Lesson Management",

@@ -2,13 +2,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import {
-  FaBuffer,
+  FaVideo,
   FaEdit,
   FaEye,
   FaPlus,
   FaLockOpen,
   FaLock,
   FaTimes,
+  FaArrowRight,
 } from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,11 +20,13 @@ import {
 } from "../../services/lessonapi";
 import { useTranslation } from "react-i18next";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
+import { useLocation } from "react-router-dom";
 
 export default function ManagementLesson() {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
 
+  const location = useLocation();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lessonSearch, setLessonSearch] = useState("");
@@ -33,15 +36,28 @@ export default function ManagementLesson() {
   const lessonsPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
   const [cache, setCache] = useState(new Map());
+  const [courseIdFilter, setCourseIdFilter] = useState("All");
+
+  const stored = localStorage.getItem("courseCache");
+  const courseMap = stored ? new Map(JSON.parse(stored)) : new Map();
+
+  // Lấy danh sách khóa học tổng hợp (dùng trong Lesson)
+  const courseList = courseMap.get("ALL-DATA") || [];
+
+  const selectedCourse = courseList.find(
+    (c) => String(c.id) === String(courseIdFilter)
+  );
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
     const savedSearch = localStorage.getItem("lessonSearch");
     const savedStatusFilter = localStorage.getItem("statusFilter");
+    const savedCourseFilter = localStorage.getItem("lessonCourseIdFilter");
 
     if (savedSearch) setLessonSearch(savedSearch);
     if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+    if (savedCourseFilter) setCourseIdFilter(savedCourseFilter);
   }, []); // Chạy một lần khi trang load lần đầu
 
   // ---------------------------------------------------------------------------------------------------
@@ -80,6 +96,13 @@ export default function ManagementLesson() {
       filteredLessons = filteredLessons.filter((lesson) => !lesson.deleted);
     }
 
+    // Lọc theo Course Id
+    if (courseIdFilter !== "All") {
+      filteredLessons = filteredLessons.filter(
+        (lesson) => lesson.courseId === parseInt(courseIdFilter)
+      );
+    }
+
     // Phân trang
     const startIndex = currentPage * lessonsPerPage;
     const endIndex = startIndex + lessonsPerPage;
@@ -88,7 +111,7 @@ export default function ManagementLesson() {
     setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
     setTotalPages(Math.ceil(filteredLessons.length / lessonsPerPage));
     setLoading(false);
-  }, [cache, statusFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+  }, [cache, statusFilter, courseIdFilter, currentPage, lessonSearch]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
@@ -99,7 +122,7 @@ export default function ManagementLesson() {
   const fetchLessons = async () => {
     setLoading(true);
     try {
-      const cacheKey = `${lessonSearch.trim()}-${statusFilter}`;
+      const cacheKey = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
 
       let fetchedLessons;
 
@@ -185,7 +208,8 @@ export default function ManagementLesson() {
   useEffect(() => {
     localStorage.setItem("lessonSearch", lessonSearch);
     localStorage.setItem("lessonStatusFilter", statusFilter);
-  }, [lessonSearch, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
+    localStorage.setItem("lessonCourseIdFilter", courseIdFilter);
+  }, [lessonSearch, statusFilter, courseIdFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
@@ -198,7 +222,7 @@ export default function ManagementLesson() {
 
       if (savedNewLessons) {
         const newLessons = JSON.parse(savedNewLessons);
-        const key = `${lessonSearch.trim()}-${statusFilter}`;
+        const key = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
 
         const updatedLessons = [...(parsedCache.get(key) || []), ...newLessons];
         parsedCache.set(key, updatedLessons);
@@ -331,17 +355,17 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="h-full w-full dark:text-darkText">
+    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex gap-2" onClick={() => navigate(-1)}>
-            <FaBuffer size={30} />
-            <MdNavigateBefore size={30} />
-            <h2 className="text-lg font-bold">{t("back")}</h2>
+          <Link className="flex mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
+            <FaVideo size={30} />
+            <MdNavigateNext size={30} />
+            <h2 className="text-lg font-bold">{t("addLesson.main")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
-            <button className="cursor-pointer bg-scolor px-8 drop-shadow-lg hover:scale-105 py-2 rounded-xl">
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
               <FaPlus size={30} />
             </button>
           </Link>
@@ -370,6 +394,22 @@ export default function ManagementLesson() {
           </div>
 
           <select
+            value={courseIdFilter}
+            onChange={(e) => {
+              setCurrentPage(0);
+              setCourseIdFilter(e.target.value);
+            }}
+            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
+          >
+            <option value="All">All Courses</option>
+            {courseList.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.courseName}
+              </option>
+            ))}
+          </select>
+
+          <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
@@ -383,24 +423,23 @@ export default function ManagementLesson() {
           </select>
           <button
             type="submit"
-            className="bg-fcolor whitespace-nowrap text-white px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
         {/* Danh sách bài học + Pagination dưới bảng */}
-        <div className="flex-1 drop-shadow-lg">
-          <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder p-4 rounded-2xl">
+        <div className="flex-1 py-2">
+          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="w-full">
               <thead>
-                <tr className="text-center whitespace-nowrap font-bold">
+                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("createdDate")}</th>
-                  <th className="p-2">{t("lesson.videoURL")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
                 </tr>
@@ -416,7 +455,7 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center">
+                    <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
@@ -424,17 +463,10 @@ export default function ManagementLesson() {
                       <td className="p-2">
                         {lesson.description || "No description"}
                       </td>
-                      <td className="p-2">
-                        {lesson.img ? (
-                          <img
-                            src={lesson.img}
-                            alt="lesson"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          "No image"
-                        )}
+                      <td className="p-2 text-center">
+                        {lesson.courseName || "No course"}
                       </td>
+
                       <td className="p-2">
                         {lesson.date
                           ? new Date(
@@ -452,50 +484,53 @@ export default function ManagementLesson() {
                           : "N/A"}
                       </td>
                       <td className="p-2">
-                        {lesson.videoURL ? (
-                          <a
-                            href={lesson.videoURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline"
-                          >
-                            {t("viewVideo")}
-                          </a>
-                        ) : (
-                          <>{t("noVideo")}</>
-                        )}
-                      </td>
-                      <td className="p-2">
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
                       <td className="p-2 flex justify-center gap-1">
+                        {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/lessons/${lesson.id}/quizzes`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+                        {/* Xem chi tiết */}
+                        <Link
+                          to={`/view-lesson-detail/${lesson.id}`}
+                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
+                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
+                        {/* Khóa hoặc Khôi phục */}
                         {lesson.deleted ? (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-blue-600 hover:bg-blue-500 text-white"
                             onClick={() =>
                               handleRestore(lesson.id, lesson.lessonName)
                             }
+                            title="Khôi phục bài học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(lesson.id, lesson.lessonName)
                             }
+                            title="Khóa bài học"
                           >
                             <FaLock />
                           </button>
@@ -510,21 +545,21 @@ export default function ManagementLesson() {
         </div>
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText mt-2 items-center justify-between">
-          <p>
+          <p className="mx-2">
             {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 0}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateBefore size={30} />
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1}
-              className="bg-scolor p-1 rounded disabled:opacity-50"
+             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateNext size={30} />
             </button>

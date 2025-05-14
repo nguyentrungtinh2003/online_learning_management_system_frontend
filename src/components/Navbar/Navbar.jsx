@@ -320,7 +320,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="px-4 py-3 dark:bg-darkBackground dark:text-darkText">
+    <nav className="px-4 bg-wcolor py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
         <img
           src={
@@ -332,7 +332,7 @@ export default function Navbar() {
           alt="logo"
         />
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
-          <div className="flex lg:h-8 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
+          <div className="flex lg:h-10 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
@@ -383,7 +383,7 @@ export default function Navbar() {
 
         <div ref={dropdownRef} className="relative items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center ml-2 space-x-3">
               <div className="flex items-center gap-2">
                 <span className="lg:text-md text-2xl">{point}</span>
                 <FaStar
@@ -404,11 +404,11 @@ export default function Navbar() {
                   onClick={toggleNotificationDropdown}
                 >
                   <PiBellRinging
-                    size={isLargeScreen ? 40 : 40}
+                    size={isLargeScreen ? 30 : 40}
                     className="hover:bg-focolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
                   />
                   {unreadCount >= 0 && (
-                    <span className="absolute top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                    <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
                       {unreadCount}
                     </span>
                   )}
@@ -454,7 +454,7 @@ export default function Navbar() {
 
               <button
                 onClick={toggleDarkMode}
-                className="text-gray-600 dark:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="text-fcolor dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
               </button>
