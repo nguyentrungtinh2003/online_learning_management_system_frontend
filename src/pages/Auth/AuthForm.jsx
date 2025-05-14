@@ -88,6 +88,7 @@ export default function AuthForm() {
         localStorage.setItem("coin", userData.coin);
         localStorage.setItem("role", userData.roleEnum);
         localStorage.setItem("point", userData.point);
+        localStorage.setItem("rank", userData.rankEnum);
         console.log(userData);
         console.log(document.cookie);
 
@@ -98,12 +99,12 @@ export default function AuthForm() {
         });
 
         setTimeout(() => {
-        if (userData.roleEnum === "ADMIN") {
-          window.location.replace("/admin");
-        } else {
-          window.location.replace("/");
-        }
-      }, 1000);
+          if (userData.roleEnum === "ADMIN") {
+            window.location.replace("/admin");
+          } else {
+            window.location.replace("/");
+          }
+        }, 1000);
       })
       .catch((error) => {
         setLoginLoading(false);

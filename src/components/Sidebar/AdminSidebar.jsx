@@ -37,24 +37,105 @@ export default function Sidebar() {
   }, []);
 
   const adminItems = [
-    { id: "Dashboard", label: t("dashboard"), icon: <MdDashboardCustomize size={isMobile ? 35 : 25} />, path: "/admin" },
-    { id: "Courses", label: t("courses"), icon: <FaBuffer size={isMobile ? 35 : 25} />, path: "/admin/courses" },
-    { id: "Lessons", label: t("lessons"), icon: <FaVideo size={isMobile ? 35 : 25} />, path: "/admin/lessons" },
-    { id: "Quizzes", label: t("quizzes"), icon: <FaClipboardList size={isMobile ? 35 : 25} />, path: "/admin/quizzes" },
-    { id: "Users", label: t("users"), icon: <FaUsers size={isMobile ? 35 : 25} />, path: "/admin/users" },
-    { id: "Payments", label: t("payments"), icon: <MdPayment size={isMobile ? 35 : 25} />, path: "/admin/payment" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={isMobile ? 35 : 25} />, path: "/admin/blog" },
-    { id: "Settings", label: t("settings"), icon: <MdSettingsSuggest size={isMobile ? 35 : 25} />, path: "/admin/settings" },
+    {
+      id: "Dashboard",
+      label: t("dashboard"),
+      icon: <MdDashboardCustomize size={isMobile ? 35 : 25} />,
+      path: "/admin",
+    },
+    {
+      id: "Courses",
+      label: t("courses"),
+      icon: <FaBuffer size={isMobile ? 35 : 25} />,
+      path: "/admin/courses",
+    },
+    {
+      id: "Lessons",
+      label: t("lessons"),
+      icon: <FaVideo size={isMobile ? 35 : 25} />,
+      path: "/admin/lessons",
+    },
+    {
+      id: "Quizzes",
+      label: t("quizzes"),
+      icon: <FaClipboardList size={isMobile ? 35 : 25} />,
+      path: "/admin/quizzes",
+    },
+    {
+      id: "Users",
+      label: t("users"),
+      icon: <FaUsers size={isMobile ? 35 : 25} />,
+      path: "/admin/users",
+    },
+    {
+      id: "Payments",
+      label: t("payments"),
+      icon: <MdPayment size={isMobile ? 35 : 25} />,
+      path: "/admin/payment",
+    },
+    {
+      id: "Blog",
+      label: t("blog"),
+      icon: <MdForum size={isMobile ? 35 : 25} />,
+      path: "/admin/blog",
+    },
+    {
+      id: "Ranking",
+      label: t("ranking"),
+      icon: <FaTrophy size={isMobile ? 35 : 25} />,
+      path: "/ranking",
+    },
+    {
+      id: "Settings",
+      label: t("settings"),
+      icon: <MdSettingsSuggest size={isMobile ? 35 : 25} />,
+      path: "/admin/settings",
+    },
   ];
 
   const userItems = [
-    { id: "Home", label: t("home"), icon: <FaHome size={isMobile ? 35 : 25}/>, path: "/" },
-    { id: "MyCourses", label: t("myCourses"), icon: <FaBuffer size={isMobile ? 35 : 25} />, path: "/user-course" },
-    { id: "Blog", label: t("blog"), icon: <MdForum size={isMobile ? 35 : 25} />, path: "/blog" },
-    { id: "Ranking", label: t("ranking"), icon: <FaTrophy size={isMobile ? 35 : 25} />, path: "/ranking" },
-    { id: "Profile", label: t("profile"), icon: <FaUser size={isMobile ? 35 : 25} />, path: "/profile" },
-    { id: "E-Wallet", label: t("eWallet"), icon: <FaWallet size={isMobile ? 35 : 25} />, path: "/user/payment" },
-    { id: "Chatting", label: t("chatting"), icon: <MdMessage size={isMobile ? 35 : 25} />, path: "/chat" },
+    {
+      id: "Home",
+      label: t("home"),
+      icon: <FaHome size={isMobile ? 35 : 25} />,
+      path: "/",
+    },
+    {
+      id: "MyCourses",
+      label: t("myCourses"),
+      icon: <FaBuffer size={isMobile ? 35 : 25} />,
+      path: "/user-course",
+    },
+    {
+      id: "Blog",
+      label: t("blog"),
+      icon: <MdForum size={isMobile ? 35 : 25} />,
+      path: "/blog",
+    },
+    {
+      id: "Ranking",
+      label: t("ranking"),
+      icon: <FaTrophy size={isMobile ? 35 : 25} />,
+      path: "/ranking",
+    },
+    {
+      id: "Profile",
+      label: t("profile"),
+      icon: <FaUser size={isMobile ? 35 : 25} />,
+      path: "/profile",
+    },
+    {
+      id: "E-Wallet",
+      label: t("eWallet"),
+      icon: <FaWallet size={isMobile ? 35 : 25} />,
+      path: "/user/payment",
+    },
+    {
+      id: "Chatting",
+      label: t("chatting"),
+      icon: <MdMessage size={isMobile ? 35 : 25} />,
+      path: "/chat",
+    },
   ];
 
   const isAdmin = location.pathname.startsWith("/admin");
@@ -89,7 +170,9 @@ export default function Sidebar() {
             key={item.id}
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center w-full h-full items-center pt-8 h-[2.5rem] gap-1 text-xl ${
-              activeItem === item.id ? "border-b-4 border-cyan-400 bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-b dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
+              activeItem === item.id
+                ? "border-b-4 border-cyan-400 bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
+                : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-b dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
             }`}
           >
             {item.icon}
@@ -133,17 +216,19 @@ export default function Sidebar() {
         {menuItems.map((item) => (
           <li
             key={item.id}
-            className={`p-2 font-bold ${isCollapsed === true ?"border-none bg-none":""} cursor-pointer flex items-center gap-2 duration-100 relative 
-              ${activeItem === item.id ? "border-r-4 border-cyan-400 bg-gradient-to-r from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500" : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-r dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"}`}
+            className={`p-2 font-bold ${
+              isCollapsed === true ? "border-none bg-none" : ""
+            } cursor-pointer flex items-center gap-2 duration-100 relative 
+              ${
+                activeItem === item.id
+                  ? "border-r-4 border-cyan-400 bg-gradient-to-r from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
+                  : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-r dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
+              }`}
             onClick={() => handleNavigate(item.id, item.path)}
             onMouseEnter={() => setHoveredItem(item.id)}
             onMouseLeave={() => setHoveredItem(null)}
           >
-            <span
-              className={`${
-                activeItem === item.id ? "" : ""
-              }`}
-            >
+            <span className={`${activeItem === item.id ? "" : ""}`}>
               {item.icon}
             </span>
             {!isCollapsed && !isAnimating && (

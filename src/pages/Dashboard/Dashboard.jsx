@@ -1,24 +1,69 @@
 import { FaUsers, FaDollarSign, FaBookOpen, FaChartLine } from "react-icons/fa";
 import Chart from "./Chart";
 import { useTranslation } from "react-i18next";
+import URL from "../../config/URLconfig";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
+  const [countUser, setCountUser] = useState(0);
+  const [countCourse, setCountCourse] = useState(0);
+  const [amount, setAmount] = useState(0);
+
+  useEffect(() => {
+    fetchTotalUser();
+    fetchTotalCourse();
+    fetchTotalAmount();
+  }, []);
+
+  const fetchTotalUser = () => {
+    axios
+      .get(`${URL}/user/count`)
+      .then((response) => {
+        setCountUser(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get count user " + error.message);
+      });
+  };
+
+  const fetchTotalCourse = () => {
+    axios
+      .get(`${URL}/courses/count`)
+      .then((response) => {
+        setCountCourse(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get count course " + error.message);
+      });
+  };
+
+  const fetchTotalAmount = () => {
+    axios
+      .get(`${URL}/payments/total`)
+      .then((response) => {
+        setAmount(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get amount " + error.message);
+      });
+  };
 
   const stats = [
     {
       title: t("total_revenue"),
-      value: "$80,620",
+      value: amount,
       icon: <FaDollarSign className="text-green-500" />,
     },
     {
       title: t("total_users"),
-      value: "1632",
+      value: countUser,
       icon: <FaUsers className="text-blue-500" />,
     },
     {
       title: t("total_courses"),
-      value: "65",
+      value: countCourse,
       icon: <FaBookOpen className="text-purple-500" />,
     },
     {
@@ -32,7 +77,6 @@ const Dashboard = () => {
     <div className="flex-1 h-full">
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full">
-
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
           {stats.map((item, index) => (
@@ -43,7 +87,9 @@ const Dashboard = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <p className="font-bold text-lg sm:text-xl">{item.title}</p>
-                  <p className="text-left text-sm sm:text-xs">{t("last_30_days")}</p>
+                  <p className="text-left text-sm sm:text-xs">
+                    {t("last_30_days")}
+                  </p>
                 </div>
                 <div className="text-2xl sm:text-2xl">{item.icon}</div>
               </div>
