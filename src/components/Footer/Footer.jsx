@@ -46,7 +46,7 @@ export default function Footer() {
                 }
                 alt="Logo"
               />
-              <h3 className="font-bold text-white">
+              <h3 className="font-bold text-fcolor">
                 {localStorage.getItem("systemName")}
               </h3>
             </div>

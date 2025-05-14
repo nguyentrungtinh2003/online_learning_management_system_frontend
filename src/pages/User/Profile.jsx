@@ -329,26 +329,31 @@ const Profile = () => {
         )}
 
         {tab === "rank" && (
-          <div className="flex flex-1 w-full dark:border dark:border-darkBorder gap-6 p-6 bg-wcolor dark:bg-darkBackground dark:text-darkText shadow-lg rounded-xl">
+          <div className="flex flex-1 h-[500px] w-full dark:border dark:border-darkBorder gap-6 p-6 bg-wcolor dark:bg-darkBackground dark:text-darkText shadow-lg rounded-xl">
             <RankLevel />
-            <div className="flex-1 p-4 bg-gray-50 dark:bg-darkSubbackground rounded-lg shadow-inner">
+            <div className="flex-1 h-full overflow-auto p-4 bg-gray-50 dark:bg-darkSubbackground rounded-lg shadow-inner">
               <p className="text-2xl font-semibold text-gray-700 dark:text-darkText mb-6">
                 {t("activityLog")}
               </p>
-              <ul className="space-y-4">
-                {userHistory.map((uh, index) => (
-                  <li
-                    key={index}
-                    className="w-full flex items-center border-l-8 border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
-                  >
-                    <span className="text-gray-600 dark:text-darkSubtext font-medium">
-                      Point {uh.point}
-                    </span>{" "}
-                    <span className="m-2 text-gray-600 dark:text-darkSubtext font-medium">
-                      Date {uh.date}
-                    </span>
-                  </li>
-                ))}
+              <ul className="space-y-4 h-[340px] overflow-auto">
+                {userHistory.map((uh, index) => {
+                  const formattedDate = new Intl.DateTimeFormat("vi-VN", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(uh.date));
+
+                  return (
+                    <li
+                      key={index}
+                      className="w-full text-gray-600 dark:text-darkSubtext font-medium flex justify-between items-center border-l-8 border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
+                    >
+                      <span className="text-gray-800 dark:text-darkText">
+                        Bạn đã nhận được {uh.point} điểm
+                      </span>
+                      <p>{formattedDate}</p>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>

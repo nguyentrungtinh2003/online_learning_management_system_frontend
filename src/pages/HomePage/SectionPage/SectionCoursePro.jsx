@@ -65,7 +65,7 @@ export default function SectionCoursePro() {
         </p>
 
         <a href={`/view-course/${course.id}`}>
-          <button className="mt-4 w-full bg-scolor text-white text-xl font-semibold py-2 rounded-lg hover:bg-fcolor transition duration-300">
+          <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
             {language === "vi" ? "Xem khoá học" : "View Course"}
           </button>
         </a>
