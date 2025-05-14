@@ -75,7 +75,7 @@ export default function SectionCourseFree() {
 
   return (
     <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="lg:text-3xl lg:py-0 py-4 text-4xl font-bold text-center text-fcolor mb-8">
+      <h2 className="lg:text-3xl lg:py-0 py-4 text-4xl font-bold text-center dark:text-darkText mb-8">
         {language === "vi"
           ? "Khoá học miễn phí – Không cần thanh toán!"
           : "Top Courses – No Payment Needed!"}

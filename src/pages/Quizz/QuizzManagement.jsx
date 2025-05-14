@@ -409,7 +409,7 @@ const QuizzManagement = () => {
   };
 
   return (
-    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center justify-between mb-2">
           <div className="flex mx-2 gap-2 dark:text-darkText">

@@ -366,7 +366,7 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+    <div className="h-full bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="flex-1 flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex mx-2 gap-2 dark:text-darkText">
@@ -518,7 +518,7 @@ export default function CourseManagement() {
                         {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
-                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
                           title="Xem danh sách liên quan"
                         >
                           <FaArrowRight />
@@ -527,7 +527,7 @@ export default function CourseManagement() {
                         {/* Xem chi tiết */}
                         <Link
                           to={`/view-course/${course.id}`}
-                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
                           title="Xem chi tiết"
                         >
                           <FaEye />
@@ -536,7 +536,7 @@ export default function CourseManagement() {
                         {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/courses/edit-course/${course.id}`}
-                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa"
                         >
                           <FaEdit />
@@ -545,7 +545,7 @@ export default function CourseManagement() {
                         {/* Khóa hoặc Khôi phục */}
                         {course.deleted ? (
                           <button
-                            className="p-2 border rounded text-white bg-blue-600 hover:bg-blue-500"
+                            className="p-2 border-2 dark:border-darkBorder rounded text-white bg-blue-600 hover:bg-blue-500"
                             onClick={() =>
                               handleRestore(course.id, course.courseName)
                             }
@@ -555,7 +555,7 @@ export default function CourseManagement() {
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() =>
                               handleDelete(course.id, course.courseName)
                             }

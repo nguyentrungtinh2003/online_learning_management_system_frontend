@@ -55,7 +55,7 @@ export default function UserCourse() {
   const displayedCourses = showAll ? courses : courses.slice(0, 8);
 
   return (
-    <div className="w-full h-full py-6 px-4">
+    <div className="w-full h-full">
       {loading ? (
         <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

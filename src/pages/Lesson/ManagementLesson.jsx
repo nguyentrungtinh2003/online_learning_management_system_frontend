@@ -355,7 +355,7 @@ export default function ManagementLesson() {
   };
 
   return (
-    <div className="h-full bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <ToastContainer />
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">

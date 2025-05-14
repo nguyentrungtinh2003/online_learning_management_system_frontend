@@ -101,10 +101,10 @@ const Chart = () => {
     ],
   };
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex lg:flex-row flex-col gap-2">
+    <div className="flex flex-1 flex-col gap-2">
+      <div className="flex flex-1 lg:flex-row flex-col gap-2">
         {/* Line Chart - Revenue */}
-        <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText shadow-lg rounded-lg p-4">
+        <div className="lg:w-2/3 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText shadow-lg rounded-lg p-4">
           <ReactECharts option={lineChartOption} style={{ height: 300, filter: 'invert(1)'  }} />
         </div>
 
@@ -115,12 +115,12 @@ const Chart = () => {
       </div>
       <div className="flex lg:flex-row flex-col gap-2">
         {/* Bar Chart - User Points by Course */}
-        <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+        <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <ReactECharts option={barChartOption} style={{ height: 300, filter: 'invert(1)' }} />
         </div>
 
         {/* Radar Chart - User Progress */}
-        <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+        <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <ReactECharts option={radarChartOption} style={{ height: 300, filter: 'invert(1)' }} />
         </div>
       </div>
