@@ -34,6 +34,14 @@ export default function CourseManagement() {
   const coursesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
@@ -366,27 +374,27 @@ export default function CourseManagement() {
   };
 
   return (
-    <div className="h-full bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
-      <div className="flex-1 flex flex-col h-full">
+    <div className="h-full flex-1 bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+      <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
-          <div className="flex mx-2 gap-2 dark:text-darkText">
-            <FaBuffer size={30} />
-            <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
+          <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+            <FaBuffer size={isMobile ? 60 : 30} />
+            <MdNavigateNext size={isMobile ? 80 : 30} />
+            <h2 className="text-5xl lg:text-lg font-bold">{t("courseManagement")}</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-              <FaPlus size={30} />
+              <FaPlus size={isMobile ? 50 : 30} />
             </button>
           </Link>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
-          <div className="relative w-full">
+          <div className="relative h-24 lg:h-12 w-full">
             <input
               type="text"
               placeholder={t("searchPlaceholder")}
-              className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
               value={search}
               onChange={handleSearchInput}
             />
@@ -409,7 +417,7 @@ export default function CourseManagement() {
               setFilterType(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">{t("all")}</option>
             <option value="Free">{t("free")}</option>
@@ -422,7 +430,7 @@ export default function CourseManagement() {
               setStatusFilter(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">{t("all")}</option>
             <option value="Deleted">{t("deleted")}</option>
@@ -431,17 +439,18 @@ export default function CourseManagement() {
 
           <button
             type="submit"
-            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor lg:text-base text-3xl hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
-        <div className="flex-1 py-2">
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-            <table className="w-full">
+        <div className="flex-1 w-full overflow-auto py-2 overflow-x">
+          <div className="bg-wcolor justify-between flex flex-col lg:h-full h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+            <div className="h-full overflow-auto">
+              <table className="lg:w-full w-[200%] lg:h-fit h-full">
               <thead>
-                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
+                <tr className="border-y text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("description")}</th>
@@ -463,29 +472,29 @@ export default function CourseManagement() {
                   </tr>
                 ) : (
                   courses.map((course, index) => (
-                    <tr key={course.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                    <tr key={course.id} className="text-center text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
-                      <td className="p-2 w-48 whitespace-nowrap">
+                      <td className="p-2 lg:w-48 whitespace-nowrap">
                         {course.courseName?.length > 20
                           ? course.courseName.slice(0, 20) + "..."
                           : course.courseName || "N/A"}
                       </td>
 
-                      <td className="p-2 w-48 whitespace-nowrap">
+                      <td className="py-2 lg:w-56 whitespace-nowrap">
                         {course.description
-                          ? stripHtml(course.description).slice(0, 20) +
+                          ? stripHtml(course.description).slice(0, 25) +
                             (stripHtml(course.description).length > 20
                               ? "..."
                               : "")
                           : "No description"}
                       </td>
 
-                      <td className="p-2 text-center w-48">
+                      <td className="p-2 text-center lg:w-40">
                         {course.user?.username || "No username"}
                       </td>
-                      <td className="p-2 w-32">
+                      <td className="p-2 lg:w-32">
                         {course.price === 0 || course.price === null ? (
                           "Free"
                         ) : (
@@ -514,11 +523,11 @@ export default function CourseManagement() {
                       <td className="p-2 w-32">
                         {course.deleted ? "Deleted" : "Active"}
                       </td>
-                      <td className="p-2 flex flex-1 justify-center gap-1">
+                      <td className="px-2 h-full items-center flex flex-1 justify-center gap-1">
                         {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
-                          className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          className="p-2 h-fit border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
                           title="Xem danh sách liên quan"
                         >
                           <FaArrowRight />
@@ -570,31 +579,31 @@ export default function CourseManagement() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <p className="mx-2">
-            {loading
-              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-            {/* Nếu không phải loading, hiển thị thông tin page */}
-          </p>
-          <div className="space-x-2">
-            <button
-              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
-              onClick={handlePrePage}
-              disabled={currentPage === 0 || loading}
-            >
-              <MdNavigateBefore fontSize={30} />
-            </button>
-            <button
-              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages - 1 || loading}
-            >
-              <MdNavigateNext fontSize={30} />
-            </button>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="mx-2">
+                {loading
+                  ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+                  : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+                {/* Nếu không phải loading, hiển thị thông tin page */}
+              </p>
+              <div className="space-x-2">
+                <button
+                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+                  onClick={handlePrePage}
+                  disabled={currentPage === 0 || loading}
+                >
+                  <MdNavigateBefore fontSize={30} />
+                </button>
+                <button
+                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
+                  onClick={handleNextPage}
+                  disabled={currentPage >= totalPages - 1 || loading}
+                >
+                  <MdNavigateNext fontSize={30} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

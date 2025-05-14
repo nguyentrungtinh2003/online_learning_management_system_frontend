@@ -17,5 +17,7 @@
     "hide": "Hide post",
     "share": "Share",
     "emotion": "Feeling / Activity",
-    "moreComments": "View more comments"
+    "moreComments": "View more comments",
+    "unknownHello": "Hello Mates",
+    "toastMessage": "You need to login to perform this function!"
 }

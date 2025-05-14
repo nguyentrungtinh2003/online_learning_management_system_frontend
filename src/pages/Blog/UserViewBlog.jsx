@@ -13,13 +13,14 @@ import {
 } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
 import URLSocket from "../../config/URLsocket";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function Blog() {
   const { t } = useTranslation("blog"); // assuming the namespace is "blog"
@@ -49,6 +50,28 @@ export default function Blog() {
   const userId = parseInt(localStorage.getItem("id"));
   const [searchParams] = useSearchParams();
   const scrollToId = searchParams.get("scrollTo");
+
+  const navigate = useNavigate();
+
+  const requireLogin = () => {
+    const userId = localStorage.getItem("id");
+    const role = localStorage.getItem("role");
+
+    if (!userId || !role) {
+      toast.warn(<p>{t("toastMessage")}</p>, {
+        position: "top-right",
+        autoClose: 1500,
+      });
+
+      setTimeout(() => {
+        navigate("/login"); // chuyển hướng sau 2 giây
+      }, 2000);
+
+      return false;
+    }
+
+    return true;
+  };
 
   // Tạo map để lưu ref cho từng post
   const postRefs = useRef({});
@@ -180,6 +203,9 @@ export default function Blog() {
 
   const handleCreatePost = async (event) => {
     event.preventDefault(); // Ngăn chặn trang reload
+
+    if (!requireLogin()) return;
+
     setLoading(true);
 
     const formData = new FormData();
@@ -227,6 +253,7 @@ export default function Blog() {
   };
 
   const addBlogComment = (blogId, userId, content) => {
+    if (!requireLogin()) return;
     axios
       .post(
         `${URL}/blog-comments/add`,
@@ -323,11 +350,10 @@ export default function Blog() {
   };
 
   const handleLike = (postId, post) => {
-    if (likedUsersMap[post.id].includes(parseInt(localStorage.getItem("id")))) {
-      postUnLike(postId); // nếu đã like → thì unlike
-    } else {
-      postLike(postId); // nếu chưa like → thì like
-    }
+    if (!requireLogin()) return;
+
+    const isLiked = likedUsersMap[post.id]?.includes(userId);
+    isLiked ? postUnLike(postId) : postLike(postId);
   };
 
   const hidePost = (postId) => {
@@ -344,6 +370,10 @@ export default function Blog() {
     alert("Bài viết đã được báo cáo.");
     setMenuOpenPost(null); // Đóng menu sau khi báo cáo
   };
+  const handleOpenCreatePost = () => {
+    if (!requireLogin()) return;
+    setIsCreatingPost(true);
+  };
 
   if (dataLoading) {
     return (
@@ -355,7 +385,6 @@ export default function Blog() {
 
   return (
     <div className="h-full dark:text-darkSubtext overflow-y-auto flex-1 flex flex-col">
-      <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -446,7 +475,7 @@ export default function Blog() {
         <div className="flex lg:h-12 h-16 items-center gap-2">
           <img
             src={
-              localStorage.getItem("img") !== "null"
+              localStorage.getItem("img") === "null"
                 ? localStorage.getItem("img")
                 : "/user.png"
             }
@@ -456,21 +485,21 @@ export default function Blog() {
           <input
             className="focus:outline-none h-10 dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
-              username: localStorage.getItem("username"),
+              username: localStorage.getItem("username") || "Hello ",
             })}
-            onClick={() => setIsCreatingPost(true)}
+            onClick={() => handleOpenCreatePost()}
           />
         </div>
         <div className="flex gap-2 dark:text-darkText">
           <button
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
-            onClick={() => setIsCreatingPost(true)}
+            onClick={() => handleOpenCreatePost()}
           >
             {t("image")}/{t("video")}
           </button>
           <button
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
-            onClick={() => setIsCreatingPost(true)}
+            onClick={() => handleOpenCreatePost()}
           >
             {t("emotion")}
           </button>

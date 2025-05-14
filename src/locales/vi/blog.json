@@ -17,5 +17,7 @@
     "hide": "Ẩn bài viết",
     "share": "Chia sẻ",
     "emotion": "Cảm xúc / Hoạt động",
-    "moreComments": "Xem thêm bình luận"
+    "moreComments": "Xem thêm bình luận",
+    "unknownHello": "Chào bạn",
+    "toastMessage": "Bạn cần đăng nhập để thực hiện chức năng này!"
 }

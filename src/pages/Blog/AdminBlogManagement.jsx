@@ -250,16 +250,13 @@ export default function AdminBlogManagement() {
                 blogs.map((blog, index) => (
                   <tr
                     key={blog.id}
-                    className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText"
                   >
                     <td className="p-2">
-                      {index + 1 + currentPage * blogsPerPage}{" "}
-                      {/* Hiển thị số thứ tự */}
+                      {index + 1 + currentPage * blogsPerPage}
                     </td>
                     <td className="p-2">{blog.blogName}</td>
-                    <td className="p-2 truncate max-w-xs">
-                      {blog.description}
-                    </td>
+                    <td className="p-2 truncate max-w-xs">{blog.description}</td>
                     <td className="p-2">
                       <img
                         src={blog.img}
@@ -287,18 +284,24 @@ export default function AdminBlogManagement() {
                     <td className="p-2">{blog.likedUsers?.length || 0}</td>
                     <td className="p-2">{blog.user.username}</td>
                     <td className="p-2">
-                      {blog.deleted ? "Deleted" : "Active"}
+                      {blog.deleted ? (
+                        <span className="text-red-600 font-semibold">Deleted</span>
+                      ) : (
+                        <span className="text-green-600 font-semibold">Active</span>
+                      )}
                     </td>
-                    <td className="p-2 flex justify-center gap-2">
+                    <td className="p-2 flex justify-center gap-1">
                       <Link
                         to={`/admin/blog/edit-blog/${blog.id}`}
-                        className="p-2 border rounded hover:text-blue-500 hover:scale-105"
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                        title="Chỉnh sửa blog"
                       >
                         <FaEdit />
                       </Link>
                       <button
-                        className="p-2 border rounded text-red-600 hover:scale-105"
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
                         onClick={() => handleDelete(blog.id, blog.blogName)}
+                        title="Xóa blog"
                       >
                         <MdDeleteForever />
                       </button>
@@ -307,6 +310,7 @@ export default function AdminBlogManagement() {
                 ))
               )}
             </tbody>
+
           </table>
         </div>
         </div>

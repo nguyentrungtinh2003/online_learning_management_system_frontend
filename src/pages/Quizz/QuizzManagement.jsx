@@ -8,7 +8,7 @@ import {
   FaPlus,
   FaTimes,
   FaCoins,
-  FaImage,
+  FaArrowRight,
 } from "react-icons/fa";
 import {
   MdNavigateNext,
@@ -505,7 +505,7 @@ const QuizzManagement = () => {
                   <th className="p-2">{t("quizz.name")}</th>
                   <th className="p-2">{t("description")}</th>
                   <th className="p-2">{t("price")}</th>
-                  <th className="p-2">{t("lessonName Chỉnh lại")}</th>
+                  <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("quizz.date")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -526,16 +526,22 @@ const QuizzManagement = () => {
                       <td className="p-2">
                         {index + 1 + currentPage * quizzesPerPage}
                       </td>
-                      <td className="p-2">{quiz.quizName || "N/A"}</td>
-                      <td
-                        className="p-2"
-                        dangerouslySetInnerHTML={{
-                          __html: quiz.description || "No description",
-                        }}
-                      />
-                      <td className="p-2">
+
+                      <td className="p-2 w-44 whitespace-nowrap">
+                        {quiz.quizName?.length > 20
+                          ? quiz.quizName.slice(0, 20) + "..."
+                          : quiz.quizName || "N/A"}
+                      </td>
+
+                      <td className="p-2 w-60 whitespace-nowrap">
+                        {quiz.description
+                          ? quiz.description.replace(/<[^>]+>/g, "").slice(0, 25) + (quiz.description.length > 25 ? "..." : "")
+                          : "No description"}
+                      </td>
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {quiz.price === 0 || quiz.price === null ? (
-                          <p>{t("free")}</p>
+                          <p className="text-green-600 font-semibold">{t("free")}</p>
                         ) : (
                           <span>
                             {quiz.price}{" "}
@@ -546,11 +552,14 @@ const QuizzManagement = () => {
                           </span>
                         )}
                       </td>
-                      <td className="p-2 text-center">
-                        {quiz.lessonName || "No quiz"}
+
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {quiz.lessonName?.length > 20
+                          ? quiz.lessonName.slice(0, 20) + "..."
+                          : quiz.lessonName || "No quiz"}
                       </td>
 
-                      <td className="p-2">
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {quiz.date
                           ? new Date(
                               quiz.date[0],
@@ -566,35 +575,49 @@ const QuizzManagement = () => {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {quiz.deleted ? "Deleted" : "Active"}
                       </td>
+
                       <td className="p-2 flex justify-center gap-1">
                         <Link
                           to={`/admin/quizzes/${quiz.id}/questions`}
-                          className="p-2 border rounded"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách câu hỏi"
+                        >
+                          <FaArrowRight />
+                        </Link>
+
+                        <Link
+                          to={`/view-quiz-detail/${quiz.id}`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
                         <Link
-                          to={`/admin/quizzes/${quiz.id}/edit`} // <-- bạn có thể sửa theo đúng URL edit nếu có
-                          className="p-2 border rounded"
+                          to={`/admin/quizzes/${quiz.id}/edit`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
                         {quiz.deleted ? (
                           <button
-                            className="p-2 border rounded"
-                            onClick={() =>
-                              handleRestore(quiz.id, quiz.quizName)
-                            }
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
+                            onClick={() => handleRestore(quiz.id, quiz.quizName)}
+                            title="Khôi phục bài kiểm tra"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
                             onClick={() => handleDelete(quiz.id, quiz.quizName)}
+                            title="Khóa bài kiểm tra"
                           >
                             <FaLock />
                           </button>

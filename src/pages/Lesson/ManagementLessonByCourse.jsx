@@ -1,7 +1,7 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
-import { FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import { FaBuffer,FaArrowRight, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import {
   MdNavigateNext,
   MdDeleteForever,
@@ -402,7 +402,6 @@ export default function ManagementLesson() {
                   <th className="p-2">{t("description")}</th>
                   <th className="p-2">{t("image")}</th>
                   <th className="p-2">{t("createdDate")}</th>
-                  <th className="p-2">{t("lesson.videoURL")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
                 </tr>
@@ -418,26 +417,30 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                  <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
                       <td className="p-2">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
-                      <td className="p-2">{lesson.lessonName || "N/A"}</td>
-                      <td className="p-2">
-                        {lesson.description || "No description"}
+
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {lesson.lessonName?.length > 20
+                          ? lesson.lessonName.slice(0, 20) + "..."
+                          : lesson.lessonName || "N/A"}
                       </td>
-                      <td className="p-2">
-                        {lesson.img ? (
-                          <img
-                            src={lesson.img}
-                            alt="lesson"
-                            className="w-8 h-8 rounded mx-auto"
-                          />
-                        ) : (
-                          "No image"
-                        )}
+
+                      <td className="p-2 w-72 whitespace-nowrap">
+                        {lesson.description
+                          ? lesson.description.slice(0, 25) + (lesson.description.length > 25 ? "..." : "")
+                          : "No description"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 text-center w-48 whitespace-nowrap">
+                        {lesson.courseName?.length > 20
+                          ? lesson.courseName.slice(0, 20) + "..."
+                          : lesson.courseName || "N/A"}
+                      </td>
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {lesson.date
                           ? new Date(
                               lesson.date[0],
@@ -453,51 +456,49 @@ export default function ManagementLesson() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">
-                        {lesson.videoURL ? (
-                          <a
-                            href={lesson.videoURL}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 underline"
-                          >
-                            {t("viewVideo")}
-                          </a>
-                        ) : (
-                          <>{t("noVideo")}</>
-                        )}
-                      </td>
-                      <td className="p-2">
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
-                      <td className="p-2 flex justify-center gap-1">
+
+                      <td className="p-2 flex flex-1 justify-center gap-1">
                         <Link
                           to={`/admin/lessons/${lesson.id}/quizzes`}
-                          className="p-2 border rounded"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          title="Xem danh sách liên quan"
+                        >
+                          <FaArrowRight />
+                        </Link>
+
+                        <Link
+                          to={`/view-lesson-detail/${lesson.id}`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
+                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
+
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
-                          className="p-2 border rounded"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
+
                         {lesson.deleted ? (
                           <button
-                            className="p-2 border rounded"
-                            onClick={() =>
-                              handleRestore(lesson.id, lesson.lessonName)
-                            }
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
+                            onClick={() => handleRestore(lesson.id, lesson.lessonName)}
+                            title="Khôi phục bài học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded"
-                            onClick={() =>
-                              handleDelete(lesson.id, lesson.lessonName)
-                            }
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                            onClick={() => handleDelete(lesson.id, lesson.lessonName)}
+                            title="Khóa bài học"
                           >
                             <FaLock />
                           </button>
