@@ -4,12 +4,9 @@ import URL from "../../config/URLconfig";
 import { getCourseById } from "../../services/courseapi";
 import axios from "axios";
 import Spinner from "react-bootstrap/Spinner";
-<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-=======
->>>>>>> 9e18d05da0d774af045dd27e6df08f74bef6b4e3
 
 export default function UserViewCourse() {
   const { id } = useParams();
@@ -32,7 +29,7 @@ const requireLogin = () => {
     if (!userId || !role) {
       toast.warn("Bạn cần đăng nhập để thực hiện chức năng này!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
 
       setTimeout(() => {
@@ -178,13 +175,13 @@ const requireLogin = () => {
             <div className="flex items-center gap-4">
               {/* Instructor Image */}
               <img
-                src={course.user.img} // Replace with actual instructor image
+                src="https://randomuser.me/api/portraits/men/44.jpg" // Replace with actual instructor image
                 alt="Instructor"
                 className="w-16 h-16 rounded-full object-cover"
               />
               <div>
                 <p className="font-semibold dark:text-darkText">
-                  {course.user.username}
+                  Nguyen Trung Tinh
                 </p>
                 <p className="text-sm text-gray-600 dark:text-darkSubtext">
                   Experienced instructor with over 10 years of teaching in the
@@ -247,17 +244,15 @@ const requireLogin = () => {
               <h2 className="text-xl font-semibold text-gray-800">
                 Course Details
               </h2>
-              <p className="d-flex">
-                <strong>Price : </strong>{" "}
-                {course.coin !== "null" ? `${course.price} ` : "Free"}
-                <FaCoins className="ml-2" style={{ color: "gold" }} size={30} />
+              <p>
+                <strong>Price:</strong>{" "}
+                {course.coin !== undefined ? `${course.coin} Coins` : "Free"}
               </p>
-
               <p>
                 <strong>Lessons:</strong> {lessons.length}
               </p>
               <p>
-                <strong>Instructor:</strong> {course.user.username}
+                <strong>Instructor:</strong> Nguyen Trung Tinh
               </p>
             </div>
 

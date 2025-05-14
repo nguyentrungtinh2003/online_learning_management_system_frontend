@@ -60,7 +60,7 @@ export default function Blog() {
     if (!userId || !role) {
       toast.warn(<p>{t("toastMessage")}</p>, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
 
       setTimeout(() => {
