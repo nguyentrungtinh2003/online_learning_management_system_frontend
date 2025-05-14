@@ -13,8 +13,10 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import URLSocket from "../../config/URLsocket";
 import { useMediaQuery } from "react-responsive";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const isLargeScreen = useMediaQuery({ minWidth: 1024 });
   const languageOptions = [
     {
@@ -119,6 +121,9 @@ export default function Navbar() {
   }, [unreadCount]);
 
   const fetchUserData = async () => {
+    // Nếu không có cookie hoặc user ID → bỏ qua
+    if (!document.cookie || localStorage.getItem("id")) return;
+
     try {
       const response = await axios.get(`${URL}/user-info`, {
         withCredentials: true,
@@ -135,21 +140,7 @@ export default function Navbar() {
       setCoin(coin);
       setPoint(point);
     } catch {
-      try {
-        const googleResponse = await axios.get(`${URL}/user-google`);
-        const { id, email, name, picture } = googleResponse.data.data;
-        localStorage.setItem("id", id);
-        localStorage.setItem("email", email);
-        localStorage.setItem("username", name);
-        localStorage.setItem("img", picture);
-
-        axios.get(`${URL}/user/email/${email}`).then((response) => {
-          localStorage.setItem("coin", response.data.data.coin);
-          localStorage.setItem("role", response.data.data.roleEnum);
-        });
-      } catch {
-        console.log("Không tìm thấy user đăng nhập");
-      }
+      console.log("Không tìm thấy user đăng nhập");
     }
   };
 
@@ -306,7 +297,7 @@ export default function Navbar() {
       console.error("Logout failed:", error);
     } finally {
       localStorage.clear();
-      window.location.href = "/";
+      navigate("/"); // Điều hướng đến trang đăng nhập
       setLoadingLogout(false);
     }
   };
@@ -336,7 +327,7 @@ export default function Navbar() {
           alt="logo"
         />
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
-          <div className="flex lg:h-10 h-14 lg:w-[50%] justify-center gap-2 items-center border-1 dark:bg-darkSubbackground dark:border-darkBorder p-2 rounded-xl relative">
+          <div className="flex lg:h-10 h-14 lg:w-full justify-center gap-2 items-center border-1 dark:bg-darkSubbackground dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
             <input
               type="text"
@@ -385,78 +376,80 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div ref={dropdownRef} className="relative items-center">
+        <div ref={dropdownRef} className="relative lg:w-[60%] flex justify-end items-center">
           {localStorage.getItem("username") ? (
-            <div className="flex items-center ml-2 space-x-3">
-              <div className="flex items-center gap-2">
-                <span className="lg:text-lg text-2xl">{point}</span>
-                <FaStar style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
+            <div className="flex w-full items-center justify-between ml-2 space-x-4">
+              <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
+                <div className="flex items-center justify-end gap-2">
+                  <span className="lg:text-lg text-2xl">{point}</span>
+                  <FaStar style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
+                </div>
+                <div className="flex items-center gap-2 justify-end gap-2">
+                  <span className="lg:text-lg text-2xl">{coin}</span>
+                  <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
+                </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="lg:text-lg text-2xl">{coin}</span>
-                <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
-              </div>
-              <div ref={notificationRef} className="relative">
+                <div ref={notificationRef} className="relative">
+                  <div
+                    className="relative mx-2 cursor-pointer"
+                    onClick={toggleNotificationDropdown}
+                  >
+                    <PiBellRinging
+                      size={isLargeScreen ? 30 : 40}
+                      className="hover:bg-tcolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
+                    />
+                    {unreadCount >= 0 && (
+                      <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
                 <div
-                  className="relative cursor-pointer"
-                  onClick={toggleNotificationDropdown}
+                  className="flex relative items-center space-x-2 cursor-pointer"
+                  onClick={toggleDropdown}
                 >
-                  <PiBellRinging
-                    size={isLargeScreen ? 30 : 40}
-                    className="hover:bg-tcolor dark:hover:bg-darkBorder lg:p-1 p-0 rounded-xl"
+                  <img
+                    src={
+                      localStorage.getItem("img") !== "null"
+                        ? localStorage.getItem("img")
+                        : "/user.png"
+                    }
+                    alt="User"
+                    className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
                   />
-                  {unreadCount >= 0 && (
-                    <span className="absolute lg:left-5 top-4 left-6 bg-red-500 text-white text-xs font-bold px-1 rounded-full">
-                      {unreadCount}
-                    </span>
+                  <span className="lg:text-lg text-xl whitespace-nowrap w-[160px] overflow-hidden text-ellipsis">
+                    {localStorage.getItem("username")}
+                  </span>
+                  {isDropdownOpen && (
+                    <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
+                      <ul className="py-2 font-semibold whitespace-nowrap">
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                          <Link to="/profile">{t("profileInfo")}</Link>
+                        </li>
+                        <hr className="border-t border-gray-400 dark:border-darkBorder mx-3 my-1" />
+                        <li
+                          className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                          onClick={handleLogout}
+                        >
+                          {loadingLogout ? (
+                            <Spinner animation="border" variant="blue" />
+                          ) : (
+                            t("logout")
+                          )}
+                        </li>
+                      </ul>
+                    </div>
                   )}
                 </div>
               </div>
-              <div
-                className="flex relative items-center space-x-2 cursor-pointer"
-                onClick={toggleDropdown}
-              >
-                <img
-                  src={
-                    localStorage.getItem("img") !== "null"
-                      ? localStorage.getItem("img")
-                      : "/user.png"
-                  }
-                  alt="User"
-                  className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
-                />
-                <span className="lg:text-lg text-xl whitespace-nowrap w-34 overflow-hidden">
-                  {localStorage.getItem("username")}
-                </span>
-                {isDropdownOpen && (
-                  <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
-                    <ul className="py-2 font-semibold whitespace-nowrap">
-                      <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
-                        <Link to="/profile">{t("profileInfo")}</Link>
-                      </li>
-                      <hr className="border-t border-gray-400 dark:border-darkBorder mx-3 my-1" />
-                      <li
-                        className="px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                        onClick={handleLogout}
-                      >
-                        {loadingLogout ? (
-                          <Spinner animation="border" variant="blue" />
-                        ) : (
-                          t("logout")
-                        )}
-                      </li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-
               <button
                 onClick={toggleDarkMode}
-                className="text-fcolor dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
                 {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
               </button>
-
               {/* Language Dropdown */}
               <Dropdown
                 options={languageOptions}
@@ -470,11 +463,30 @@ export default function Navbar() {
               />
             </div>
           ) : (
-            <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-              <Link to="/login" className="no-underline text-white">
-                {t("startLearning")}
-              </Link>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleDarkMode}
+                className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+              >
+                {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+              </button>
+              {/* Language Dropdown */}
+              <Dropdown
+                options={languageOptions}
+                selected={language}
+                onChange={(lang) => {
+                  i18n.changeLanguage(lang);
+                  localStorage.setItem("language", lang);
+                  window.location.reload();
+                }}
+                placeholder="Select Language"
+              />
+              <button className="bg-fcolor hover:bg-scolor text-md text-black font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
+                <Link to="/login" className="no-underline text-white">
+                  {t("startLearning")}
+                </Link>
+              </button>
+            </div>
           )}
 
           {isNotificationOpen && (

@@ -36,35 +36,107 @@ const UserRouter = () => {
     <Route path="/effect" element={<UpLevelEffect />} />
     <Route path="*" element={<NotFound />} />
 
-    {/* Route trang chủ: KHÔNG CẦN login */}
-    <Route path="/" element={<UserLayout />}>
-      <Route index element={<HomePage />} />
-    </Route>
-
     {/* Các route cần login */}
-    <Route
-      element={
-        <ProtectedRouter requiredRoles={["ADMIN", "STUDENT", "TEACHER"]}>
-          <UserLayout />
-        </ProtectedRouter>
-      }
-    >
-      <Route path="user/process" element={<LearningProgress />} />
-      <Route path="user/payment" element={<PaymentPage />} />
-      <Route path="user/payment/history" element={<PaymentHistory />} />
-      <Route path="/chat" element={<ChatRoom />} />
-      <Route path="user-course" element={<UserCourse />} />
-      <Route path="view-course/:id" element={<UserViewCourse />} />
-      <Route path="view-lesson/:courseId" element={<UserViewLesson />} />
-      <Route path="view-lesson-detail/:lessonId" element={<ViewLessonDetail />} />
-      <Route path="view-quiz/:quizId" element={<UserQuizz />} />
+    <Route element={<UserLayout />}>
+      {/* Không yêu cầu đăng nhập */}
+      <Route index element={<HomePage />} />
+
       <Route path="blog" element={<UserViewBlog />} />
-      <Route path="quiz" element={<QuizzManagement />} />
-      <Route path="view-result/:quizId" element={<UserQuizzResult />} />
-      <Route path="lesson" element={<ManagementLesson />} />
-      <Route path="question" element={<ManagementQuestion />} />
-      <Route path="profile" element={<Profile />} />
+
       <Route path="ranking" element={<UserRanking />} />
+
+      <Route path="view-course/:id" element={<UserViewCourse />} />
+
+      {/* Yêu cầu đăng nhập và quyền tương ứng */}
+      <Route
+        path="user/process"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <LearningProgress />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="user/payment"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <PaymentPage />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="user/payment/history"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <PaymentHistory />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "TEACHER", "ADMIN"]}>
+            <ChatRoom />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="user-course"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <UserCourse />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="view-lesson/:courseId"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <UserViewLesson />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="view-lesson-detail/:lessonId"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <ViewLessonDetail />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="view-quiz/:quizId"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <UserQuizz />
+          </ProtectedRouter>
+        }
+      />
+      
+      <Route
+        path="view-result/:quizId"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+            <UserQuizzResult />
+          </ProtectedRouter>
+        }
+      />
+
+      <Route
+        path="profile"
+        element={
+          <ProtectedRouter requiredRoles={["STUDENT", "TEACHER", "ADMIN"]}>
+            <Profile />
+          </ProtectedRouter>
+        }
+      />
     </Route>
   </Routes>
 
