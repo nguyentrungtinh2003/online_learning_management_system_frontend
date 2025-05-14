@@ -3,14 +3,16 @@ import { FaMedal, FaCrown, FaStar } from "react-icons/fa";
 
 export default function RankLevel() {
   const ranks = [
-    { name: "BRONZE", color: "#cd7f32", points: 100 },
-    { name: "SILVER", color: "#c0c0c0", points: 300 },
-    { name: "GOLD", color: "#ffd700", points: 500 },
-    { name: "DIAMOND", color: "#00c3ff", points: 1000 },
-    { name: "MASTER", color: "#ff4500", points: 1500 },
+    { name: "BRONZE", color: "#cd7f32", points: 200 }, // 0 - 200
+    { name: "SILVER", color: "#c0c0c0", points: 500 }, // 201 - 500
+    { name: "GOLD", color: "#ffd700", points: 1000 }, // 501 - 1000
+    { name: "PLATINUM", color: "#00bfff", points: 2000 }, // 1001 - 2000
+    { name: "DIAMOND", color: "#5b12b0", points: 3000 }, // 2001+
   ];
 
-  const [currentPoints, setCurrentPoints] = useState(localStorage.getItem("point") || 0); // Use state for dynamic updates
+  const [currentPoints, setCurrentPoints] = useState(
+    localStorage.getItem("point") || 0
+  ); // Use state for dynamic updates
 
   const handlePointUpdate = (newPoints) => {
     setCurrentPoints(newPoints);
@@ -42,7 +44,10 @@ export default function RankLevel() {
 
   return (
     <div className="flex items-center">
-      <div className="box-border border-x-4 px-24 rounded-[15%] border-amber-300 drop-shadow-xl">
+      <div
+        className="box-border border-x-4 px-24 rounded-[15%] drop-shadow-xl"
+        style={{ borderColor: currentRank.color }}
+      >
         <FaMedal size={250} color={currentRank.color} />
         <div className="grid place-items-center">
           <p className="font-bold text-3xl mt-4 mb-2">{currentRank.name}</p>
@@ -53,8 +58,9 @@ export default function RankLevel() {
           </p>
           <div className="w-[80%] border-2">
             <p
-              className="h-2 bg-cyan-300"
+              className="h-2"
               style={{
+                backgroundColor: currentRank.color,
                 width:
                   currentPoints > currentRank.points
                     ? "100%"

@@ -104,7 +104,7 @@ export default function UserRanking() {
         <p className="lg:text-2xl text-5xl font-bold">{t("title")}</p>
         <div className="flex gap-2 font-semibold">
           <button
-            className={`border-2 h-16 lg:h-12 text-xl lg:text-md rounded-xl px-4 py-2 ${
+            className={`border rounded-xl px-4 py-2 ${
               selectedTop === "day"
                 ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
                 : ""

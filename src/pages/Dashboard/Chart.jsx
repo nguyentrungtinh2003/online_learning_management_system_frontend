@@ -1,9 +1,67 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import { useTranslation } from "react-i18next";
+import URL from "../../config/URLconfig";
+import axios from "axios";
+import Select from "react-select";
+import { Button, ButtonGroup, Table } from "react-bootstrap";
+import { FaCoins, FaStar } from "react-icons/fa";
 
 const Chart = () => {
   const { t } = useTranslation("dashboard");
+
+  const [monthData, setMonthData] = useState([]);
+  const [courseEnroll, setCourseEnroll] = useState([]);
+  const [userTop, setUserTop] = useState([]);
+  const [type, setType] = useState("coin"); // "coin" hoặc "point"
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => ({
+    value: currentYear - i,
+    label: (currentYear - i).toString(),
+  }));
+  const [selectedYear, setSelectedYear] = useState(years[0]);
+
+  useEffect(() => {
+    fetchMonthData();
+    fetchCourseEnroll();
+    fetchTopUserTop();
+  }, [selectedYear, type]);
+
+  const fetchMonthData = () => {
+    axios
+      .get(`${URL}/payments/monthly-amounts/${selectedYear.value}`)
+      .then((response) => {
+        setMonthData(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get count course " + error.message);
+      });
+  };
+
+  const fetchCourseEnroll = () => {
+    axios
+      .get(`${URL}/enroll/top-enrollments`)
+      .then((response) => {
+        setCourseEnroll(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get course enroll " + error.message);
+      });
+  };
+
+  const fetchTopUserTop = () => {
+    const url = type === "coin" ? `${URL}/user/coin` : `${URL}/user/point`;
+    axios
+      .get(url)
+      .then((response) => {
+        setUserTop(response.data.data);
+        console.log("Data top " + response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get top user " + error.message);
+      });
+  };
 
   const courseNames = [
     t("web_development"),
@@ -17,20 +75,14 @@ const Chart = () => {
     tooltip: { trigger: "axis" },
     xAxis: {
       type: "category",
-      data: [
-        t("week_1"),
-        t("week_2"),
-        t("week_3"),
-        t("week_4")
-      ],
+      data: monthData.map((md) => `Tháng ${md.month}`), // hoặc md.month nếu không cần chữ "Tháng"
     },
-    
     yAxis: { type: "value" },
     series: [
       {
         name: t("revenue"),
         type: "line",
-        data: [5000, 8000, 7000, 12000],
+        data: monthData.map((md) => md.amount),
         areaStyle: {},
         smooth: true,
         color: "#007bff",
@@ -46,17 +98,17 @@ const Chart = () => {
         name: t("enrollments"),
         type: "pie",
         radius: "50%",
-        data: [
-          { value: 150, name: courseNames[0] },
-          { value: 200, name: courseNames[1] },
-          { value: 180, name: courseNames[2] },
-          { value: 120, name: courseNames[3] },
-        ],
+        data:
+          courseEnroll.length > 0
+            ? courseEnroll.map((ce) => ({
+                name: ce.course.courseName,
+                value: ce.enrollmentCount,
+              }))
+            : [],
+
         emphasis: {
           itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
+            color: "#007bff",
           },
         },
       },
@@ -104,24 +156,113 @@ const Chart = () => {
     <div className="flex flex-1 flex-col gap-2">
       <div className="flex flex-1 lg:flex-row flex-col gap-2">
         {/* Line Chart - Revenue */}
-        <div className="lg:w-2/3 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText shadow-lg rounded-lg p-4">
-          <ReactECharts option={lineChartOption} style={{ height: 300, filter: 'invert(1)'  }} />
+        <div className="lg:w-2/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+          <h5 className="m-2">Chọn năm:</h5>
+          <Select
+            options={years}
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(e)} // e là object { value, label }
+          />
+
+          <ReactECharts
+            option={lineChartOption}
+            style={{ height: 400, filter: "invert(1)" }}
+          />
         </div>
 
         {/* Pie Chart - Course Enrollments */}
         <div className="lg:w-1/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
-          <ReactECharts option={pieChartOption} style={{ height: 300, filter: 'invert(1)' }} />
+          <ReactECharts
+            option={pieChartOption}
+            style={{ height: 400, filter: "invert(1)" }}
+          />
         </div>
       </div>
       <div className="flex lg:flex-row flex-col gap-2">
         {/* Bar Chart - User Points by Course */}
-        <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
-          <ReactECharts option={barChartOption} style={{ height: 300, filter: 'invert(1)' }} />
-        </div>
+        {/* <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+          <ReactECharts
+            option={barChartOption}
+            style={{ height: 300, filter: "invert(1)" }}
+          />
+        </div> */}
 
         {/* Radar Chart - User Progress */}
-        <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
-          <ReactECharts option={radarChartOption} style={{ height: 300, filter: 'invert(1)' }} />
+        <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+          <div className="">
+            <h4 className=" text-black dark:text-darkText">
+              Top 5 người dùng theo {type === "coin" ? "Coin" : "Point"}
+            </h4>
+            <ButtonGroup className="m-3">
+              <Button
+                variant={
+                  type === "coin" ? "primary text-white" : "outline-primary"
+                }
+                onClick={() => setType("coin")}
+                className="text-black dark:text-darkText"
+              >
+                <FaCoins style={{ color: "gold" }} size={30} />
+              </Button>
+              <Button
+                variant={
+                  type === "point" ? "primary text-white" : "outline-primary"
+                }
+                onClick={() => setType("point")}
+                className="text-black dark:text-darkText"
+              >
+                <FaStar style={{ color: "gold" }} size={30} />
+              </Button>
+            </ButtonGroup>
+
+            <Table
+              striped
+              bordered
+              hover
+              responsive
+              className=" dark:bg-darkBackground dark:text-darkText border dark:border-darkBorder"
+            >
+              <thead className="dark:bg-darkBackground dark:text-darkText">
+                <tr className="dark:bg-darkBackground dark:hover:bg-darkHover dark:hover:text-darkBackground">
+                  <th>ID</th>
+                  <th>Ảnh</th>
+                  <th>Username</th>
+                  <th>{type === "coin" ? "Coin" : "Point"}</th>
+                </tr>
+              </thead>
+              <tbody className="dark:bg-darkBackground dark:text-darkText dark:hover:bg-darkHover dark:hover:text-darkBackground">
+                {userTop.map((user, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img
+                        src={user.img || "/user.png"}
+                        alt="avatar"
+                        width="40"
+                        height="40"
+                        className="rounded-full"
+                      />
+                    </td>
+                    <td>{user.username}</td>
+                    <td>
+                      <span className="inline-flex items-center gap-1">
+                        {type === "coin" ? (
+                          <>
+                            {user.coin?.toLocaleString("vi-VN")}
+                            <FaCoins style={{ color: "gold" }} size={20} />
+                          </>
+                        ) : (
+                          <>
+                            {user.point?.toLocaleString("vi-VN")}
+                            <FaStar style={{ color: "gold" }} size={20} />
+                          </>
+                        )}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </div>
       </div>
     </div>
