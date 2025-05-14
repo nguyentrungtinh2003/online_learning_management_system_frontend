@@ -207,181 +207,183 @@ const ChatRoom = () => {
   return (
     <div className="flex-1 h-full lg:items-start items-center flex">
       <div className="w-full lg:h-full h-[70%] flex gap-1">
-      {/* Danh sách giảng viên */}
-      <div className="w-64 bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder p-4 border-2 rounded-lg shadow-lg">
-        <input
-          type="text"
-          placeholder={t("searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
-        />
+        {/* Danh sách giảng viên */}
+        <div className="w-64 bg-wcolor dark:bg-darkSubbackground dark:border-darkBorder p-4 border-2 rounded-lg shadow-lg">
+          <input
+            type="text"
+            placeholder={t("searchPlaceholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
+          />
 
-        <div className="flex flex-col space-y-4 overflow-y-auto max-h-[500px]">
-          {filteredTeachers.map((teacher) => (
-            <div
-              key={teacher.id}
-              className={`cursor-pointer p-2 rounded-lg flex items-center gap-3 ${
-                currentTeacher === teacher.id
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-focolor dark:hover:bg-darkBorder dark:text-darkText"
-              }`}
-              onClick={() => setCurrentTeacher(teacher.id)}
-            >
-              <img
-                src={teacher.img || "/user.png"}
-                alt={teacher.username}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <div className="flex flex-col overflow-hidden">
-                <div className="font-semibold truncate">{teacher.username}</div>
-                <div className="text-sm text-black-600 dark:text-white-300 truncate">
-                  {teacher.lastMessage?.sender === "teacher"
-                    ? teacher.lastMessage?.content
-                    : `${t("you")}: ${teacher.lastMessage?.content}`}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Khung chat */}
-      <div className="flex-1 overflow-y-auto border-2 dark:text-darkText dark:bg-darkSubbackground dark:border-darkBorder rounded-lg p-4 bg-gray-50 flex flex-col space-y-3 relative">
-        {loadingChatRoom ? (
-          <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground absolute inset-0 z-10">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-          </div>
-        ) : (
-          <>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold dark:text-darkText text-gray-700">
-                💬 Chat với{" "}
-                {teachers.find((t) => t.id === currentTeacher)?.username ||
-                  "Đang tải..."}
-              </h2>
-            </div>
-
-            <div className="flex-1 overflow-y-auto space-y-4 px-2">
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center gap-2 ${
-                    msg.user1Id === user1Id ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {msg.user1Id !== user1Id && (
-                    <img
-                      src={
-                        msg.user1Img && msg.user1Img !== "null"
-                          ? msg.user1Img
-                          : "/user.png"
-                      }
-                      alt="avatar"
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  )}
-
-                  <div className="max-w-xs relative group">
-                    <div
-                      className={`relative p-3 rounded-2xl shadow-md ${
-                        msg.user1Id === user1Id
-                          ? "bg-blue-500 text-white"
-                          : "bg-white border"
-                      }`}
-                    >
-                      <p className="break-words">
-                        {msg.isDeleted ? (
-                          <i className="text-sm text-gray-400">
-                            Tin nhắn đã bị xóa
-                          </i>
-                        ) : (
-                          msg.message
-                        )}
-                      </p>
-                    </div>
-
-                    {msg.user1Id === user1Id && !msg.isDeleted && (
-                      <div className="absolute top-10 -left-10 -translate-y-full">
-                        <div className="relative">
-                          <button className="text-wcolor text-sm bg-gray-500 rounded-full w-6 h-6 flex items-center justify-center">
-                            ⋯
-                          </button>
-                          <div className="hidden group group-hover:block absolute right-0 mt-1 w-20 bg-wcolor border-2 dark:border-darkBorder rounded shadow-md z-10">
-                            <button
-                              onClick={() => deleteChat(parseInt(msg.id))}
-                              className="block w-full text-left px-3 py-2 dark:bg-darkBackground text-sm text-red-600 hover:bg-gray-100"
-                            >
-                              {t("delete")}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div
-                      className={`text-xs text-gray-500 mt-1 ${
-                        msg.user1Id === user1Id ? "text-right" : "text-left"
-                      }`}
-                    >
-                      {msg.timeStamp
-                        ? new Date(
-                            msg.timeStamp[0],
-                            msg.timeStamp[1] - 1,
-                            msg.timeStamp[2],
-                            msg.timeStamp[3],
-                            msg.timeStamp[4],
-                            msg.timeStamp[5]
-                          ).toLocaleString("vi-VN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : "N/A"}
-                    </div>
+          <div className="flex flex-col space-y-4 overflow-y-auto max-h-[500px]">
+            {filteredTeachers.map((teacher) => (
+              <div
+                key={teacher.id}
+                className={`cursor-pointer p-2 rounded-lg flex items-center gap-3 ${
+                  currentTeacher === teacher.id
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-focolor dark:hover:bg-darkBorder dark:text-darkText"
+                }`}
+                onClick={() => setCurrentTeacher(teacher.id)}
+              >
+                <img
+                  src={teacher.img || "/user.png"}
+                  alt={teacher.username}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div className="flex flex-col overflow-hidden">
+                  <div className="font-semibold truncate">
+                    {teacher.username}
+                  </div>
+                  <div className="text-sm text-black-600 dark:text-white-300 truncate">
+                    {teacher.lastMessage?.sender === "teacher"
+                      ? teacher.lastMessage?.content
+                      : `${t("you")}: ${teacher.lastMessage?.content}`}
                   </div>
                 </div>
-              ))}
-              <div ref={messagesEndRef}></div>
-            </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-            {/* Nhập tin nhắn */}
-            <div className="flex mt-4 space-x-2">
-              <img
-                src={
-                  localStorage.getItem("img") !== "null"
-                    ? localStorage.getItem("img")
-                    : "/user.png"
-                }
-                alt="avatar"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <input
-                type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="flex-1 px-4 py-2 rounded-lg border-2 dark:border-darkBorder dark:bg-darkBackground border-gray-300 focus:outline-none"
-                placeholder={t("inputPlaceholder")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addChat();
-                  }
-                }}
-              />
-              <button
-                onClick={addChat}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
-                {t("send")}
-              </button>
+        {/* Khung chat */}
+        <div className="flex-1 overflow-y-auto border-2 dark:text-darkText dark:bg-darkSubbackground dark:border-darkBorder rounded-lg p-4 bg-gray-50 flex flex-col space-y-3 relative">
+          {loadingChatRoom ? (
+            <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground absolute inset-0 z-10">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold dark:text-darkText text-gray-700">
+                  💬 Chat với{" "}
+                  {teachers.find((t) => t.id === currentTeacher)?.username ||
+                    "Đang tải..."}
+                </h2>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-4 px-2">
+                {messages.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex items-center gap-2 ${
+                      msg.user1Id === user1Id ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {msg.user1Id !== user1Id && (
+                      <img
+                        src={
+                          msg.user1Img && msg.user1Img !== "null"
+                            ? msg.user1Img
+                            : "/user.png"
+                        }
+                        alt="avatar"
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    )}
+
+                    <div className="max-w-xs relative group">
+                      <div
+                        className={`relative p-3 rounded-2xl shadow-md ${
+                          msg.user1Id === user1Id
+                            ? "bg-blue-500 text-white"
+                            : "bg-white border text-black"
+                        }`}
+                      >
+                        <p className="break-words">
+                          {msg.isDeleted ? (
+                            <i className="text-sm text-gray-400">
+                              Tin nhắn đã bị xóa
+                            </i>
+                          ) : (
+                            msg.message
+                          )}
+                        </p>
+                      </div>
+
+                      {msg.user1Id === user1Id && !msg.isDeleted && (
+                        <div className="absolute top-10 -left-10 -translate-y-full">
+                          <div className="relative">
+                            <button className="text-wcolor text-sm bg-gray-500 rounded-full w-6 h-6 flex items-center justify-center">
+                              ⋯
+                            </button>
+                            <div className="hidden group group-hover:block absolute right-0 mt-1 w-20 bg-wcolor border-2 dark:border-darkBorder rounded shadow-md z-10">
+                              <button
+                                onClick={() => deleteChat(parseInt(msg.id))}
+                                className="block w-full text-left px-3 py-2 dark:bg-darkBackground text-sm text-red-600 hover:bg-gray-100"
+                              >
+                                {t("delete")}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div
+                        className={`text-xs text-gray-500 mt-1 ${
+                          msg.user1Id === user1Id ? "text-right" : "text-left"
+                        }`}
+                      >
+                        {msg.timeStamp
+                          ? new Date(
+                              msg.timeStamp[0],
+                              msg.timeStamp[1] - 1,
+                              msg.timeStamp[2],
+                              msg.timeStamp[3],
+                              msg.timeStamp[4],
+                              msg.timeStamp[5]
+                            ).toLocaleString("vi-VN", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : "N/A"}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef}></div>
+              </div>
+
+              {/* Nhập tin nhắn */}
+              <div className="flex mt-4 space-x-2">
+                <img
+                  src={
+                    localStorage.getItem("img") !== "null"
+                      ? localStorage.getItem("img")
+                      : "/user.png"
+                  }
+                  alt="avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                <input
+                  type="text"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="flex-1 px-4 py-2 rounded-lg border-2 dark:border-darkBorder dark:bg-darkBackground border-gray-300 focus:outline-none"
+                  placeholder={t("inputPlaceholder")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addChat();
+                    }
+                  }}
+                />
+                <button
+                  onClick={addChat}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  {t("send")}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

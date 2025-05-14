@@ -84,7 +84,7 @@ export default function UserRanking() {
   const currentUser = listUser.find(
     (user) => user.user.id === parseInt(localStorage.getItem("id"))
   ) || {
-    rankEnum: "-",
+    rankEnum: "",
     user: { username: `Bạn không ở trong Top` },
     point: "0",
   };
@@ -146,11 +146,13 @@ export default function UserRanking() {
               <div className="flex flex-col items-center">
                 <div className="translate-x-1 lg:text-lg text-2xl flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src={paddedListUser[1].user.avatar || "/user.png"}
+                    src={paddedListUser[1].user.img || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold whitespace-nowrap">{paddedListUser[1].user.username}</p>
+                  <p className="font-bold whitespace-nowrap">
+                    {paddedListUser[1].user.username}
+                  </p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -170,11 +172,11 @@ export default function UserRanking() {
               <div className="flex w-fit flex-col items-center">
                 <div className="translate-x-1 lg:text-lg text-2xl drop-shadow-xl mb-2 flex flex-col justify-center items-center w-full skew-x-[3deg]">
                   <img
-                    src={paddedListUser[0].user.avatar || "/user.png"}
+                    src={paddedListUser[0].user.img || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold whitespace-nowrap">{paddedListUser[0].user.username }</p>
+                  <p className="font-bold">{paddedListUser[0].user.username}</p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -194,11 +196,13 @@ export default function UserRanking() {
               <div className="flex w-fit flex-col items-center">
                 <div className="translate-x-1 lg:text-lg text-2xl flex flex-col justify-center items-center w-full drop-shadow-xl mb-2 skew-x-[3deg]">
                   <img
-                    src={paddedListUser[2].user.avatar || "/user.png"}
+                    src={paddedListUser[2].user.img || "/user.png"}
                     alt=""
                     className="w-20 h-20 rounded-full"
                   />
-                  <p className="font-bold whitespace-nowrap">{paddedListUser[2].user.username}</p>
+                  <p className="font-bold whitespace-nowrap">
+                    {paddedListUser[2].user.username}
+                  </p>
                 </div>
                 <div className="relative w-24 group hover:border-cyan-300">
                   {/* Mặt trên */}
@@ -243,12 +247,10 @@ export default function UserRanking() {
                           : "bg-gray-50 dark:bg-darkBackground dark:hover:bg-sicolor dark:hover:text-darkBackground"
                       } border-b lg:text-lg text-2xl dark:border-darkBorder hover:bg-sicolor`}
                     >
-                      <td className="p-2 px-4 font-medium">
-                        {index + 1}
-                      </td>
+                      <td className="p-2 px-4 font-medium">{index + 1}</td>
                       <td className="p-2">
                         <img
-                          src="/user.png"
+                          src={item.user.img || "/user.png"}
                           alt=""
                           className="w-8 rounded-2xl h-8"
                         />
@@ -265,8 +267,13 @@ export default function UserRanking() {
           <div className="absolute bottom-0 h-10 left-0 right-0 dark:text-darkBackground bg-green-100 border-t border-green-300 shadow-inner">
             <div className="relative flex lg:text-lg text-2xl justify-around items-center">
               <span className="font-semibold">{currentUser.rankEnum}</span>
+
               <div className="flex items-center space-x-24 w-full">
-                <img src="/user.png" alt="" className="w-8 rounded-xl h-8" />
+                <img
+                  src={currentUser.user.img || "/user.png"}
+                  alt=""
+                  className="w-8 rounded-xl h-8"
+                />
                 <span className="whitespace-nowrap">
                   {currentUser?.user.username}
                 </span>
@@ -274,7 +281,7 @@ export default function UserRanking() {
               <span className="font-semibold mr-4">{currentUser.point}</span>
 
               {/* Gắn chữ “Bản thân” nổi lên */}
-              <span className="absolute -top-2 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
+              <span className="absolute -top-6 left-0 text-xs bg-green-500 text-white px-2 py-0.5 rounded-full shadow">
                 {t("you")}
               </span>
             </div>

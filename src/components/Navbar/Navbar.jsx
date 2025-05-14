@@ -378,6 +378,7 @@ export default function Navbar() {
 
         <div ref={dropdownRef} className="relative lg:w-[60%] flex justify-end items-center">
           {localStorage.getItem("username") ? (
+<<<<<<< HEAD
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
                 <div className="flex items-center justify-end gap-2">
@@ -406,6 +407,24 @@ export default function Navbar() {
                     )}
                   </div>
                 </div>
+=======
+            <div className="flex items-center ml-2 space-x-3">
+              <div className="flex items-center gap-2">
+                <span className="lg:text-md text-2xl">{point}</span>
+                <FaStar
+                  style={{ color: "gold" }}
+                  size={isLargeScreen ? 30 : 30}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="lg:text-md text-2xl">{coin}</span>
+                <FaCoins
+                  style={{ color: "gold" }}
+                  size={isLargeScreen ? 30 : 30}
+                />
+              </div>
+              <div ref={notificationRef} className="relative">
+>>>>>>> 9e18d05da0d774af045dd27e6df08f74bef6b4e3
                 <div
                   className="flex relative items-center space-x-2 cursor-pointer"
                   onClick={toggleDropdown}
@@ -501,12 +520,13 @@ export default function Navbar() {
                       <li
                         className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 cursor-pointer break-words ${
                           !notification.read
-                            ? "font-bold text-gray-600 dark:text-darkText"
+                            ? "font-bold text-black dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"
                         }`}
                       >
                         {notification.message}
                       </li>
+
                       <button
                         onClick={() =>
                           readNotifications(parseInt(notification.id))

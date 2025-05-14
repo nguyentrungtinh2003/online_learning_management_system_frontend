@@ -65,7 +65,6 @@ export default function AuthForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
       })
       .then((response) => {
         setLoginLoading(false);
