@@ -4,7 +4,6 @@ import { FaLock,FaPlus, FaLockOpen } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 import { MdNavigateNext, MdNavigateBefore, MdPayment } from "react-icons/md";
-import { ToastContainer } from "react-toastify";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -16,6 +15,14 @@ export default function TransactionAdmin() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [keyword, setKeyword] = useState("");
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
@@ -107,33 +114,32 @@ export default function TransactionAdmin() {
   };
 
   return (
-    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
-      <ToastContainer />
-      <div className="flex-1 flex flex-col h-full">
+    <div className="h-full flex-1 bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+      <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
-        <div className="flex mx-2 gap-2 dark:text-darkText">
-          <MdPayment fontSize={30}/>
-          <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">{t("payment.title")}</h2>
-        </div>
-        <Link to="/admin/transactions/add">
-          <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-            <FaPlus size={30} />
-          </button>
-        </Link>
+          <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+            <MdPayment size={isMobile ? 60 : 30}/>
+            <MdNavigateNext size={isMobile ? 60 : 30} />
+            <h2 className="text-5xl lg:text-lg font-bold">{t("payment.title")}</h2>
+          </div>
+          <Link className="hover:text-ficolor" to="/admin/transactions/add">
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
+              <FaPlus size={isMobile ? 50 : 30} />
+            </button>
+          </Link>
       </div>
       <div className="flex gap-2 mb-2">
         <input
           type="text"
           placeholder={t("searchPlaceholder")}
-          className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
+          className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
         <select
           // value={statusFilter}
           // onChange={(e) => setStatusFilter(e.target.value)}
-          className="border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText px-3 py-2 rounded"
+          className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
         >
           <option value="All">{t("all")}</option>
           <option value="Deleted">{t("deleted")}</option>
@@ -141,14 +147,14 @@ export default function TransactionAdmin() {
         </select>
       </div>
 
-      <div className="flex-1 py-2">
-        <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+      <div className="flex-1 w-full overflow-auto overflow-x">
+        <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
         {transactions?.length === 0 ? (
           <p className="text-center">{t("payment.noTransaction")}</p>
         ) : (
-          <table className="w-full">
+          <table className="lg:w-full w-[200%] h-fit">
             <thead>
-              <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
+              <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
                 <th className="p-2">{t("stt")}</th>
                 <th className="p-2">{t("user.username")}</th>
                 <th className="p-2">{t("payment.amount")} (VNĐ)</th>
@@ -164,9 +170,9 @@ export default function TransactionAdmin() {
               transactions.map((t, index) => (
                 <tr
                   key={t.id}
-                  className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText"
+                  className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
                 >
-                  <td className="p-2">{index + 1}</td>
+                  <td className="p-2 lg:h-[8vh] h-[11vh]">{index + 1}</td>
                   <td className="p-2">{t.user?.username || "Unknown"}</td>
                   <td className="p-2">{t.amount.toLocaleString()}₫</td>
                   <td className="p-2">{t.coinAmount}</td>
@@ -181,7 +187,7 @@ export default function TransactionAdmin() {
                       <span className="text-green-600 font-semibold">No</span>
                     )}
                   </td>
-                  <td className="flex justify-center p-1 gap-1">
+                  <td className="px-2 h-full items-center flex flex-1 justify-center">
                     <Link
                       to={`/admin/transactions/edit/${t.id}`}
                       className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
@@ -214,9 +220,9 @@ export default function TransactionAdmin() {
         )}
       </div>
       </div>
-      <div className="flex dark:text-darkText items-center justify-between">
-              <p className="mx-2">
-            {loading
+      <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
+        <p className="mx-2">
+        {loading
               ? t("Loading") // Hiển thị "Loading..." nếu đang tải
               : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
             {/* Nếu không phải loading, hiển thị thông tin page */}
@@ -227,17 +233,17 @@ export default function TransactionAdmin() {
                   onClick={handlePrePage}
                   disabled={currentPage === 0}
                 >
-                  <MdNavigateBefore size={30} />
+                  <MdNavigateBefore size={isMobile ? 55 : 30}  />
                 </button>
                 <button
                   className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages - 1}
                 >
-                  <MdNavigateNext size={30} />
+                  <MdNavigateNext size={isMobile ? 55 : 30}  />
                 </button>
               </div>
-      </div>
+        </div>
       </div>
     </div>
   );

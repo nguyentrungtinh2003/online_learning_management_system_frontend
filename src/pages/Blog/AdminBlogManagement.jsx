@@ -29,6 +29,15 @@ export default function AdminBlogManagement() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const blogsPerPage = 6;
 
   useEffect(() => {
@@ -162,20 +171,21 @@ export default function AdminBlogManagement() {
   };
 
   return (
-    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
-      <ToastContainer />
-      <div className="flex-1 flex flex-col h-full">
+    <div className="h-full flex-1 bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+      <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
-          <div className="flex mx-2 gap-2 dark:text-darkText">
-            <MdForum size={30} />
-            <MdNavigateNext size={30} />
-            <h2 className="text-xl font-bold">{t("blog.title")}</h2>
+          <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+            <MdForum size={isMobile ? 60 : 30} />
+            <MdNavigateNext size={isMobile ? 60 : 30} />
+            <h2 className="text-5xl lg:text-lg font-bold">{t("blog.title")}</h2>
           </div>
           <Link
             to="/admin/blog/add-blog"
-            className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
+            className="hover:text-ficolor"
           >
-            <FaPlus size={30} />
+            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
+               <FaPlus size={isMobile ? 50 : 30} />
+            </button>
           </Link>
         </div>
 
@@ -189,7 +199,7 @@ export default function AdminBlogManagement() {
           <input
             type="text"
             placeholder={t("searchPlaceholder")}
-            className="p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded w-full focus:outline-none"
+            className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -202,7 +212,7 @@ export default function AdminBlogManagement() {
               setStatusFilter(e.target.value);
               setCurrentPage(0); // Reset page when status filter changes
             }}
-            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">{t("all")}</option>
             <option value="Deleted">{t("deleted")}</option>
@@ -210,111 +220,111 @@ export default function AdminBlogManagement() {
           </select>
           <button
             type="submit"
-            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor lg:text-base text-3xl hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
-        <div className="flex-1 py-2">
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-          <table className="w-full">
-            <thead className="dark:text-darkText">
-              <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
-                <th className="p-2">{t("stt")}</th>
-                <th className="p-2">{t("blog.blogTitle")}</th>
-                <th className="p-2">{t("description")}</th>
-                <th className="p-2">{t("image")}</th>
-                <th className="p-2">{t("video")}</th>
-                <th className="p-2 whitespace-nowrap">{t("createdDate")}</th>
-                <th className="p-2">{t("blog.like")}</th>
-                <th className="p-2">{t("blog.author")}</th>
-                <th className="p-2">{t("status")}</th>
-                <th className="p-2">{t("action")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="10" className="text-center py-4">
-                    Đang tải...
-                  </td>
+        <div className="flex-1 w-full overflow-auto overflow-x">
+          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+            <table className="lg:w-full w-[200%] h-fit">
+              <thead className="dark:text-darkText">
+                <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("blog.blogTitle")}</th>
+                  <th className="p-2">{t("description")}</th>
+                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("video")}</th>
+                  <th className="p-2 whitespace-nowrap">{t("createdDate")}</th>
+                  <th className="p-2">{t("blog.like")}</th>
+                  <th className="p-2">{t("blog.author")}</th>
+                  <th className="p-2">{t("status")}</th>
+                  <th className="p-2">{t("action")}</th>
                 </tr>
-              ) : blogs.length === 0 ? (
-                <tr>
-                  <td colSpan="10" className="text-center py-4">
-                    {t("blog.noBlog")}
-                  </td>
-                </tr>
-              ) : (
-                blogs.map((blog, index) => (
-                  <tr
-                    key={blog.id}
-                    className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText"
-                  >
-                    <td className="p-2">
-                      {index + 1 + currentPage * blogsPerPage}
-                    </td>
-                    <td className="p-2">{blog.blogName}</td>
-                    <td className="p-2 truncate max-w-xs">{blog.description}</td>
-                    <td className="p-2">
-                      <img
-                        src={blog.img}
-                        alt="blog"
-                        className="w-8 h-8 rounded mx-auto"
-                      />
-                    </td>
-                    <td className="p-2">{blog.video}</td>
-                    <td className="p-2">
-                      {blog.date
-                        ? new Date(
-                            blog.date[0],
-                            blog.date[1] - 1,
-                            blog.date[2],
-                            blog.date[3],
-                            blog.date[4],
-                            blog.date[5]
-                          ).toLocaleDateString("vi-VN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })
-                        : "N/A"}
-                    </td>
-                    <td className="p-2">{blog.likedUsers?.length || 0}</td>
-                    <td className="p-2">{blog.user.username}</td>
-                    <td className="p-2">
-                      {blog.deleted ? (
-                        <span className="text-red-600 font-semibold">Deleted</span>
-                      ) : (
-                        <span className="text-green-600 font-semibold">Active</span>
-                      )}
-                    </td>
-                    <td className="p-2 flex justify-center gap-1">
-                      <Link
-                        to={`/admin/blog/edit-blog/${blog.id}`}
-                        className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
-                        title="Chỉnh sửa blog"
-                      >
-                        <FaEdit />
-                      </Link>
-                      <button
-                        className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
-                        onClick={() => handleDelete(blog.id, blog.blogName)}
-                        title="Xóa blog"
-                      >
-                        <MdDeleteForever />
-                      </button>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="10" className="text-center py-4">
+                      Đang tải...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
+                ) : blogs.length === 0 ? (
+                  <tr>
+                    <td colSpan="10" className="text-center py-4">
+                      {t("blog.noBlog")}
+                    </td>
+                  </tr>
+                ) : (
+                  blogs.map((blog, index) => (
+                    <tr
+                      key={blog.id}
+                      className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    >
+                      <td className="p-2 lg:h-[8vh] h-[11vh]">
+                        {index + 1 + currentPage * blogsPerPage}
+                      </td>
+                      <td className="p-2">{blog.blogName}</td>
+                      <td className="p-2 truncate max-w-xs">{blog.description}</td>
+                      <td className="p-2">
+                        <img
+                          src={blog.img}
+                          alt="blog"
+                          className="w-8 h-8 rounded mx-auto"
+                        />
+                      </td>
+                      <td className="p-2">{blog.video}</td>
+                      <td className="p-2">
+                        {blog.date
+                          ? new Date(
+                              blog.date[0],
+                              blog.date[1] - 1,
+                              blog.date[2],
+                              blog.date[3],
+                              blog.date[4],
+                              blog.date[5]
+                            ).toLocaleDateString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                          : "N/A"}
+                      </td>
+                      <td className="p-2">{blog.likedUsers?.length || 0}</td>
+                      <td className="p-2">{blog.user.username}</td>
+                      <td className="p-2">
+                        {blog.deleted ? (
+                          <span className="text-red-600 font-semibold">Deleted</span>
+                        ) : (
+                          <span className="text-green-600 font-semibold">Active</span>
+                        )}
+                      </td>
+                      <td className="px-2 h-full items-center flex flex-1 justify-center">
+                        <Link
+                          to={`/admin/blog/edit-blog/${blog.id}`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          title="Chỉnh sửa blog"
+                        >
+                          <FaEdit />
+                        </Link>
+                        <button
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                          onClick={() => handleDelete(blog.id, blog.blogName)}
+                          title="Xóa blog"
+                        >
+                          <MdDeleteForever />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
 
-          </table>
+            </table>
         </div>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
         <p className="mx-2">
             {loading
               ? t("Loading") // Hiển thị "Loading..." nếu đang tải
@@ -327,14 +337,14 @@ export default function AdminBlogManagement() {
             disabled={currentPage === 0}
             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
           >
-            <MdNavigateBefore size={30} />
+            <MdNavigateBefore size={isMobile ? 55 : 30} />
           </button>
           <button
             onClick={handleNextPage}
             disabled={currentPage >= totalPages - 1}
             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
           >
-            <MdNavigateNext size={30} />
+            <MdNavigateNext size={isMobile ? 55 : 30} />
           </button>
         </div>
       </div>
