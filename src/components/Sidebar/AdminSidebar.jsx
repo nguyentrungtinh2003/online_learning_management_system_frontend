@@ -19,6 +19,8 @@ import {
 } from "react-icons/fa";
 import { MdOutlineKeyboardDoubleArrowLeft, MdMenu } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
@@ -29,6 +31,21 @@ export default function Sidebar() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  const protectedRoutes = {
+    "/user-course": ["STUDENT", "ADMIN", "TEACHER"],
+    "/user/payment": ["STUDENT", "ADMIN", "TEACHER"],
+    "/chat": ["STUDENT", "ADMIN", "TEACHER"],
+    "/profile": ["STUDENT", "ADMIN", "TEACHER"],
+  };
+
+  const hasPermission = (path) => {
+    const userRoles = localStorage.getItem("role");
+    const requiredRoles = protectedRoutes[path];
+    if (!requiredRoles) return true;
+    if (!userRoles) return false; // Không có role -> chưa đăng nhập => không cho truy cập
+    return requiredRoles.some((role) => userRoles.includes(role));
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -61,23 +78,45 @@ export default function Sidebar() {
   const menuItems = isAdmin ? adminItems : userItems;
 
   useEffect(() => {
+    const currentPath = location.pathname;
     const matchedItem = menuItems
-      .filter((item) => location.pathname.startsWith(item.path))
+      .filter((item) => currentPath.startsWith(item.path))
       .sort((a, b) => b.path.length - a.path.length)[0];
     setActiveItem(matchedItem ? matchedItem.id : "");
-  }, [location.pathname, isAdmin]);
+
+    // Kiểm tra quyền truy cập sau mỗi lần chuyển trang
+    if (!hasPermission(currentPath)) {
+      toast.warning("Bạn không có quyền truy cập vào trang này");
+    }
+  }, [location.pathname, menuItems]);  // Lắng nghe sự thay đổi của location
+
+
+  const [lastClickTime, setLastClickTime] = useState(0);
 
   const handleNavigate = (id, path) => {
+    const now = Date.now();
+    if (now - lastClickTime < 300) return; // Tránh spam click
+
+    setLastClickTime(now);
+
+    if (isAnimating) return;
+    if (!hasPermission(path)) {
+      toast.warning("Bạn không có quyền truy cập vào trang này");
+      return;
+    }
+
     setActiveItem(id);
     navigate(path);
   };
 
+
   const handleCollapseToggle = () => {
+    if (isAnimating) return;
     setIsAnimating(true);
     setIsCollapsed(!isCollapsed);
     setTimeout(() => {
       setIsAnimating(false);
-    }, 100);
+    }, 100); // nên khớp với thời gian animation thực tế
   };
 
   // Sidebar dạng NẰM NGANG ở mobile

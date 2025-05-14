@@ -160,35 +160,56 @@ export default function TransactionAdmin() {
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(transactions) &&
-                transactions.map((t) => (
-                  <tr key={t.id} className="text-center dark:text-darkSubtext">
-                    <td className="p-2">{t.id}</td>
-                    <td className="p-2">{t.user?.username || "Unknown"}</td>
-                    <td className="p-2">{t.amount.toLocaleString()}₫</td>
-                    <td className="p-2">{t.coinAmount}</td>
-                    <td className="p-2">{t.status}</td>
-                    <td className="p-2">
-                      {new Date(t.date).toLocaleString("vi-VN")}
-                    </td>
-                    <td className="p-2">{t.deleted === true ? "Yes" : "No"}</td>
-                    <td className="p-2 flex justify-center gap-2">
-                      <Link to={`/admin/transactions/edit/${t.id}`}>
-                        <Edit className="text-blue-600 cursor-pointer" />
-                      </Link>
-                      {t.deleted === true ? (
-                        <button onClick={() => handleRestore(t.id)}>
-                          <FaLock className="text-red-600" />
-                        </button>
-                      ) : (
-                        <button onClick={() => handleDelete(t.id)}>
-                          <FaLockOpen className="text-blue-600" />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
+            {Array.isArray(transactions) &&
+              transactions.map((t, index) => (
+                <tr
+                  key={t.id}
+                  className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText"
+                >
+                  <td className="p-2">{index + 1}</td>
+                  <td className="p-2">{t.user?.username || "Unknown"}</td>
+                  <td className="p-2">{t.amount.toLocaleString()}₫</td>
+                  <td className="p-2">{t.coinAmount}</td>
+                  <td className="p-2">{t.status}</td>
+                  <td className="p-2">
+                    {new Date(t.date).toLocaleString("vi-VN")}
+                  </td>
+                  <td className="p-2">
+                    {t.deleted === true ? (
+                      <span className="text-red-600 font-semibold">Yes</span>
+                    ) : (
+                      <span className="text-green-600 font-semibold">No</span>
+                    )}
+                  </td>
+                  <td className="flex justify-center p-1 gap-1">
+                    <Link
+                      to={`/admin/transactions/edit/${t.id}`}
+                      className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                    >
+                      <Edit />
+                    </Link>
+                    {t.deleted === true ? (
+                      <button
+                        onClick={() => handleRestore(t.id)}
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-green-500 text-white"
+                        title="Khôi phục giao dịch"
+                      >
+                        <FaLock />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleDelete(t.id)}
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                        title="Khoá giao dịch"
+                      >
+                        <FaLockOpen />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+
           </table>
         )}
       </div>

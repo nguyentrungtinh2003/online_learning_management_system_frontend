@@ -473,16 +473,16 @@ export default function CourseManagement() {
                           : course.courseName || "N/A"}
                       </td>
 
-                      <td className="p-2 w-48 whitespace-nowrap">
+                      <td className="py-2 w-56 whitespace-nowrap">
                         {course.description
-                          ? stripHtml(course.description).slice(0, 20) +
+                          ? stripHtml(course.description).slice(0, 25) +
                             (stripHtml(course.description).length > 20
                               ? "..."
                               : "")
                           : "No description"}
                       </td>
 
-                      <td className="p-2 text-center w-48">
+                      <td className="p-2 text-center w-40">
                         {course.user?.username || "No username"}
                       </td>
                       <td className="p-2 w-32">

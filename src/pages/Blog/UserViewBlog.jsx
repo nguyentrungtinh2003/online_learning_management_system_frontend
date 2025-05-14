@@ -13,7 +13,7 @@ import {
 } from "react-icons/pi";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import { Link, useSearchParams } from "react-router-dom";
 import URLSocket from "../../config/URLsocket";
@@ -385,7 +385,6 @@ export default function Blog() {
 
   return (
     <div className="h-full dark:text-darkSubtext overflow-y-auto flex-1 flex flex-col">
-      <ToastContainer />
       {/* Form tạo bài viết */}
       {isCreatingPost && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

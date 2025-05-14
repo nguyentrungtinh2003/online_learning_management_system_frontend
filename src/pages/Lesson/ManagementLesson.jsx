@@ -459,15 +459,26 @@ export default function ManagementLesson() {
                       <td className="p-2">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
-                      <td className="p-2">{lesson.lessonName || "N/A"}</td>
-                      <td className="p-2">
-                        {lesson.description || "No description"}
-                      </td>
-                      <td className="p-2 text-center">
-                        {lesson.courseName || "No course"}
+
+                      <td className="p-2 w-48 whitespace-nowrap">
+                        {lesson.lessonName?.length > 20
+                          ? lesson.lessonName.slice(0, 20) + "..."
+                          : lesson.lessonName || "N/A"}
                       </td>
 
-                      <td className="p-2">
+                      <td className="p-2 w-72 whitespace-nowrap">
+                        {lesson.description
+                          ? lesson.description.slice(0, 25) + (lesson.description.length > 25 ? "..." : "")
+                          : "No description"}
+                      </td>
+
+                      <td className="p-2 text-center w-48 whitespace-nowrap">
+                        {lesson.courseName?.length > 20
+                          ? lesson.courseName.slice(0, 20) + "..."
+                          : lesson.courseName || "N/A"}
+                      </td>
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {lesson.date
                           ? new Date(
                               lesson.date[0],
@@ -483,53 +494,48 @@ export default function ManagementLesson() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">
+
+                      <td className="p-2 w-32 whitespace-nowrap">
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
-                      <td className="p-2 flex justify-center gap-1">
-                        {/* Điều hướng đến danh sách phụ */}
+
+                      <td className="p-2 flex flex-1 justify-center gap-1">
                         <Link
                           to={`/admin/lessons/${lesson.id}/quizzes`}
-                          className="p-2 border rounded bg-indigo-500 hover:bg-indigo-400 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
                           title="Xem danh sách liên quan"
                         >
                           <FaArrowRight />
                         </Link>
-                        {/* Xem chi tiết */}
+
                         <Link
                           to={`/view-lesson-detail/${lesson.id}`}
-                          className="p-2 border rounded bg-green-500 hover:bg-green-400 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
                           title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
 
-                        {/* Chỉnh sửa */}
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
-                          className="p-2 border rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
 
-                        {/* Khóa hoặc Khôi phục */}
                         {lesson.deleted ? (
                           <button
-                            className="p-2 border rounded bg-blue-600 hover:bg-blue-500 text-white"
-                            onClick={() =>
-                              handleRestore(lesson.id, lesson.lessonName)
-                            }
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
+                            onClick={() => handleRestore(lesson.id, lesson.lessonName)}
                             title="Khôi phục bài học"
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
-                            className="p-2 border rounded bg-red-600 hover:bg-red-500 text-white"
-                            onClick={() =>
-                              handleDelete(lesson.id, lesson.lessonName)
-                            }
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                            onClick={() => handleDelete(lesson.id, lesson.lessonName)}
                             title="Khóa bài học"
                           >
                             <FaLock />
@@ -537,6 +543,7 @@ export default function ManagementLesson() {
                         )}
                       </td>
                     </tr>
+
                   ))
                 )}
               </tbody>

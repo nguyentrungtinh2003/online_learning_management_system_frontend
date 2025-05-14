@@ -125,9 +125,7 @@ export default function UserManagement() {
             </thead>
             <tbody>
               {loading ? (
-                [...Array(1)].map((_, index) => (
-                  <DataTableSkeleton key={index} />
-                ))
+                [...Array(1)].map((_, index) => <DataTableSkeleton key={index} />)
               ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="text-center p-4">
@@ -135,12 +133,14 @@ export default function UserManagement() {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user, index) => (
                   <tr
                     key={user.id}
                     className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover"
                   >
-                    <td className="p-2">{user.id}</td>
+                    <td className="p-2">
+                      {index + 1 + currentPage * usersPerPage}
+                    </td>
                     <td className="p-2">{user.username}</td>
                     <td className="p-2">{user.email}</td>
                     <td className="p-2">{user.phoneNumber}</td>
@@ -150,27 +150,25 @@ export default function UserManagement() {
                       {!user.deleted ? (
                         <div className="flex justify-center items-center gap-1">
                           <FaCheckCircle className="text-green-500" />
-                          <p></p>
                         </div>
                       ) : (
                         <div className="flex justify-center items-center gap-1">
                           <FaTimesCircle className="text-red-500" />
-                          <p></p>
                         </div>
                       )}
                     </td>
                     <td className="p-2 flex justify-center gap-1">
-                      <button
-                        className="p-2 border rounded"
-                        onClick={() =>
-                          (window.location.href = `/admin/users/edit-user/${user.id}`)
-                        }
+                      <Link
+                        to={`/admin/users/edit-user/${user.id}`}
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                        title="Chỉnh sửa người dùng"
                       >
                         <FaEdit />
-                      </button>
+                      </Link>
                       <button
-                        className="p-2 border rounded text-red-600"
                         onClick={() => handleDeleteUser(user.id, user.username)}
+                        className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                        title="Xoá người dùng"
                       >
                         <MdDeleteForever />
                       </button>
@@ -179,6 +177,7 @@ export default function UserManagement() {
                 ))
               )}
             </tbody>
+
           </table>
         </div>
       </div>
