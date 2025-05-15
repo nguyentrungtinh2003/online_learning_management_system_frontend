@@ -194,12 +194,12 @@ export default function AdminBlogManagement() {
             e.preventDefault();
             fetchBlogs();
           }}
-          className="mb-2 flex gap-2"
+          className="mb-2 lg:h-12 h-24 flex gap-2"
         >
           <input
             type="text"
             placeholder={t("searchPlaceholder")}
-            className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+            className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -212,7 +212,7 @@ export default function AdminBlogManagement() {
               setStatusFilter(e.target.value);
               setCurrentPage(0); // Reset page when status filter changes
             }}
-            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
           >
             <option value="All">{t("all")}</option>
             <option value="Deleted">{t("deleted")}</option>

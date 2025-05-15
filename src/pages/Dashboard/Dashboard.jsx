@@ -17,6 +17,14 @@ const Dashboard = () => {
     fetchTotalAmount();
   }, []);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+    
+      useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
+
   const fetchTotalUser = () => {
     axios
       .get(`${URL}/user/count`)
@@ -54,22 +62,22 @@ const Dashboard = () => {
     {
       title: t("total_revenue"),
       value: amount,
-      icon: <FaDollarSign className="text-green-500" />,
+      icon: <FaDollarSign size={isMobile ? 150 : 60} className="text-green-500" />,
     },
     {
       title: t("total_users"),
       value: countUser,
-      icon: <FaUsers className="text-blue-500" />,
+      icon: <FaUsers size={isMobile ? 150 : 60} className="text-blue-500" />,
     },
     {
       title: t("total_courses"),
       value: countCourse,
-      icon: <FaBookOpen className="text-purple-500" />,
+      icon: <FaBookOpen size={isMobile ? 150 : 60} className="text-purple-500" />,
     },
     {
       title: t("new_access"),
       value: "120",
-      icon: <FaChartLine className="text-orange-500" />,
+      icon: <FaChartLine size={isMobile ? 150 : 60} className="text-orange-500" />,
     },
   ];
 
@@ -78,24 +86,24 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-2 mb-2">
           {stats.map((item, index) => (
             <div
               key={index}
-              className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText space-y-2 px-4 pt-4 pb-2 w-full rounded-xl shadow-md text-center"
+              className="bg-wcolor flex justify-between items-center px-16 lg:p-4 lg:h-fit h-[15vh] dark:bg-darkSubbackground dark:border dark:border-darkBorder dark:text-darkText space-y-2 w-full rounded-xl shadow-md"
             >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-lg sm:text-xl">{item.title}</p>
-                  <p className="text-left text-sm sm:text-xs">
+              <div className="flex flex-col items-left justify-between">
+                <div className="">
+                  <p className="font-bold text-7xl lg:text-xl">{item.title}</p>
+                  <p className="text-left text-4xl lg:text-xs">
                     {t("last_30_days")}
                   </p>
                 </div>
-                <div className="text-2xl sm:text-2xl">{item.icon}</div>
+                <h3 className="text-7xl lg:text-xl text-left text-fcolor font-bold">
+                  {item.value}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-xl text-left text-fcolor font-bold">
-                {item.value}
-              </h3>
+              <div className="h-full flex justify-between items-center">{item.icon}</div>
             </div>
           ))}
         </div>

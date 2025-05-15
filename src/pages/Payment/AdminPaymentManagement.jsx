@@ -128,18 +128,18 @@ export default function TransactionAdmin() {
             </button>
           </Link>
       </div>
-      <div className="flex gap-2 mb-2">
+      <div className="flex lg:h-12 h-24 gap-2 mb-2">
         <input
           type="text"
           placeholder={t("searchPlaceholder")}
-          className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+          className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
         />
         <select
           // value={statusFilter}
           // onChange={(e) => setStatusFilter(e.target.value)}
-          className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+          className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
         >
           <option value="All">{t("all")}</option>
           <option value="Deleted">{t("deleted")}</option>

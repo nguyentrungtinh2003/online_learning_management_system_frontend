@@ -97,12 +97,6 @@ export default function Sidebar() {
       path: "/admin/blog",
     },
     {
-      id: "Ranking",
-      label: t("ranking"),
-      icon: <FaTrophy size={isMobile ? 35 : 25} />,
-      path: "/ranking",
-    },
-    {
       id: "Settings",
       label: t("settings"),
       icon: <MdSettingsSuggest size={isMobile ? 35 : 25} />,

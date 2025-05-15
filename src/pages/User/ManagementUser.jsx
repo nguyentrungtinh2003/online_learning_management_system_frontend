@@ -11,6 +11,7 @@ import {
   FaTimesCircle,
   FaEdit,
   FaUserPlus,
+  FaTimes,
 } from "react-icons/fa";
 import {
   MdNavigateNext,
@@ -24,6 +25,7 @@ export default function UserManagement() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [roleFilter, setRoleFilter] = useState("All");
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   
@@ -114,9 +116,43 @@ export default function UserManagement() {
           <FaUserPlus size={isMobile ? 50 : 30} />
         </Link>
         </div>
+        <div className="flex flex-col lg:flex-row gap-2 mb-2">
+          {/* Ô tìm kiếm */}
+          <div className="relative flex gap-2 h-24 lg:h-12 w-full">
+            <input
+              type="text"
+              value={search}
+              placeholder={t("searchPlaceholder")}
+              className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                onClick={() => setSearch("")}
+              >
+                <FaTimes size={18} />
+              </button>
+            )}
+            {/* Select lọc theo vai trò */}
+            <select
+              value={roleFilter}
+              onChange={(e) => {
+                setCurrentPage(0);
+                setRoleFilter(e.target.value);
+              }}
+              className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
+            >
+              <option value="All">{t("all")}</option>
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+        </div>
         {/* User Table */}
         <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor lg:px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead>
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
