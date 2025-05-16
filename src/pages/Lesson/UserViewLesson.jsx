@@ -426,55 +426,57 @@ export default function UserViewLesson() {
             </div>
             <div>
               <ul className="flex flex-col gap-2">
-                {lessons.map((lesson, index) => (
-                  <li key={lesson.id}>
-                    <div
-                      onClick={() => setCurrentLessonIndex(index)}
-                      className={`cursor-pointer py-2 px-3 rounded-xl ${
-                        currentLessonIndex === index
-                          ? "bg-scolor text-white shadow-lg"
-                          : "hover:bg-gray-100 dark:hover:bg-darkBorder"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span>{lesson.lessonName}</span>
+                {[...lessons]
+                  .sort((a, b) => a.id - b.id)
+                  .map((lesson, index) => (
+                    <li key={lesson.id}>
+                      <div
+                        onClick={() => setCurrentLessonIndex(index)}
+                        className={`cursor-pointer py-2 px-3 rounded-xl ${
+                          currentLessonIndex === index
+                            ? "bg-scolor text-white shadow-lg"
+                            : "hover:bg-gray-100 dark:hover:bg-darkBorder"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{lesson.lessonName}</span>
 
-                        {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
-                        {currentLessonIndex === index && isCompleted && (
-                          <FaCheckCircle className="text-green-500 ml-2" />
-                        )}
+                          {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
+                          {currentLessonIndex === index && isCompleted && (
+                            <FaCheckCircle className="text-green-500 ml-2" />
+                          )}
 
-                        {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
-                        {lesson.quizzes && lesson.quizzes.length > 0 && (
-                          <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
-                            Quiz
-                          </span>
-                        )}
-                      </span>
-                    </div>
+                          {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
+                          {lesson.quizzes && lesson.quizzes.length > 0 && (
+                            <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                              Quiz
+                            </span>
+                          )}
+                        </span>
+                      </div>
 
-                    {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
-                    {currentLessonIndex === index &&
-                      lesson.quizzes &&
-                      lesson.quizzes.length > 0 && (
-                        <ul className="ml-6 mt-2 flex flex-col gap-1">
-                          {lesson.quizzes.map((quiz, qIndex) => (
-                            <Link
-                              to={`/view-quiz/${quiz.id}`}
-                              className="hover:text-blue-500"
-                            >
-                              <li
-                                key={quiz.id || qIndex}
-                                className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
+                      {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
+                      {currentLessonIndex === index &&
+                        lesson.quizzes &&
+                        lesson.quizzes.length > 0 && (
+                          <ul className="ml-6 mt-2 flex flex-col gap-1">
+                            {lesson.quizzes.map((quiz, qIndex) => (
+                              <Link
+                                to={`/view-quiz/${quiz.id}`}
+                                className="hover:text-blue-500"
                               >
-                                📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
-                              </li>
-                            </Link>
-                          ))}
-                        </ul>
-                      )}
-                  </li>
-                ))}
+                                <li
+                                  key={quiz.id || qIndex}
+                                  className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
+                                >
+                                  📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                </li>
+                              </Link>
+                            ))}
+                          </ul>
+                        )}
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>

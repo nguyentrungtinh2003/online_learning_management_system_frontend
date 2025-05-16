@@ -19,12 +19,12 @@ export default function UserViewCourse() {
   const [showAllLessons, setShowAllLessons] = useState(false);
 
   const role = localStorage.getItem("role");
-  
+
   const navigate = useNavigate();
 
-const requireLogin = () => {
-  const userId = localStorage.getItem("id");
-  const role = localStorage.getItem("role");
+  const requireLogin = () => {
+    const userId = localStorage.getItem("id");
+    const role = localStorage.getItem("role");
 
     if (!userId || !role) {
       toast.warn("Bạn cần đăng nhập để thực hiện chức năng này!", {
@@ -175,17 +175,16 @@ const requireLogin = () => {
             <div className="flex items-center gap-4">
               {/* Instructor Image */}
               <img
-                src="https://randomuser.me/api/portraits/men/44.jpg" // Replace with actual instructor image
+                src={course.user.img || "/user.png"} // Replace with actual instructor image
                 alt="Instructor"
                 className="w-16 h-16 rounded-full object-cover"
               />
               <div>
                 <p className="font-semibold dark:text-darkText">
-                  Nguyen Trung Tinh
+                  {course.user.username}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-darkSubtext">
-                  Experienced instructor with over 10 years of teaching in the
-                  field of web development and software engineering.
+                  Giảng viên có 2 năm kinh nghiệm trong lập trình FullStack
                 </p>
                 <p className="text-sm text-gray-500">Courses taught: 120+</p>
               </div>
@@ -195,7 +194,7 @@ const requireLogin = () => {
           {/* Course Content */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">
             <h2 className="text-2xl font-semibold dark:text-darkText text-gray-800">
-              Course Content
+              Nội dung khoá học
             </h2>
             {lessonsToDisplay.map((lesson, index) => (
               <li
@@ -242,17 +241,18 @@ const requireLogin = () => {
                 />
               </div>
               <h2 className="text-xl font-semibold text-gray-800">
-                Course Details
+                Thông tin khoá học
               </h2>
               <p>
-                <strong>Price:</strong>{" "}
-                {course.coin !== undefined ? `${course.coin} Coins` : "Free"}
+                <strong>Giá:</strong>{" "}
+                {course?.price > 0 ? `${course.price} coin` : "Miễn phí"}
               </p>
               <p>
-                <strong>Lessons:</strong> {lessons.length}
+                <strong>Số bài học:</strong> {lessons.length}
               </p>
               <p>
-                <strong>Instructor:</strong> Nguyen Trung Tinh
+                <strong>Người dạy:</strong>
+                {course.user.username}
               </p>
             </div>
 

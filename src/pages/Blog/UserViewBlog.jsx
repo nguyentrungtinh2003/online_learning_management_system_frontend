@@ -475,7 +475,7 @@ export default function Blog() {
         <div className="flex lg:h-12 h-16 items-center gap-2">
           <img
             src={
-              localStorage.getItem("img") === "null"
+              localStorage.getItem("img") !== "null"
                 ? localStorage.getItem("img")
                 : "/user.png"
             }
@@ -520,7 +520,7 @@ export default function Blog() {
                   <div className="flex justify-between dark:text-darkText">
                     <div className="flex items-center mb-2">
                       <img
-                        src={post?.user?.img ? post?.user?.img : "/user.png"}
+                        src={post.userImg ? post.userImg : "/user.png"}
                         alt="avatar"
                         className="w-10 h-10 rounded-full"
                       />
