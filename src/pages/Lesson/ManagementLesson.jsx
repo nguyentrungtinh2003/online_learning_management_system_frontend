@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
 import {
@@ -47,6 +47,14 @@ export default function ManagementLesson() {
   const selectedCourse = courseList.find(
     (c) => String(c.id) === String(courseIdFilter)
   );
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 1024);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
@@ -356,28 +364,26 @@ export default function ManagementLesson() {
 
   return (
     <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
-      <ToastContainer />
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
-            <FaVideo size={30} />
-            <MdNavigateNext size={30} />
-            <h2 className="text-lg font-bold">{t("addLesson.main")}</h2>
+          <Link className="flex items-center mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
+            <FaVideo size={isMobile ? 60 : 30} />
+            <MdNavigateNext size={isMobile ? 60 : 30} />
+            <h2 className="text-5xl lg:text-lg font-bold">{t("addLesson.main")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-              <FaPlus size={30} />
+              <FaPlus size={isMobile ? 50 : 30} />
             </button>
           </Link>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
-          <div className="relative w-full">
+          <div className="relative h-24 lg:h-12 w-full">
             <input
               type="text"
               placeholder={t("searchPlaceholder")}
-              className="py-2 px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
-              value={lessonSearch}
+              className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
               onChange={handleSearchInput}
             />
             {lessonSearch && (
@@ -399,9 +405,9 @@ export default function ManagementLesson() {
               setCurrentPage(0);
               setCourseIdFilter(e.target.value);
             }}
-            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-48"
           >
-            <option value="All">All Courses</option>
+            <option value="All">{t("all")}</option>
             {courseList.map((course) => (
               <option key={course.id} value={course.id}>
                 {course.courseName}
@@ -415,7 +421,7 @@ export default function ManagementLesson() {
               setStatusFilter(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
             <option value="All">{t("all")}</option>
             <option value="Deleted">{t("deleted")}</option>
@@ -423,18 +429,18 @@ export default function ManagementLesson() {
           </select>
           <button
             type="submit"
-            className="bg-wcolor hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
+            className="bg-wcolor lg:text-base text-3xl hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
           >
             {t("search")}
           </button>
         </form>
 
         {/* Danh sách bài học + Pagination dưới bảng */}
-        <div className="flex-1 py-2">
-          <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-            <table className="w-full">
+        <div className="flex-1 w-full overflow-auto overflow-x">
+          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+            <table className="lg:w-full w-[200%] h-fit">
               <thead>
-                <tr className="border-y text-center dark:text-darkText whitespace-nowrap font-bold">
+                <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
@@ -455,30 +461,30 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center border-b hover:bg-tcolor dark:hover:bg-darkHover">
-                      <td className="p-2">
+                    <tr key={lesson.id} className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                      <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
 
-                      <td className="p-2 w-48 whitespace-nowrap">
+                      <td className="p-2 lg:w-48 whitespace-nowrap">
                         {lesson.lessonName?.length > 20
                           ? lesson.lessonName.slice(0, 20) + "..."
                           : lesson.lessonName || "N/A"}
                       </td>
 
-                      <td className="p-2 w-72 whitespace-nowrap">
+                      <td className="p-2 lg:w-72 whitespace-nowrap">
                         {lesson.description
                           ? lesson.description.slice(0, 25) + (lesson.description.length > 25 ? "..." : "")
                           : "No description"}
                       </td>
 
-                      <td className="p-2 text-center w-48 whitespace-nowrap">
+                      <td className="p-2 text-center lg:w-48 whitespace-nowrap">
                         {lesson.courseName?.length > 20
                           ? lesson.courseName.slice(0, 20) + "..."
                           : lesson.courseName || "N/A"}
                       </td>
 
-                      <td className="p-2 w-32 whitespace-nowrap">
+                      <td className="p-2 lg:w-32 whitespace-nowrap">
                         {lesson.date
                           ? new Date(
                               lesson.date[0],
@@ -495,11 +501,11 @@ export default function ManagementLesson() {
                           : "N/A"}
                       </td>
 
-                      <td className="p-2 w-32 whitespace-nowrap">
+                      <td className="p-2 lg:w-32 whitespace-nowrap">
                         {lesson.deleted ? "Deleted" : "Active"}
                       </td>
 
-                      <td className="p-2 flex flex-1 justify-center gap-1">
+                      <td className="px-2 h-full items-center flex flex-1 justify-center gap-1">
                         <Link
                           to={`/admin/lessons/${lesson.id}/quizzes`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
@@ -551,7 +557,7 @@ export default function ManagementLesson() {
           </div>
         </div>
         {/* Pagination gắn liền bên dưới */}
-        <div className="flex dark:text-darkText mt-2 items-center justify-between">
+        <div className="flex dark:text-darkText lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
             {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
@@ -561,14 +567,14 @@ export default function ManagementLesson() {
               disabled={currentPage === 0}
              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
-              <MdNavigateBefore size={30} />
+              <MdNavigateBefore size={isMobile ? 55 : 30} />
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1}
              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
-              <MdNavigateNext size={30} />
+              <MdNavigateNext size={isMobile ? 55 : 30}/>
             </button>
           </div>
         </div>

@@ -379,7 +379,7 @@ export default function CourseManagement() {
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
             <FaBuffer size={isMobile ? 60 : 30} />
-            <MdNavigateNext size={isMobile ? 80 : 30} />
+            <MdNavigateNext size={isMobile ? 60 : 30} />
             <h2 className="text-5xl lg:text-lg font-bold">{t("courseManagement")}</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
@@ -445,12 +445,11 @@ export default function CourseManagement() {
           </button>
         </form>
 
-        <div className="flex-1 w-full overflow-auto py-2 overflow-x">
-          <div className="bg-wcolor justify-between flex flex-col lg:h-full h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-            <div className="h-full overflow-auto">
-              <table className="lg:w-full w-[200%] lg:h-fit h-full">
+        <div className="flex-1 w-full overflow-auto overflow-x">
+          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+            <table className="lg:w-full w-[200%] h-fit">
               <thead>
-                <tr className="border-y text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
+                <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("description")}</th>
@@ -472,8 +471,8 @@ export default function CourseManagement() {
                   </tr>
                 ) : (
                   courses.map((course, index) => (
-                    <tr key={course.id} className="text-center text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
-                      <td className="p-2">
+                    <tr key={course.id} className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                      <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
                       <td className="p-2 lg:w-48 whitespace-nowrap">
@@ -523,7 +522,7 @@ export default function CourseManagement() {
                       <td className="p-2 w-32">
                         {course.deleted ? "Deleted" : "Active"}
                       </td>
-                      <td className="px-2 h-full items-center flex flex-1 justify-center gap-1">
+                      <td className="px-2 h-full items-center flex flex-1 justify-center">
                         {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
@@ -579,8 +578,9 @@ export default function CourseManagement() {
                 )}
               </tbody>
             </table>
-            </div>
-            <div className="flex items-center justify-between">
+          </div>
+        </div>
+        <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
               <p className="mx-2">
                 {loading
                   ? t("Loading") // Hiển thị "Loading..." nếu đang tải
@@ -593,21 +593,18 @@ export default function CourseManagement() {
                   onClick={handlePrePage}
                   disabled={currentPage === 0 || loading}
                 >
-                  <MdNavigateBefore fontSize={30} />
+                  <MdNavigateBefore fontSize={isMobile ? 55 : 30} />
                 </button>
                 <button
                   className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
                   onClick={handleNextPage}
                   disabled={currentPage >= totalPages - 1 || loading}
                 >
-                  <MdNavigateNext fontSize={30} />
+                  <MdNavigateNext fontSize={isMobile ? 55 : 30} />
                 </button>
               </div>
             </div>
-          </div>
-        </div>
       </div>
-      <ToastContainer />
     </div>
   );
 }
