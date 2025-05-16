@@ -126,13 +126,12 @@ export default function Navbar() {
   }, [unreadCount]);
 
   const fetchUserData = async () => {
-    // Nếu không có cookie hoặc user ID → bỏ qua
-    if (!document.cookie) return;
-
     try {
+      // Gọi thử /user-info trước (JWT hoặc session)
       const response = await axios.get(`${URL}/user-info`, {
         withCredentials: true,
       });
+
       const { id, email, username, img, coin, roleEnum, point } =
         response.data.data;
       localStorage.setItem("id", id);
@@ -142,28 +141,38 @@ export default function Navbar() {
       localStorage.setItem("coin", coin);
       localStorage.setItem("role", roleEnum);
       localStorage.setItem("point", point);
+
       setCoin(coin);
       setPoint(point);
       setUsername(username);
       setImg(img);
-    } catch {
-      const response = await axios.get(`${URL}/user-google`);
-      const { email } = response.data.data;
+    } catch (error) {
+      // Nếu lỗi → thử gọi /user-google
+      try {
+        const response = await axios.get(`${URL}/user-google`, {
+          withCredentials: true,
+        });
+        const { email } = response.data.data;
 
-      const response2 = await axios.get(`${URL}/user/email/${email}`);
-      const { id, username, img, coin, roleEnum, point } = response2.data.data;
+        const response2 = await axios.get(`${URL}/user/email/${email}`);
+        const { id, username, img, coin, roleEnum, point } =
+          response2.data.data;
 
-      localStorage.setItem("id", id);
-      localStorage.setItem("email", email);
-      localStorage.setItem("username", username);
-      localStorage.setItem("img", img);
-      localStorage.setItem("coin", coin);
-      localStorage.setItem("role", roleEnum);
-      localStorage.setItem("point", point);
-      setCoin(coin);
-      setPoint(point);
-      setUsername(username);
-      setImg(img);
+        localStorage.setItem("id", id);
+        localStorage.setItem("email", email);
+        localStorage.setItem("username", username);
+        localStorage.setItem("img", img);
+        localStorage.setItem("coin", coin);
+        localStorage.setItem("role", roleEnum);
+        localStorage.setItem("point", point);
+
+        setCoin(coin);
+        setPoint(point);
+        setUsername(username);
+        setImg(img);
+      } catch (err) {
+        console.log("Không tìm thấy thông tin user Google.");
+      }
     }
   };
 
