@@ -16,6 +16,11 @@ import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
+  const [img, setImg] = useState(localStorage.getItem("img") || "");
+
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery({ minWidth: 1024 });
   const languageOptions = [
@@ -139,6 +144,8 @@ export default function Navbar() {
       localStorage.setItem("point", point);
       setCoin(coin);
       setPoint(point);
+      setUsername(username);
+      setImg(img);
     } catch {
       const response = await axios.get(`${URL}/user-google`);
       const { email } = response.data.data;
@@ -155,6 +162,8 @@ export default function Navbar() {
       localStorage.setItem("point", point);
       setCoin(coin);
       setPoint(point);
+      setUsername(username);
+      setImg(img);
     }
   };
 
@@ -434,16 +443,12 @@ export default function Navbar() {
                   onClick={toggleDropdown}
                 >
                   <img
-                    src={
-                      localStorage.getItem("img") !== "null"
-                        ? localStorage.getItem("img")
-                        : "/user.png"
-                    }
+                    src={img ? { img } : "/user.png"}
                     alt="User"
                     className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
                   />
                   <span className="lg:text-lg text-xl whitespace-nowrap w-[160px] overflow-hidden text-ellipsis">
-                    {localStorage.getItem("username")}
+                    {username}
                   </span>
                   {isDropdownOpen && (
                     <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
