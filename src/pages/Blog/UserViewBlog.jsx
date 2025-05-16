@@ -483,7 +483,7 @@ export default function Blog() {
             className="w-10 h-10 rounded-full"
           />
           <input
-            className="focus:outline-none h-10 dark:border dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
+            className="focus:outline-none h-10 border-2 dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
               username: localStorage.getItem("username") || "Hello ",
             })}
@@ -671,7 +671,7 @@ export default function Blog() {
                           </button>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-2 border-t pt-2">
+                      <div className="flex items-center dark:border-darkBorder gap-2 mt-2 border-t pt-2">
                         <img
                           src={localStorage.getItem("img") || "/user.png"}
                           alt="avatar"
@@ -685,13 +685,12 @@ export default function Blog() {
                           placeholder={t("writeComment")}
                           className="flex-1 px-3 py-2 dark:bg-darkSubbackground dark:border-darkBorder border-2 rounded-full focus:outline-none"
                         />
-                        <PiPaperPlaneRightFill className="" size={25} />
                         <button
                           onClick={() =>
                             addBlogComment(selectedPost, userId, content)
                           }
                         >
-                          {t("send")}
+                          <PiPaperPlaneRightFill className="" size={25} />
                         </button>
                       </div>
                     </div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
 import { useTranslation } from "react-i18next";
+import { PiPaperPlaneRightFill } from "react-icons/pi";
 
 const ChatRoom = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -214,7 +215,7 @@ const ChatRoom = () => {
             placeholder={t("searchPlaceholder")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
+            className="w-full dark:text-darkText dark:bg-darkBackground dark:border-darkBorder px-3 py-2 mb-4 border-2 rounded-lg focus:outline-none"
           />
 
           <div className="flex flex-col space-y-4 overflow-y-auto max-h-[500px]">
@@ -223,7 +224,7 @@ const ChatRoom = () => {
                 key={teacher.id}
                 className={`cursor-pointer p-2 rounded-lg flex items-center gap-3 ${
                   currentTeacher === teacher.id
-                    ? "bg-blue-500 text-white"
+                    ? "bg-darkHover text-white"
                     : "hover:bg-focolor dark:hover:bg-darkBorder dark:text-darkText"
                 }`}
                 onClick={() => setCurrentTeacher(teacher.id)}
@@ -350,7 +351,7 @@ const ChatRoom = () => {
               </div>
 
               {/* Nhập tin nhắn */}
-              <div className="flex mt-4 space-x-2">
+              <div className="flex mt-4 items-center space-x-2">
                 <img
                   src={
                     localStorage.getItem("img") !== "null"
@@ -375,9 +376,8 @@ const ChatRoom = () => {
                 />
                 <button
                   onClick={addChat}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                 >
-                  {t("send")}
+                  <PiPaperPlaneRightFill className="" size={25} />
                 </button>
               </div>
             </>
