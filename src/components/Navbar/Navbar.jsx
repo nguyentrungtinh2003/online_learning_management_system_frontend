@@ -122,7 +122,7 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     // Nếu không có cookie hoặc user ID → bỏ qua
-    if (!document.cookie || localStorage.getItem("id")) return;
+    if (!document.cookie) return;
 
     try {
       const response = await axios.get(`${URL}/user-info`, {
@@ -140,7 +140,21 @@ export default function Navbar() {
       setCoin(coin);
       setPoint(point);
     } catch {
-      console.log("Không tìm thấy user đăng nhập");
+      const response = await axios.get(`${URL}/user-google`);
+      const { email } = response.data.data;
+
+      const response2 = await axios.get(`${URL}/user/email/${email}`);
+      const { id, username, img, coin, roleEnum, point } = response2.data.data;
+
+      localStorage.setItem("id", id);
+      localStorage.setItem("email", email);
+      localStorage.setItem("username", username);
+      localStorage.setItem("img", img);
+      localStorage.setItem("coin", coin);
+      localStorage.setItem("role", roleEnum);
+      localStorage.setItem("point", point);
+      setCoin(coin);
+      setPoint(point);
     }
   };
 
@@ -309,9 +323,9 @@ export default function Navbar() {
   const handleBlur = () => {
     setShowSuggestions(false);
     setTimeout(() => {
-    setSearchQuery("");       // Reset input
-    setSuggestions([]);       // Ẩn suggestions
-  }, 1000);
+      setSearchQuery(""); // Reset input
+      setSuggestions([]); // Ẩn suggestions
+    }, 1000);
   };
 
   return (
@@ -376,17 +390,26 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div ref={dropdownRef} className="relative lg:w-[60%] flex justify-end items-center">
+        <div
+          ref={dropdownRef}
+          className="relative lg:w-[60%] flex justify-end items-center"
+        >
           {localStorage.getItem("username") ? (
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
                 <div className="flex items-center justify-end gap-2">
                   <span className="lg:text-lg text-2xl">{point}</span>
-                  <FaStar style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
+                  <FaStar
+                    style={{ color: "gold" }}
+                    size={isLargeScreen ? 25 : 30}
+                  />
                 </div>
                 <div className="flex items-center gap-2 justify-end gap-2">
                   <span className="lg:text-lg text-2xl">{coin}</span>
-                  <FaCoins style={{ color: "gold" }} size={isLargeScreen ? 25 : 30} />
+                  <FaCoins
+                    style={{ color: "gold" }}
+                    size={isLargeScreen ? 25 : 30}
+                  />
                 </div>
               </div>
               <div className="flex items-center gap-2">
