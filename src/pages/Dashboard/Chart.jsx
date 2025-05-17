@@ -3,8 +3,8 @@ import ReactECharts from "echarts-for-react";
 import { useTranslation } from "react-i18next";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { Button, ButtonGroup, Table } from "react-bootstrap";
-import { FaCoins, FaStar } from "react-icons/fa";
+import { TbCoin } from "react-icons/tb";
+import { FaStar } from "react-icons/fa";
 
 const Chart = () => {
   const { t } = useTranslation("dashboard");
@@ -283,17 +283,17 @@ const Chart = () => {
               <button
                 className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
                   type === "coin"
-                    ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-ficolor"
+                    ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-ficolor"
                     : "dark:text-darkText"
                 }`}
                 onClick={() => setType("coin")}
               >
-                <FaCoins style={{ color: "gold" }} size={isMobile ? 55 : 25} />
+                <TbCoin style={{ color: "gold" }} size={isMobile ? 55 : 25} />
               </button>
               <button
                 className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
                   type === "point"
-                    ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
+                    ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-darkBackground"
                     : "dark:text-darkText"
                 }`}
                 onClick={() => setType("point")}
@@ -331,7 +331,7 @@ const Chart = () => {
                           {type === "coin" ? (
                             <>
                               {user.coin?.toLocaleString("vi-VN")}
-                              <FaCoins style={{ color: "gold" }} size={20} />
+                              <TbCoin style={{ color: "gold" }} size={20} />
                             </>
                           ) : (
                             <>

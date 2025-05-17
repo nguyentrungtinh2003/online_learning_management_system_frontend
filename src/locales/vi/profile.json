@@ -9,6 +9,13 @@
     "role": "Vai trò",
     "saveChange": "Lưu thay đổi",
     "activityLog": "Nhật ký hoạt động",
-    "activityItem": "Xem video +8 điểm"
+    "activityItem": "Xem video +8 điểm",
+    "overview": "Tổng quan",
+    "topupHistory": "Lịch sử nạp tiền",
+    "weeklyPerformance": "Hiệu suất tuần này",
+    "totalPointThisWeek": "Tổng điểm tuần này",
+    "noTopup": "Chưa có lịch sử nạp tiền nào",
+    "topupAmount": "Số tiền nạp",
+    "date": "Ngày"
   }
   

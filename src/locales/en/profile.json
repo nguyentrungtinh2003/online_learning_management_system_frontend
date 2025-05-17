@@ -9,6 +9,13 @@
     "role": "Role",
     "saveChange": "Save Change",
     "activityLog": "Activity Log",
-    "activityItem": "Watched Video +8 points"
+    "activityItem": "Watched Video +8 points",
+    "overview": "Overview",
+    "topupHistory": "Top Up History",
+    "weeklyPerformance": "Weekly Performance",
+    "totalPointThisWeek": "Total Point This Week",
+    "noTopup": "You have no top up.",
+    "topupAmount": "Top Up Amount",
+    "date": "Date"
   }
   

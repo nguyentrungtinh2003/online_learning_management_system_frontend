@@ -4,9 +4,11 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import { FaStar } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { ToastContainer, toast, Slide } from "react-toastify";
+import { toast, Slide } from "react-toastify";
 import { Spinner } from "react-bootstrap";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -19,7 +21,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const Profile = () => {
-  const [tab, setTab] = useState("introduce");
+  const [tab, setTab] = useState("overview");
   const [user, setUser] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const formContainerRef = useRef(null);
@@ -28,6 +30,8 @@ const Profile = () => {
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [userHistory, setUserHistory] = useState([]);
+  const [weeklyPoints, setWeeklyPoints] = useState([]);
+  const [topupHistory, setTopupHistory] = useState([]);
 
   const userId = localStorage.getItem("id");
   const { t } = useTranslation("profile");
@@ -51,6 +55,44 @@ const Profile = () => {
       SetEnroll(response.data.data);
       setLoading(false);
     });
+  };
+
+  const fetchWeeklyPoints = () => {
+    const today = new Date();
+    const day = today.getDay(); // 0 (Sun) -> 6 (Sat)
+    const start = new Date(today);
+    start.setDate(today.getDate() - day + (day === 0 ? -6 : 1)); // Monday
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6); // Sunday
+
+    const startDate = start.toISOString().split("T")[0];
+    const endDate = end.toISOString().split("T")[0];
+
+    axios
+      .get(`${URL}/user-point-history/${userId}?start=${startDate}&end=${endDate}`)
+      .then((response) => {
+        const data = response.data.data.map((item) => ({
+          day: new Date(item.date).toLocaleDateString("vi-VN", {
+            weekday: "short",
+          }),
+          point: item.point,
+        }));
+        setWeeklyPoints(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching weekly points:", error.message);
+      });
+  };
+
+  const fetchTopupHistory = () => {
+    axios
+      .get(`${URL}/payments/user/${userId}`)
+      .then((response) => {
+        setTopupHistory(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching top-up history:", error.message);
+      });
   };
 
   const updateUser = async () => {
@@ -106,6 +148,8 @@ const Profile = () => {
     fetchUserInfo();
     fetchUserEnroll();
     fetchUserHistory();
+    fetchWeeklyPoints();
+    fetchTopupHistory();
   }, [tab]);
 
   const handleImageChange = (event) => {
@@ -128,7 +172,6 @@ const Profile = () => {
 
   return (
     <div className="h-full overflow-y-auto shadow flex-1">
-      <ToastContainer />
       {/* Header Section */}
       <div className="relative h-fit mb-32">
         <div className="bg-gradient-to-b from-cyan-300 to-blue-500 h-60 rounded-2xl m-2"></div>
@@ -160,17 +203,19 @@ const Profile = () => {
       {/* Navigation Tabs */}
       <div className="mt-10 flex justify-center">
         {[
+          { label: t("overview"), key: "overview" },
           { label: t("introduce"), key: "introduce" },
           { label: t("rank"), key: "rank" },
+          { label: t("topupHistory"), key: "topupHistory" },
         ].map((item) => (
           <button
             key={item.key}
+            onClick={() => setTab(item.key)}
             className={`font-semibold dark:border-darkBorder border-2 border-sicolor m-2 px-4 py-2 rounded-lg ${
               tab === item.key
                 ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
                 : "bg-wcolor text-black-700 dark:bg-darkBackground dark:text-wcolor"
             } transition`}
-            onClick={() => setTab(item.key)}
           >
             {item.label}
           </button>
@@ -327,7 +372,71 @@ const Profile = () => {
             </div>
           </div>
         )}
+        {tab === "overview" && (
+          <div className="p-6 bg-wcolor dark:bg-darkBackground shadow rounded-lg">
+            <h2 className="text-2xl font-semibold mb-4 dark:text-darkText">
+              {t("weeklyPerformance")}
+            </h2>
+            <p className="text-lg flex items-center gap-1 font-medium mb-2 dark:text-darkText">
+              {t("totalPointThisWeek")}:{" "}
+              {weeklyPoints.reduce((sum, d) => sum + d.point, 0)}
+              <FaStar color="gold" size={15}/>
+            </p>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={weeklyPoints}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="point" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
+        {tab === "topupHistory" && (
+          <div className="p-6 bg-wcolor dark:bg-darkBackground shadow rounded-lg">
+            <h2 className="text-2xl font-semibold mb-4 dark:text-darkText">
+              {t("topupHistory")}
+            </h2>
+            <ul className="space-y-3 h-[400px] overflow-auto">
+              {topupHistory.length === 0 ? (
+                <p className="dark:text-darkText">{t("noTopup")}</p>
+              ) : (
+                topupHistory.map((topup, index) => {
+                  const formattedDate = new Date(topup.createdAt).toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
+                  return (
+                    <li
+                      key={index}
+                      className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
+                    >
+                      <div>
+                        <p className="text-lg dark:text-darkText">
+                          {t("topupAmount")}:{" "}
+                          <span className="font-semibold text-green-600 dark:text-green-400">
+                            {topup.amount} VND
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {t("date")}: {formattedDate}
+                        </p>
+                      </div>
+                      <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
+                        {topup.status || "Success"}
+                      </span>
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </div>
+        )}
         {tab === "rank" && (
           <div className="flex flex-1 h-[500px] w-full dark:border dark:border-darkBorder gap-6 p-6 bg-wcolor dark:bg-darkBackground dark:text-darkText shadow-lg rounded-xl">
             <RankLevel />

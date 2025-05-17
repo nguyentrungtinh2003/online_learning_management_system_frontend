@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
-import { PiArrowFatLinesDown } from "react-icons/pi";
+import { PiArrowFatLinesDown,PiMonitorPlayFill } from "react-icons/pi";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
+import { TbCoin } from "react-icons/tb";
 
 export default function SectionCoursePro() {
   const [courses, setCourses] = useState([]);
@@ -111,84 +112,90 @@ export default function SectionCoursePro() {
 
 
   const CourseCard = ({ course, language = "vi" }) => (
-    <div className="font-semibold h-full dark:bg-darkSubbackground dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
-      <div className="relative">
-        <img
-          src={course.img || "/default-course-img.jpg"}
-          alt={course.courseName}
-          className="w-full h-48 object-cover"
-        />
-        {course.isNew && (
-          <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
-            {language === "vi" ? "Mới" : "New"}
-          </span>
-        )}
-        {course.isPopular && (
-          <span className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
-            {language === "vi" ? "Bán chạy" : "Popular"}
-          </span>
-        )}
-      </div>
+      <div className="font-semibold h-full dark:bg-darkSubbackground dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
+        <div className="relative">
+          <img
+            src={course.img || "/default-course-img.jpg"}
+            alt={course.courseName}
+            className="w-full h-48 object-cover"
+          />
+          {course.isNew && (
+            <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
+              {language === "vi" ? "Mới" : "New"}
+            </span>
+          )}
+          {course.isPopular && (
+            <span className="absolute top-2 right-2 bg-yellow-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
+              {language === "vi" ? "Bán chạy" : "Popular"}
+            </span>
+          )}
+        </div>
+  
+        <div className="p-6 font-bold">
+          <h3 className="text-4xl lg:text-2xl h-16 font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 h-[5.5rem] lg:h-[3.9rem] leading-tight">
+            {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
+          </h3>
 
-      <div className="p-6 font-bold">
-        <h3 className="text-2xl h-16 font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 leading-tight">
-          {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
-        </h3>
-
-        <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
-          {course.description ||
-            (language === "vi"
-              ? "Khoá học Java Spring Boot cho người mới bắt đầu."
-              : "Java Spring Boot course for beginners.")}
-        </p>
-
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Số bài học: " : "Lessons: "}
-          {Array.isArray(course?.lessons) ? course.lessons.length : 60}
-        </p>
-
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Giảng viên: " : "Lecturer: "}
-          <span className="text-fcolor">
-            {course.user?.username}
-          </span>
-        </p>
-
-        {course.duration && (
-          <p className="text-sm mt-1">
-            {language === "vi" ? "Thời lượng: " : "Duration: "} {course.duration}
+          <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug lg:h-[2.5rem]">
+            {course.description ||
+              (language === "vi"
+                ? "Khoá học Java Spring Boot cho người mới bắt đầu."
+                : "Java Spring Boot course for beginners.")}
           </p>
-        )}
+  
+          <p className="text-sm my-2">
+            <span className="text-fcolor flex items-center gap-1 text-3xl lg:text-2xl font-semibold">
+              {/* Giá gốc gạch ngang */}
+                  <span className="line-through flex gap-1 justify-center items-center text-gray-400">
+                    {(course.price * 2).toLocaleString()}
+                    <TbCoin color="gold" size={25} />
+                  </span>
 
-        {typeof course.rating === "number" && (
-          <p className="text-sm mt-1">
-            ⭐ {course.rating.toFixed(1)} / 5{" "}
-            {course.reviews?.length > 0 &&
-              `(${course.reviews.length} ${
-                language === "vi" ? "đánh giá" : "reviews"
-              })`}
+                  {/* Giá hiện tại */}
+                  <span>{course.price.toLocaleString()}</span>
+
+                  {/* Icon coin */}
+                  <TbCoin color="gold" size={25} />
+            </span>
           </p>
-        )}
-
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Giá: " : "Price: "}
-          <span className="text-green-600 font-semibold">
-            {course.price === 0 || course.isFree
-              ? language === "vi"
-                ? "Miễn phí"
-                : "Free"
-              : `${course.price.toLocaleString()}₫`}
-          </span>
-        </p>
-
-        <a href={`/view-course/${course.id}`}>
-          <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
-            {language === "vi" ? "Xem khoá học" : "View Course"}
-          </button>
-        </a>
+  
+          <div className="flex items-center w-full justify-between">
+            <p className="text-xl lg:text-sm mt-1 flex w-full gap-2 items-center">
+              <img className="h-6 w-6" alt={course.user?.username} src={course.user?.img}/>
+              <span>
+                {course.user?.username}
+              </span>
+            </p>
+            <p className="mt-1 gap-2 text-xl lg:text-sm flex items-center">
+              <PiMonitorPlayFill size={25}/>
+              {Array.isArray(course?.lessons) ? course.lessons.length : 60}
+            </p>
+          </div>
+  
+          {course.duration && (
+            <p className="text-sm mt-1">
+              {language === "vi" ? "Thời lượng: " : "Duration: "} {course.duration}
+            </p>
+          )}
+  
+          {typeof course.rating === "number" && (
+            <p className="text-sm mt-1">
+              ⭐ {course.rating.toFixed(1)} / 5{" "}
+              {course.reviews?.length > 0 &&
+                `(${course.reviews.length} ${
+                  language === "vi" ? "đánh giá" : "reviews"
+                })`}
+            </p>
+          )}
+  
+          <a href={`/view-course/${course.id}`}>
+            <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
+              {language === "vi" ? "Xem khoá học" : "View Course"}
+            </button>
+          </a>
+        </div>
       </div>
-    </div>
-  );
+    );
 
 
   const handleShowMore = () => {

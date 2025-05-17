@@ -219,7 +219,7 @@ export default function Sidebar() {
   // Sidebar DỌC cho desktop như cũ
   return (
     <div
-      className={`h-full bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 z-40 ${
+      className={`h-full bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 ${
         isCollapsed ? "w-[90px]" : "w-56"
       }`}
     >

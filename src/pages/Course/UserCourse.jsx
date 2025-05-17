@@ -70,11 +70,11 @@ export default function UserCourse() {
         className="h-40 w-full object-cover"
       />
       <div className="p-4 flex flex-col flex-1">
-        <h2 className="text-xl font-semibold truncate mb-1">{item.courseName}</h2>
+        <h2 className="text-3xl lg:text-xl font-semibold truncate mb-1">{item.courseName}</h2>
 
         <div className="flex flex-wrap items-center gap-2 text-xs mb-2">
           <span
-            className={`px-2 py-1 rounded-full font-medium ${
+            className={`px-2 py-1 text-lg lg:text-xs rounded-full font-medium ${
               item.progress === 100
                 ? "bg-green-100 text-green-700"
                 : "bg-yellow-100 text-yellow-700"
@@ -83,22 +83,22 @@ export default function UserCourse() {
             {item.progress === 100 ? "✅ Hoàn thành" : "⏳ Chưa hoàn thành"}
           </span>
           {item.progress < 20 && (
-            <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+            <span className="bg-blue-100 text-lg lg:text-xs text-blue-700 px-2 py-1 rounded-full font-medium">
               🆕 Mới học
             </span>
           )}
           {item.progress >= 80 && item.progress < 100 && (
-            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">
+            <span className="bg-purple-100 text-lg lg:text-xs text-purple-700 px-2 py-1 rounded-full font-medium">
               🔥 Gần hoàn thành
             </span>
           )}
         </div>
 
-        <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
+        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
           {item.description || t.noDescription}
         </p>
 
-        <p className="text-xs dark:text-darkSubtext mb-2">
+        <p className="text-xl lg:text-xs dark:text-darkSubtext mb-2">
           <strong>{t.enrolled}: </strong>
           <span className="text-fcolor">
             {new Date(...item.enrolledDate).toLocaleDateString("vi-VN")}
@@ -149,7 +149,7 @@ export default function UserCourse() {
               {/* Đã hoàn thành */}
               {completedCourses.length > 0 ? (
                 <section>
-                  <h2 className="text-xl dark:border-darkBorder md:text-2xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder md:text-2xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
                     ✅ {t.completed} ({completedCourses.length})
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -158,10 +158,10 @@ export default function UserCourse() {
                 </section>
               ) : (
                 <section>
-                  <h2 className="text-xl dark:border-darkBorder lg:text-3xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder lg:text-3xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
                     ✅ {t.completed} ({completedCourses.length})
                   </h2>
-                  <p className="text-center h-16 text-gray-600 dark:text-darkText">
+                  <p className="text-center text-2xl lg:text-base h-16 text-gray-600 dark:text-darkText">
                     {t.noCompleted}
                   </p>
                 </section>
@@ -169,7 +169,7 @@ export default function UserCourse() {
               {/* Đang học */}
               {inProgressCourses.length > 0 ? (
                 <section className="mb-10">
-                  <h2 className="text-xl lg:text-3xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
                     ⏳ {t.inProgress} ({inProgressCourses.length})
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -178,10 +178,10 @@ export default function UserCourse() {
                 </section>
               ) : (
                 <section className="mb-10">
-                  <h2 className="text-xl lg:text-3xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  <h2 className="text-5xl lg:text-xl lg:text-3xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
                     ⏳ {t.inProgress} ({inProgressCourses.length})
                   </h2>
-                  <p className="text-center h-16 text-gray-600 dark:text-darkText mb-8">
+                  <p className="text-center text-2xl lg:text-base h-16 text-gray-600 dark:text-darkText mb-8">
                     ⏳ {t.noInProgress}
                   </p>
                 </section>

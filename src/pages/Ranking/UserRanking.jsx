@@ -100,8 +100,7 @@ export default function UserRanking() {
   return (
     <div className="w-full dark:bg-black h-full bg-wcolor dark:text-darkText pl-4 flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <p className="lg:text-2xl text-5xl font-bold">{t("title")}</p>
+      <div className="flex justify-end items-center mb-4">
         <div className="flex gap-2 font-semibold">
           <button
             className={`border rounded-xl px-4 py-2 ${

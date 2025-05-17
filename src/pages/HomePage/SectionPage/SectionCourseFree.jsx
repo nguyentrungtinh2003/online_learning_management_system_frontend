@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import URL from "../../../config/URLconfig";
 import axios from "axios";
-import { PiArrowFatLinesDown } from "react-icons/pi";
+import { PiArrowFatLinesDown,PiMonitorPlayFill } from "react-icons/pi";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 
 export default function SectionCourseFree() {
@@ -113,28 +113,39 @@ export default function SectionCourseFree() {
       </div>
 
       <div className="p-6 font-bold">
-        <h3 className="text-2xl h-16 font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 leading-tight">
+        <h3 className="text-4xl lg:text-2xl h-16 font-bold text-gray-800 dark:text-darkText overflow-hidden text-ellipsis line-clamp-2 h-[5.5rem] lg:h-[3.9rem] leading-tight">
           {course.courseName || (language === "vi" ? "Khoá học Java" : "Java Course")}
         </h3>
 
-        <p className="text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
+        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug lg:h-[2.5rem]">
           {course.description ||
             (language === "vi"
               ? "Khoá học Java Spring Boot cho người mới bắt đầu."
               : "Java Spring Boot course for beginners.")}
         </p>
 
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Số bài học: " : "Lessons: "}
-          {Array.isArray(course?.lessons) ? course.lessons.length : 60}
-        </p>
-
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Giảng viên: " : "Lecturer: "}
-          <span className="text-fcolor">
-            {course.user?.username}
+        <p className="my-2">
+          <span className="text-fcolor text-3xl lg:text-2xl font-semibold">
+            {course.price === 0 || course.isFree
+              ? language === "vi"
+                ? "Miễn phí"
+                : "Free"
+              : `${course.price.toLocaleString()}$`}
           </span>
         </p>
+
+        <div className="flex items-center w-full justify-between">
+          <p className="text-xl lg:text-sm mt-1 flex w-full gap-2 items-center">
+            <img className="h-6 w-6" alt={course.user?.username} src={course.user?.img}/>
+            <span>
+              {course.user?.username}
+            </span>
+          </p>
+          <p className="mt-1 text-xl lg:text-sm gap-2 flex items-center">
+            <PiMonitorPlayFill size={25}/>
+            {Array.isArray(course?.lessons) ? course.lessons.length : 60}
+          </p>
+        </div>
 
         {course.duration && (
           <p className="text-sm mt-1">
@@ -152,19 +163,8 @@ export default function SectionCourseFree() {
           </p>
         )}
 
-        <p className="text-sm mt-1">
-          {language === "vi" ? "Giá: " : "Price: "}
-          <span className="text-green-600 font-semibold">
-            {course.price === 0 || course.isFree
-              ? language === "vi"
-                ? "Miễn phí"
-                : "Free"
-              : `${course.price.toLocaleString()}₫`}
-          </span>
-        </p>
-
         <a href={`/view-course/${course.id}`}>
-          <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
+          <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-lg font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
             {language === "vi" ? "Xem khoá học" : "View Course"}
           </button>
         </a>

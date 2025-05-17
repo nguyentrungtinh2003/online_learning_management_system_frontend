@@ -480,17 +480,17 @@ export default function Blog() {
                 : "/user.png"
             }
             alt="Avatar"
-            className="w-10 h-10 rounded-full"
+            className="w-16 h-16 lg:w-10 lg:h-10 rounded-full"
           />
           <input
-            className="focus:outline-none h-10 border-2 dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
+            className="focus:outline-none h-16 lg:h-10 text-2xl lg:text-base border-2 dark:border-darkBorder placeholder-darkSubtext flex-1 px-4 bg-focolor dark:bg-darkSubbackground rounded-2xl"
             placeholder={t("placeholderDescription", {
               username: localStorage.getItem("username") || "Hello ",
             })}
             onClick={() => handleOpenCreatePost()}
           />
         </div>
-        <div className="flex gap-2 dark:text-darkText">
+        <div className="flex text-2xl lg:text-base gap-2 dark:text-darkText">
           <button
             className="cursor-pointer hover:bg-focolor border-1 dark:border-darkBorder dark:hover:bg-darkSubbackground px-4 py-2 rounded-2xl"
             onClick={() => handleOpenCreatePost()}
@@ -522,18 +522,18 @@ export default function Blog() {
                       <img
                         src={post.userImg ? post.userImg : "/user.png"}
                         alt="avatar"
-                        className="w-10 h-10 rounded-full"
+                        className="w-16 h-16 lg:w-10 lg:h-10 rounded-full"
                       />
                       <Link to={`/blog/${post.id}`}>
                         <div className="ml-2">
-                          <h4 className="font-bold text-gray-600 dark:text-darkText mx-1">
+                          <h4 className="font-bold text-2xl lg:text-lg text-gray-600 dark:text-darkText mx-1">
                             {post.username}
                           </h4>
                           <p className="text-sm text-gray-500">{post.date}</p>
                         </div>
                       </Link>
                     </div>
-                    <div className="flex items-center gap-2 relative">
+                    <div className="flex text-5xl lg:text-3xl items-center gap-2 relative">
                       <button
                         onClick={() =>
                           setMenuOpenPost(
@@ -541,7 +541,7 @@ export default function Blog() {
                           )
                         }
                       >
-                        <PiDotsThreeBold size={25} />
+                        <PiDotsThreeBold />
                       </button>
                       {menuOpenPost === post.id && (
                         <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
@@ -554,51 +554,50 @@ export default function Blog() {
                         </div>
                       )}
                       <button onClick={() => hidePost(post.id)}>
-                        <PiBackspace size={25} />
+                        <PiBackspace/>
                       </button>
                     </div>
                   </div>
-                  <h2 className="mb-2">{post.blogName}</h2>
-                  <p className="mb-2">{post.description}</p>
+                  <h2 className="mb-2 text-3xl lg:text-base">{post.blogName}</h2>
+                  <p className="mb-2 text-2xl lg:text-base">{post.description}</p>
                   {post.img && (
                     <img
                       src={post.img}
                       alt="Post"
-                      className="w-full lg:h-60 h-96 object-cover rounded-lg mb-2"
+                      className="w-full lg:h-60  object-cover rounded-lg mb-2"
                     />
                   )}
                   <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
                     <button
-                      className="flex items-center gap-2"
+                      className="flex text-5xl lg:text-3xl items-center gap-2"
                       onClick={() => handleLike(post.id, post)}
                     >
                       <PiHeartFill
-                        size={25}
                         color={
                           post.likedUsers.includes(currentUserId) || isLiked
                             ? "red"
                             : "gray"
                         }
                       />
-                      <span>
+                      <span className="text-3xl lg:text-lg">
                         {likedUsersMap[post.id]?.length || 0} {t("like")}
                       </span>
                     </button>
                     <button
-                      className="flex items-center space-x-1"
+                      className="flex text-5xl lg:text-3xl items-center space-x-1"
                       onClick={() =>
                         setSelectedPost(
                           post.id === selectedPost ? null : post.id
                         )
                       }
                     >
-                      <PiChatCircle size={25} />
-                      <span>
+                      <PiChatCircle />
+                      <span className="text-3xl lg:text-lg">
                         {post.blogComments ? post.blogComments.length : 0}
                       </span>
                     </button>
-                    <button className="flex items-center space-x-1">
-                      <PiShareFatLight size={25} />
+                    <button className="flex text-5xl lg:text-3xl items-center space-x-1">
+                      <PiShareFatLight />
                       {/* <span>{post.shares.toLocaleString()}</span> */}
                     </button>
                   </div>

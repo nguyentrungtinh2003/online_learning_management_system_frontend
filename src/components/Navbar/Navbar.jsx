@@ -14,6 +14,7 @@ import { Client } from "@stomp/stompjs";
 import URLSocket from "../../config/URLsocket";
 import { useMediaQuery } from "react-responsive";
 import { useNavigate } from "react-router-dom";
+import { TbCoin } from "react-icons/tb";
 
 export default function Navbar() {
   const [username, setUsername] = useState(
@@ -419,12 +420,12 @@ export default function Navbar() {
                   <span className="lg:text-lg text-2xl">{point}</span>
                   <FaStar
                     style={{ color: "gold" }}
-                    size={isLargeScreen ? 25 : 30}
+                    size={isLargeScreen ? 20 : 25}
                   />
                 </div>
                 <div className="flex items-center gap-2 justify-end gap-2">
                   <span className="lg:text-lg text-2xl">{coin}</span>
-                  <FaCoins
+                  <TbCoin
                     style={{ color: "gold" }}
                     size={isLargeScreen ? 25 : 30}
                   />
