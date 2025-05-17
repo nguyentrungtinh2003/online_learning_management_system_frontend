@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { userEnroll } from "../../services/courseapi";
 import { useNavigate } from "react-router-dom";
+import { getCoursesProgress } from "../../services/courseapi";
 
 export default function UserCourse() {
   const [courses, setCourses] = useState([]);
@@ -10,35 +11,36 @@ export default function UserCourse() {
   const userId = localStorage.getItem("id");
   const navigate = useNavigate();
   const language = localStorage.getItem("language") || "en";
+  const [progressData, setProgressData] = useState(null);
 
   const translations = {
-  en: {
-    enrolledCourses: "Your Enrolled Courses",
-    noCourses: "You haven't enrolled in any course yet.",
-    continueLearning: "Continue Learning",
-    noDescription: "No description",
-    enrolled: "Enrolled",
-    showMore: "Show More",
-    showLess: "Show Less",
-    completed: "Completed Courses",
-    inProgress: "In Progress Courses",
-    noCompleted: "No completed courses.",
-    noInProgress: "No courses in progress.",
-  },
-  vi: {
-    enrolledCourses: "Khóa học bạn đã tham gia",
-    noCourses: "Bạn chưa tham gia khóa học nào.",
-    continueLearning: "Tiếp tục học",
-    noDescription: "Không có mô tả",
-    enrolled: "Ngày tham gia",
-    showMore: "Hiển thị thêm",
-    showLess: "Thu gọn",
-    completed: "Khóa học đã hoàn thành",
-    inProgress: "Khóa học đang học",
-    noCompleted: "Không có khóa học nào hoàn thành.",
-    noInProgress: "Không có khóa học nào đang học.",
-  },
-};
+    en: {
+      enrolledCourses: "Your Enrolled Courses",
+      noCourses: "You haven't enrolled in any course yet.",
+      continueLearning: "Continue Learning",
+      noDescription: "No description",
+      enrolled: "Enrolled",
+      showMore: "Show More",
+      showLess: "Show Less",
+      completed: "Completed Courses",
+      inProgress: "In Progress Courses",
+      noCompleted: "No completed courses.",
+      noInProgress: "No courses in progress.",
+    },
+    vi: {
+      enrolledCourses: "Khóa học bạn đã tham gia",
+      noCourses: "Bạn chưa tham gia khóa học nào.",
+      continueLearning: "Tiếp tục học",
+      noDescription: "Không có mô tả",
+      enrolled: "Ngày tham gia",
+      showMore: "Hiển thị thêm",
+      showLess: "Thu gọn",
+      completed: "Khóa học đã hoàn thành",
+      inProgress: "Khóa học đang học",
+      noCompleted: "Không có khóa học nào hoàn thành.",
+      noInProgress: "Không có khóa học nào đang học.",
+    },
+  };
 
   const t = translations[language];
 
@@ -47,6 +49,18 @@ export default function UserCourse() {
       try {
         const data = await userEnroll(userId);
         const courseList = data.data || [];
+
+        // Ánh xạ và thêm progress từ progressData
+        const mergedCourses = courseList.map((course) => {
+          const progressItem = progressData?.find(
+            (p) => p.courseId === course.courseId
+          );
+          return {
+            ...course,
+            progress: progressItem?.progress ?? 0, // fallback nếu không có
+          };
+        });
+
         setCourses(courseList);
         setCompletedCourses(courseList.filter((c) => c.progress === 100));
         setInProgressCourses(courseList.filter((c) => c.progress < 100));
@@ -56,8 +70,10 @@ export default function UserCourse() {
         setLoading(false);
       }
     };
-    fetchCourses();
-  }, [userId]);
+    if (progressData) {
+      fetchCourses();
+    }
+  }, [userId, progressData]);
 
   const renderCourseCard = (item) => (
     <div
@@ -70,7 +86,9 @@ export default function UserCourse() {
         className="h-40 w-full object-cover"
       />
       <div className="p-4 flex flex-col flex-1">
-        <h2 className="text-3xl lg:text-xl font-semibold truncate mb-1">{item.courseName}</h2>
+        <h2 className="text-3xl lg:text-xl font-semibold truncate mb-1">
+          {item.courseName}
+        </h2>
 
         <div className="flex flex-wrap items-center gap-2 text-xs mb-2">
           <span
@@ -143,7 +161,9 @@ export default function UserCourse() {
       ) : (
         <div className="px-2">
           {courses.length === 0 ? (
-            <p className="text-center text-gray-600 dark:text-darkText">{t.noCourses}</p>
+            <p className="text-center text-gray-600 dark:text-darkText">
+              {t.noCourses}
+            </p>
           ) : (
             <>
               {/* Đã hoàn thành */}

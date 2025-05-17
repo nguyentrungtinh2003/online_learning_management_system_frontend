@@ -1,7 +1,7 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
-import { FaBuffer,FaArrowRight, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import { FaBuffer, FaArrowRight, FaEdit, FaEye, FaPlus } from "react-icons/fa";
 import {
   MdNavigateNext,
   MdDeleteForever,
@@ -34,12 +34,12 @@ export default function ManagementLesson() {
   const [reloadTrigger, setReloadTrigger] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-    
-      useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-      }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
@@ -345,14 +345,17 @@ export default function ManagementLesson() {
     <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex items-center mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
-            <FaBuffer size={isMobile ? 60 : 30}/>
-            <MdNavigateBefore size={isMobile ? 60 : 30}/>
+          <Link
+            className="flex items-center mx-2 gap-2 dark:text-darkText"
+            onClick={() => navigate(-1)}
+          >
+            <FaBuffer size={isMobile ? 60 : 30} />
+            <MdNavigateBefore size={isMobile ? 60 : 30} />
             <h2 className="text-5xl lg:text-lg font-bold">{t("back")}</h2>
           </Link>
           <Link to={`/admin/lessons/add`}>
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-              <FaPlus size={isMobile ? 50 : 30}/>
+              <FaPlus size={isMobile ? 50 : 30} />
             </button>
           </Link>
         </div>
@@ -407,7 +410,7 @@ export default function ManagementLesson() {
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
+                  <th className="p-2">{t("course.name")}</th>
                   <th className="p-2">{t("createdDate")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -424,7 +427,10 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                  <tr key={lesson.id} className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                    <tr
+                      key={lesson.id}
+                      className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    >
                       <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
@@ -437,7 +443,8 @@ export default function ManagementLesson() {
 
                       <td className="p-2 lg:w-72 whitespace-nowrap">
                         {lesson.description
-                          ? lesson.description.slice(0, 25) + (lesson.description.length > 25 ? "..." : "")
+                          ? lesson.description.slice(0, 25) +
+                            (lesson.description.length > 25 ? "..." : "")
                           : "No description"}
                       </td>
 
@@ -496,7 +503,9 @@ export default function ManagementLesson() {
                         {lesson.deleted ? (
                           <button
                             className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
-                            onClick={() => handleRestore(lesson.id, lesson.lessonName)}
+                            onClick={() =>
+                              handleRestore(lesson.id, lesson.lessonName)
+                            }
                             title="Khôi phục bài học"
                           >
                             <FaLockOpen />
@@ -504,7 +513,9 @@ export default function ManagementLesson() {
                         ) : (
                           <button
                             className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
-                            onClick={() => handleDelete(lesson.id, lesson.lessonName)}
+                            onClick={() =>
+                              handleDelete(lesson.id, lesson.lessonName)
+                            }
                             title="Khóa bài học"
                           >
                             <FaLock />
@@ -532,7 +543,7 @@ export default function ManagementLesson() {
               disabled={currentPage === 0}
               className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
-              <MdNavigateBefore size={isMobile ? 55 : 30}/>
+              <MdNavigateBefore size={isMobile ? 55 : 30} />
             </button>
             <button
               onClick={handleNextPage}

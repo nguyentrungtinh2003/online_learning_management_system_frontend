@@ -225,3 +225,27 @@ export const restoreCourse = async (id) => {
     throw error;
   }
 };
+
+// Process Course
+// API: Lấy tiến độ các khóa học của người dùng
+export const getCoursesProgress = async (userId) => {
+  try {
+    const response = await fetch(`${URL}/user/${userId}/courses-progress`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // nếu bạn cần gửi cookie (ví dụ: session login)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch course progress");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching course progress:", error);
+    throw error;
+  }
+};
