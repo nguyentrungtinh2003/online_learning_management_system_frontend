@@ -453,7 +453,9 @@ export default function Navbar() {
                 >
                   <img
                     src={
-                      img ? { img } : localStorage.getItem("img") || "/user.png"
+                      img !== "null"
+                        ? img
+                        : localStorage.getItem("img") || "/user.png"
                     }
                     alt="User"
                     className="lg:w-10 lg:h-10 w-12 h-12 rounded-full object-cover"
