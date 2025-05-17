@@ -1,12 +1,15 @@
 {
-    "title": "Xếp Hạng Điểm",
-    "topDay": "Top Ngày",
-    "topWeek": "Top Tuần",
-    "topMonth": "Top Tháng",
-    "columnRank": "Hạng",
-    "columnAvatar": "Ảnh",
-    "columnName": "Tên",
-    "columnPoints": "Điểm",
-    "you": "Bản thân"
-  }
-  
+  "rankingTitle": "Bảng Xếp Hạng",
+  "topDay": "Top Ngày",
+  "topWeek": "Top Tuần",
+  "topMonth": "Top Tháng",
+  "notInTop": "Bạn không nằm trong top",
+  "points": "Điểm",
+  "rank": "Hạng",
+  "player": "Người chơi",
+  "club": "Câu lạc bộ",
+  "country": "Quốc gia",
+  "score": "Điểm số",
+  "noData": "Không có dữ liệu.",
+  "searchPlaceholder": "Tìm kiếm người chơi..."
+}

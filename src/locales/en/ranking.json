@@ -1,12 +1,15 @@
 {
-    "title": "Leaderboard",
-    "topDay": "Top Day",
-    "topWeek": "Top Week",
-    "topMonth": "Top Month",
-    "columnRank": "Rank",
-    "columnAvatar": "Avatar",
-    "columnName": "Name",
-    "columnPoints": "Points",
-    "you": "You"
-  }
-  
+  "rankingTitle": "Leaderboard",
+  "topDay": "Top of the Day",
+  "topWeek": "Top of the Week",
+  "topMonth": "Top of the Month",
+  "notInTop": "You are not in the Top",
+  "points": "Points",
+  "rank": "Rank",
+  "player": "Player",
+  "club": "Club",
+  "country": "Country",
+  "score": "Score",
+  "noData": "No data available.",
+  "searchPlaceholder": "Search a player here..."
+}
