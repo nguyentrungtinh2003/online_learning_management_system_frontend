@@ -10,20 +10,22 @@ const Dashboard = () => {
   const [countUser, setCountUser] = useState(0);
   const [countCourse, setCountCourse] = useState(0);
   const [amount, setAmount] = useState(0);
+  const [logData, setLogData] = useState([]);
 
   useEffect(() => {
     fetchTotalUser();
     fetchTotalCourse();
     fetchTotalAmount();
+    fetchLog();
   }, []);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-    
-      useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-      }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchTotalUser = () => {
     axios
@@ -58,11 +60,40 @@ const Dashboard = () => {
       });
   };
 
+  const fetchLog = () => {
+    axios
+      .get(`${URL}/logs/all`, { withCredentials: true })
+      .then((response) => {
+        const now = new Date();
+        const past30Days = new Date();
+        past30Days.setDate(now.getDate() - 30);
+
+        const logs = response.data.data;
+
+        // Lọc log trong 30 ngày gần nhất
+        const recentLogs = logs.filter((log) => {
+          const logDate = new Date(...log.timestamp); // timestamp là mảng như [2024, 6, 30, 12, 34, 56]
+          return logDate >= past30Days;
+        });
+
+        // Tổng số lượt truy cập mới (đếm số lượng log hợp lệ)
+        const accessCount = recentLogs.length;
+
+        // Gán giá trị cho state
+        setLogData(accessCount); // bạn cần tạo state accessCount
+      })
+      .catch((error) =>
+        console.log("Error fetching access logs: " + error.message)
+      );
+  };
+
   const stats = [
     {
       title: t("total_revenue"),
       value: amount,
-      icon: <FaDollarSign size={isMobile ? 150 : 60} className="text-green-500" />,
+      icon: (
+        <FaDollarSign size={isMobile ? 150 : 60} className="text-green-500" />
+      ),
     },
     {
       title: t("total_users"),
@@ -72,12 +103,16 @@ const Dashboard = () => {
     {
       title: t("total_courses"),
       value: countCourse,
-      icon: <FaBookOpen size={isMobile ? 150 : 60} className="text-purple-500" />,
+      icon: (
+        <FaBookOpen size={isMobile ? 150 : 60} className="text-purple-500" />
+      ),
     },
     {
       title: t("new_access"),
-      value: "120",
-      icon: <FaChartLine size={isMobile ? 150 : 60} className="text-orange-500" />,
+      value: logData,
+      icon: (
+        <FaChartLine size={isMobile ? 150 : 60} className="text-orange-500" />
+      ),
     },
   ];
 
@@ -103,7 +138,9 @@ const Dashboard = () => {
                   {item.value}
                 </h3>
               </div>
-              <div className="h-full flex justify-between items-center">{item.icon}</div>
+              <div className="h-full flex justify-between items-center">
+                {item.icon}
+              </div>
             </div>
           ))}
         </div>

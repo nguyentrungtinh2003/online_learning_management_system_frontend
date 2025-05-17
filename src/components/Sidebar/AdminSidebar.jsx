@@ -20,7 +20,7 @@ import {
 import { MdOutlineKeyboardDoubleArrowLeft, MdMenu } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Sidebar() {
   const { t } = useTranslation("sidebar");
@@ -163,8 +163,7 @@ export default function Sidebar() {
     if (!hasPermission(currentPath)) {
       toast.warning("Bạn không có quyền truy cập vào trang này");
     }
-  }, [location.pathname, menuItems]);  // Lắng nghe sự thay đổi của location
-
+  }, [location.pathname, menuItems]); // Lắng nghe sự thay đổi của location
 
   const [lastClickTime, setLastClickTime] = useState(0);
 
@@ -184,7 +183,6 @@ export default function Sidebar() {
     navigate(path);
   };
 
-
   const handleCollapseToggle = () => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -197,7 +195,7 @@ export default function Sidebar() {
   // Sidebar dạng NẰM NGANG ở mobile
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 py-2 right-0 z-50 bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-36">
+      <div className="fixed bottom-0 left-0 py-2 right-0  bg-wcolor dark:bg-darkBackground shadow-inner border-t dark:border-darkBorder flex justify-around items-center h-36">
         {menuItems.map((item) => (
           <button
             key={item.id}

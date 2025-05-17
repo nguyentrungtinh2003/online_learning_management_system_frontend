@@ -5,6 +5,16 @@ import URL from "../../config/URLconfig";
 import axios from "axios";
 import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { FaCoins, FaStar } from "react-icons/fa";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 const Chart = () => {
   const { t } = useTranslation("dashboard");
@@ -21,6 +31,8 @@ const Chart = () => {
   const [userTop, setUserTop] = useState([]);
   const [type, setType] = useState("coin");
 
+  const [logData, setLogData] = useState([]);
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => ({
     value: currentYear - i,
@@ -32,6 +44,7 @@ const Chart = () => {
     fetchMonthData();
     fetchCourseEnroll();
     fetchTopUserTop();
+    fetchLog();
   }, [selectedYear, type]);
 
   const fetchMonthData = () => {
@@ -45,7 +58,44 @@ const Chart = () => {
     axios
       .get(`${URL}/enroll/top-enrollments`)
       .then((response) => setCourseEnroll(response.data.data))
-      .catch((error) => console.log("Error get course enroll " + error.message));
+      .catch((error) =>
+        console.log("Error get course enroll " + error.message)
+      );
+  };
+
+  const fetchLog = () => {
+    axios
+      .get(`${URL}/logs/all`, { withCredentials: true })
+      .then((response) => {
+        const now = new Date();
+        const past30Days = new Date(now);
+        past30Days.setDate(now.getDate() - 30);
+
+        const logs = response.data.data;
+
+        // Đếm số log theo action, nhưng chỉ trong 30 ngày
+        const actionCount = {};
+        logs.forEach((log) => {
+          const logDate = new Date(...log.timestamp); // convert mảng timestamp thành Date
+          if (logDate >= past30Days) {
+            const action = log.action;
+            actionCount[action] = (actionCount[action] || 0) + 1;
+          }
+        });
+
+        // Chuyển sang mảng để dùng cho biểu đồ
+        const chartData = Object.entries(actionCount).map(
+          ([action, count]) => ({
+            action,
+            count,
+          })
+        );
+
+        setLogData(chartData);
+      })
+      .catch((error) =>
+        console.log("Error get count logs in 30 days: " + error.message)
+      );
   };
 
   const fetchTopUserTop = () => {
@@ -229,26 +279,28 @@ const Chart = () => {
         {/* Line Chart - Revenue */}
         <div className="lg:w-2/3 bg-wcolor lg:gap-4 gap-16 flex flex-col w-full dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg lg:p-4">
           <div className="flex justify-between items-center">
-            <h5 className="m-2 whitespace-nowrap lg:text-base text-5xl dark:text-darkText">Chọn năm:</h5>
-          <select
-            value={selectedYear}
-            className="p-2 w-72 lg:w-full lg:h-12 h-24 lg:text-base text-5xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
-            onChange={(e) => setSelectedYear(e)} // e là object { value, label }
-          >
-            <option>2025</option>
-            <option>2024</option>
-            <option>2023</option>
-            <option>2022</option>
-            <option>2021</option>
-          </select>
+            <h5 className="m-2 whitespace-nowrap lg:text-base text-5xl dark:text-darkText">
+              Chọn năm:
+            </h5>
+            <select
+              value={selectedYear}
+              className="p-2 w-72 lg:w-full lg:h-12 h-24 lg:text-base text-5xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
+              onChange={(e) => setSelectedYear(e)} // e là object { value, label }
+            >
+              <option>2025</option>
+              <option>2024</option>
+              <option>2023</option>
+              <option>2022</option>
+              <option>2021</option>
+            </select>
           </div>
 
           <div className="lg:w-full w-[90vw] mx-auto overflow-x-auto">
             <ReactECharts
-            option={lineChartOption}
-            className="lg:w-full w-[2000px]"
-            style={{ height: isMobile? 1000 : 400, filter: "invert(1)" }}
-          />
+              option={lineChartOption}
+              className="lg:w-full w-[2000px]"
+              style={{ height: isMobile ? 1000 : 400, filter: "invert(1)" }}
+            />
           </div>
         </div>
 
@@ -256,67 +308,87 @@ const Chart = () => {
         <div className="lg:w-1/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <div className="lg:w-full w-[90vw] mx-auto overflow-x-auto">
             <ReactECharts
-            option={pieChartOption}
-            className="lg:w-full"
-            style={{ height: isMobile? 1000 : 400, filter: "invert(1)" }}
-          />
+              option={pieChartOption}
+              className="lg:w-full"
+              style={{ height: isMobile ? 1000 : 400, filter: "invert(1)" }}
+            />
           </div>
         </div>
       </div>
       <div className="flex lg:flex-row flex-col gap-2">
         {/* Bar Chart - User Points by Course */}
-        {/* <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
-          <ReactECharts
-            option={barChartOption}
-            style={{ height: 300, filter: "invert(1)" }}
-          />
-        </div> */}
+        <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+          <div style={{ width: "100%", height: 400 }}>
+            <h4 className="text-center mb-4">
+              Thống kê hành động người dùng (Logs)
+            </h4>
+            <ResponsiveContainer>
+              <BarChart
+                data={logData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="action" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" fill="#8884d8" name="Số lượng" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
         {/* Radar Chart - User Progress */}
         <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg pb-4 px-4">
           <div className="">
             <div className="flex items-center justify-between py-4">
               <h4 className="dark:text-darkText lg:text-xl text-5xl">
-              Top 5 người dùng theo {type === "coin" ? "Coin" : "Point"}
-            </h4>
-            <div className="flex gap-2 text-3xl lg:text-base font-semibold">
-              <button
-                className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
-                  type === "coin"
-                    ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-ficolor"
-                    : "dark:text-darkText"
-                }`}
-                onClick={() => setType("coin")}
-              >
-                <FaCoins style={{ color: "gold" }} size={isMobile ? 55 : 25} />
-              </button>
-              <button
-                className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
-                  type === "point"
-                    ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
-                    : "dark:text-darkText"
-                }`}
-                onClick={() => setType("point")}
-              >
-                <FaStar style={{ color: "gold" }} size={isMobile ? 55 : 25} />
-              </button>
-            </div>
+                Top 5 người dùng theo {type === "coin" ? "Coin" : "Point"}
+              </h4>
+              <div className="flex gap-2 text-3xl lg:text-base font-semibold">
+                <button
+                  className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                    type === "coin"
+                      ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-ficolor"
+                      : "dark:text-darkText"
+                  }`}
+                  onClick={() => setType("coin")}
+                >
+                  <FaCoins
+                    style={{ color: "gold" }}
+                    size={isMobile ? 55 : 25}
+                  />
+                </button>
+                <button
+                  className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                    type === "point"
+                      ? "bg-darkBackground text-wcolor dark:bg-wcolor dark:text-darkBackground"
+                      : "dark:text-darkText"
+                  }`}
+                  onClick={() => setType("point")}
+                >
+                  <FaStar style={{ color: "gold" }} size={isMobile ? 55 : 25} />
+                </button>
+              </div>
             </div>
             <div className="bg-wcolor h-fit overflow-auto p-4 rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
-              <table
-              className="lg:w-full w-[200%] px-4 bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder"
-              >
+              <table className="lg:w-full w-[200%] px-4 bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
                 <thead className="dark:text-darkText">
                   <tr className="lg:text-2xl text-6xl text-center">
                     <th className="p-2">ID</th>
                     <th className="p-2">Ảnh</th>
                     <th className="p-2">Username</th>
-                    <th className="p-2">{type === "coin" ? "Coin" : "Point"}</th>
+                    <th className="p-2">
+                      {type === "coin" ? "Coin" : "Point"}
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="dark:text-darkText">
                   {userTop.map((user, index) => (
-                    <tr key={index} className="lg:text-xl text-5xl text-center  dark:hover:bg-darkHover hover:bg-tcolor">
+                    <tr
+                      key={index}
+                      className="lg:text-xl text-5xl text-center  dark:hover:bg-darkHover hover:bg-tcolor"
+                    >
                       <td className="lg:h-16 h-[11vh] p-2 w-32">{index + 1}</td>
                       <td className="p-2 place-items-center">
                         <img
@@ -325,7 +397,9 @@ const Chart = () => {
                           className="rounded-full lg:h-12 h-32 w-32 lg:w-12"
                         />
                       </td>
-                      <td className="p-2 w-72 whitespace-nowrap">{user.username}</td>
+                      <td className="p-2 w-72 whitespace-nowrap">
+                        {user.username}
+                      </td>
                       <td className="w-[400px] p-2">
                         <span className="inline-flex items-center gap-1">
                           {type === "coin" ? (
