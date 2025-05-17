@@ -141,7 +141,6 @@ export default function Navbar() {
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
       localStorage.setItem("role", roleEnum);
-      localStorage.setItem("point", point);
 
       setCoin(coin);
       setPoint(point);

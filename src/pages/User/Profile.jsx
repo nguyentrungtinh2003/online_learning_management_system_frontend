@@ -355,7 +355,26 @@ const Profile = () => {
                   }}
                 />
                 <label className="mt-2 dark:text-gray-400">{t("role")}</label>
-                <h3 className="mt-2 dark:text-gray-400 ">{user.roleEnum}</h3>
+                <TextField
+                  className="mt-2 w-full dark:text-gray-400"
+                  required
+                  value={user.roleEnum}
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      "& fieldset": { borderColor: "rgb(75 85 99)" },
+                      "& input": {
+                        color: "black", // mặc định là đen
+                        "&:-webkit-autofill": {
+                          WebkitTextFillColor: "black", // xử lý autofill
+                        },
+                      },
+                      ".dark & input": {
+                        color: "white", // nếu dark mode thì trắng
+                      },
+                    },
+                  }}
+                />
               </div>
               <div className="col-span-2 flex text-black justify-end">
                 <button
@@ -404,35 +423,50 @@ const Profile = () => {
                 <p className="dark:text-darkText">{t("noTopup")}</p>
               ) : (
                 topupHistory.map((topup, index) => {
-                  const formattedDate = new Date(topup.createdAt).toLocaleDateString("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
-                  return (
-                    <li
-                      key={index}
-                      className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
-                    >
-                      <div>
-                        <p className="text-lg dark:text-darkText">
-                          {t("topupAmount")}:{" "}
-                          <span className="font-semibold text-green-600 dark:text-green-400">
-                            {topup.amount} VND
-                          </span>
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {t("date")}: {formattedDate}
-                        </p>
-                      </div>
-                      <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
-                        {topup.status || "Success"}
-                      </span>
-                    </li>
-                  );
-                })
+                // Convert mảng date thành đối tượng Date
+                const formattedDate = new Date(
+                  topup.date[0],
+                  topup.date[1] - 1, // Tháng trong JS tính từ 0
+                  topup.date[2],
+                  topup.date[3],
+                  topup.date[4],
+                  topup.date[5]
+                ).toLocaleString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+
+                return (
+                  <li
+                    key={index}
+                    className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
+                  >
+                    <div>
+                      <p className="text-lg dark:text-darkText">
+                        {t("topupAmount")}:{" "}
+                        <span className="font-semibold text-green-600 dark:text-green-400">
+                          {topup.amount.toLocaleString()} VND
+                        </span>
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {t("coinReceived") || "Xu nhận được"}:{" "}
+                        <span className="font-medium text-yellow-600 dark:text-yellow-400">
+                          {topup.coinAmount.toLocaleString()} xu
+                        </span>
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {t("date")}: {formattedDate}
+                      </p>
+                    </div>
+                    <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
+                      {topup.status || "Success"}
+                    </span>
+                  </li>
+                );
+              })
               )}
             </ul>
           </div>
