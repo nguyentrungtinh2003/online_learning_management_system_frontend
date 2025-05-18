@@ -7,6 +7,8 @@ import { TbCoin } from "react-icons/tb";
 import { FaStar } from "react-icons/fa";
 import {
   BarChart,
+  LineChart,
+  Line,
   Bar,
   XAxis,
   YAxis,
@@ -32,6 +34,9 @@ const Chart = () => {
   const [type, setType] = useState("coin");
 
   const [logData, setLogData] = useState([]);
+  const [logAllData, setLogAllData] = useState([]);
+  const [loginData, setLoginData] = useState([]);
+  const [blogData, setBlogData] = useState([]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => ({
@@ -45,6 +50,8 @@ const Chart = () => {
     fetchCourseEnroll();
     fetchTopUserTop();
     fetchLog();
+    fetchBlog();
+    fetchLogLogin();
   }, [selectedYear, type]);
 
   const fetchMonthData = () => {
@@ -65,13 +72,15 @@ const Chart = () => {
 
   const fetchLog = () => {
     axios
-      .get(`${URL}/logs/all`, { withCredentials: true })
+      .get(`${URL}/admin/logs/all`, { withCredentials: true })
       .then((response) => {
         const now = new Date();
         const past30Days = new Date(now);
         past30Days.setDate(now.getDate() - 30);
 
         const logs = response.data.data;
+
+        setLogAllData(logs);
 
         // Đếm số log theo action, nhưng chỉ trong 30 ngày
         const actionCount = {};
@@ -92,6 +101,36 @@ const Chart = () => {
         );
 
         setLogData(chartData);
+      })
+      .catch((error) =>
+        console.log("Error get count logs in 30 days: " + error.message)
+      );
+  };
+
+  const fetchLogLogin = () => {
+    axios
+      .get(`${URL}/admin/login-logs/all`, { withCredentials: true })
+      .then((response) => {
+        const logs = response.data.data;
+        setLoginData(logs);
+      })
+      .catch((error) =>
+        console.log("Error get count logs in 30 days: " + error.message)
+      );
+  };
+
+  const fetchBlog = () => {
+    axios
+      .get(`${URL}/blogs/all`, { withCredentials: true })
+      .then((response) => {
+        const blogs = response.data.data;
+
+        const blogData = blogs.map((blog, index) => ({
+          blogName: blog.blogName,
+          likedUsers: blog.likedUsers.length,
+        }));
+
+        setBlogData(blogData); // gán kết quả đã lọc
       })
       .catch((error) =>
         console.log("Error get count logs in 30 days: " + error.message)
@@ -315,11 +354,30 @@ const Chart = () => {
           </div>
         </div>
       </div>
+      <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
+        <div style={{ width: "100%", height: 400 }}>
+          <h4>Số bài viết được tạo trong 30 ngày gần nhất</h4>
+          <ResponsiveContainer>
+            <LineChart data={blogData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="blogName" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="likedUsers"
+                stroke="#8884d8"
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
       <div className="flex lg:flex-row flex-col gap-2">
         {/* Bar Chart - User Points by Course */}
         <div className="lg:w-1/2 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg p-4">
           <div style={{ width: "100%", height: 400 }}>
-            <h4 className="text-center mb-4">
+            <h4 className="dark:text-darkText lg:text-xl text-5xl">
               Thống kê hành động người dùng (Logs)
             </h4>
             <ResponsiveContainer>
@@ -338,35 +396,89 @@ const Chart = () => {
           </div>
         </div>
 
+        {/* Login log*/}
+        <div className="p-6 bg-wcolor dark:bg-darkBackground shadow rounded-lg">
+          <ul className="space-y-3 h-[400px] overflow-auto">
+            {logAllData?.map((loda, index) => {
+              // Convert mảng date thành đối tượng Date
+              const formattedDate = new Date(
+                loda.timestamp[0],
+                loda.timestamp[1] - 1, // Tháng trong JS tính từ 0
+                loda.timestamp[2],
+                loda.timestamp[3],
+                loda.timestamp[4],
+                loda.timestamp[5]
+              ).toLocaleString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+              return (
+                <li
+                  key={index}
+                  className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
+                >
+                  <div>
+                    <p className="text-lg dark:text-darkText">
+                      <span className="font-semibold text-green-600 dark:text-green-400">
+                        {loda.username}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-medium text-yellow-600 dark:text-yellow-400">
+                        {loda.action}{" "}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-medium text-yellow-600 dark:text-yellow-400">
+                        {loda.details}{" "}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {formattedDate}
+                    </p>
+                  </div>
+                  {/* <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
+                      {loda.status || "Success"}
+                    </span> */}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
         {/* Radar Chart - User Progress */}
         <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg pb-4 px-4">
           <div className="">
             <div className="flex items-center justify-between py-4">
               <h4 className="dark:text-darkText lg:text-xl text-5xl">
-              Top 5 người dùng theo {type === "coin" ? "Coin" : "Point"}
-            </h4>
-            <div className="flex gap-2 text-3xl lg:text-base font-semibold">
-              <button
-                className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
-                  type === "coin"
-                    ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-ficolor"
-                    : "dark:text-darkText"
-                }`}
-                onClick={() => setType("coin")}
-              >
-                <TbCoin style={{ color: "gold" }} size={isMobile ? 55 : 25} />
-              </button>
-              <button
-                className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
-                  type === "point"
-                    ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-darkBackground"
-                    : "dark:text-darkText"
-                }`}
-                onClick={() => setType("point")}
-              >
-                <FaStar style={{ color: "gold" }} size={isMobile ? 55 : 25} />
-              </button>
-            </div>
+                Top 5 người dùng theo {type === "coin" ? "Coin" : "Point"}
+              </h4>
+              <div className="flex gap-2 text-3xl lg:text-base font-semibold">
+                <button
+                  className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                    type === "coin"
+                      ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-ficolor"
+                      : "dark:text-darkText"
+                  }`}
+                  onClick={() => setType("coin")}
+                >
+                  <TbCoin style={{ color: "gold" }} size={isMobile ? 55 : 25} />
+                </button>
+                <button
+                  className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                    type === "point"
+                      ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-darkBackground"
+                      : "dark:text-darkText"
+                  }`}
+                  onClick={() => setType("point")}
+                >
+                  <FaStar style={{ color: "gold" }} size={isMobile ? 55 : 25} />
+                </button>
+              </div>
             </div>
             <div className="bg-wcolor h-fit overflow-auto p-4 rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
               <table className="lg:w-full w-[200%] px-4 bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
@@ -417,6 +529,33 @@ const Chart = () => {
                 </tbody>
               </table>
             </div>
+
+            <table className="lg:w-full w-[200%] px-4 bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
+              <thead className="dark:text-darkText">
+                <tr className="lg:text-2xl text-6xl text-center">
+                  <th className="p-2">ID</th>
+
+                  <th className="p-2">Username</th>
+                  <th className="p-2">IP</th>
+                  <th className="p-2">Success</th>
+                  <th className="p-2">Message</th>
+                </tr>
+              </thead>
+              <tbody className="dark:text-darkText">
+                {loginData.map((loda, index) => (
+                  <tr
+                    key={index}
+                    className="lg:text-xl text-5xl text-center  dark:hover:bg-darkHover hover:bg-tcolor"
+                  >
+                    <td className="lg:h-16 h-[11vh] p-2 w-32">{index + 1}</td>
+                    <td className="p-2 place-items-center">{loda.username}</td>
+                    <td className="p-2 w-72 whitespace-nowrap">{loda.IP}</td>
+                    <td className="w-[400px] p-2">{loda.success}</td>
+                    <td className="w-[400px] p-2">{loda.message}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

@@ -325,11 +325,12 @@ export default function Navbar() {
     setLoadingLogout(true);
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
+      localStorage.clear();
+      console.log("Logout success:");
+      navigate("/"); // Điều hướng đến trang đăng nhập
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      localStorage.clear();
-      navigate("/"); // Điều hướng đến trang đăng nhập
       setLoadingLogout(false);
     }
   };

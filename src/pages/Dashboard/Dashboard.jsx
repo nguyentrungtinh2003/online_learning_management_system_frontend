@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   const fetchLog = () => {
     axios
-      .get(`${URL}/logs/all`, { withCredentials: true })
+      .get(`${URL}/admin/logs/all`, { withCredentials: true })
       .then((response) => {
         const now = new Date();
         const past30Days = new Date();
