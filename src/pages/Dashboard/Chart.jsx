@@ -36,6 +36,7 @@ const Chart = () => {
   const [logData, setLogData] = useState([]);
   const [logAllData, setLogAllData] = useState([]);
   const [loginData, setLoginData] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const [blogData, setBlogData] = useState([]);
 
   const currentYear = new Date().getFullYear();
@@ -53,6 +54,69 @@ const Chart = () => {
     fetchBlog();
     fetchLogLogin();
   }, [selectedYear, type]);
+
+  useEffect(() => {
+    const generateAlerts = () => {
+      const ipMap = {};
+      const failedLoginMap = {};
+      const endpointMap = {};
+
+      const now = new Date();
+      const alertsList = [];
+
+      loginData.forEach((log) => {
+        const time = new Date(...log.timestamp);
+        const diffInSeconds = (now - time) / 1000;
+
+        // Rule 1: > 5 requests cùng IP trong 10s
+        if (diffInSeconds < 10) {
+          ipMap[log.ipAddress] = (ipMap[log.ipAddress] || 0) + 1;
+          if (ipMap[log.ipAddress] > 5) {
+            alertsList.push({
+              type: "Medium",
+              message: `IP ${log.ipAddress} gửi > 5 request trong 10s`,
+            });
+          }
+        }
+
+        // Rule 2: > 10 lần thất bại
+        if (log.success === false) {
+          failedLoginMap[log.username] =
+            (failedLoginMap[log.username] || 0) + 1;
+          if (failedLoginMap[log.username] > 10) {
+            alertsList.push({
+              type: "High",
+              message: `Người dùng ${log.username} có > 10 lần request thất bại`,
+            });
+          }
+        }
+
+        // Rule 3: truy cập admin liên tục
+        if (log.message.includes("/api/admin")) {
+          endpointMap[log.username] = (endpointMap[log.username] || 0) + 1;
+          if (endpointMap[log.username] > 3) {
+            alertsList.push({
+              type: "Medium",
+              message: `${log.username} truy cập endpoint admin liên tục`,
+            });
+          }
+        }
+
+        // Rule 4: IP lạ (ví dụ: không thuộc whitelist IP Việt Nam)
+        const trustedIps = ["14.169.", "113.", "27."]; // IP Việt Nam thường dùng
+        if (!trustedIps.some((prefix) => log.ipAddress.startsWith(prefix))) {
+          alertsList.push({
+            type: "High",
+            message: `IP lạ ${log.ipAddress} phát hiện từ user ${log.username}`,
+          });
+        }
+      });
+
+      setAlerts(alertsList);
+    };
+
+    generateAlerts();
+  }, [loginData]);
 
   const fetchMonthData = () => {
     axios
@@ -449,6 +513,22 @@ const Chart = () => {
             })}
           </ul>
         </div>
+
+        <h2>Cảnh báo realtime 🔔</h2>
+        {alerts.length === 0 ? (
+          <p>Không có hành vi bất thường nào.</p>
+        ) : (
+          <ul>
+            {alerts.map((alert, index) => (
+              <li
+                key={index}
+                style={{ color: alert.type === "High" ? "red" : "orange" }}
+              >
+                <strong>{alert.type}:</strong> {alert.message}
+              </li>
+            ))}
+          </ul>
+        )}
 
         {/* Radar Chart - User Progress */}
         <div className="w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg pb-4 px-4">
