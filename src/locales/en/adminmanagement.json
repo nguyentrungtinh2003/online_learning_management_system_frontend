@@ -145,6 +145,21 @@
     "author": "Author",
     "noBlog": "No Blog Available"
   },
+  "editBlog": {
+    "blog_management": "Blog Management",
+    "edit_blog": "Edit Blog",
+    "blog_id": "Blog ID",
+    "created_date": "Created Date",
+    "blog_title": "Blog Title",
+    "description": "Description",
+    "image": "Image",
+    "video": "Video",
+    "interactions": "Interactions",
+    "views": "Views",
+    "actor": "Actor",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  },
   "payment": {
     "title": "Transaction Management",
     "amount": "Amount",

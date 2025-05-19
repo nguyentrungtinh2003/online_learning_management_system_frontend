@@ -1,0 +1,76 @@
+{
+  "new": "Mới",
+  "popular": "Bán chạy",
+  "defaultCourseName": "Khoá học Java",
+  "defaultDescription": "Khoá học Java Spring Boot cho người mới bắt đầu.",
+  "free": "Miễn phí",
+  "duration": "Thời lượng",
+  "reviews": "đánh giá",
+  "viewCourse": "Xem khoá học",
+  "freeCourseTitle": "Khoá học miễn phí – Không cần thanh toán!",
+  "noFreeCourses": "Không có khoá học miễn phí nào.",
+  "showMoreCourses": "Xem thêm khoá học",
+  "blog": {
+    "title": "Bài viết & Góc nhìn lập trình",
+    "popular": "Nhiều lượt thích",
+    "readMore": "Đọc thêm"
+  },
+  "course": {
+    "new": "Mới",
+    "popular": "Bán chạy",
+    "defaultTitle": "Khoá học Java",
+    "defaultDescription": "Khoá học Java Spring Boot cho người mới bắt đầu.",
+    "free": "Miễn phí",
+    "duration": "Thời lượng",
+    "reviews": "đánh giá",
+    "view": "Xem khoá học",
+    "heading": "Khoá học miễn phí – Không cần thanh toán!",
+    "noCourses": "Không có khoá học nào.",
+    "showMore": "Xem thêm khoá học",
+    "premiumTitle": "Nâng cao kỹ năng – Truy cập chuyên sâu",
+    "defaultCourseName": "Khoá học Java",
+    "viewCourse": "Xem khoá học"
+  },
+  "rewards": {
+    "title": "Hệ thống phần thưởng & điểm số",
+
+    "depositTitle": "Nạp tiền & quy đổi thành xu",
+    "depositDesc": "Nạp tiền để quy đổi thành xu và truy cập nội dung nâng cao, khoá học chuyên sâu và thử thách độc quyền.",
+    "depositItem1": "Mở khoá các khoá học nâng cao, chi tiết.",
+    "depositItem2": "Tham gia các thử thách độc quyền.",
+    "depositItem3": "Nhận phần thưởng và ưu đãi đặc biệt.",
+    "depositButton": "Nạp ngay",
+
+    "earnTitle": "Cách kiếm điểm & xu",
+    "earnItem1": "Hoàn thành video học miễn phí để nhận điểm.",
+    "earnItem2": "Tham gia bài tập (cần xu).",
+    "earnItem3": "Chia sẻ kết quả lên mạng xã hội để nhận thêm xu.",
+    "earnItem4": "Tham gia thảo luận và hỗ trợ cộng đồng.",
+    "earnButton": "Tìm hiểu thêm",
+
+    "redeemTitle": "Phần thưởng quy đổi",
+    "redeemItem1": "Xu có thể đổi lấy các khoá học nâng cao.",
+    "redeemItem2": "Nhận huy hiệu và huy chương cho thành tích.",
+    "redeemItem3": "Nhận ưu đãi giảm giá cho các khoá học tiếp theo.",
+    "redeemItem4": "Quà tặng đặc biệt và phần thưởng ảo độc quyền.",
+    "redeemButton": "Đổi thưởng",
+
+    "rankTitle": "Xếp hạng & cấp độ",
+    "rankDesc": "Hoàn thành nhiệm vụ để nhận điểm và tham gia bảng xếp hạng, mở khoá thêm phần thưởng hấp dẫn.",
+    "rankItem1": "Người học top đầu sẽ mở khoá thử thách mới.",
+    "rankItem2": "Nhận huy hiệu và phần thưởng ảo đặc biệt.",
+    "rankItem3": "Thăng cấp để truy cập nội dung nâng cao hơn.",
+    "rankButton": "Xem hạng của tôi"
+  },
+  "footer": {
+    "phone": "Điện thoại",
+    "email": "Email",
+    "address": "Địa chỉ",
+    "about_us": "Về Chúng Tôi",
+    "introduce": "Giới thiệu",
+    "services": "Sản phẩm & Dịch vụ",
+    "qa": "Hỏi & Đáp",
+    "terms": "Điều khoản & Điều kiện",
+    "follow": "Theo dõi chúng tôi"
+  }
+}

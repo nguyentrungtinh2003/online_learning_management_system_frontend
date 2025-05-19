@@ -1,0 +1,76 @@
+{
+  "new": "New",
+  "popular": "Popular",
+  "defaultCourseName": "Java Course",
+  "defaultDescription": "Java Spring Boot course for beginners.",
+  "free": "Free",
+  "duration": "Duration",
+  "reviews": "reviews",
+  "viewCourse": "View Course",
+  "freeCourseTitle": "Top Courses – No Payment Needed!",
+  "noFreeCourses": "No free courses available.",
+  "showMoreCourses": "Show more courses",
+  "blog": {
+    "title": "Tech Talks & Programming Perspectives",
+    "popular": "Popular",
+    "readMore": "Read More"
+  },
+  "course": {
+    "new": "New",
+    "popular": "Popular",
+    "defaultTitle": "Java Course",
+    "defaultDescription": "Java Spring Boot course for beginners.",
+    "free": "Free",
+    "duration": "Duration",
+    "reviews": "reviews",
+    "view": "View Course",
+    "heading": "Top Courses – No Payment Needed!",
+    "noCourses": "No free courses available.",
+    "showMore": "Show more courses",
+    "premiumTitle": "Advance Your Skills – Premium Access",
+    "defaultCourseName": "Java Course",
+    "viewCourse": "View Course"
+  },
+  "rewards": {
+    "title": "Rewards & Points System",
+
+    "depositTitle": "Deposit Money & Convert to Coins",
+    "depositDesc": "Deposit money to convert into coins and access premium content, advanced courses, and exclusive challenges.",
+    "depositItem1": "Unlock advanced courses with in-depth content.",
+    "depositItem2": "Participate in exclusive challenges.",
+    "depositItem3": "Earn special bonuses and rewards.",
+    "depositButton": "Deposit Now",
+
+    "earnTitle": "How to Earn Points & Coins",
+    "earnItem1": "Complete free learning videos to earn points.",
+    "earnItem2": "Participate in exercises (coins required).",
+    "earnItem3": "Share results on social media for extra coins.",
+    "earnItem4": "Engage in discussions and help others.",
+    "earnButton": "Learn More",
+
+    "redeemTitle": "Redeemable Rewards",
+    "redeemItem1": "Coins can be exchanged for advanced courses.",
+    "redeemItem2": "Earn badges and medals for achievements.",
+    "redeemItem3": "Get discounts on future courses and challenges.",
+    "redeemItem4": "Special gifts and exclusive virtual rewards.",
+    "redeemButton": "Redeem Now",
+
+    "rankTitle": "Ranking & Levels",
+    "rankDesc": "Earn points by completing activities and participate in ranking systems to unlock additional rewards.",
+    "rankItem1": "Top learners will unlock new challenges.",
+    "rankItem2": "Earn special badges and virtual rewards.",
+    "rankItem3": "Level up to access more advanced content.",
+    "rankButton": "Check My Rank"
+  },
+  "footer": {
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "about_us": "About Us",
+    "introduce": "Introduce",
+    "services": "Products & Services",
+    "qa": "Q&A",
+    "terms": "Terms and Conditions",
+    "follow": "Follow Us"
+  }
+}

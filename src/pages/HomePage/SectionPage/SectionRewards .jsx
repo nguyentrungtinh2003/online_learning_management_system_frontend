@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   FaDollarSign,
   FaCoins,
@@ -6,95 +6,60 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import { GiMedal } from "react-icons/gi";
+import { useTranslation } from "react-i18next";
 
 const SectionRewards = () => {
-  const [language, setLanguage] = useState("en");
-
-  useEffect(() => {
-    const storedLang =
-      localStorage.getItem("i18nextLng") || localStorage.getItem("language");
-    if (storedLang === "vi" || storedLang === "en") {
-      setLanguage(storedLang);
-    }
-  }, []);
+  const { t } = useTranslation("homepage");
 
   const rewardsData = [
     {
       icon: <FaDollarSign size={150} className="text-blue-600 mr-6 transform hover:scale-110 transition-all" />,
-      title: language === "vi" ? "Nạp tiền & quy đổi thành xu" : "Deposit Money & Convert to Coins",
-      description:
-        language === "vi"
-          ? "Nạp tiền để quy đổi thành xu và truy cập nội dung nâng cao, khoá học chuyên sâu và thử thách độc quyền."
-          : "Deposit money to convert into coins and access premium content, advanced courses, and exclusive challenges.",
+      title: t("rewards.depositTitle"),
+      description: t("rewards.depositDesc"),
       items: [
-        language === "vi" ? "Mở khoá các khoá học nâng cao, chi tiết." : "Unlock advanced courses with in-depth content.",
-        language === "vi" ? "Tham gia các thử thách độc quyền." : "Participate in exclusive challenges.",
-        language === "vi" ? "Nhận phần thưởng và ưu đãi đặc biệt." : "Earn special bonuses and rewards.",
+        t("rewards.depositItem1"),
+        t("rewards.depositItem2"),
+        t("rewards.depositItem3"),
       ],
-      buttonText: language === "vi" ? "Nạp ngay" : "Deposit Now",
+      buttonText: t("rewards.depositButton"),
       buttonColor: "bg-blue-600 hover:bg-blue-700",
     },
     {
       icon: <FaCoins size={150} className="text-green-600 mr-6 transform hover:scale-110 transition-all" />,
-      title: language === "vi" ? "Cách kiếm điểm & xu" : "How to Earn Points & Coins",
+      title: t("rewards.earnTitle"),
       description: "",
       items: [
-        language === "vi"
-          ? "Hoàn thành video học miễn phí để nhận điểm."
-          : "Complete free learning videos to earn points.",
-        language === "vi"
-          ? "Tham gia bài tập (cần xu)."
-          : "Participate in exercises (coins required).",
-        language === "vi"
-          ? "Chia sẻ kết quả lên mạng xã hội để nhận thêm xu."
-          : "Share results on social media for extra coins.",
-        language === "vi"
-          ? "Tham gia thảo luận và hỗ trợ cộng đồng."
-          : "Engage in discussions and help others.",
+        t("rewards.earnItem1"),
+        t("rewards.earnItem2"),
+        t("rewards.earnItem3"),
+        t("rewards.earnItem4"),
       ],
-      buttonText: language === "vi" ? "Tìm hiểu thêm" : "Learn More",
+      buttonText: t("rewards.earnButton"),
       buttonColor: "bg-green-600 hover:bg-green-700",
     },
     {
       icon: <FaGift size={150} className="text-red-600 mr-6 transform hover:scale-110 transition-all" />,
-      title: language === "vi" ? "Phần thưởng quy đổi" : "Redeemable Rewards",
+      title: t("rewards.redeemTitle"),
       description: "",
       items: [
-        language === "vi"
-          ? "Xu có thể đổi lấy các khoá học nâng cao."
-          : "Coins can be exchanged for advanced courses.",
-        language === "vi"
-          ? "Nhận huy hiệu và huy chương cho thành tích."
-          : "Earn badges and medals for achievements.",
-        language === "vi"
-          ? "Nhận ưu đãi giảm giá cho các khoá học tiếp theo."
-          : "Get discounts on future courses and challenges.",
-        language === "vi"
-          ? "Quà tặng đặc biệt và phần thưởng ảo độc quyền."
-          : "Special gifts and exclusive virtual rewards.",
+        t("rewards.redeemItem1"),
+        t("rewards.redeemItem2"),
+        t("rewards.redeemItem3"),
+        t("rewards.redeemItem4"),
       ],
-      buttonText: language === "vi" ? "Đổi thưởng" : "Redeem Now",
+      buttonText: t("rewards.redeemButton"),
       buttonColor: "bg-red-600 hover:bg-red-700",
     },
     {
       icon: <GiMedal size={150} className="text-yellow-600 mr-6 transform hover:scale-110 transition-all" />,
-      title: language === "vi" ? "Xếp hạng & cấp độ" : "Ranking & Levels",
-      description:
-        language === "vi"
-          ? "Hoàn thành nhiệm vụ để nhận điểm và tham gia bảng xếp hạng, mở khoá thêm phần thưởng hấp dẫn."
-          : "Earn points by completing activities and participate in ranking systems to unlock additional rewards.",
+      title: t("rewards.rankTitle"),
+      description: t("rewards.rankDesc"),
       items: [
-        language === "vi"
-          ? "Người học top đầu sẽ mở khoá thử thách mới."
-          : "Top learners will unlock new challenges.",
-        language === "vi"
-          ? "Nhận huy hiệu và phần thưởng ảo đặc biệt."
-          : "Earn special badges and virtual rewards.",
-        language === "vi"
-          ? "Thăng cấp để truy cập nội dung nâng cao hơn."
-          : "Level up to access more advanced content.",
+        t("rewards.rankItem1"),
+        t("rewards.rankItem2"),
+        t("rewards.rankItem3"),
       ],
-      buttonText: language === "vi" ? "Xem hạng của tôi" : "Check My Rank",
+      buttonText: t("rewards.rankButton"),
       buttonColor: "bg-yellow-600 hover:bg-yellow-700",
     },
   ];
@@ -102,9 +67,7 @@ const SectionRewards = () => {
   return (
     <div className="p-6 rounded-lg">
       <h2 className="lg:text-3xl lg:py-0 py-4 text-4xl font-bold text-center mb-8 text-blue-600">
-        {language === "vi"
-          ? "Hệ thống phần thưởng & điểm số"
-          : "Rewards & Points System"}
+        {t("rewards.title")}
       </h2>
 
       {rewardsData.map((reward, index) => (

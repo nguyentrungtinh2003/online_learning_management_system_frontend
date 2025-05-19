@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import FormData from "form-data";
 import { FaBuffer } from "react-icons/fa";
@@ -16,6 +16,13 @@ import { useTranslation } from "react-i18next";
 const AddCourse = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 1024);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const [courseData, setCourse] = useState({
     courseName: "",
@@ -200,18 +207,19 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="h-full flex flex-col w-full">
-      <div className="flex dark:text-darkText gap-2 items-center mb-4">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+      <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+        <FaBuffer size={isMobile ? 60 : 30} />
+        <MdNavigateNext size={isMobile ? 60 : 30} />
         <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
-        <MdNavigateNext size={30} />
+        <MdNavigateNext size={isMobile ? 60 : 30} />
         <h2 className="text-lg font-bold">{t("addCourse.title")}</h2>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border-2 dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
+        className="space-y-4 p-2 text-gray-700 dark:text-darkText"
       >
         {/* Course Name & Price */}
         <div className="flex items-center space-x-4">
@@ -322,8 +330,7 @@ const AddCourse = () => {
           </button>
         </div>
       </form>
-
-      <ToastContainer />
+    </div>
     </div>
   );
 };

@@ -302,7 +302,7 @@ export default function AdminBlogManagement() {
                       </td>
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
-                          to={`/admin/blog/edit-blog/${blog.id}`}
+                          to={`edit-blog/${blog.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa blog"
                         >

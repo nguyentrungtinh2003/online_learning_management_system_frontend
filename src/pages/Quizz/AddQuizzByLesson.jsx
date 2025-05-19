@@ -164,8 +164,6 @@ const AddQuizz = () => {
           </button>
         </div>
       </form>
-
-      <ToastContainer />
     </div>
   );
 };

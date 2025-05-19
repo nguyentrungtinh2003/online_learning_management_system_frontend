@@ -15,6 +15,13 @@ import { useTranslation } from "react-i18next";
 
 const EditCourse = () => {
   const { t } = useTranslation("adminmanagement");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const navigate = useNavigate();
   const { id } = useParams();
   const [reloadTrigger, setReloadTrigger] = useState(false);
@@ -257,136 +264,137 @@ const EditCourse = () => {
   };
 
   return (
-    <div className="h-full flex flex-col w-full">
-      <div className="flex dark:text-darkText gap-2 items-center mb-4">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">{t("editCourse.title")}</h2>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={30} />
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">{t("courseManagement")}</h2>
+          <MdNavigateNext size={30} />
+          <h2 className="text-lg font-bold">{t("editCourse.title")}</h2>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          {/* Course Name & Price */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">
+              {t("editCourse.courseName")}
+            </label>
+            <input
+              type="text"
+              name="courseName"
+              value={courseData.courseName}
+              onChange={handleChange}
+              placeholder="Enter Course Name"
+              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("price")}</label>
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              value={courseData.price}
+              onChange={handleChange}
+              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+              min="0"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("image")}</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+            />
+          </div>
+
+          {/* Current Image */}
+          {courseData.img && !imgPreview && (
+            <div className="mt-4 text-center">
+              <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
+              <img
+                src={courseData.img}
+                alt="Current Image"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            </div>
+          )}
+
+          {/* Image Preview */}
+          {imgPreview && (
+            <div className="mt-4 text-center">
+              <h3 className="font-medium">{t("editCourse.imagePreview")}</h3>
+              <img
+                src={imgPreview}
+                alt="Preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            </div>
+          )}
+
+          {/* Description */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("description")}</label>
+            <ReactQuill
+              theme="snow"
+              value={courseData.description}
+              onChange={handleDescriptionChange}
+              placeholder={t("Enter Description")}
+              className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+            />
+          </div>
+
+          {/* Course Type */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("type")}</label>
+            <select
+              name="courseEnum"
+              value={courseData.courseEnum}
+              onChange={handleEnumChange}
+              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="FREE">Free</option>
+              <option value="PAID">Paid</option>
+            </select>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-2 mt-6">
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {t("cancel")}
+            </button>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading || isSubmitted
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              }`}
+              disabled={loading || isSubmitted}
+            >
+              {loading
+                ? t("processing")
+                : isSubmitted
+                ? t("submitted")
+                : t("submit")}
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-wcolor text-gray-700 dark:bg-darkBackground dark:border-2 dark:border-darkBorder dark:text-darkText p-6 rounded-lg shadow space-y-4"
-      >
-        {/* Course Name & Price */}
-        <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">
-            {t("editCourse.courseName")}
-          </label>
-          <input
-            type="text"
-            name="courseName"
-            value={courseData.courseName}
-            onChange={handleChange}
-            placeholder="Enter Course Name"
-            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">{t("price")}</label>
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={courseData.price}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-            min="0"
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">{t("image")}</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
-          />
-        </div>
-
-        {/* Current Image */}
-        {courseData.img && !imgPreview && (
-          <div className="mt-4 text-center">
-            <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
-            <img
-              src={courseData.img}
-              alt="Current Image"
-              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
-            />
-          </div>
-        )}
-
-        {/* Image Preview */}
-        {imgPreview && (
-          <div className="mt-4 text-center">
-            <h3 className="font-medium">{t("editCourse.imagePreview")}</h3>
-            <img
-              src={imgPreview}
-              alt="Preview"
-              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
-            />
-          </div>
-        )}
-
-        {/* Description */}
-        <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">{t("description")}</label>
-          <ReactQuill
-            theme="snow"
-            value={courseData.description}
-            onChange={handleDescriptionChange}
-            placeholder={t("Enter Description")}
-            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
-          />
-        </div>
-
-        {/* Course Type */}
-        <div className="flex items-center space-x-4">
-          <label className="w-1/4 font-medium">{t("type")}</label>
-          <select
-            name="courseEnum"
-            value={courseData.courseEnum}
-            onChange={handleEnumChange}
-            className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="FREE">Free</option>
-            <option value="PAID">Paid</option>
-          </select>
-        </div>
-
-        {/* Submit Button */}
-        <div className="flex justify-end space-x-2 mt-6">
-          <button
-            onClick={() => !loading && navigate("/admin/courses")}
-            disabled={loading || isSubmitted}
-            className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
-          >
-            {t("cancel")}
-          </button>
-          <button
-            type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading || isSubmitted
-                ? "bg-gray-400"
-                : "bg-scolor text-ficolor hover:bg-opacity-80"
-            }`}
-            disabled={loading || isSubmitted}
-          >
-            {loading
-              ? t("processing")
-              : isSubmitted
-              ? t("submitted")
-              : t("submit")}
-          </button>
-        </div>
-      </form>
-      <ToastContainer />
     </div>
   );
 };

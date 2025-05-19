@@ -20,5 +20,16 @@
     "week_1": "Week 1",
     "week_2": "Week 2",
     "week_3": "Week 3",
-    "week_4": "Week 4"
+    "week_4": "Week 4",
+    "blogStats": "Blog posts in the last 30 days",
+    "userLogs": "User action statistics (Logs)",
+    "recentActivities": "Recent activities",
+    "topUsers": "Top 5 users by",
+    "avatar": "Avatar",
+    "loginHistory": "Login history",
+    "status": "Status",
+    "message": "Message",
+    "success": "Success",
+    "fail": "Failed",
+    "count": "Count"
 }

@@ -32,7 +32,7 @@ import AddQuizz from "../pages/Quizz/AddQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz";
 import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
-import AdminViewCourse from "../pages/Course/UserViewCourse";
+import UserViewCourse from "../pages/Course/UserViewCourse";
 
 const AdminRoutes = () => {
   return (
@@ -54,9 +54,10 @@ const AdminRoutes = () => {
         <Route path="comment" element={<CommentManagement />} />
         <Route path="blog" element={<AdminBlogManagement />} />
         <Route path="blog/add-blog" element={<AdminAddBlog />} />
-        <Route path="blog/edit-blog" element={<AdminEditBlog />} />
+        <Route path="blog/edit-blog/:id" element={<AdminEditBlog />} />
         <Route path="payment" element={<AdminPaymentManagement />} />
         <Route path="courses" element={<ManagementCourse />} />
+        <Route path="admin-view-course/:id" element={<UserViewCourse />} />
         <Route path="lessons" element={<ManagementLesson />} />
         <Route path="quizzes" element={<QuizzManagement />} />
         <Route path="questions" element={<QuestionManagement />} />
