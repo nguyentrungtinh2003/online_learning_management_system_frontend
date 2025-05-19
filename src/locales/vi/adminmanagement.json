@@ -129,6 +129,21 @@
     "title": "Thêm Bài Viết Mới",
     "blogTitle": "Tiêu Đề Bài Viết"
   },
+  "editBlog": {
+    "blog_management": "Quản lý blog",
+    "edit_blog": "Chỉnh sửa blog",
+    "blog_id": "Mã blog",
+    "created_date": "Ngày tạo",
+    "blog_title": "Tiêu đề blog",
+    "description": "Mô tả",
+    "image": "Hình ảnh",
+    "video": "Băng ghi hình",
+    "interactions": "Tương tác",
+    "views": "Lượt xem",
+    "actor": "Người đăng",
+    "cancel": "Hủy",
+    "submit": "Lưu"
+  },
   "payment": {
     "title": "Quản Lí Giao Dịch",
     "amount": "Số Lượng",

@@ -499,7 +499,6 @@ export default function Navbar() {
                 onChange={(lang) => {
                   i18n.changeLanguage(lang);
                   localStorage.setItem("language", lang);
-                  window.location.reload();
                 }}
                 placeholder="Select Language"
               />
@@ -519,7 +518,6 @@ export default function Navbar() {
                 onChange={(lang) => {
                   i18n.changeLanguage(lang);
                   localStorage.setItem("language", lang);
-                  window.location.reload();
                 }}
                 placeholder="Select Language"
               />

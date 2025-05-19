@@ -534,7 +534,7 @@ export default function CourseManagement() {
 
                         {/* Xem chi tiết */}
                         <Link
-                          to={`/view-course/${course.id}`}
+                          to={`/admin/admin-view-course/${course.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
                           title="Xem chi tiết"
                         >

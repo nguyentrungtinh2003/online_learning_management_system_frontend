@@ -14,6 +14,13 @@ import Select from "react-select";
 const AddQuizz = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 1024);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   const [quizData, setQuizData] = useState({
     quizName: "",
@@ -293,179 +300,167 @@ const AddQuizz = () => {
   };
 
   return (
-    <div className="flex w-full flex-col h-full">
-      <div className="flex dark:text-darkText mb-2 items-center gap-2">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">{t("addQuiz.title")}</h2>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 60 : 30}  />
+          <MdNavigateNext size={isMobile ? 60 : 30}  />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("quizz.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30}  />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("addQuiz.title")}</h2>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("addQuiz.course")}</label>
+            <div className="flex-1">
+              <select
+                name="courseId"
+                value={quizData.courseId}
+                onChange={(e) => {
+                  const courseId = e.target.value;
+                  setQuizData((prev) => ({
+                    ...prev,
+                    courseId,
+                    lessonId: "", // reset lesson khi đổi khóa học
+                  }));
+                  setSelectedCourseId(courseId); // để load lại danh sách lessons tương ứng
+                }}
+                className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+                required
+              >
+                <option value="">{t("addQuiz.selectCourse")}</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.courseName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex items-center mt-4">
+            <label className="w-1/4 font-medium">{t("addQuiz.lesson")}</label>
+            <div className="flex-1">
+              <select
+                name="lessonId"
+                value={quizData.lessonId}
+                onChange={(e) => {
+                  const lessonId = e.target.value;
+                  setQuizData((prev) => ({
+                    ...prev,
+                    lessonId,
+                  }));
+                }}
+                className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+                required
+                disabled={!selectedCourseId} // vô hiệu hóa khi chưa chọn khóa học
+              >
+                <option value="">{t("addQuiz.selectLesson")}</option>
+                {lessons.map((lesson) => (
+                  <option key={lesson.id} value={lesson.id}>
+                    {lesson.lessonName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">{t("addQuiz.quizName")}</label>
+            <input
+              type="text"
+              name="quizName"
+              value={quizData.quizName}
+              onChange={handleChange}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              required
+            />
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">{t("price")}</label>
+            <input
+              type="number"
+              name="price"
+              value={quizData.price}
+              onChange={handleChange}
+              disabled={quizData.quizEnum === "FREE"}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">{t("image")}</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+            />
+          </div>
+
+          {/* Image Preview */}
+          {imgPreview && (
+            <div className="mt-4 text-center">
+              {" "}
+              {/* Thêm text-center để căn giữa */}
+              <h3 className="font-medium">{t("addQuiz.imagePreview")}</h3>
+              <img
+                src={imgPreview}
+                alt="Preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            </div>
+          )}
+
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">{t("description")}</label>
+            <ReactQuill
+              theme="snow"
+              value={quizData.description}
+              onChange={handleDescriptionChange}
+              placeholder={t("Enter Description")}
+              rows={3}
+              style={{ minHeight: "300px" }}
+              className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">{t("type")}</label>
+            <select
+              name="quizEnum"
+              value={quizData.quizEnum}
+              onChange={handleChange}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+            >
+              <option value="FREE">{t("free")}</option>
+              <option value="PAID">{t("paid")}</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-6 py-2 rounded text-white ${
+                loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4"
-      >
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("addQuiz.course")}</label>
-          <div className="flex-1">
-            <Select
-              styles={customStyles}
-              options={courses.map((course) => ({
-                value: course.id,
-                label: course.courseName,
-              }))}
-              onChange={(selectedOption) => {
-                const courseId = selectedOption ? selectedOption.value : "";
-                setQuizData((prev) => ({
-                  ...prev,
-                  courseId,
-                  lessonId: "", // reset lesson khi chọn course khác
-                }));
-                setSelectedCourseId(courseId); // để load lại lessons theo courseId
-              }}
-              isClearable
-              placeholder={t("addQuiz.selectCourse")}
-              value={
-                quizData.courseId
-                  ? {
-                      value: quizData.courseId,
-                      label:
-                        courses.find((c) => c.id === quizData.courseId)
-                          ?.courseName || "",
-                    }
-                  : null
-              }
-            />
-          </div>
-        </div>
-        <div className="flex items-center mt-4">
-          <label className="w-1/4 font-medium">{t("addQuiz.lesson")}</label>
-          <div className="flex-1">
-            <Select
-              styles={customStyles}
-              options={lessons.map((lesson) => ({
-                value: lesson.id,
-                label: lesson.lessonName,
-              }))}
-              onChange={(selectedOption) => {
-                const lessonId = selectedOption ? selectedOption.value : "";
-                setQuizData((prev) => ({
-                  ...prev,
-                  lessonId,
-                }));
-              }}
-              isClearable
-              isDisabled={!selectedCourseId}
-              placeholder={t("addQuiz.selectLesson")}
-              value={
-                quizData.lessonId
-                  ? {
-                      value: quizData.lessonId,
-                      label:
-                        lessons.find((l) => l.id === quizData.lessonId)
-                          ?.lessonName || "",
-                    }
-                  : null
-              }
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("addQuiz.quizName")}</label>
-          <input
-            type="text"
-            name="quizName"
-            value={quizData.quizName}
-            onChange={handleChange}
-            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
-            required
-          />
-        </div>
-
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("price")}</label>
-          <input
-            type="number"
-            name="price"
-            value={quizData.price}
-            onChange={handleChange}
-            disabled={quizData.quizEnum === "FREE"}
-            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
-          />
-        </div>
-
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("image")}</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
-          />
-        </div>
-
-        {/* Image Preview */}
-        {imgPreview && (
-          <div className="mt-4 text-center">
-            {" "}
-            {/* Thêm text-center để căn giữa */}
-            <h3 className="font-medium">{t("addQuiz.imagePreview")}</h3>
-            <img
-              src={imgPreview}
-              alt="Preview"
-              className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
-            />
-          </div>
-        )}
-
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("description")}</label>
-          <ReactQuill
-            theme="snow"
-            value={quizData.description}
-            onChange={handleDescriptionChange}
-            placeholder={t("Enter Description")}
-            rows={3}
-            style={{ minHeight: "300px" }}
-            className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
-          />
-        </div>
-
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">{t("type")}</label>
-          <select
-            name="quizEnum"
-            value={quizData.quizEnum}
-            onChange={handleChange}
-            className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
-          >
-            <option value="FREE">{t("free")}</option>
-            <option value="PAID">{t("paid")}</option>
-          </select>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded text-white ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
-          </button>
-        </div>
-      </form>
-
-      <ToastContainer />
     </div>
   );
 };
