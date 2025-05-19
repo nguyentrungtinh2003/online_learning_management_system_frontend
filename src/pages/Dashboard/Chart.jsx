@@ -549,8 +549,12 @@ const Chart = () => {
                   >
                     <td className="lg:h-16 h-[11vh] p-2 w-32">{index + 1}</td>
                     <td className="p-2 place-items-center">{loda.username}</td>
-                    <td className="p-2 w-72 whitespace-nowrap">{loda.IP}</td>
-                    <td className="w-[400px] p-2">{loda.success}</td>
+                    <td className="p-2 w-72 whitespace-nowrap">
+                      {loda.ipAddress}
+                    </td>
+                    <td className="w-[400px] p-2">
+                      {loda.success === true ? "Success" : "Failse"}
+                    </td>
                     <td className="w-[400px] p-2">{loda.message}</td>
                   </tr>
                 ))}
