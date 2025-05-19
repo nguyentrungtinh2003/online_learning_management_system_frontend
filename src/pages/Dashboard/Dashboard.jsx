@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import URL from "../../config/URLconfig";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import StatisticalTable from "./StatisticalTable";
 
 const Dashboard = () => {
   const { t } = useTranslation("dashboard");
@@ -119,9 +120,9 @@ const Dashboard = () => {
   return (
     <div className="flex-1 h-full">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full">
+      <div className="flex flex-col gap-2">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-2 mb-2">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-2">
           {stats.map((item, index) => (
             <div
               key={index}
@@ -134,7 +135,7 @@ const Dashboard = () => {
                     {t("last_30_days")}
                   </p>
                 </div>
-                <h3 className="text-7xl lg:text-xl text-left text-fcolor font-bold">
+                <h3 className="text-7xl lg:text-4xl text-left text-fcolor font-bold">
                   {item.value}
                 </h3>
               </div>
@@ -146,8 +147,9 @@ const Dashboard = () => {
         </div>
 
         {/* Sales Analytics Chart */}
-        <div className="w-full gap-4">
+        <div className="w-full flex flex-col gap-2">
           <Chart />
+          <StatisticalTable/>
         </div>
       </div>
     </div>
