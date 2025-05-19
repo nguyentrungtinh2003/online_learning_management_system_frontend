@@ -65,6 +65,8 @@ export default function AuthForm() {
         headers: {
           "Content-Type": "application/json",
         },
+
+        withCredentials: true, // CẦN THIẾT
       })
       .then((response) => {
         setLoginLoading(false);
@@ -127,10 +129,12 @@ export default function AuthForm() {
 
   const handelRegister = () => {
     setRegisterLoading(true);
-    axios.post(`${URL}/user-register`, fromData).then((response) => {
-      console.log(response.data);
-      console.log("Register success");
-    });
+    axios
+      .post(`${URL}/user-register`, fromData, { withCredentials: true })
+      .then((response) => {
+        console.log(response.data);
+        console.log("Register success");
+      });
   };
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
