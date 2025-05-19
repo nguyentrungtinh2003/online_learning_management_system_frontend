@@ -235,7 +235,7 @@ const EditCourse = () => {
       // localStorage.removeItem("courseCache");
       window.dispatchEvent(new Event("triggerCourseReload"));
 
-      toast.success("Cập nhật khóa học thành công!", {
+      toast.success("Course updated successfully!", {
         autoClose: 1000,
         position: "top-right",
       });
@@ -246,8 +246,8 @@ const EditCourse = () => {
         navigate("/admin/courses", { state: { reload: true } });
       }, 1000);
     } catch (err) {
-      console.error("Lỗi khi cập nhật khóa học:", err);
-      toast.error("Không thể cập nhật khóa học!", {
+      console.error("Error updating course:", err);
+      toast.error("Failed to delete course!", {
         autoClose: 1000,
         position: "top-right",
       });
@@ -363,7 +363,7 @@ const EditCourse = () => {
         {/* Submit Button */}
         <div className="flex justify-end space-x-2 mt-6">
           <button
-            onClick={() => !loading && navigate(-1)}
+            onClick={() => !loading && navigate("/admin/courses")}
             disabled={loading || isSubmitted}
             className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
           >

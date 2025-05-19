@@ -32,6 +32,7 @@ import AddQuizz from "../pages/Quizz/AddQuizz";
 import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz";
 import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
+import AdminViewCourse from "../pages/Course/UserViewCourse";
 
 const AdminRoutes = () => {
   return (
@@ -92,6 +93,7 @@ const AdminRoutes = () => {
           path="quizzes/:quizId/questions/add"
           element={<AddQuestionByQuiz />}
         />
+        <Route path="view-course/:id" element={<AdminViewCourse />} />
       </Route>
     </Routes>
   );

@@ -19,6 +19,7 @@ import {
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { FaLockOpen, FaLock, FaTimes, FaCoins } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 
 export default function CourseManagement() {
   const { t } = useTranslation("adminmanagement");
@@ -30,6 +31,11 @@ export default function CourseManagement() {
   const [cache, setCache] = useState(new Map());
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const location = useLocation();
+
+  const triggerReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi giá trị để các useEffect phụ thuộc vào reloadTrigger chạy lại
+  };
 
   const coursesPerPage = 6;
   const [reloadTrigger, setReloadTrigger] = useState(false);
@@ -58,7 +64,12 @@ export default function CourseManagement() {
   // **Effect 2: Lắng nghe sự kiện triggerCourseReload**
   useEffect(() => {
     const handleReload = () => {
-      triggerReload(); // Gọi trigger để re-fetch cache và courses
+      const savedCache = localStorage.getItem("courseCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+        setCache(parsedCache);
+        setCurrentPage(0);
+      }
     };
     window.addEventListener("triggerCourseReload", handleReload);
 
@@ -279,13 +290,23 @@ export default function CourseManagement() {
         const savedCache = localStorage.getItem("courseCache");
         if (savedCache) {
           const parsedCache = new Map(JSON.parse(savedCache));
-          const key = `--ALL--ALL`; // hoặc tuỳ bộ lọc hiện tại
-          const existingCourses = parsedCache.get(key) || [];
 
-          const updatedCourses = existingCourses.filter(
-            (course) => course.id !== id
+          // Cập nhật ALL-DATA
+          const allData = parsedCache.get("ALL-DATA") || [];
+          const updatedAllData = allData.map((course) =>
+            course.id === id ? { ...course, deleted: true } : course
           );
-          parsedCache.set(key, updatedCourses);
+          parsedCache.set("ALL-DATA", updatedAllData);
+
+          // Cập nhật cache hiện tại
+          const currentKey = `${search.trim()}-${filterType}-${statusFilter}`;
+          if (parsedCache.has(currentKey)) {
+            const currentList = parsedCache.get(currentKey);
+            const updatedList = currentList.map((course) =>
+              course.id === id ? { ...course, deleted: true } : course
+            );
+            parsedCache.set(currentKey, updatedList);
+          }
 
           localStorage.setItem(
             "courseCache",
@@ -318,19 +339,26 @@ export default function CourseManagement() {
       try {
         await restoreCourse(id);
 
-        // ✅ Cập nhật courseCache trong localStorage nếu có
         const savedCache = localStorage.getItem("courseCache");
         if (savedCache) {
           const parsedCache = new Map(JSON.parse(savedCache));
-          const key = `--ALL--ALL`; // hoặc key tương ứng với filter hiện tại
 
-          const existingCourses = parsedCache.get(key) || [];
-
-          const updatedCourses = existingCourses.map((course) =>
+          // Cập nhật ALL-DATA
+          const allData = parsedCache.get("ALL-DATA") || [];
+          const updatedAllData = allData.map((course) =>
             course.id === id ? { ...course, deleted: false } : course
           );
+          parsedCache.set("ALL-DATA", updatedAllData);
 
-          parsedCache.set(key, updatedCourses);
+          // Cập nhật cache hiện tại
+          const currentKey = `${search.trim()}-${filterType}-${statusFilter}`;
+          if (parsedCache.has(currentKey)) {
+            const currentList = parsedCache.get(currentKey);
+            const updatedList = currentList.map((course) =>
+              course.id === id ? { ...course, deleted: false } : course
+            );
+            parsedCache.set(currentKey, updatedList);
+          }
 
           localStorage.setItem(
             "courseCache",
@@ -338,7 +366,7 @@ export default function CourseManagement() {
           );
         }
 
-        // ✅ Gửi sự kiện để các component khác reload nếu cần
+        // ✅ Gửi event để các useEffect khác reload
         window.dispatchEvent(new Event("triggerCourseReload"));
 
         toast.success("Course restored successfully!", {
@@ -380,7 +408,9 @@ export default function CourseManagement() {
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
             <FaBuffer size={isMobile ? 60 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">{t("courseManagement")}</h2>
+            <h2 className="text-5xl lg:text-lg font-bold">
+              {t("courseManagement")}
+            </h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/courses/add-course">
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
@@ -471,7 +501,10 @@ export default function CourseManagement() {
                   </tr>
                 ) : (
                   courses.map((course, index) => (
-                    <tr key={course.id} className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                    <tr
+                      key={course.id}
+                      className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    >
                       <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * coursesPerPage}
                       </td>
@@ -490,12 +523,15 @@ export default function CourseManagement() {
                           : "No description"}
                       </td>
 
-                      <td className="p-2 text-center lg:w-40">
+                      <td className="p-2 lg:w-32 whitespace-nowrap">
                         {course.user?.username || "No username"}
                       </td>
-                      <td className="p-2 lg:w-32">
+
+                      <td className="p-2 lg:w-32 whitespace-nowrap">
                         {course.price === 0 || course.price === null ? (
-                          "Free"
+                          <p className="text-green-600 font-semibold">
+                            {t("free")}
+                          </p>
                         ) : (
                           <>
                             {course.price}{" "}
@@ -519,24 +555,31 @@ export default function CourseManagement() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2 w-32">
-                        {course.deleted ? "Deleted" : "Active"}
+                      <td className="p-2 w-40">
+                        {course.deleted ? (
+                          <p className="text-red-600 font-semibold">
+                            {t("deleted")}
+                          </p>
+                        ) : (
+                          <p className="text-green-600 font-semibold">
+                            {t("active")}
+                          </p>
+                        )}
                       </td>
+
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         {/* Điều hướng đến danh sách phụ */}
                         <Link
                           to={`/admin/courses/${course.id}/lessons`}
                           className="p-2 h-fit border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
-                          title="Xem danh sách liên quan"
                         >
                           <FaArrowRight />
                         </Link>
 
                         {/* Xem chi tiết */}
                         <Link
-                          to={`/view-course/${course.id}`}
+                          to={`/admin/view-course/${course.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
-                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
@@ -545,7 +588,6 @@ export default function CourseManagement() {
                         <Link
                           to={`/admin/courses/edit-course/${course.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
-                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
@@ -557,7 +599,6 @@ export default function CourseManagement() {
                             onClick={() =>
                               handleRestore(course.id, course.courseName)
                             }
-                            title="Khôi phục khóa học"
                           >
                             <FaLockOpen />
                           </button>
@@ -567,7 +608,6 @@ export default function CourseManagement() {
                             onClick={() =>
                               handleDelete(course.id, course.courseName)
                             }
-                            title="Khóa khóa học"
                           >
                             <FaLock />
                           </button>
@@ -581,29 +621,29 @@ export default function CourseManagement() {
           </div>
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
-              <p className="mx-2">
-                {loading
-                  ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-                  : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-                {/* Nếu không phải loading, hiển thị thông tin page */}
-              </p>
-              <div className="space-x-2">
-                <button
-                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
-                  onClick={handlePrePage}
-                  disabled={currentPage === 0 || loading}
-                >
-                  <MdNavigateBefore fontSize={isMobile ? 55 : 30} />
-                </button>
-                <button
-                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
-                  onClick={handleNextPage}
-                  disabled={currentPage >= totalPages - 1 || loading}
-                >
-                  <MdNavigateNext fontSize={isMobile ? 55 : 30} />
-                </button>
-              </div>
-            </div>
+          <p className="mx-2">
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
+          <div className="space-x-2">
+            <button
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+              onClick={handlePrePage}
+              disabled={currentPage === 0 || loading}
+            >
+              <MdNavigateBefore fontSize={isMobile ? 55 : 30} />
+            </button>
+            <button
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 p-1 hover:bg-tcolor rounded disabled:opacity-50"
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1 || loading}
+            >
+              <MdNavigateNext fontSize={isMobile ? 55 : 30} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
