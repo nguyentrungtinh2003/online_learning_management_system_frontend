@@ -153,6 +153,12 @@ export default function UserViewCourse() {
     );
   }
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   const lessonsToDisplay = showAllLessons ? lessons : lessons.slice(0, 4);
 
   return (
@@ -165,7 +171,12 @@ export default function UserViewCourse() {
             <h1 className="text-4xl font-semibold text-gray-800 dark:text-darkText">
               {course.courseName}
             </h1>
-            <p className="text-lg">{course.description}</p>
+            <p className="text-lg">
+              {course.description
+                ? stripHtml(course.description).slice(0, 80) +
+                  (stripHtml(course.description).length > 80 ? "..." : "")
+                : "No description"}
+            </p>
           </div>
           {/* Instructor */}
           <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground p-6 rounded-lg shadow space-y-4">

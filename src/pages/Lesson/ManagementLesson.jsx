@@ -38,6 +38,10 @@ export default function ManagementLesson() {
   const [cache, setCache] = useState(new Map());
   const [courseIdFilter, setCourseIdFilter] = useState("All");
 
+  const triggerReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi giá trị để các useEffect phụ thuộc vào reloadTrigger chạy lại
+  };
+
   const stored = localStorage.getItem("courseCache");
   const courseMap = stored ? new Map(JSON.parse(stored)) : new Map();
 
@@ -49,12 +53,12 @@ export default function ManagementLesson() {
   );
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
@@ -69,24 +73,30 @@ export default function ManagementLesson() {
   }, []); // Chạy một lần khi trang load lần đầu
 
   // ---------------------------------------------------------------------------------------------------
-  // **Effect 2: Lắng nghe sự kiện triggerLLessonReload**
+  // **Effect 2: Lắng nghe sự kiện triggerLessonReload**
   useEffect(() => {
     const handleReload = () => {
-      triggerReload(); // Gọi trigger để re-fetch cache và lesson
+      const savedCache = localStorage.getItem("lessonCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+        setCache(parsedCache);
+        setCurrentPage(0);
+      }
     };
     window.addEventListener("triggerLessonReload", handleReload);
 
     return () => {
       window.removeEventListener("triggerLessonReload", handleReload);
     };
-  }, []); // Lắng nghe sự kiện reload từ các trang khác
+  }, []);
+  // Lắng nghe sự kiện reload từ các trang khác
 
   // ---------------------------------------------------------------------------------------------------
   // Effect 3: Lọc bài học từ cache và phân trang khi cache thay đổi
   useEffect(() => {
-    if (!cache.has("ALL-LESSONS")) return;
+    if (!cache.has("ALL-DATA")) return;
 
-    let filteredLessons = cache.get("ALL-LESSONS");
+    let filteredLessons = cache.get("ALL-DATA");
 
     // Lọc theo lessonSearch
     if (lessonSearch.trim() !== "") {
@@ -107,7 +117,7 @@ export default function ManagementLesson() {
     // Lọc theo Course Id
     if (courseIdFilter !== "All") {
       filteredLessons = filteredLessons.filter(
-        (lesson) => lesson.courseId === parseInt(courseIdFilter)
+        (lesson) => lesson.courseId === Number(courseIdFilter)
       );
     }
 
@@ -157,7 +167,7 @@ export default function ManagementLesson() {
           );
         }
 
-        const ALL_KEY = "ALL-LESSONS";
+        const ALL_KEY = "ALL-DATA";
         if (!cache.has(ALL_KEY)) {
           const data = await getLessonByPage(0, 1000);
 
@@ -204,7 +214,7 @@ export default function ManagementLesson() {
       setLessons(paginatedLessons.sort((a, b) => b.id - a.id));
       setTotalPages(Math.ceil(fetchedLessons.length / lessonsPerPage));
     } catch (error) {
-      console.error("Lỗi tải bài học:", error);
+      console.error("Error loading lessons:", error);
       setLessons([]);
     } finally {
       setLoading(false);
@@ -215,8 +225,8 @@ export default function ManagementLesson() {
   // **Effect 5: Lưu lại các giá trị của lessonSearch, filterType, và statusFilter vào localStorage**
   useEffect(() => {
     localStorage.setItem("lessonSearch", lessonSearch);
-    localStorage.setItem("lessonStatusFilter", statusFilter);
-    localStorage.setItem("lessonCourseIdFilter", courseIdFilter);
+    localStorage.setItem("statusFilter", statusFilter);
+    localStorage.setItem("courseIdFilter", courseIdFilter);
   }, [lessonSearch, statusFilter, courseIdFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
@@ -278,13 +288,23 @@ export default function ManagementLesson() {
         const savedCache = localStorage.getItem("lessonCache");
         if (savedCache) {
           const parsedCache = new Map(JSON.parse(savedCache));
-          const key = `--ALL--ALL`; // hoặc tuỳ bộ lọc hiện tại
-          const existingLessons = parsedCache.get(key) || [];
 
-          const updatedLessons = existingLessons.filter(
-            (lesson) => lesson.id !== id
+          // Cập nhật ALL-DATA
+          const allData = parsedCache.get("ALL-DATA") || [];
+          const updatedAllData = allData.map((lesson) =>
+            lesson.id === id ? { ...lesson, deleted: true } : lesson
           );
-          parsedCache.set(key, updatedLessons);
+          parsedCache.set("ALL-DATA", updatedAllData);
+
+          // Cập nhật cache hiện tại (dựa vào các filter)
+          const currentKey = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
+          if (parsedCache.has(currentKey)) {
+            const currentList = parsedCache.get(currentKey);
+            const updatedList = currentList.map((lesson) =>
+              lesson.id === id ? { ...lesson, deleted: true } : lesson
+            );
+            parsedCache.set(currentKey, updatedList);
+          }
 
           localStorage.setItem(
             "lessonCache",
@@ -321,15 +341,23 @@ export default function ManagementLesson() {
         const savedCache = localStorage.getItem("lessonCache");
         if (savedCache) {
           const parsedCache = new Map(JSON.parse(savedCache));
-          const key = `--ALL--ALL`; // hoặc key tương ứng với filter hiện tại
 
-          const existingLessons = parsedCache.get(key) || [];
-
-          const updatedLessons = existingLessons.map((lesson) =>
+          // Cập nhật ALL-DATA
+          const allData = parsedCache.get("ALL-DATA") || [];
+          const updatedAllData = allData.map((lesson) =>
             lesson.id === id ? { ...lesson, deleted: false } : lesson
           );
+          parsedCache.set("ALL-DATA", updatedAllData);
 
-          parsedCache.set(key, updatedLessons);
+          // Cập nhật cache hiện tại (dựa vào các filter)
+          const currentKey = `${lessonSearch.trim()}-${statusFilter}-${courseIdFilter}`;
+          if (parsedCache.has(currentKey)) {
+            const currentList = parsedCache.get(currentKey);
+            const updatedList = currentList.map((lesson) =>
+              lesson.id === id ? { ...lesson, deleted: false } : lesson
+            );
+            parsedCache.set(currentKey, updatedList);
+          }
 
           localStorage.setItem(
             "lessonCache",
@@ -362,16 +390,27 @@ export default function ManagementLesson() {
     if (currentPage > 0) setCurrentPage((prev) => prev - 1);
   };
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   return (
     <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="w-full flex flex-col h-full">
         <div className="flex justify-between items-center mb-2">
-          <Link className="flex items-center mx-2 gap-2 dark:text-darkText" onClick={() => navigate(-1)}>
+          <Link
+            className="flex items-center mx-2 gap-2 dark:text-darkText"
+            onClick={() => navigate(-1)}
+          >
             <FaVideo size={isMobile ? 60 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">{t("addLesson.main")}</h2>
+            <h2 className="text-5xl lg:text-lg font-bold">
+              {t("addLesson.main")}
+            </h2>
           </Link>
-          <Link to={`/admin/lessons/add`}>
+          <Link className="hover:text-ficolor" to={`/admin/lessons/add`}>
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
               <FaPlus size={isMobile ? 50 : 30} />
             </button>
@@ -461,7 +500,10 @@ export default function ManagementLesson() {
                   </tr>
                 ) : (
                   lessons.map((lesson, index) => (
-                    <tr key={lesson.id} className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover">
+                    <tr
+                      key={lesson.id}
+                      className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    >
                       <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * lessonsPerPage}
                       </td>
@@ -472,9 +514,12 @@ export default function ManagementLesson() {
                           : lesson.lessonName || "N/A"}
                       </td>
 
-                      <td className="p-2 lg:w-72 whitespace-nowrap">
+                      <td className="py-2 lg:w-56 whitespace-nowrap">
                         {lesson.description
-                          ? lesson.description.slice(0, 25) + (lesson.description.length > 25 ? "..." : "")
+                          ? stripHtml(lesson.description).slice(0, 25) +
+                            (stripHtml(lesson.description).length > 20
+                              ? "..."
+                              : "")
                           : "No description"}
                       </td>
 
@@ -501,15 +546,22 @@ export default function ManagementLesson() {
                           : "N/A"}
                       </td>
 
-                      <td className="p-2 lg:w-32 whitespace-nowrap">
-                        {lesson.deleted ? "Deleted" : "Active"}
+                      <td className="p-2 w-40">
+                        {lesson.deleted ? (
+                          <p className="text-red-600 font-semibold">
+                            {t("deleted")}
+                          </p>
+                        ) : (
+                          <p className="text-green-600 font-semibold">
+                            {t("active")}
+                          </p>
+                        )}
                       </td>
 
                       <td className="px-2 h-full items-center flex flex-1 justify-center gap-1">
                         <Link
                           to={`/admin/lessons/${lesson.id}/quizzes`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-indigo-500 hover:bg-indigo-400 text-white"
-                          title="Xem danh sách liên quan"
                         >
                           <FaArrowRight />
                         </Link>
@@ -517,7 +569,6 @@ export default function ManagementLesson() {
                         <Link
                           to={`/view-lesson-detail/${lesson.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
-                          title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
@@ -525,7 +576,6 @@ export default function ManagementLesson() {
                         <Link
                           to={`/admin/lessons/edit/${lesson.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
-                          title="Chỉnh sửa"
                         >
                           <FaEdit />
                         </Link>
@@ -533,15 +583,18 @@ export default function ManagementLesson() {
                         {lesson.deleted ? (
                           <button
                             className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
-                            onClick={() => handleRestore(lesson.id, lesson.lessonName)}
-                            title="Khôi phục bài học"
+                            onClick={() =>
+                              handleRestore(lesson.id, lesson.lessonName)
+                            }
                           >
                             <FaLockOpen />
                           </button>
                         ) : (
                           <button
                             className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
-                            onClick={() => handleDelete(lesson.id, lesson.lessonName)}
+                            onClick={() =>
+                              handleDelete(lesson.id, lesson.lessonName)
+                            }
                             title="Khóa bài học"
                           >
                             <FaLock />
@@ -549,7 +602,6 @@ export default function ManagementLesson() {
                         )}
                       </td>
                     </tr>
-
                   ))
                 )}
               </tbody>
@@ -559,22 +611,25 @@ export default function ManagementLesson() {
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-            {t("page")} {currentPage + 1} {t("of")} {totalPages}
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}{" "}
           </p>
           <div className="space-x-2">
             <button
               onClick={handlePrevPage}
-              disabled={currentPage === 0}
-             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+              disabled={currentPage === 0 || loading}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateBefore size={isMobile ? 55 : 30} />
             </button>
             <button
               onClick={handleNextPage}
               disabled={currentPage >= totalPages - 1}
-             className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
-              <MdNavigateNext size={isMobile ? 55 : 30}/>
+              <MdNavigateNext size={isMobile ? 55 : 30} />
             </button>
           </div>
         </div>

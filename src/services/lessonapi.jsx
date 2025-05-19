@@ -16,8 +16,21 @@ export const getLesson = async () => {
   }
 };
 
+// 2.Get Lesson By Id
+export const getLessonById = async (lessonId) => {
+  try {
+    const response = await axios.get(`${URL}/lessons/${lessonId}`, {
+      withCredentials: true,
+    });
+    return response.data; // Dữ liệu API trả về
+  } catch (error) {
+    console.error("❌ Lỗi lấy khóa học:", error);
+    return null;
+  }
+};
+
 // 🟢 Lấy bài học theo course ID
-export const getLessonById = async (courseId) => {
+export const getLessonByCourseId = async (courseId) => {
   try {
     const response = await axios.get(`${URL}/lessons/${courseId}`, {
       withCredentials: true,
@@ -163,4 +176,30 @@ export const updateLessonProcess = async (userId, courseId, lessonId) => {
       console.error("Lỗi không xác định:", error);
     }
   }
+};
+
+// API Update Lesson
+export const updateLesson = async (id, lessonData, img, video) => {
+  const formData = new FormData();
+
+  formData.append(
+    "lesson",
+    new Blob([JSON.stringify(lessonData)], { type: "application/json" })
+  );
+
+  if (img) formData.append("img", img);
+  if (video) formData.append("video", video);
+
+  const response = await axios.put(
+    `${URL}/teacher/lessons/update/${id}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
 };
