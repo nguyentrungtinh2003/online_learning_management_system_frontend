@@ -37,7 +37,7 @@ export default function TransactionHistory() {
       <h1 className="text-2xl font-bold mb-4">Transaction History</h1>
 
       <table className="w-full border-collapse border border-gray-300">
-        <thead>
+        <thead className="sticky top-0 z-10 dark:text-darkText">
           <tr className="bg-gray-100">
             <th className="border p-2">Transaction ID</th>
             <th className="border p-2">Date</th>

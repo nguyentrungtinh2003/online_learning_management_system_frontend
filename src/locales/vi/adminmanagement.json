@@ -118,6 +118,21 @@
     "success": "Đã Thêm Người Dùng Thành Công!",
     "error": "Thêm Người Dùng Thất Bại!"
   },
+  "editUser": {
+    "user_management": "Quản lý người dùng",
+    "edit_user": "Chỉnh sửa người dùng",
+    "image": "Ảnh",
+    "rank": "Hạng",
+    "silver": "Bạc",
+    "bronze": "Đồng",
+    "gold": "Vàng",
+    "diamond": "Kim cương",
+    "cancel": "Hủy",
+    "submit": "Lưu",
+    "user_not_found": "Không tìm thấy người dùng!",
+    "error_fetching_user": "Lỗi khi lấy dữ liệu người dùng:",
+    "user_updated_successfully": "Cập nhật người dùng thành công!"
+  },
   "blog": {
     "title": "Quản Lí Bài Viết",
     "blogTitle": "Tiêu Đề",

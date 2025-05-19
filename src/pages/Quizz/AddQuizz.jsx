@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -9,7 +9,6 @@ import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
-import Select from "react-select";
 
 const AddQuizz = () => {
   const { t } = useTranslation("adminmanagement");
@@ -303,8 +302,8 @@ const AddQuizz = () => {
     <div className="w-full">
       <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-          <FaBuffer size={isMobile ? 60 : 30}  />
-          <MdNavigateNext size={isMobile ? 60 : 30}  />
+          <FaBuffer size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-5xl lg:text-lg font-bold">{t("quizz.title")}</h2>
           <MdNavigateNext size={isMobile ? 60 : 30}  />
           <h2 className="text-5xl lg:text-lg font-bold">{t("addQuiz.title")}</h2>
@@ -314,7 +313,7 @@ const AddQuizz = () => {
           onSubmit={handleSubmit}
           className="space-y-4 p-2 text-gray-700 dark:text-darkText"
         >
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center">
             <label className="w-1/4 font-medium">{t("addQuiz.course")}</label>
             <div className="flex-1">
               <select
@@ -329,7 +328,7 @@ const AddQuizz = () => {
                   }));
                   setSelectedCourseId(courseId); // để load lại danh sách lessons tương ứng
                 }}
-                className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+                className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
                 required
               >
                 <option value="">{t("addQuiz.selectCourse")}</option>
@@ -354,7 +353,7 @@ const AddQuizz = () => {
                     lessonId,
                   }));
                 }}
-                className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+                className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
                 required
                 disabled={!selectedCourseId} // vô hiệu hóa khi chưa chọn khóa học
               >
@@ -445,9 +444,9 @@ const AddQuizz = () => {
           <div className="flex justify-end gap-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
-              className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
+              className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover"
             >
-              Cancel
+              {t("cancel")}
             </Link>
             <button
               type="submit"

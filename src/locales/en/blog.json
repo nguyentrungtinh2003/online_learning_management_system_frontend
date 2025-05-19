@@ -19,5 +19,9 @@
     "emotion": "Feeling / Activity",
     "moreComments": "View more comments",
     "unknownHello": "Hello Mates",
-    "toastMessage": "You need to login to perform this function!"
+    "toastMessage": "You need to login to perform this function!",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago"
 }

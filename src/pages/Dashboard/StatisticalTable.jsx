@@ -5,6 +5,7 @@ import axios from "axios";
 import { TbCoin } from "react-icons/tb";
 import { FaStar } from "react-icons/fa";
 import { PiEyeBold } from "react-icons/pi";
+import { RiContactsBook3Fill } from "react-icons/ri";
 import {
   BarChart,
   LineChart,
@@ -156,12 +157,12 @@ const StatisticalTable = () => {
           {blogData.map((item, index) => (
             <div
               key={index}
-              className="p-4 bg-gray-50 flex flex-col justify-between dark:bg-darkHover dark:text-darkText rounded-lg border-2 dark:border-darkBorder shadow-sm"
+              className="p-4 bg-gray-50 hover:scale-105 duration-100 flex flex-col justify-between dark:bg-darkHover dark:text-darkText rounded-lg border-2 dark:border-darkBorder shadow-sm"
             >
               <p className="text-lg font-bold">{item.blogName}</p>
               <p className="text-2xl flex items-center gap-2 text-cyan-400 font-semibold">
                 {item.likedUsers}
-                <PiEyeBold size={30}/>
+                <PiEyeBold size={30} />
               </p>
             </div>
           ))}
@@ -184,9 +185,13 @@ const StatisticalTable = () => {
                 <XAxis dataKey="action" />
                 <YAxis allowDecimals={false} />
                 <Tooltip
-                contentStyle={{ backgroundColor: "#334155", borderRadius: "8px", border: "none" }}
-                itemStyle={{ color: "#22d3ee" }}
-                labelStyle={{ color: "#FFFFFF" }} // màu cho nhãn label
+                  contentStyle={{
+                    backgroundColor: "#334155",
+                    borderRadius: "8px",
+                    border: "none",
+                  }}
+                  itemStyle={{ color: "#22d3ee" }}
+                  labelStyle={{ color: "#FFFFFF" }} // màu cho nhãn label
                 />
                 <Legend />
                 <Bar dataKey="count" fill="#22d3ee" name={t("count")} />
@@ -206,16 +211,25 @@ const StatisticalTable = () => {
               return (
                 <li
                   key={idx}
-                  className="border-2 dark:text-darkText rounded-lg p-4 dark:border-darkBorder bg-gray-50 dark:bg-darkHover"
+                  className="border-2 flex w-full justify-between items-center dark:text-darkText rounded-lg p-4 dark:border-darkBorder bg-gray-50 dark:bg-darkHover"
                 >
-                  <p>
-                    <span className="font-bold text-green-600">
-                      {log.username}
-                    </span>{" "}
-                    - <span className="text-yellow-500">{log.action}</span>
+                  <div>
+                    <p>
+                      <span className="font-bold text-green-600">
+                        {log.username}
+                      </span>
+                    </p>
+                    <p className="text-sm flex items-center gap-2">
+                      <span className="text-yellow-500 flex items-center gap-1">
+                        <RiContactsBook3Fill />
+                        <span className="text-gray-400">•</span>
+                        {log.action}</span>
+                        {" "}<span className="text-gray-400">|</span> {log.details}
+                    </p>
+                  </div>
+                  <p className="text-base dark:text-darkSubtext text-gray-500">
+                    {formatted}
                   </p>
-                  <p className="text-sm">{log.details}</p>
-                  <p className="text-xs dark:text-darkSubtext text-gray-500">{formatted}</p>
                 </li>
               );
             })}
@@ -256,7 +270,7 @@ const StatisticalTable = () => {
 
           <div className="overflow-auto p-4 rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
             <table className="lg:w-full w-[200%]">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
                 <tr className="lg:text-base text-xl text-center">
                   <th className="p-2">ID</th>
                   <th className="p-2">{t("avatar")}</th>
@@ -271,7 +285,7 @@ const StatisticalTable = () => {
                     className="text-center hover:bg-tcolor dark:hover:bg-darkHover"
                   >
                     <td className="p-2">{index + 1}</td>
-                    <td className="p-2">
+                    <td className="p-2 flex justify-center">
                       <img
                         src={user.img || "/user.png"}
                         alt="avatar"
@@ -279,7 +293,7 @@ const StatisticalTable = () => {
                       />
                     </td>
                     <td className="p-2">{user.username}</td>
-                    <td className="p-2">
+                    <td className="p-2 w-72">
                       <span className="inline-flex items-center gap-1">
                         {type === "coin" ? (
                           <>
@@ -308,7 +322,7 @@ const StatisticalTable = () => {
           </h2>
           <div className="overflow-auto max-h-[400px]">
             <table className="w-full text-center text-sm dark:text-darkText">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
                 <tr className="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-darkText">
                   <th className="py-2">ID</th>
                   <th>Username</th>

@@ -122,7 +122,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="flex flex-col gap-2">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-2">
+        <div className="grid grid-cols-1  lg:grid-cols-4 gap-8 lg:gap-2">
           {stats.map((item, index) => (
             <div
               key={index}
@@ -131,13 +131,13 @@ const Dashboard = () => {
               <div className="flex flex-col items-left justify-between">
                 <div className="">
                   <p className="font-bold text-7xl lg:text-xl">{item.title}</p>
-                  <p className="text-left text-4xl lg:text-xs">
-                    {t("last_30_days")}
-                  </p>
+                  <h3 className="text-7xl lg:text-4xl text-left text-fcolor font-bold">
+                    {item.value}
+                  </h3>
                 </div>
-                <h3 className="text-7xl lg:text-4xl text-left text-fcolor font-bold">
-                  {item.value}
-                </h3>
+                <p className="text-left text-4xl lg:text-xs">
+                  {t("last_30_days")}
+                </p>
               </div>
               <div className="h-full flex justify-between items-center">
                 {item.icon}
@@ -149,7 +149,7 @@ const Dashboard = () => {
         {/* Sales Analytics Chart */}
         <div className="w-full flex flex-col gap-2">
           <Chart />
-          <StatisticalTable/>
+          <StatisticalTable />
         </div>
       </div>
     </div>

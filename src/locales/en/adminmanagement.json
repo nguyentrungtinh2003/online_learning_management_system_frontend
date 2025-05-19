@@ -131,6 +131,21 @@
     "success": "User added successfully!",
     "error": "Failed to add user!"
   },
+  "editUser": {
+    "user_management": "User Management",
+    "edit_user": "Edit User",
+    "image": "Image",
+    "rank": "Rank",
+    "silver": "Silver",
+    "bronze": "Bronze",
+    "gold": "Gold",
+    "diamond": "Diamond",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "user_not_found": "User not found!",
+    "error_fetching_user": "Error fetching user:",
+    "user_updated_successfully": "User updated successfully!"
+  },
   "blog": {
     "title": "Blog Management",
     "blogTitle": "Title",
