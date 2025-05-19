@@ -75,6 +75,19 @@ export default function UserCourse() {
     }
   }, [userId, progressData]);
 
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const progress = await getCoursesProgress(userId);
+        setProgressData(progress.data || []);
+      } catch (error) {
+        console.error("Failed to fetch progress data:", error);
+      }
+    };
+
+    fetchProgress();
+  }, [userId]);
+
   const renderCourseCard = (item) => (
     <div
       key={item.courseId}
