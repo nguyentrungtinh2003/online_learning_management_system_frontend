@@ -390,6 +390,12 @@ export default function ManagementLesson() {
     if (currentPage > 0) setCurrentPage((prev) => prev - 1);
   };
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   return (
     <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="w-full flex flex-col h-full">
@@ -508,10 +514,12 @@ export default function ManagementLesson() {
                           : lesson.lessonName || "N/A"}
                       </td>
 
-                      <td className="p-2 lg:w-72 whitespace-nowrap">
+                      <td className="py-2 lg:w-56 whitespace-nowrap">
                         {lesson.description
-                          ? lesson.description.slice(0, 25) +
-                            (lesson.description.length > 25 ? "..." : "")
+                          ? stripHtml(lesson.description).slice(0, 25) +
+                            (stripHtml(lesson.description).length > 20
+                              ? "..."
+                              : "")
                           : "No description"}
                       </td>
 

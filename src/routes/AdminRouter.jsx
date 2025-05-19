@@ -72,7 +72,7 @@ const AdminRoutes = () => {
           element={<ManagementlessonByCourse />}
         />
         <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
-        <Route path="lessons/edit/:lessonId" element={<EditLesson />} />
+        <Route path="lessons/edit/:id" element={<EditLesson />} />
         <Route
           path="lessons/:lessonId/quizzes"
           element={<QuizzManagementByLesson />}
@@ -94,7 +94,7 @@ const AdminRoutes = () => {
           path="quizzes/:quizId/questions/add"
           element={<AddQuestionByQuiz />}
         />
-        <Route path="view-course/:id" element={<AdminViewCourse />} />
+        <Route path="courses/view-course/:id" element={<UserViewCourse />} />
       </Route>
     </Routes>
   );

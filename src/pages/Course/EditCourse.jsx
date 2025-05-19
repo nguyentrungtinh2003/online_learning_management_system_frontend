@@ -22,6 +22,7 @@ const EditCourse = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [reloadTrigger, setReloadTrigger] = useState(false);

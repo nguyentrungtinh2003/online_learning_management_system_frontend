@@ -4,10 +4,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { FaBuffer } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { MdNavigateNext } from "react-icons/md";
-import { FaVideo} from "react-icons/fa";
+import { FaVideo } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
+import { getLessonById, updateLesson } from "../../services/lessonapi";
 
 const EditLesson = () => {
   const { t } = useTranslation("adminmanagement");
@@ -18,74 +22,191 @@ const EditLesson = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const navigate = useNavigate();
-  const { courseId, lessonId } = useParams(); // Lấy cả courseId từ URL
+
+  const { id } = useParams();
+
+  const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [videoURL, setVideoURL] = useState("");
 
   const [lessons, setLesson] = useState({
     lessonName: "",
     description: "",
-    date: "",
-    courseId: courseId, // ID của khóa học
-    isDeleted: false,
     img: "",
-    videoURL: "",
+    video: "",
   });
 
-  const [file, setFile] = useState(null);
+  const [initialLesson, setInitialLesson] = useState({
+    lessonName: "",
+    description: "",
+    img: "",
+    video: "",
+  });
+
+  const [img, setImg] = useState(null);
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`https://codearena-backend-dev.onrender.com/api/lessons/${lessonId}`)
-      .then(({ data }) => {
-        setLesson({
-          lessonName: data.data.lessonName || "",
-          description: data.data.description || "",
-          date: data.data.date || "",
-          img: data.data.img || "", // Handle image URL
-          videoURL: data.data.videoURL || "", // Handle video URL
-          courseId: data.data.course?.id || courseId,
-          isDeleted: data.data.isDeleted || false,
-        });
-      })
-      .catch((err) => {
+    const fetchLesson = async () => {
+      try {
+        const response = await getLessonById(id); // chỉ trả về response.data
+
+        if (response && response.data) {
+          const formattedLesson = {
+            lessonName: response.data.lessonName || "",
+            description: response.data.description || "",
+            img: response.data.img || "",
+            video: response.data.video || "",
+          };
+
+          setLesson(formattedLesson);
+          setInitialLesson(formattedLesson);
+        } else {
+          setError("Không thể tải dữ liệu bài học");
+        }
+      } catch (err) {
         console.error("Lỗi khi tải dữ liệu bài học:", err);
         setError("Không thể tải dữ liệu bài học");
-      })
-      .finally(() => setLoading(false));
-  }, [lessonId, courseId]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLesson();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLesson({ ...lessons, [name]: value });
   };
 
-  const handleImageChange = (e) => setFile(e.target.files[0]);
-  const handleVideoChange = (e) => setVideo(e.target.files[0]);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Lấy file ảnh đầu tiên người dùng chọn
+    if (file) {
+      setImg(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Sau khi đọc xong file, chúng ta gán kết quả vào state để hiển thị
+        setImgPreview(reader.result);
+      };
+
+      // Đọc file ảnh dưới dạng URL data
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideo(file);
+      setVideoURL(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDescriptionChange = (value) => {
+    setLesson((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+
+  const handleClosePreview = () => {
+    setVideo(null);
+    setVideoURL("");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Kiểm tra nếu đang loading hoặc đã submit rồi
+    if (loading || isSubmitted) return;
+
+    // Kiểm tra xem dữ liệu có thay đổi không
+    const isDataUnchanged =
+      lessons.lessonName === initialLesson.lessonName &&
+      lessons.description === initialLesson.description &&
+      lessons.video === initialLesson.video &&
+      lessons.img === initialLesson.img &&
+      !img;
+
+    // Nếu dữ liệu không thay đổi, chỉ cần quay lại
+    if (isDataUnchanged) {
+      navigate(-1); // Quay lại trang trước
+      return;
+    }
+
+    const missingFields = [];
+
+    // Kiểm tra các trường bắt buộc
+    if (!lessons.lessonName.trim()) missingFields.push(t("lessonName"));
+    if (!lessons.description.trim()) missingFields.push(t("description"));
+    if (!img && !lessons.img) missingFields.push(t("image"));
+
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 1000 }
+      );
+      return;
+    }
+
     setLoading(true);
 
     const formData = new FormData();
+    if (img) formData.append("img", img);
+    if (video) formData.append("video", video);
     formData.append(
       "lesson",
       new Blob([JSON.stringify(lessons)], { type: "application/json" })
     );
-    if (file) formData.append("img", file);
-    if (video) formData.append("video", video);
 
     try {
-      const response = await axios.put(
-        `https://codearena-backend-dev.onrender.com/api/teacher/lessons/update/${lessonId}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const result = await updateLesson(id, lessons, img, video);
+
+      // ✅ Cập nhật localStorage nếu có khóa học trong cache
+      const savedCache = localStorage.getItem("lessonCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+
+        const key = `--ALL--ALL`; // hoặc tùy theo bộ lọc thực tế đang dùng
+        const existingLessons = parsedCache.get(key) || [];
+
+        // Cập nhật khóa học trong danh sách
+        const updatedLessons = existingLessons.map((lesson) =>
+          lesson.id === id
+            ? {
+                ...lesson,
+                lessonName: lessons.lessonName,
+                description: lessons.description,
+                img: result.img || lesson.img,
+                video: lessons.video,
+              }
+            : lesson
+        );
+
+        parsedCache.set(key, updatedLessons);
+
+        localStorage.setItem(
+          "lessonCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+      }
+
+      window.dispatchEvent(new Event("triggerLessonReload"));
+
       toast.success("Cập nhật bài học thành công!", {
         position: "top-right",
         autoClose: 1000,
@@ -108,18 +229,28 @@ const EditLesson = () => {
     }
   };
 
+  if (loading) return <div>Đang tải dữ liệu bài học...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className="w-full">
       <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaVideo size={isMobile ? 60 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">{t("addLesson.main")}</h2>
+          <h2 className="text-5xl lg:text-lg font-bold">
+            {t("addLesson.main")}
+          </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">{t("editLesson.title")}</h2>
+          <h2 className="text-5xl lg:text-lg font-bold">
+            {t("editLesson.title")}
+          </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 p-2 text-gray-700 dark:text-darkText">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
           {/* Tên bài học */}
           <div className="flex items-center space-x-4">
             <label className="w-1/4 font-medium">{t("lesson.name")}:</label>
@@ -128,40 +259,58 @@ const EditLesson = () => {
               name="lessonName"
               value={lessons.lessonName}
               onChange={handleChange}
+              placeholder="Enter Lesson Name"
+              required
               className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText"
             />
           </div>
 
-          {/* Mô tả */}
-          <div className="flex items-start space-x-4">
-            <label className="w-1/4 font-medium pt-2">{t("description")}:</label>
-            <textarea
-              name="description"
-              rows={3}
+          {/* Description */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("description")}</label>
+            <ReactQuill
+              theme="snow"
               value={lessons.description}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText"
-            ></textarea>
+              onChange={handleDescriptionChange}
+              placeholder={t("Enter Description")}
+              className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg "
+            />
           </div>
 
-          {/* Ảnh bài học */}
-          <div className="flex items-start space-x-4">
-            <label className="w-1/4 font-medium pt-2">{t("image")}:</label>
-            <div className="flex-1 space-y-2">
-              {lessons.img && (
-                <img
-                  src={lessons.img}
-                  alt="Lesson"
-                  className="w-40 h-40 object-cover rounded-md"
-                />
-              )}
-              <input
-                type="file"
-                onChange={handleImageChange}
-                className="w-full border-2 px-3 py-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 file:rounded-xl"
+          {/* Image Upload */}
+          <div className="flex items-center space-x-4">
+            <label className="w-1/4 font-medium">{t("image")}</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+            />
+          </div>
+
+          {/* Current Image */}
+          {lessons.img && !imgPreview && (
+            <div className="mt-4 text-center">
+              <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
+              <img
+                src={lessons.img}
+                alt="Current Image"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
               />
             </div>
-          </div>
+          )}
+
+          {/* Image Preview */}
+          {imgPreview && (
+            <div className="mt-4 text-center">
+              <h3 className="font-medium">{t("editLesson.imagePreview")}</h3>
+              <img
+                src={imgPreview}
+                alt="Preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            </div>
+          )}
 
           {/* Video bài học */}
           <div className="flex items-start space-x-4">
@@ -185,6 +334,7 @@ const EditLesson = () => {
           <div className="flex justify-end space-x-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
+              disabled={loading || isSubmitted}
               className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80 dark:text-darkText"
             >
               {t("cancel")}
@@ -193,12 +343,16 @@ const EditLesson = () => {
               type="submit"
               disabled={loading}
               className={`px-6 py-2 rounded-lg ${
-                loading
+                loading || isSubmitted
                   ? "bg-gray-400 text-white"
                   : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
             >
-              {loading ? t("processing") : t("submit")}
+              {loading
+                ? t("processing")
+                : isSubmitted
+                ? t("submitted")
+                : t("submit")}{" "}
             </button>
           </div>
         </form>
