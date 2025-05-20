@@ -36,6 +36,9 @@ import viAdminManagement from "./locales/vi/adminmanagement.json";
 import enAdminSetting from "./locales/en/adminsetting.json";
 import viAdminSetting from "./locales/vi/adminsetting.json";
 
+import enHomePage from "./locales/en/homepage.json";
+import viHomePage from "./locales/vi/homepage.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -45,7 +48,7 @@ i18n
     debug: true,
     ns: ["settings", "navbar", "sidebar", "blog", "ranking",
        "profile", "payment","chatroom","dashboard","adminmanagement",
-      "adminsetting",],// thêm 'ranking'
+      "adminsetting","homepage",],// thêm 'ranking'
     defaultNS: "settings",
     resources: {
       en: {
@@ -53,26 +56,28 @@ i18n
         navbar: enNavbar,
         sidebar: enSidebar,
         blog: enBlog,
-        ranking: enRanking, // thêm dòng này
+        ranking: enRanking,
         profile: enProfile,
         payment: enPayment,
         chatroom: enChatroom,
         dashboard: enDashboard,
         adminmanagement: enAdminManagement,
         adminsetting: enAdminSetting,
+        homepage: enHomePage,
       },
       vi: {
         settings: viSettings,
         navbar: viNavbar,
         sidebar: viSidebar,
         blog: viBlog,
-        ranking: viRanking, // thêm dòng này
+        ranking: viRanking,
         profile: viProfile,
         payment: viPayment,
         chatroom: viChatroom,
         dashboard: viDashboard,
         adminmanagement: viAdminManagement,
         adminsetting: viAdminSetting,
+        homepage: viHomePage,
       },
     },
     interpolation: {

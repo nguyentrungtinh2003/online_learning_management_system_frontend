@@ -20,6 +20,17 @@
     "week_1": "Tuần 1",
     "week_2": "Tuần 2",
     "week_3": "Tuần 3",
-    "week_4": "Tuần 4"
+    "week_4": "Tuần 4",
+    "blogStats": "Số bài viết trong 30 ngày gần nhất",
+    "userLogs": "Thống kê hành động người dùng (Logs)",
+    "recentActivities": "Nhật ký hoạt động gần đây",
+    "topUsers": "Top 5 người dùng theo",
+    "avatar": "Ảnh",
+    "loginHistory": "Lịch sử đăng nhập",
+    "status": "Trạng thái",
+    "message": "Thông báo",
+    "success": "Thành công",
+    "fail": "Thất bại",
+    "count": "Số lượng"
   }
   
