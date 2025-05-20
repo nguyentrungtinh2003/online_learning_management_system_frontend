@@ -353,7 +353,7 @@ export default function ManagementLesson() {
             <MdNavigateBefore size={isMobile ? 60 : 30} />
             <h2 className="text-5xl lg:text-lg font-bold">{t("back")}</h2>
           </Link>
-          <Link to={`/admin/lessons/add`}>
+          <Link to={`/admin/courses/${courseId}/lessons/add`}>
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
               <FaPlus size={isMobile ? 50 : 30} />
             </button>

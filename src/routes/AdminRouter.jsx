@@ -16,7 +16,7 @@ import AdminPaymentManagement from "../pages/Payment/AdminPaymentManagement";
 import ManagementCourse from "../pages/Course/ManagementCourse";
 import AddCourse from "../pages/Course/AddCourse";
 import UpdateCourse from "../pages/Course/EditCourse";
-import AddLesson from "../pages/Lesson/AddLessonByCourse";
+import AddLesson from "../pages/Lesson/AddLesson";
 import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagementByLesson from "../pages/Quizz/QuizzManagementByLesson";
 import UpdateQuizz from "../pages/Quizz/UpdateQuizz";
@@ -25,7 +25,7 @@ import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import AdminLayout from "../components/Layout/AdminLayout";
 import ManagementLesson from "../pages/Lesson/ManagementLesson";
-import AddLessonByCourse from "../pages/Lesson/AddLesson";
+import AddLessonByCourse from "../pages/Lesson/AddLessonByCourse";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse";
 import AddQuizz from "../pages/Quizz/AddQuizz";
@@ -61,7 +61,7 @@ const AdminRoutes = () => {
         <Route path="lessons" element={<ManagementLesson />} />
         <Route path="quizzes" element={<QuizzManagement />} />
         <Route path="questions" element={<QuestionManagement />} />
-        <Route path="lessons/add" element={<AddLessonByCourse />} />
+        <Route path="lessons/add" element={<AddLesson />} />
         <Route path="quizzes/add" element={<AddQuizz />} />
         <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
@@ -71,7 +71,10 @@ const AdminRoutes = () => {
           path="courses/:courseId/lessons"
           element={<ManagementlessonByCourse />}
         />
-        <Route path="courses/:courseId/lessons/add" element={<AddLesson />} />
+        <Route
+          path="courses/:courseId/lessons/add"
+          element={<AddLessonByCourse />}
+        />
         <Route path="lessons/edit/:id" element={<EditLesson />} />
         <Route
           path="lessons/:lessonId/quizzes"
