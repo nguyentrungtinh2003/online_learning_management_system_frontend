@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Form, Button } from "react-bootstrap";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import URL from "../../config/URLconfig";
+import { useTranslation } from "react-i18next";
+import { MdNavigateNext } from "react-icons/md";
+import { FaBuffer } from "react-icons/fa";
 
 const UpdateQuestion = () => {
+  const { t } = useTranslation("adminmanagement");
   const { questionId } = useParams();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [questionData, setQuestionData] = useState({
     questionName: "",
     answerA: "",
@@ -53,72 +64,124 @@ const UpdateQuestion = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h2>Edit Question</h2>
-      <Form.Group controlId="formQuestionName">
-        <Form.Label>Question Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="questionName"
-          value={questionData.questionName}
-          onChange={handleChange}
-        />
-      </Form.Group>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-lg font-bold">{t("updateQuestion.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-lg font-bold">{t("updateQuestion.edit")}</h2>
+        </div>
 
-      {["A", "B", "C", "D"].map((option) => (
-        <Form.Group key={option} controlId={`formAnswer${option}`}>
-          <Form.Label>Answer {option}</Form.Label>
-          <Form.Control
-            type="text"
-            name={`answer${option}`}
-            value={questionData[`answer${option}`]}
-            onChange={handleChange}
-          />
-        </Form.Group>
-      ))}
-
-      <Form.Group controlId="formAnswerCorrect">
-        <Form.Label>Correct Answer</Form.Label>
-        <Form.Control
-          as="select"
-          name="answerCorrect"
-          value={questionData.answerCorrect}
-          onChange={handleChange}
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
         >
-          <option value="">Select Correct Answer</option>
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
-          <option value="D">D</option>
-        </Form.Control>
-      </Form.Group>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("updateQuestion.questionName")}:
+              </label>
+              <input
+                type="text"
+                name="questionName"
+                value={questionData.questionName}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              />
+            </div>
 
-      <Form.Group controlId="formQuizId">
-        <Form.Label>Quiz ID</Form.Label>
-        <Form.Control
-          type="text"
-          name="quizId"
-          value={questionData.quizId}
-          onChange={handleChange}
-        />
-      </Form.Group>
+            {["A", "B", "C", "D"].map((opt) => (
+              <div key={opt} className="flex items-center space-x-4">
+                <label className="w-1/4 font-medium">{`${t(
+                  "updateQuestion.answer"
+                )} ${opt}:`}</label>
+                <input
+                  type="text"
+                  name={`answer${opt}`}
+                  value={questionData[`answer${opt}`]}
+                  onChange={handleChange}
+                  className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+                />
+              </div>
+            ))}
 
-      <Form.Group controlId="formIsDeleted">
-        <Form.Check
-          type="checkbox"
-          label="Is Deleted"
-          name="isDeleted"
-          checked={questionData.isDeleted}
-          onChange={(e) =>
-            setQuestionData({ ...questionData, isDeleted: e.target.checked })
-          }
-        />
-      </Form.Group>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("updateQuestion.correctAnswer")}:
+              </label>
+              <select
+                name="answerCorrect"
+                value={questionData.answerCorrect}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              >
+                <option value="">{t("updateQuestion.selectCorrect")}</option>
+                {["A", "B", "C", "D"].map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <Button variant="primary" type="submit">
-        Save Changes
-      </Button>
-    </Form>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("updateQuestion.quizId")}:
+              </label>
+              <input
+                type="text"
+                name="quizId"
+                value={questionData.quizId}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("updateQuestion.isDeleted")}:
+              </label>
+              <input
+                type="checkbox"
+                name="isDeleted"
+                checked={questionData.isDeleted}
+                onChange={(e) =>
+                  setQuestionData({
+                    ...questionData,
+                    isDeleted: e.target.checked,
+                  })
+                }
+                className="w-5 h-5"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
+            >
+              {t("updateQuestion.cancel")}
+            </Link>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
+            >
+              {loading
+                ? t("updateQuestion.processing")
+                : t("updateQuestion.submit")}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 };
 

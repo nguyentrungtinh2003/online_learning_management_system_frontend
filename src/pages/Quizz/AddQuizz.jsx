@@ -14,12 +14,12 @@ const AddQuizz = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [quizData, setQuizData] = useState({
     quizName: "",
@@ -305,8 +305,10 @@ const AddQuizz = () => {
           <FaBuffer size={isMobile ? 60 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-5xl lg:text-lg font-bold">{t("quizz.title")}</h2>
-          <MdNavigateNext size={isMobile ? 60 : 30}  />
-          <h2 className="text-5xl lg:text-lg font-bold">{t("addQuiz.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">
+            {t("addQuiz.title")}
+          </h2>
         </div>
 
         <form
@@ -444,7 +446,7 @@ const AddQuizz = () => {
           <div className="flex justify-end gap-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
-              className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover"
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
             >
               {t("cancel")}
             </Link>
@@ -452,7 +454,7 @@ const AddQuizz = () => {
               type="submit"
               disabled={loading}
               className={`px-6 py-2 rounded text-white ${
-                loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                loading ? "bg-gray-400" : "bg-scolor hover:bg-opacity-80"
               }`}
             >
               {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}

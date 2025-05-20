@@ -58,7 +58,7 @@ const Chart = () => {
         areaStyle: {},
         smooth: true,
         color: "#007bff",
-        label: { show: true, fontSize: isMobile ? 40 : 20 },
+        label: { show: true, fontSize: isMobile ? 40 : 15 },
       },
     ],
   };
@@ -69,7 +69,7 @@ const Chart = () => {
       left: "center",
       textStyle: { fontSize: isMobile ? 80 : 30 },
     },
-    tooltip: { trigger: "item", textStyle: { fontSize: isMobile ? 50 : 20 } },
+    tooltip: { trigger: "item", textStyle: { fontSize: isMobile ? 50 : 15 } },
     series: [
       {
         name: t("enrollments"),
@@ -90,7 +90,7 @@ const Chart = () => {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden gap-2">
-      <div className="flex flex-1 lg:flex-row lg:p-0 flex-col gap-8 lg:gap-2">
+      <div className="flex flex-1 lg:flex-row lg:p-0 flex-col gap-3 lg:gap-2">
         {/* Line Chart - Revenue */}
         <div className="lg:w-2/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg lg:p-4 p-4">
           <div className="flex justify-between items-center mb-3">

@@ -155,7 +155,7 @@ const AddQuizz = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <Link
               onClick={() => navigate(-1)}
-              className="px-6 py-2 border-2 dark:text-darkText border-sicolor text-ficolor rounded-lg hover:bg-tcolor dark:hover:bg-darkHover"
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
             >
               {t("cancel")}
             </Link>

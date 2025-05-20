@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,9 +6,18 @@ import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
+import { useTranslation } from "react-i18next";
 
 const AddQuestion = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("adminmanagement");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [courses, setCourses] = useState([]);
   const [lessons, setLessons] = useState([]);
@@ -150,158 +159,172 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="flex w-full flex-col h-full">
-      <div className="flex dark:text-darkText mb-2 items-center gap-2">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Question Management</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Add New Question</h2>
-      </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-wcolor dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground shadow-2xl p-6 rounded-xl space-y-4"
-      >
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">Course:</label>
-          <select
-            name="courseId"
-            value={questions.courseId}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg"
-            required
-          >
-            <option value="">-- Select Course --</option>
-            {courses.map((course) => (
-              <option key={course.id} value={course.id}>
-                {course.courseName}
-              </option>
-            ))}
-          </select>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("addQuestion.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("addQuestion.addNew")}</h2>
         </div>
 
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">Lesson:</label>
-          <select
-            name="lessonId"
-            value={questions.lessonId}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg"
-            required
-            disabled={!questions.courseId}
-          >
-            <option value="">-- Select Lesson --</option>
-            {lessons.map((lesson) => (
-              <option key={lesson.id} value={lesson.id}>
-                {lesson.lessonName}
-              </option>
-            ))}
-          </select>
-        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.course")}:
+            </label>
+            <select
+              name="courseId"
+              value={questions.courseId}
+              onChange={handleChange}
+              className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            >
+              <option value="">{t("addQuestion.selectCourse")}</option>
+              {courses.map((course) => (
+                <option key={course.id} value={course.id}>
+                  {course.courseName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">Quiz:</label>
-          <select
-            name="quizId"
-            value={questions.quizId}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg"
-            required
-            disabled={!questions.lessonId}
-          >
-            <option value="">-- Select Quiz --</option>
-            {quizzes.map((quiz) => (
-              <option key={quiz.id} value={quiz.id}>
-                {quiz.quizName}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.lesson")}:
+            </label>
+            <select
+              name="lessonId"
+              value={questions.lessonId}
+              onChange={handleChange}
+              className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+              disabled={!questions.courseId}
+            >
+              <option value="">{t("addQuestion.selectLesson")}</option>
+              {lessons.map((lesson) => (
+                <option key={lesson.id} value={lesson.id}>
+                  {lesson.lessonName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">Question Text:</label>
-          <input
-            type="text"
-            name="questionText"
-            value={questions.questionText}
-            onChange={handleChange}
-            className="flex-1 p-2 border-2 rounded"
-            required
-          />
-        </div>
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.quiz")}:
+            </label>
+            <select
+              name="quizId"
+              value={questions.quizId}
+              onChange={handleChange}
+              className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+              disabled={!questions.lessonId}
+            >
+              <option value="">{t("addQuestion.selectQuiz")}</option>
+              {quizzes.map((quiz) => (
+                <option key={quiz.id} value={quiz.id}>
+                  {quiz.quizName}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="flex items-center gap-4">
-          <label className="w-1/4 font-medium">Image:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="flex-1 p-2 border-2 rounded"
-          />
-          {imgPreview && (
-            <img
-              src={imgPreview}
-              alt="preview"
-              className="h-16 w-auto border rounded"
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.questionText")}:
+            </label>
+            <input
+              type="text"
+              name="questionText"
+              value={questions.questionText}
+              onChange={handleChange}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              required
             />
-          )}
-        </div>
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {["A", "B", "C", "D"].map((letter) => (
-            <div key={letter} className="flex items-center">
-              <label className="w-1/4 font-medium">{`Answer ${letter}:`}</label>
-              <input
-                type="text"
-                name={`answer${letter}`}
-                value={questions[`answer${letter}`]}
-                onChange={handleChange}
-                className="flex-1 p-2 border-2 rounded"
-                required
+          <div className="flex items-center gap-4">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.image")}:
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+            />
+            {imgPreview && (
+              <img
+                src={imgPreview}
+                alt="preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
               />
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
 
-        <div className="flex items-center">
-          <label className="w-1/4 font-medium">Correct Answer:</label>
-          <select
-            name="correctAnswer"
-            value={questions.correctAnswer}
-            onChange={handleChange}
-            className="flex-1 px-4 py-2 border rounded-lg"
-            required
-          >
-            <option value="">-- Select Correct Answer --</option>
-            {["A", "B", "C", "D"].map((ans) => (
-              <option key={ans} value={ans}>
-                {ans}
-              </option>
+          <div className="grid grid-cols-2 gap-4">
+            {["A", "B", "C", "D"].map((letter) => (
+              <div key={letter} className="flex items-center">
+                <label className="w-1/4 font-medium">{`${t(
+                  "addQuestion.answer"
+                )} ${letter}:`}</label>
+                <input
+                  type="text"
+                  name={`answer${letter}`}
+                  value={questions[`answer${letter}`]}
+                  onChange={handleChange}
+                  className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+                  required
+                />
+              </div>
             ))}
-          </select>
-        </div>
+          </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-gray-100"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`px-6 py-2 rounded text-white ${
-              loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-            }`}
-          >
-            {loading ? "Processing..." : "Submit"}
-          </button>
-        </div>
-      </form>
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.correctAnswer")}:
+            </label>
+            <select
+              name="correctAnswer"
+              value={questions.correctAnswer}
+              onChange={handleChange}
+              className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            >
+              <option value="">{t("addQuestion.selectCorrectAnswer")}</option>
+              {["A", "B", "C", "D"].map((ans) => (
+                <option key={ans} value={ans}>
+                  {ans}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <ToastContainer />
+          <div className="flex justify-end gap-2 pt-4">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
+            >
+              {t("addQuestion.cancel")}
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-6 py-2 rounded text-white ${
+                loading ? "bg-gray-400" : "bg-scolor hover:bg-opacity-80"
+              }`}
+            >
+              {loading ? t("addQuestion.processing") : t("addQuestion.submit")}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

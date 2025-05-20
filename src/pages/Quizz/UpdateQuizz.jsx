@@ -1,16 +1,25 @@
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 import URL from "../../config/URLconfig";
 
 const UpdateQuizz = () => {
+  const { t } = useTranslation("adminmanagement");
   const { lessonId, quizId } = useParams();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [quiz, setQuiz] = useState({
     quizName: "",
@@ -18,6 +27,7 @@ const UpdateQuizz = () => {
     price: "",
     img: "",
     lessonId: lessonId,
+    quizEnum: "",
   });
 
   const [file, setFile] = useState(null);
@@ -28,15 +38,14 @@ const UpdateQuizz = () => {
     axios
       .get(`${URL}/quizzes/${quizId}`, { withCredentials: true })
       .then(({ data }) => {
-        console.log("Dữ liệu nhận từ API:", data);
         setQuiz({
           ...data.data,
           lesson: { id: data.data.lesson?.id ?? lessonId },
         });
       })
-      .catch(() => setError("Không thể tải dữ liệu trắc nghiệm"))
+      .catch(() => setError(t("updateQuiz.loadError")))
       .finally(() => setLoading(false));
-  }, [quizId]);
+  }, [quizId, lessonId, t]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,30 +68,21 @@ const UpdateQuizz = () => {
     if (file) formData.append("img", file);
 
     try {
-      const response = await axios.put(
-        `${URL}/teacher/quizzes/update/${quizId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true, // Cho phép gửi cookies, session
-        }
-      );
-      console.log("Thành công:", response);
-      // alert("Cập nhật khóa học thành công!");
-      toast.success("Cập nhật trắc nghiệm thành công!", {
-        position: "top-right",
-        autoClose: 3000, // 4 giây
+      await axios.put(`${URL}/teacher/quizzes/update/${quizId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
       });
-
+      toast.success(t("updateQuiz.success"), {
+        position: "top-right",
+        autoClose: 3000,
+      });
       setTimeout(() => {
         navigate(-1);
       }, 4000);
     } catch (error) {
-      console.error("Lỗi:", error.response?.data || error.message);
-      // alert("Lỗi khi thêm khóa học!");
-      toast.error("Không thể cập nhật trắc nghiệm!", {
+      toast.error(t("updateQuiz.error"), {
         position: "top-right",
         autoClose: 3000,
       });
@@ -90,104 +90,115 @@ const UpdateQuizz = () => {
       setLoading(false);
     }
   };
+
   return (
-    <div className="w-full flex flex-col h-full">
-      <div className="flex items-center mb-2 gap-2">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Quiz Management</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Edit Quiz</h2>
-      </div>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Quiz Title:
-            </label>
-            <input
-              type="text"
-              name="quizName"
-              value={quiz.quizName}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            />
-          </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Price:</label>
-            <input
-              type="number"
-              name="price"
-              value={quiz.price}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            />
-          </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
-            <div className="flex-1">
-              {quiz.img && (
-                <img
-                  src={quiz.img}
-                  alt="Quiz"
-                  className="w-40 h-40 object-cover rounded-md mb-2"
-                />
-              )}
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("updateQuiz.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("updateQuiz.edit")}</h2>
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                {t("updateQuiz.quizName")}:
+              </label>
               <input
-                type="file"
-                onChange={handleImageChange}
-                className="border rounded-lg px-3 py-2 w-full"
+                type="text"
+                name="quizName"
+                value={quiz.quizName}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
               />
             </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                {t("updateQuiz.price")}:
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={quiz.price}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              />
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                {t("updateQuiz.image")}:
+              </label>
+              <div className="flex-1">
+                {quiz.img && (
+                  <img
+                    src={quiz.img}
+                    alt="Quiz"
+                    className="w-40 h-40 object-cover rounded-md mb-2"
+                  />
+                )}
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+                />
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                {t("updateQuiz.description")}:
+              </label>
+              <textarea
+                name="description"
+                rows={3}
+                value={quiz.description}
+                onChange={handleChange}
+                className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+              ></textarea>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 text-gray-700 font-medium">
+                {t("updateQuiz.type")}:
+              </label>
+              <select
+                name="quizEnum"
+                value={quiz.quizEnum}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              >
+                <option>{t("updateQuiz.selectType")}</option>
+                <option value="FREE">{t("updateQuiz.free")}</option>
+                <option value="PAID">{t("updateQuiz.paid")}</option>
+              </select>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Description:
-            </label>
-            <textarea
-              name="description"
-              rows={3}
-              value={quiz.description}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            ></textarea>
-          </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
-            <select
-              name="quizEnum"
-              value={quiz.quizEnum}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-            >
-              <option>Select Type</option>
-              <option value="FREE">Free</option>
-              <option value="PAID">Paid</option>
-            </select>
-          </div>
-        </div>
 
-        <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading
-                ? "bg-gray-400"
-                : "bg-scolor text-ficolor hover:bg-opacity-80"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : "Submit"}
-          </button>
-        </div>
-      </form>
-      <ToastContainer />
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
+            >
+              {t("updateQuiz.cancel")}
+            </Link>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
+            >
+              {loading ? t("updateQuiz.processing") : t("updateQuiz.submit")}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
