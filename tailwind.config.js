@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         fcolor: "#06b6d4", // Màu chủ đạo
-        scolor: "#578FCA", // Màu phụ
+        scolor: "#06b6d4", // Màu phụ
         tcolor: "#e5e7eb", // Màu nền khi hover
         focolor: "#f9f9f9", // Màu nền background
         wcolor: "#ffffff",

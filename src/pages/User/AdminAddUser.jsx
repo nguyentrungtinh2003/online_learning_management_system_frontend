@@ -138,7 +138,7 @@ const AdminAddUser = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <Link
               to="/admin/users"
-              className="px-6 py-2 border-2 dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover"
+              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
             >
               <p>{t("cancel")}</p>
             </Link>
