@@ -175,9 +175,9 @@ export default function AdminBlogManagement() {
       <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-            <MdForum size={isMobile ? 60 : 30} />
+            <MdForum size={isMobile ? 50 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">{t("blog.title")}</h2>
+            <h2 className="text-4xl lg:text-lg font-bold">{t("blog.title")}</h2>
           </div>
           <Link
             to="/admin/blog/add-blog"

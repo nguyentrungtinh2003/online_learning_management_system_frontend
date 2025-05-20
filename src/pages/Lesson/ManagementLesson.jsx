@@ -404,9 +404,9 @@ export default function ManagementLesson() {
             className="flex items-center mx-2 gap-2 dark:text-darkText"
             onClick={() => navigate(-1)}
           >
-            <FaVideo size={isMobile ? 60 : 30} />
+            <FaVideo size={isMobile ? 50 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">
+            <h2 className="text-4xl lg:text-lg font-bold">
               {t("addLesson.main")}
             </h2>
           </Link>

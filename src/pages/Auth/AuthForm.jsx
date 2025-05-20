@@ -8,9 +8,46 @@ import { ToastContainer, toast, Slide } from "react-toastify";
 import Spinner from "react-bootstrap/Spinner";
 import gglogo from "../../assets/google-color.svg";
 import URLSocket from "../../config/URLsocket";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AuthForm() {
+  const { t, i18n } = useTranslation("authform");
+  const [language, setLanguage] = useState(i18n.language || "en");
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Load theme & language từ localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("darkMode");
+    const savedLang = localStorage.getItem("language");
+
+    if (savedTheme === "true") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.body.classList.remove("dark");
+    }
+
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+      setLanguage(savedLang);
+    }
+  }, [i18n]);
+
+  const handleLanguageChange = (e) => {
+    const selectedLang = e.target.value;
+    i18n.changeLanguage(selectedLang);
+    localStorage.setItem("language", selectedLang);
+    setLanguage(selectedLang);
+  };
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    localStorage.setItem("darkMode", newMode.toString());
+    document.body.classList.toggle("dark", newMode);
+  };
   const navigate = useNavigate();
   const [fromLogin, setFromLogin] = useState({
     username: "",
@@ -212,10 +249,45 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center dark:bg-darkBackground bg-gray-100">
+    <div className="h-screen relative flex justify-center items-center dark:bg-darkBackground bg-gray-100">
       <ToastContainer />
+      <div className="max-w-2xl top-0 left-0 absolute mx-auto p-6 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+          {t("title")}
+        </h1>
+
+        <div className="space-y-4">
+          {/* Language selector */}
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 mb-1">
+              {t("languageLabel")}
+            </label>
+            <select
+              value={language}
+              onChange={handleLanguageChange}
+              className="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
+            >
+              <option value="en">English</option>
+              <option value="vi">Tiếng Việt</option>
+            </select>
+          </div>
+
+          {/* Dark mode toggle */}
+          <div>
+            <label className="block text-gray-700 dark:text-gray-200 mb-1">
+              {t("darkModeLabel")}
+            </label>
+            <button
+              onClick={toggleDarkMode}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-500"
+            >
+              {isDarkMode ? t("darkModeOn") : t("darkModeOff")}
+            </button>
+          </div>
+        </div>
+      </div>
       <div
-        className="h-auto shadow-lg rounded-lg sm:w-96 md:w-1/3 lg:w-[35%] p-8 bg-wcolor dark:bg-darkBackground"
+        className="h-[40vh] lg:h-auto shadow-lg rounded-lg w-[80vw] lg:w-[35%] p-8 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground"
         ref={formContainerRef}
       >
         {isForgotPassword || isCreatePassword ? (
@@ -239,7 +311,7 @@ export default function AuthForm() {
               className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
                 isLogin
                   ? "bg-cyan-500 text-white shadow-lg"
-                  : "bg-gray-200 text-gray-600"
+                  : "bg-gray-200 dark:bg-wcolor text-gray-600"
               }`}
               onClick={() => {
                 setIsLogin(true);
@@ -252,7 +324,7 @@ export default function AuthForm() {
               className={`px-10 py-3 rounded-2xl transition-all duration-300 ${
                 !isLogin
                   ? "bg-cyan-500 text-white shadow-lg"
-                  : "bg-gray-200 text-gray-600"
+                  : "bg-gray-200 dark:bg-wcolor text-gray-600"
               }`}
               onClick={() => {
                 setIsLogin(false);
@@ -307,13 +379,12 @@ export default function AuthForm() {
             </button> */}
             <p className="text-rose-600 text-sm text-center mt-4">
               Back to Sign In?
-              <a
-                href="#"
+              <Link
                 className="cursor-pointer ml-1"
                 onClick={() => setIsForgotPassword(false)}
               >
                 Click here
-              </a>
+              </Link>
             </p>
           </div>
         ) : isCreatePassword ? (
@@ -410,15 +481,14 @@ export default function AuthForm() {
               </button>
             </div>
 
-            <a
+            <Link
               className="text-rose-600 text-sm text-center block"
-              href="#"
               onClick={() => {
                 setIsForgotPassword(true);
               }}
             >
               Forget your Password? Click here!
-            </a>
+            </Link>
 
             <button
               onClick={() => handelLogin()}
@@ -433,7 +503,7 @@ export default function AuthForm() {
               )}
             </button>
             <p className="text-center text-lg m-2">Or</p>
-            <button className="border-2 flex items-center justify-center rounded-2xl py-2 w-full hover:bg-cyan-300">
+            <button className="border-2 dark:hover:text-darkBackground bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder flex items-center justify-center rounded-2xl py-2 w-full dark:hover:bg-cyan-300 hover:bg-cyan-300">
               <img className="ml-3 w-6" src={gglogo} alt="Google logo" />
               <p className="ml-4" onClick={() => handleGoogleLogin()}>
                 Login with Google
@@ -441,13 +511,12 @@ export default function AuthForm() {
             </button>
             <p className="text-rose-600 text-sm text-center mt-4">
               You don't have an account?{" "}
-              <a
-                href="#"
+              <Link
                 className="cursor-pointer"
                 onClick={() => setIsLogin(false)}
               >
                 Sign Up Now
-              </a>
+              </Link>
             </p>
           </div>
         ) : (
@@ -520,13 +589,9 @@ export default function AuthForm() {
             </button>
             <p className="text-rose-600 text-sm text-center">
               You already have an account?{" "}
-              <a
-                href="#"
-                className="cursor-pointer"
-                onClick={() => setIsLogin(true)}
-              >
+              <Link className="cursor-pointer" onClick={() => setIsLogin(true)}>
                 Sign In Now
-              </a>
+              </Link>
             </p>
           </div>
         )}

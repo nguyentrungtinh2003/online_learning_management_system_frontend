@@ -236,13 +236,13 @@ const EditLesson = () => {
     <div className="w-full">
       <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-          <FaVideo size={isMobile ? 60 : 30} />
+          <FaVideo size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">
+          <h2 className="text-4xl lg:text-lg font-bold">
             {t("addLesson.main")}
           </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">
+          <h2 className="text-4xl lg:text-lg font-bold">
             {t("editLesson.title")}
           </h2>
         </div>
@@ -335,7 +335,7 @@ const EditLesson = () => {
             <Link
               onClick={() => navigate(-1)}
               disabled={loading || isSubmitted}
-              className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80 dark:text-darkText"
+              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
               {t("cancel")}
             </Link>

@@ -406,9 +406,9 @@ export default function CourseManagement() {
       <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-            <FaBuffer size={isMobile ? 60 : 30} />
+            <FaBuffer size={isMobile ? 50 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">
+            <h2 className="text-4xl lg:text-lg font-bold">
               {t("courseManagement")}
             </h2>
           </div>

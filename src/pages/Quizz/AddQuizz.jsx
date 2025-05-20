@@ -302,11 +302,11 @@ const AddQuizz = () => {
     <div className="w-full">
       <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-          <FaBuffer size={isMobile ? 60 : 30} />
+          <FaBuffer size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">{t("quizz.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">{t("quizz.title")}</h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-5xl lg:text-lg font-bold">
+          <h2 className="text-4xl lg:text-lg font-bold">
             {t("addQuiz.title")}
           </h2>
         </div>
@@ -446,7 +446,7 @@ const AddQuizz = () => {
           <div className="flex justify-end gap-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
-              className="px-6 py-2 border-2 dark:text-darkText text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover dark:border-darkBorder"
+              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
               {t("cancel")}
             </Link>
