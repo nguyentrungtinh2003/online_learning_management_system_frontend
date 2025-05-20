@@ -118,9 +118,9 @@ export default function TransactionAdmin() {
       <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-            <MdPayment size={isMobile ? 60 : 30}/>
+            <MdPayment size={isMobile ? 50 : 30}/>
             <MdNavigateNext size={isMobile ? 60 : 30} />
-            <h2 className="text-5xl lg:text-lg font-bold">{t("payment.title")}</h2>
+            <h2 className="text-4xl lg:text-lg font-bold">{t("payment.title")}</h2>
           </div>
           <Link className="hover:text-ficolor" to="/admin/transactions/add">
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
@@ -150,7 +150,7 @@ export default function TransactionAdmin() {
       <div className="flex-1 w-full overflow-auto overflow-x">
         <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
         {transactions?.length === 0 ? (
-          <p className="text-center">{t("payment.noTransaction")}</p>
+          <p className="text-center text-4xl lg:text-base">{t("payment.noTransaction")}</p>
         ) : (
           <table className="lg:w-full w-[200%] h-fit">
             <thead className="sticky top-0 z-10 dark:text-darkText">

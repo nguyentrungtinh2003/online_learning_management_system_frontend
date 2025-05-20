@@ -105,9 +105,9 @@ export default function UserManagement() {
       <div className="flex-1 w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
-            <FaUsers size={isMobile ? 60 : 30} />
+            <FaUsers size={isMobile ? 50 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30}/>
-            <h2 className="text-5xl lg:text-lg font-bold">{t("user.title")}</h2>
+            <h2 className="text-4xl lg:text-lg font-bold">{t("user.title")}</h2>
           </div>
         <Link
           className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
