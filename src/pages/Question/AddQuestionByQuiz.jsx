@@ -6,12 +6,22 @@ import axios from "axios";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
 import URL from "../../config/URLconfig";
+import { useTranslation } from "react-i18next";
 
 const AddQuestion = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation("adminmanagement");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const { quizId } = useParams();
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
+  const [imgPreview, setImgPreview] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(""); // "A", "B", "C", "D"
 
   const [questionData, setQuestionData] = useState({
@@ -89,106 +99,114 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="flex items-center gap-2 dark:text-darkText">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Question Management</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Add New Question</h2>
-      </div>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 50 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("addQuestion.title")}
+          </h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("addQuestion.addNew")}
+          </h2>
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
-      >
-        <div className="space-y-4">
-          {/* Câu hỏi */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Question Name:
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.questionText")}:
             </label>
             <input
               type="text"
-              name="questionName"
-              value={questionData.questionName}
+              name="questionText"
+              value={questionData.questionText}
               onChange={handleChange}
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
               required
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Các đáp án A, B, C, D */}
-          {["A", "B", "C", "D"].map((option) => (
-            <div key={option} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
-                Answer {option}:
-              </label>
-              <input
-                type="text"
-                name={`answer${option}`}
-                value={questionData[`answer${option}`]}
-                onChange={handleChange}
-                required
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              />
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="correctAnswer"
-                  value={option}
-                  checked={selectedAnswer === option}
-                  onChange={(e) => setSelectedAnswer(e.target.value)}
-                />
-                <span className="text-sm">Correct</span>
-              </label>
-            </div>
-          ))}
-
-          {/* Ảnh */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Image (optional):
+          <div className="flex items-center gap-4">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.image")}:
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="flex-1 border rounded-lg px-3 py-2"
+              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
             />
+            {imgPreview && (
+              <img
+                src={imgPreview}
+                alt="preview"
+                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+              />
+            )}
           </div>
 
-          {/* Hiển thị đáp án đúng */}
-          {questionData.answerCorrect && (
-            <div className="mt-2 text-green-600 font-medium">
-              Đáp án đúng: {questionData.answerCorrect}
-            </div>
-          )}
-        </div>
+          <div className="grid grid-cols-2 gap-4">
+            {["A", "B", "C", "D"].map((letter) => (
+              <div key={letter} className="flex items-center">
+                <label className="w-1/4 font-medium">{`${t(
+                  "addQuestion.answer"
+                )} ${letter}:`}</label>
+                <input
+                  type="text"
+                  name={`answer${letter}`}
+                  value={questionData[`answer${letter}`]}
+                  onChange={handleChange}
+                  className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+                  required
+                />
+              </div>
+            ))}
+          </div>
 
-        {/* Nút */}
-        <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-gray-400 text-gray-700 rounded-lg hover:bg-gray-100"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading
-                ? "bg-gray-400"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : "Submit"}
-          </button>
-        </div>
-      </form>
+          <div className="flex items-center">
+            <label className="w-1/4 font-medium">
+              {t("addQuestion.correctAnswer")}:
+            </label>
+            <select
+              name="correctAnswer"
+              value={questionData.correctAnswer}
+              onChange={handleChange}
+              className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
+              required
+            >
+              <option value="">{t("addQuestion.selectCorrectAnswer")}</option>
+              {["A", "B", "C", "D"].map((ans) => (
+                <option key={ans} value={ans}>
+                  {ans}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <ToastContainer />
+          <div className="flex justify-end gap-2 pt-4">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+            >
+              {t("addQuestion.cancel")}
+            </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-6 py-2 rounded text-white ${
+                loading ? "bg-gray-400" : "bg-scolor hover:bg-opacity-80"
+              }`}
+            >
+              {loading ? t("addQuestion.processing") : t("addQuestion.submit")}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,14 @@
+{
+  "completed": "Completed Courses",
+  "inProgress": "In Progress Courses",
+  "noCourses": "You haven't enrolled in any course yet.",
+  "continueLearning": "Continue Learning",
+  "noDescription": "No description",
+  "enrolled": "Enrolled",
+  "completedLabel": "Completed",
+  "incompleteLabel": "Incomplete",
+  "newLabel": "New",
+  "almostLabel": "Almost Done",
+  "noCompleted": "No completed courses.",
+  "noInProgress": "No courses in progress."
+}

@@ -150,7 +150,7 @@ const StatisticalTable = () => {
     <div className="space-y-2">
       {/* Section 1: Thống kê bài viết */}
       <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4 dark:text-darkText">
+        <h2 className="text-3xl lg:text-xl font-semibold mb-4 dark:text-darkText">
           📈 {t("blogStats")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-700 dark:text-gray-300">
@@ -173,7 +173,7 @@ const StatisticalTable = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         <div className="lg:w-full bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder rounded-lg p-4">
           <div style={{ width: "100%", height: 400 }}>
-            <h4 className="dark:text-darkText lg:text-xl text-5xl">
+            <h4 className="dark:text-darkText lg:text-xl text-3xl">
               {t("userLogs")}
             </h4>
             <ResponsiveContainer>
@@ -201,7 +201,7 @@ const StatisticalTable = () => {
         </div>
 
         <div className="bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-darkText">
+          <h2 className="text-3xl lg:text-xl font-semibold mb-4 dark:text-darkText">
             🧾 {t("recentActivities")}
           </h2>
           <ul className="space-y-4 max-h-[400px] overflow-auto">
@@ -215,11 +215,11 @@ const StatisticalTable = () => {
                 >
                   <div>
                     <p>
-                      <span className="font-bold text-green-600">
+                      <span className="font-bold text-2xl lg:text-base text-green-600">
                         {log.username}
                       </span>
                     </p>
-                    <p className="text-sm flex items-center gap-2">
+                    <p className="text-xl lg:text-sm flex items-center gap-2">
                       <span className="text-yellow-500 flex items-center gap-1">
                         <RiContactsBook3Fill />
                         <span className="text-gray-400">•</span>
@@ -227,7 +227,7 @@ const StatisticalTable = () => {
                         {" "}<span className="text-gray-400">|</span> {log.details}
                     </p>
                   </div>
-                  <p className="text-base dark:text-darkSubtext text-gray-500">
+                  <p className="text-2xl lg:text-base dark:text-darkSubtext text-gray-500">
                     {formatted}
                   </p>
                 </li>
@@ -241,12 +241,12 @@ const StatisticalTable = () => {
       <div className="space-y-2">
         <div className="bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder rounded-lg pb-4 px-4">
           <div className="flex items-center justify-between py-4">
-            <h4 className="dark:text-darkText lg:text-xl text-2xl">
+            <h4 className="dark:text-darkText lg:text-xl text-3xl">
               {t("topUsers")} {type === "coin" ? "Coin" : "Point"}
             </h4>
             <div className="flex gap-2 text-xl font-semibold">
               <button
-                className={`border-2 dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                className={`border-2 text-4xl lg:text-base dark:border-darkBorder font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
                   type === "coin"
                     ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-ficolor"
                     : "dark:text-darkText"
@@ -256,7 +256,7 @@ const StatisticalTable = () => {
                 <TbCoin style={{ color: "gold" }} />
               </button>
               <button
-                className={`dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
+                className={`text-4xl lg:text-base dark:border-darkBorder border-2 font-bold rounded-xl px-4 py-2 flex items-center gap-2 ${
                   type === "point"
                     ? "bg-darkBackground text-wcolor dark:bg-darkBorder dark:text-darkBackground"
                     : "dark:text-darkText"
@@ -268,10 +268,10 @@ const StatisticalTable = () => {
             </div>
           </div>
 
-          <div className="overflow-auto p-4 rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
-            <table className="lg:w-full w-[200%]">
+          <div className="overflow-auto max-h-[400px] rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
+            <table className="lg:w-full w-[100%]">
               <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
-                <tr className="lg:text-base text-xl text-center">
+                <tr className="lg:text-base text-2xl text-center">
                   <th className="p-2">ID</th>
                   <th className="p-2">{t("avatar")}</th>
                   <th className="p-2">Username</th>
@@ -282,7 +282,7 @@ const StatisticalTable = () => {
                 {userTop.map((user, index) => (
                   <tr
                     key={index}
-                    className="text-center hover:bg-tcolor dark:hover:bg-darkHover"
+                    className="text-center text-2xl lg:text-base hover:bg-tcolor dark:hover:bg-darkHover"
                   >
                     <td className="p-2">{index + 1}</td>
                     <td className="p-2 flex justify-center">
@@ -292,7 +292,7 @@ const StatisticalTable = () => {
                         className="rounded-full lg:h-12 h-20 w-20 lg:w-12"
                       />
                     </td>
-                    <td className="p-2">{user.username}</td>
+                    <td className="p-2 w-72">{user.username}</td>
                     <td className="p-2 w-72">
                       <span className="inline-flex items-center gap-1">
                         {type === "coin" ? (
@@ -317,13 +317,13 @@ const StatisticalTable = () => {
 
         {/* Lịch sử đăng nhập */}
         <div className="bg-wcolor dark:bg-darkSubbackground rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-darkText">
+          <h2 className="text-3xl lg:text-xl font-semibold mb-4 dark:text-darkText">
             🔐 {t("loginHistory")}
           </h2>
           <div className="overflow-auto max-h-[400px]">
             <table className="w-full text-center text-sm dark:text-darkText">
               <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
-                <tr className="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-darkText">
+                <tr className="bg-gray-100 text-xl lg:text-base dark:bg-slate-900 text-gray-700 dark:text-darkText">
                   <th className="py-2">ID</th>
                   <th>Username</th>
                   <th>IP</th>
@@ -335,7 +335,7 @@ const StatisticalTable = () => {
                 {loginData.map((entry, index) => (
                   <tr
                     key={index}
-                    className="hover:bg-gray-50 dark:hover:bg-darkHover"
+                    className="hover:bg-gray-50 text-lg lg:text-sm dark:hover:bg-darkHover"
                   >
                     <td className="py-2">{index + 1}</td>
                     <td>{entry.username}</td>

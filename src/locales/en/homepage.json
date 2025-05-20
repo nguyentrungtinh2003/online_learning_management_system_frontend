@@ -72,5 +72,21 @@
     "qa": "Q&A",
     "terms": "Terms and Conditions",
     "follow": "Follow Us"
+  },
+  "landing": {
+    "title1": "Master Web Development",
+    "description1": "Become a full-stack web developer. Learn HTML, CSS, JavaScript, and popular frameworks like React and Node.js. Build dynamic and interactive web applications.",
+    
+    "title2": "Python for Data Science",
+    "description2": "Unlock the power of data with Python. Learn data analysis, machine learning, and data visualization. Build intelligent applications and make data-driven decisions.",
+    
+    "title3": "Mobile App Development",
+    "description3": "Create stunning mobile apps for iOS and Android. Learn Swift, Kotlin, and cross-platform frameworks like Flutter. Bring your app ideas to life.",
+    
+    "title4": "Game Development",
+    "description4": "Immerse yourself in the world of game development. Learn game engines like Unity and Unreal Engine. Create 2D and 3D games.",
+    
+    "title5": "Cybersecurity Fundamentals",
+    "description5": "Protect digital systems from cyber threats. Learn ethical hacking, network security, and cloud security. Become a cybersecurity expert."
   }
 }

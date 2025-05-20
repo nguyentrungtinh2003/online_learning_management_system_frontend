@@ -189,11 +189,11 @@ const AddLesson = () => {
     <div className="w-full">
           <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
             <div className="flex gap-2 dark:text-darkText">
-              <FaVideo size={isMobile ? 60 : 30} />
+              <FaVideo size={isMobile ? 50 : 30} />
               <MdNavigateNext size={isMobile ? 60 : 30} />
-              <h2 className="text-lg font-bold mb-4">{t("addLesson.main")}</h2>
+              <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.main")}</h2>
               <MdNavigateNext size={isMobile ? 60 : 30} />
-              <h2 className="text-lg font-bold mb-4">{t("addLesson.add")}</h2>
+              <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.add")}</h2>
             </div>
             <form
               onSubmit={handleSubmit}
@@ -265,7 +265,7 @@ const AddLesson = () => {
                 <button
                   onClick={() => !loading && navigate(-1)}
                   disabled={loading || isSubmitted}
-                  className={`px-6 py-2 border-2 border-sicolor text-ficolor dark:text-darkText rounded-lg hover:bg-opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
                 >
                   {t("cancel")}
                 </button>

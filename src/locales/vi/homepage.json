@@ -72,5 +72,21 @@
     "qa": "Hỏi & Đáp",
     "terms": "Điều khoản & Điều kiện",
     "follow": "Theo dõi chúng tôi"
+  },
+  "landing": {
+    "title1": "Làm chủ Lập trình Web",
+    "description1": "Trở thành lập trình viên full-stack. Học HTML, CSS, JavaScript và các framework phổ biến như React và Node.js. Xây dựng các ứng dụng web động và tương tác.",
+    
+    "title2": "Python cho Khoa học Dữ liệu",
+    "description2": "Khai phá sức mạnh dữ liệu với Python. Học phân tích dữ liệu, học máy và trực quan hóa dữ liệu. Xây dựng ứng dụng thông minh và ra quyết định dựa trên dữ liệu.",
+    
+    "title3": "Phát triển Ứng dụng Di động",
+    "description3": "Tạo ứng dụng di động tuyệt vời cho iOS và Android. Học Swift, Kotlin và các framework đa nền tảng như Flutter. Hiện thực hóa ý tưởng ứng dụng của bạn.",
+    
+    "title4": "Phát triển Trò chơi",
+    "description4": "Đắm chìm trong thế giới phát triển trò chơi. Học các công cụ như Unity và Unreal Engine. Tạo game 2D và 3D.",
+    
+    "title5": "Những kiến thức cơ bản về An ninh mạng",
+    "description5": "Bảo vệ hệ thống số khỏi các mối đe dọa mạng. Học tấn công có đạo đức, bảo mật mạng và bảo mật đám mây. Trở thành chuyên gia an ninh mạng."
   }
 }

@@ -32,7 +32,7 @@ export default function Navbar() {
           <img
             src={englishFlag}
             alt="English"
-            className="h-6 w-6 object-cover"
+            className="lg:h-6 lg:w-6 h-10 w-10 object-cover"
           />
           <span className="lg:block hidden">EN</span>
         </div>
@@ -45,7 +45,7 @@ export default function Navbar() {
           <img
             src={vietnamFlag}
             alt="Vietnamese"
-            className="h-6 w-6 object-cover"
+            className="lg:h-6 lg:w-6 h-10 w-10 object-cover"
           />
           <span className="lg:block hidden">VI</span>
         </div>
@@ -499,7 +499,7 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
               </button>
               {/* Language Dropdown */}
               <Dropdown
@@ -518,7 +518,7 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={20} /> : <FaMoon size={20} />}
+                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
               </button>
               {/* Language Dropdown */}
               <Dropdown

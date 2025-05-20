@@ -1,0 +1,14 @@
+{
+  "completed": "Khóa học đã hoàn thành",
+  "inProgress": "Khóa học đang học",
+  "noCourses": "Bạn chưa tham gia khóa học nào.",
+  "continueLearning": "Tiếp tục học",
+  "noDescription": "Không có mô tả",
+  "enrolled": "Ngày tham gia",
+  "completedLabel": "Hoàn thành",
+  "incompleteLabel": "Chưa hoàn thành",
+  "newLabel": "Mới học",
+  "almostLabel": "Gần hoàn thành",
+  "noCompleted": "Không có khóa học nào hoàn thành.",
+  "noInProgress": "Không có khóa học nào đang học."
+}
