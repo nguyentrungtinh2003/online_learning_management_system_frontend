@@ -167,7 +167,7 @@ export default function AuthForm() {
   const handelRegister = () => {
     setRegisterLoading(true);
     axios
-      .post(`${URL}/user-register`, fromData, { withCredentials: true })
+      .post(`${URL}/register`, fromData, { withCredentials: true })
       .then((response) => {
         console.log(response.data);
         console.log("Register success");
