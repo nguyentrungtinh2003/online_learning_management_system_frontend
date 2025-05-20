@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 export default function Blog() {
-  const { t } = useTranslation("blog"); // assuming the namespace is "blog"
+  const { t, i18n } = useTranslation("blog"); // assuming the namespace is "blog"
 
   const [data, setData] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
@@ -50,6 +50,45 @@ export default function Blog() {
   const userId = parseInt(localStorage.getItem("id"));
   const [searchParams] = useSearchParams();
   const scrollToId = searchParams.get("scrollTo");
+  function formatPostDate(dateArray) {
+    if (!Array.isArray(dateArray) || dateArray.length < 6) return "N/A";
+
+    const postDate = new Date(
+      dateArray[0],
+      dateArray[1] - 1,
+      dateArray[2],
+      dateArray[3],
+      dateArray[4],
+      dateArray[5]
+    );
+
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - postDate) / 1000);
+    const secondsIn20Days = 20 * 24 * 60 * 60;
+
+    if (diffInSeconds >= secondsIn20Days) {
+      return postDate.toLocaleString(i18n.language, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    if (diffInSeconds < 60) {
+      return t("justNow");
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return t("minutesAgo", { count: minutes });
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return t("hoursAgo", { count: hours });
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return t("daysAgo", { count: days });
+    }
+  }
 
   const navigate = useNavigate();
 
@@ -529,7 +568,22 @@ export default function Blog() {
                           <h4 className="font-bold text-2xl lg:text-lg text-gray-600 dark:text-darkText mx-1">
                             {post.username}
                           </h4>
-                          <p className="text-sm text-gray-500">{post.date}</p>
+                          <p className="text-sm ml-1 text-gray-500">
+                            {new Date(
+                              post.date[0],
+                              post.date[1] - 1,
+                              post.date[2],
+                              post.date[3],
+                              post.date[4],
+                              post.date[5]
+                            ).toLocaleDateString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            })
+                              ? formatPostDate(post.date)
+                              : "N/A"}
+                          </p>
                         </div>
                       </Link>
                     </div>
@@ -554,12 +608,16 @@ export default function Blog() {
                         </div>
                       )}
                       <button onClick={() => hidePost(post.id)}>
-                        <PiBackspace/>
+                        <PiBackspace />
                       </button>
                     </div>
                   </div>
-                  <h2 className="mb-2 text-3xl lg:text-base">{post.blogName}</h2>
-                  <p className="mb-2 text-2xl lg:text-base">{post.description}</p>
+                  <h2 className="mb-2 text-3xl lg:text-base">
+                    {post.blogName}
+                  </h2>
+                  <p className="mb-2 text-2xl lg:text-base">
+                    {post.description}
+                  </p>
                   {post.img && (
                     <img
                       src={post.img}

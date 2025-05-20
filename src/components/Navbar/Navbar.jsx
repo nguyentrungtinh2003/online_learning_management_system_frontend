@@ -74,12 +74,21 @@ export default function Navbar() {
   const stompClientRef = useRef(null);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("darkMode");
+    let savedTheme = localStorage.getItem("darkMode");
     const savedLang = localStorage.getItem("language");
+
+    if (savedTheme === null) {
+      // Mặc định dark mode nếu chưa có key
+      savedTheme = "true";
+      localStorage.setItem("darkMode", "true");
+    }
 
     if (savedTheme === "true") {
       setIsDarkMode(true);
       document.body.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.body.classList.remove("dark");
     }
 
     if (savedLang && savedLang !== i18n.language) {

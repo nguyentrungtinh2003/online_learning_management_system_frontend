@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
@@ -19,6 +19,13 @@ const AdminAddUser = () => {
     roleEnum: "STUDENT", // Default value
   });
   const [image, setImage] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+    
+      useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,18 +73,18 @@ const AdminAddUser = () => {
   };
 
   return (
-    <div className="h-full w-full">
-      <div className="flex-1 flex flex-col h-fit">
-        <div className="flex gap-2 dark:text-darkText items-center mb-2">
-          <FaUsers size={30} />
-          <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold">{t("user.title")}</h2>
-          <MdNavigateNext size={30} />
-          <h2 className="text-lg font-bold ">{t("addUser.title")}</h2>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaUsers size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("user.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-5xl lg:text-lg font-bold">{t("addUser.title")}</h2>
         </div>
         <form
           onSubmit={handleSubmit}
-          className="bg-wcolor dark:border dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground py-6 px-3 rounded-lg shadow"
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
         >
           <div className="space-y-4">
             {[
@@ -131,7 +138,7 @@ const AdminAddUser = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <Link
               to="/admin/users"
-              className="px-6 py-2 dark:text-darkText border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 border-2 dark:text-darkText border-gray-500 text-gray-600 rounded hover:bg-tcolor dark:hover:bg-darkHover"
             >
               <p>{t("cancel")}</p>
             </Link>

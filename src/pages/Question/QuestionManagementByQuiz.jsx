@@ -168,7 +168,7 @@ const QuestionManagement = () => {
             ) : (
               <div className="h-full">
                 <table className="lg:w-full w-[200%] h-fit">
-                  <thead>
+                  <thead className="sticky top-0 z-10 dark:text-darkText">
                     <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-6xl dark:text-darkText whitespace-nowrap font-bold">
                       <th className="p-2">ID</th>
                       <th className="p-2">Question Name</th>

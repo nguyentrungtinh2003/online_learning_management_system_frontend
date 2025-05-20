@@ -98,7 +98,7 @@ const Chart = () => {
       <div className="flex flex-1 lg:flex-row lg:p-0 flex-col gap-8 lg:gap-2">
         {/* Line Chart - Revenue */}
         <div className="lg:w-2/3 bg-wcolor dark:bg-darkSubbackground dark:border dark:border-darkBorder shadow-lg rounded-lg lg:p-4 p-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-3">
             <h5 className="m-2 whitespace-nowrap lg:text-base text-5xl dark:text-darkText">
               Chọn năm:
             </h5>

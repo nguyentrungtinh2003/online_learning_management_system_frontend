@@ -16,12 +16,13 @@ import { useTranslation } from "react-i18next";
 const EditCourse = () => {
   const { t } = useTranslation("adminmanagement");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [reloadTrigger, setReloadTrigger] = useState(false);
@@ -242,7 +243,7 @@ const EditCourse = () => {
       // localStorage.removeItem("courseCache");
       window.dispatchEvent(new Event("triggerCourseReload"));
 
-      toast.success("Cập nhật khóa học thành công!", {
+      toast.success("Course updated successfully!", {
         autoClose: 1000,
         position: "top-right",
       });
@@ -253,8 +254,8 @@ const EditCourse = () => {
         navigate("/admin/courses", { state: { reload: true } });
       }, 1000);
     } catch (err) {
-      console.error("Lỗi khi cập nhật khóa học:", err);
-      toast.error("Không thể cập nhật khóa học!", {
+      console.error("Error updating course:", err);
+      toast.error("Failed to delete course!", {
         autoClose: 1000,
         position: "top-right",
       });

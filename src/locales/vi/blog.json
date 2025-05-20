@@ -19,5 +19,9 @@
     "emotion": "Cảm xúc / Hoạt động",
     "moreComments": "Xem thêm bình luận",
     "unknownHello": "Chào bạn",
-    "toastMessage": "Bạn cần đăng nhập để thực hiện chức năng này!"
+    "toastMessage": "Bạn cần đăng nhập để thực hiện chức năng này!",
+    "justNow": "Vừa mới",
+    "minutesAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước"
 }

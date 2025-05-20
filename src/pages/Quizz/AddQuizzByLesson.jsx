@@ -1,16 +1,23 @@
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import AdminNavbar from "../../components/Navbar/Navbar";
 import { MdNavigateNext } from "react-icons/md";
 import { FaBuffer } from "react-icons/fa";
-
+import { useTranslation } from "react-i18next";
 import URL from "../../config/URLconfig";
 
 const AddQuizz = () => {
+  const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+    
+      useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 1024);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+      }, []);
 
   const { lessonId } = useParams();
   const [quizData, setQuizData] = useState({
@@ -76,94 +83,96 @@ const AddQuizz = () => {
   };
 
   return (
-    <div className="flex flex-col h-fit py-6 px-3">
-      <AdminNavbar />
-      <div className="flex items-center gap-2 mb-4">
-        <FaBuffer size={30} />
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Quiz Management</h2>
-        <MdNavigateNext size={30} />
-        <h2 className="text-lg font-bold">Add New Quiz</h2>
-      </div>
+    <div className="w-full">
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <FaBuffer size={isMobile ? 60 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-lg font-bold">{t("quizz.title")}</h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-lg font-bold">{t("addQuiz.title")}</h2>
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg shadow-md"
-      >
-        <div className="space-y-4">
-          {[
-            { label: "Quiz Name:", name: "quizName" },
-            { label: "Price", name: "price", type: "number" },
-          ].map(({ label, name, type }) => (
-            <div key={name} className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">{label}</label>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="space-y-4">
+            {[
+              { label: <p>{t("addQuiz.quizName")}</p>, name: "quizName" },
+              { label: <p>{t("price")}</p>, name: "price", type: "number" },
+            ].map(({ label, name, type }) => (
+              <div key={name} className="flex items-center space-x-4">
+                <label className="w-1/4 font-medium">{label}</label>
+                <input
+                  type={type || "text"}
+                  name={name}
+                  value={quizData[name]}
+                  onChange={handleChange}
+                  className="flex-1 p-2 border-2 dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground rounded"
+                />
+              </div>
+            ))}
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("image")}</label>
               <input
-                type={type || "text"}
-                name={name}
-                value={quizData[name]}
-                onChange={handleChange}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                type="file"
+                onChange={handleImageChange}
+                className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
               />
             </div>
-          ))}
 
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Image:</label>
-            <input
-              type="file"
-              onChange={handleImageChange}
-              className="flex-1 border rounded-lg px-3 py-2"
-            />
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("description")}
+              </label>
+              <textarea
+                name="description"
+                rows={3}
+                value={quizData.description}
+                placeholder={t("Enter Description")}
+                onChange={handleChange}
+                className="flex-1 p-2 border-2 dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              ></textarea>
+            </div>
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("type")}</label>
+              <select
+                name="quizEnum"
+                value={quizData.quizEnum}
+                onChange={(e) =>
+                  setQuizData({ ...quizData, quizEnum: e.target.value })
+                }
+                className="flex-1 p-2 border-2 dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              >
+                <option value="FREE">{t("free")}</option>
+                <option value="PAID">{t("paid")}</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">
-              Description:
-            </label>
-            <textarea
-              name="description"
-              rows={3}
-              value={quizData.description}
-              onChange={handleChange}
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            ></textarea>
-          </div>
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 text-gray-700 font-medium">Type:</label>
-            <select
-              name="quizEnum"
-              value={quizData.quizEnum}
-              onChange={(e) =>
-                setQuizData({ ...quizData, quizEnum: e.target.value })
-              }
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          <div className="flex justify-end space-x-2 mt-6">
+            <Link
+              onClick={() => navigate(-1)}
+              className="px-6 py-2 border-2 dark:text-darkText border-sicolor text-ficolor rounded-lg hover:bg-tcolor dark:hover:bg-darkHover"
             >
-              <option value="FREE">Free</option>
-              <option value="PAID">Paid</option>
-            </select>
+              {t("cancel")}
+            </Link>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-wcolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
+            >
+              {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
+            </button>
           </div>
-        </div>
-
-        <div className="flex justify-end space-x-2 mt-6">
-          <Link
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 border-2 border-sicolor text-ficolor rounded-lg hover:bg-opacity-80"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            className={`px-6 py-2 rounded-lg ${
-              loading
-                ? "bg-gray-400"
-                : "bg-scolor text-wcolor hover:bg-opacity-80"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : "Submit"}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

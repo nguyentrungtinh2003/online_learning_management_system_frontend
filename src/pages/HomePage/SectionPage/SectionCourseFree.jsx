@@ -9,7 +9,7 @@ export default function SectionCourseFree() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCourses, setVisibleCourses] = useState(4);
-  const { t, i18n } = useTranslation("homepage");
+  const { t } = useTranslation("homepage");
 
   const isNewCourse = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) return false;

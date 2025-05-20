@@ -5,6 +5,7 @@ import axios from "axios";
 import { TbCoin } from "react-icons/tb";
 import { FaStar } from "react-icons/fa";
 import { PiEyeBold } from "react-icons/pi";
+import { RiContactsBook3Fill } from "react-icons/ri";
 import {
   BarChart,
   LineChart,
@@ -56,104 +57,176 @@ const StatisticalTable = () => {
   }, [selectedYear, type]);
 
   useEffect(() => {
+    const alertsList = [];
     const generateAlerts = () => {
       const ipMap = {};
       const failedLoginMap = {};
       const endpointMap = {};
       const userAgentMap = {};
       const geoMap = {};
+      const endpointScanMap = {};
+      const userAccessMap = {};
+      const sensitiveEndpointMap = {};
 
       const now = new Date();
-      const alertsList = [];
 
       loginData.forEach((log) => {
         const time = new Date(...log.timestamp);
         const diffInSeconds = (now - time) / 1000;
+        const hour = time.getHours();
 
-        // Rule 1: > 5 requests cùng IP trong 10s (Brute-force IP)
-        if (diffInSeconds < 10) {
-          ipMap[log.ipAddress] = (ipMap[log.ipAddress] || 0) + 1;
-          if (ipMap[log.ipAddress] > 5) {
-            alertsList.push({
-              type: "Medium",
-              message: `IP ${log.ipAddress} gửi > 5 request trong 10s`,
-            });
+        if (log.username !== "Nguyễn Trung Tính") {
+          // Rule 1: > 5 requests cùng IP trong 10s (Brute-force IP)
+          if (diffInSeconds < 10) {
+            ipMap[log.ipAddress] = (ipMap[log.ipAddress] || 0) + 1;
+            if (ipMap[log.ipAddress] > 5) {
+              alertsList.push({
+                type: "Medium",
+                message: `IP ${log.ipAddress} ${log.username} gửi > 5 request trong 10s`,
+              });
+            }
           }
-        }
 
-        // Rule 2: > 10 lần thất bại liên tiếp cho 1 user
-        if (!log.success) {
-          failedLoginMap[log.username] =
-            (failedLoginMap[log.username] || 0) + 1;
-          if (failedLoginMap[log.username] > 10) {
+          // Rule 2: > 10 lần thất bại liên tiếp cho 1 user
+          if (!log.success) {
+            failedLoginMap[log.username] =
+              (failedLoginMap[log.username] || 0) + 1;
+            if (failedLoginMap[log.username] > 10) {
+              alertsList.push({
+                type: "High",
+                message: `Người dùng ${log.username} IP ${log.ipAddress} có > 10 lần login thất bại`,
+              });
+            }
+          }
+
+          // Rule 3: Truy cập endpoint /api/admin nhiều lần (dò quyền admin)
+          if (log.message.includes("/api/admin")) {
+            endpointMap[log.username] = (endpointMap[log.username] || 0) + 1;
+            if (endpointMap[log.username] > 3) {
+              alertsList.push({
+                type: "Medium",
+                message: `IP ${log.ipAddtess} ${log.username} truy cập endpoint admin nhiều lần`,
+              });
+            }
+          }
+
+          // Rule 4: IP không thuộc whitelist VN (IP lạ)
+          const trustedIps = ["14.169.", "113.", "27."];
+          if (!trustedIps.some((prefix) => log.ipAddress.startsWith(prefix))) {
             alertsList.push({
               type: "High",
-              message: `Người dùng ${log.username} có > 10 lần login thất bại`,
+              message: `IP lạ ${log.ipAddress} phát hiện từ user ${log.username}`,
             });
           }
-        }
 
-        // Rule 3: Truy cập endpoint /api/admin nhiều lần (dò quyền admin)
-        if (log.message.includes("/api/admin")) {
-          endpointMap[log.username] = (endpointMap[log.username] || 0) + 1;
-          if (endpointMap[log.username] > 3) {
+          // Rule 5: User login từ nhiều IP khác nhau
+          geoMap[log.username] = geoMap[log.username] || new Set();
+          geoMap[log.username].add(log.ipAddress);
+          if (geoMap[log.username].size > 3) {
             alertsList.push({
               type: "Medium",
-              message: `${log.username} truy cập endpoint admin nhiều lần`,
+              message: `Người dùng ${
+                log.username
+              } login từ nhiều IP khác nhau ${geoMap[log.username]}`,
             });
           }
-        }
 
-        // Rule 4: IP không thuộc whitelist VN (IP lạ)
-        const trustedIps = ["14.169.", "113.", "27."];
-        if (!trustedIps.some((prefix) => log.ipAddress.startsWith(prefix))) {
-          alertsList.push({
-            type: "High",
-            message: `IP lạ ${log.ipAddress} phát hiện từ user ${log.username}`,
-          });
-        }
-
-        // Rule 5: User cùng lúc login từ nhiều IP khác nhau (bị đánh cắp tài khoản)
-        if (!geoMap[log.username]) {
-          geoMap[log.username] = new Set();
-        }
-        geoMap[log.username].add(log.ipAddress);
-        if (geoMap[log.username].size > 3) {
-          alertsList.push({
-            type: "Medium",
-            message: `Người dùng ${log.username} login từ nhiều IP khác nhau`,
-          });
-        }
-
-        // Rule 6: User truy cập từ trình duyệt lạ (nếu có log.userAgent)
-        if (log.userAgent) {
-          userAgentMap[log.username] = userAgentMap[log.username] || new Set();
-          userAgentMap[log.username].add(log.userAgent);
-          if (userAgentMap[log.username].size > 2) {
-            alertsList.push({
-              type: "Low",
-              message: `${log.username} dùng nhiều thiết bị / trình duyệt khác nhau`,
-            });
+          // Rule 6: Trình duyệt/trình giả lập lạ
+          if (log.userAgent) {
+            userAgentMap[log.username] =
+              userAgentMap[log.username] || new Set();
+            userAgentMap[log.username].add(log.userAgent);
+            if (userAgentMap[log.username].size > 2) {
+              alertsList.push({
+                type: "Low",
+                message: `IP ${log.ipAddtess} ${log.username} dùng nhiều thiết bị / trình duyệt khác nhau`,
+              });
+            }
           }
-        }
 
-        // Rule 7: IP login vào nhiều tài khoản khác nhau (1 IP dùng thử brute force)
-        Object.keys(ipMap).forEach((ip) => {
-          const usernames = loginData
-            .filter((l) => l.ipAddress === ip)
+          // Rule 7: 1 IP login nhiều tài khoản khác nhau
+          const usernamesFromIp = loginData
+            .filter((l) => l.ipAddress === log.ipAddress)
             .map((l) => l.username);
-          const uniqueUsernames = new Set(usernames);
+          const uniqueUsernames = new Set(usernamesFromIp);
           if (uniqueUsernames.size > 5) {
             alertsList.push({
               type: "High",
-              message: `IP ${ip} login vào nhiều tài khoản khác nhau`,
+              message: `IP ${log.ipAddress} ${log.username} login vào nhiều tài khoản khác nhau`,
             });
           }
-        });
-      });
 
-      setAlerts(alertsList.reverse());
+          // Rule 8: Truy cập nhiều endpoint khác nhau liên tiếp (scan hệ thống)
+          endpointScanMap[log.ipAddress] =
+            endpointScanMap[log.ipAddress] || new Set();
+          endpointScanMap[log.ipAddress].add(log.message);
+          if (endpointScanMap[log.ipAddress].size > 10) {
+            alertsList.push({
+              type: "Medium",
+              message: `${log.username} IP ${log.ipAddress} quét nhiều endpoint khác nhau (có thể đang scan hệ thống)`,
+            });
+          }
+
+          // Rule 9: Người dùng truy cập quá nhiều endpoint trong 1 phút
+          userAccessMap[log.username] = userAccessMap[log.username] || [];
+          userAccessMap[log.username].push(time);
+          const recentAccess = userAccessMap[log.username].filter(
+            (t) => (now - t) / 1000 < 60
+          );
+          if (recentAccess.length > 15) {
+            alertsList.push({
+              type: "Medium",
+              message: `${log.username} IP ${log.ipAddress} gửi > 15 request trong 1 phút`,
+            });
+          }
+
+          // Rule 10: Truy cập thành công endpoint admin từ IP lạ
+          if (
+            log.success &&
+            log.message.includes("/api/admin") &&
+            !trustedIps.some((prefix) => log.ipAddress.startsWith(prefix))
+          ) {
+            alertsList.push({
+              type: "High",
+              message: `Truy cập admin thành công từ IP lạ: ${log.ipAddress} bởi ${log.username}`,
+            });
+          }
+
+          // Rule 11: Truy cập vào ban đêm (0h - 5h sáng)
+          if (hour >= 0 && hour <= 5) {
+            alertsList.push({
+              type: "Low",
+              message: `${log.username} IP ${log.ipAddress} truy cập vào giờ khuya (từ ${hour}h)`,
+            });
+          }
+
+          // Rule 12: IP truy cập nhiều endpoint nhạy cảm
+          const sensitiveEndpoints = [
+            "/api/admin",
+            "/api/admin/",
+            "/api/login",
+            "/api/register",
+            "/api/forgot-password",
+            "/api/reset-password",
+          ];
+          sensitiveEndpoints.forEach((ep) => {
+            if (log.message.includes(ep)) {
+              sensitiveEndpointMap[log.ipAddress] =
+                sensitiveEndpointMap[log.ipAddress] || 0;
+              sensitiveEndpointMap[log.ipAddress]++;
+              if (sensitiveEndpointMap[log.ipAddress] > 8) {
+                alertsList.push({
+                  type: "High",
+                  message: `IP ${log.ipAddress} ${log.username} đang truy cập nhiều endpoint nhạy cảm`,
+                });
+              }
+            }
+          });
+        }
+      });
     };
+
+    setAlerts(alertsList.reverse());
 
     generateAlerts();
   }, [loginData]);
@@ -189,10 +262,12 @@ const StatisticalTable = () => {
         // Đếm số log theo action, nhưng chỉ trong 30 ngày
         const actionCount = {};
         logs.forEach((log) => {
-          const logDate = new Date(...log.timestamp); // convert mảng timestamp thành Date
-          if (logDate >= past30Days) {
-            const action = log.action;
-            actionCount[action] = (actionCount[action] || 0) + 1;
+          if (log.username !== "Nguyễn Trung Tính") {
+            const logDate = new Date(...log.timestamp); // convert mảng timestamp thành Date
+            if (logDate >= past30Days) {
+              const action = log.action;
+              actionCount[action] = (actionCount[action] || 0) + 1;
+            }
           }
         });
 
@@ -216,12 +291,38 @@ const StatisticalTable = () => {
       .get(`${URL}/admin/login-logs/all`, { withCredentials: true })
       .then((response) => {
         const logs = response.data.data;
-        setLoginData(logs.reverse());
+
+        const filteredLogs = [];
+
+        logs.forEach((log) => {
+          if (log.username !== "Nguyễn Trung Tính") {
+            filteredLogs.push(log); // Thêm vào mảng hiển thị
+          }
+        });
+
+        setLoginData(filteredLogs.reverse()); // dữ liệu dùng để phân tích / render
       })
       .catch((error) =>
         console.log("Error get count logs in 30 days: " + error.message)
       );
   };
+
+  const loginByDate = {};
+
+  loginData.forEach((entry) => {
+    const dateStr = new Date(
+      entry.timestamp[0],
+      entry.timestamp[1] - 1,
+      entry.timestamp[2]
+    ).toLocaleDateString("en-CA"); // định dạng YYYY-MM-DD
+
+    loginByDate[dateStr] = (loginByDate[dateStr] || 0) + 1;
+  });
+
+  const timeChartData = Object.entries(loginByDate).map(([date, count]) => ({
+    date,
+    count,
+  }));
 
   const fetchBlog = () => {
     axios
@@ -256,20 +357,32 @@ const StatisticalTable = () => {
         <h2 className="text-xl font-semibold mb-4 dark:text-darkText">
           📈 {t("blogStats")}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-700 dark:text-gray-300">
-          {blogData.map((item, index) => (
-            <div
-              key={index}
-              className="p-4 bg-gray-50 flex flex-col justify-between dark:bg-darkHover dark:text-darkText rounded-lg border-2 dark:border-darkBorder shadow-sm"
-            >
-              <p className="text-lg font-bold">{item.blogName}</p>
-              <p className="text-2xl flex items-center gap-2 text-cyan-400 font-semibold">
-                {item.likedUsers}
-                <PiEyeBold size={30} />
-              </p>
-            </div>
-          ))}
-        </div>
+
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart
+            data={blogData}
+            margin={{
+              top: 20,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="blogName" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="likedUsers"
+              stroke="#06b6d4"
+              strokeWidth={3}
+              dot={{ r: 5 }}
+              name="Liked Users"
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
       {/* Section 2: Logs + Nhật ký */}
@@ -326,7 +439,7 @@ const StatisticalTable = () => {
               return (
                 <li
                   key={idx}
-                  className="border-2 dark:text-darkText rounded-lg p-4 dark:border-darkBorder bg-gray-50 dark:bg-darkHover"
+                  className="border-2 flex w-full justify-between items-center dark:text-darkText rounded-lg p-4 dark:border-darkBorder bg-gray-50 dark:bg-darkHover"
                 >
                   <p>
                     <span className="font-bold text-green-600">
@@ -378,7 +491,7 @@ const StatisticalTable = () => {
 
           <div className="overflow-auto p-4 rounded-2xl border-2 dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder">
             <table className="lg:w-full w-[200%]">
-              <thead>
+              <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
                 <tr className="lg:text-base text-xl text-center">
                   <th className="p-2">ID</th>
                   <th className="p-2">{t("avatar")}</th>
@@ -393,7 +506,7 @@ const StatisticalTable = () => {
                     className="text-center hover:bg-tcolor dark:hover:bg-darkHover"
                   >
                     <td className="p-2">{index + 1}</td>
-                    <td className="p-2">
+                    <td className="p-2 flex justify-center">
                       <img
                         src={user.img || "/user.png"}
                         alt="avatar"
@@ -401,7 +514,7 @@ const StatisticalTable = () => {
                       />
                     </td>
                     <td className="p-2">{user.username}</td>
-                    <td className="p-2">
+                    <td className="p-2 w-72">
                       <span className="inline-flex items-center gap-1">
                         {type === "coin" ? (
                           <>
@@ -424,45 +537,116 @@ const StatisticalTable = () => {
         </div>
 
         {/* Lịch sử đăng nhập */}
-        <div className="bg-wcolor dark:bg-darkSubbackground rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-darkText">
-            🔐 {t("loginHistory")}
+        <div className="bg-wcolor dark:bg-darkSubbackground rounded-xl p-6 mt-6 shadow-md">
+          <h2 className="text-xl font-semibold mb-6 dark:text-darkText">
+            🔍 Phân tích hành vi đăng nhập
           </h2>
-          {/* Phần hiển thị các cảnh báo */}
+
+          {/* Cảnh báo */}
           {Alerts.length > 0 && (
-            <div className="mb-4 max-h-[200px] overflow-auto space-y-2">
-              {Alerts.map((alert, idx) => (
-                <div
-                  key={idx}
-                  className={`p-3 rounded-md text-sm font-medium ${
-                    alert.type === "High"
-                      ? "bg-red-100 text-red-800 border border-red-300"
-                      : "bg-yellow-100 text-yellow-800 border border-yellow-300"
-                  }`}
-                >
-                  ⚠️ <strong>{alert.type}:</strong> {alert.message}
-                </div>
-              ))}
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-2 dark:text-darkText">
+                🚨 Cảnh báo
+              </h3>
+              <div className="space-y-3 max-h-[250px] overflow-auto">
+                {Alerts.map((alert, idx) => {
+                  const baseStyles =
+                    "p-4 rounded-lg shadow-md border-l-4 flex items-start gap-3";
+                  let bgColor = "",
+                    borderColor = "",
+                    textColor = "",
+                    icon = "";
+
+                  switch (alert.type) {
+                    case "High":
+                      bgColor = "bg-red-50 dark:bg-red-100/10";
+                      borderColor = "border-red-500";
+                      textColor = "text-red-800 dark:text-red-400";
+                      icon = "🚨";
+                      break;
+                    case "Medium":
+                      bgColor = "bg-yellow-50 dark:bg-yellow-100/10";
+                      borderColor = "border-yellow-500";
+                      textColor = "text-yellow-800 dark:text-yellow-300";
+                      icon = "⚠️";
+                      break;
+                    case "Low":
+                      bgColor = "bg-blue-50 dark:bg-blue-100/10";
+                      borderColor = "border-blue-500";
+                      textColor = "text-blue-800 dark:text-blue-300";
+                      icon = "ℹ️";
+                      break;
+                    default:
+                      bgColor = "bg-gray-50 dark:bg-gray-800";
+                      borderColor = "border-gray-400";
+                      textColor = "text-gray-800 dark:text-gray-300";
+                      icon = "❔";
+                  }
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`${baseStyles} ${bgColor} ${borderColor} ${textColor}`}
+                    >
+                      <span className="text-xl">{icon}</span>
+                      <div>
+                        <div className="font-semibold">{alert.type} Alert</div>
+                        <div className="text-sm">{alert.message}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={timeChartData}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke="#06b6d4"
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                name="Lượt truy cập"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+
+          {/* Bảng lịch sử đăng nhập */}
           <div className="overflow-auto max-h-[400px]">
-            <table className="w-full text-center text-sm dark:text-darkText">
-              <thead>
-                <tr className="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-darkText">
-                  <th className="py-2">ID</th>
+            <h3 className="text-lg font-medium mb-2 dark:text-darkText">
+              📄 Chi tiết lịch sử đăng nhập
+            </h3>
+            <table className="w-full text-sm text-center dark:text-darkText">
+              <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
+                <tr className="text-gray-700 dark:text-darkText">
+                  <th className="py-2">#</th>
                   <th>Username</th>
                   <th>IP</th>
-                  <th>{t("status")}</th>
-                  <th>{t("message")}</th>
-                  <th>TimeStamp</th>
+                  <th>Trạng thái</th>
+                  <th>Thông báo</th>
+                  <th>Thời gian</th>
                 </tr>
               </thead>
               <tbody>
                 {loginData?.map((entry, index) => {
                   const formattedDate = new Date(
                     entry?.timestamp[0],
-                    entry.timestamp[1] - 1, // Tháng trong JS tính từ 0
+                    entry.timestamp[1] - 1,
                     entry.timestamp[2],
                     entry.timestamp[3],
                     entry.timestamp[4],
@@ -474,8 +658,8 @@ const StatisticalTable = () => {
                     hour: "2-digit",
                     minute: "2-digit",
                   });
+
                   return (
-                    // 🔴 BẠN PHẢI CÓ return Ở ĐÂY
                     <tr
                       key={index}
                       className="hover:bg-gray-50 dark:hover:bg-darkHover"
@@ -488,7 +672,7 @@ const StatisticalTable = () => {
                           entry.success ? "text-green-600" : "text-red-600"
                         }
                       >
-                        {entry.success ? t("success") : t("fail")}
+                        {entry.success ? "Thành công" : "Thất bại"}
                       </td>
                       <td>{entry.message}</td>
                       <td>{formattedDate}</td>
