@@ -137,15 +137,12 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      // Nếu JWT lỗi → thử đăng nhập bằng Google OAuth
       const response = await axios.get(`${URL}/user-google`, {
         withCredentials: true,
       });
 
-      const { email } = response.data.data;
-
-      const response2 = await axios.get(`${URL}/user/email/${email}`);
-      const { id, username, img, coin, roleEnum, point } = response2.data.data;
+      const { id, email, username, img, coin, roleEnum, point } =
+        response.data.data;
 
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
@@ -161,7 +158,6 @@ export default function Navbar() {
       setPoint(point);
     } catch (error) {
       try {
-        // Gọi /user-info trước (JWT hoặc session)
         const response = await axios.get(`${URL}/user-info`, {
           withCredentials: true,
         });
@@ -184,15 +180,7 @@ export default function Navbar() {
       } catch (err) {
         console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
 
-        // Xoá localStorage và reset state nếu cả 2 đều thất bại
-        localStorage.removeItem("id");
-        localStorage.removeItem("email");
-        localStorage.removeItem("username");
-        localStorage.removeItem("img");
-        localStorage.removeItem("coin");
-        localStorage.removeItem("role");
-        localStorage.removeItem("point");
-
+        localStorage.clear();
         setUsername(null);
         setImg(null);
         setCoin(null);
