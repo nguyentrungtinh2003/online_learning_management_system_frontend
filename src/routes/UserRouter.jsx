@@ -23,13 +23,16 @@ import ChatRoom from "../pages/Chat/ChatRoom";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
 import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
+import OAuthSuccess from "../pages/Auth/OAuthSuccess";
 
 const UserRouter = () => {
   return (
-    <>{/* Thêm ToastContainer */}
+    <>
+      {/* Thêm ToastContainer */}
       <Routes>
         {/* Route không có layout */}
         <Route path="/login" element={<AuthForm />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="/payment-success" element={<PaymentSuccessPayPal />} />
         <Route path="/vnpay-return" element={<VNPaySuccess />} />
         <Route path="/effect" element={<UpLevelEffect />} />
