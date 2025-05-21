@@ -137,13 +137,15 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      // Gọi /user-info trước (JWT hoặc session)
-      const response = await axios.get(`${URL}/user-info`, {
+      // Nếu JWT lỗi → thử đăng nhập bằng Google OAuth
+      const response = await axios.get(`${URL}/user-google`, {
         withCredentials: true,
       });
 
-      const { id, email, username, img, coin, roleEnum, point } =
-        response.data.data;
+      const { email } = response.data.data;
+
+      const response2 = await axios.get(`${URL}/user/email/${email}`);
+      const { id, username, img, coin, roleEnum, point } = response2.data.data;
 
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
@@ -159,16 +161,13 @@ export default function Navbar() {
       setPoint(point);
     } catch (error) {
       try {
-        // Nếu JWT lỗi → thử đăng nhập bằng Google OAuth
-        const response = await axios.get(`${URL}/user-google`, {
+        // Gọi /user-info trước (JWT hoặc session)
+        const response = await axios.get(`${URL}/user-info`, {
           withCredentials: true,
         });
 
-        const { email } = response.data.data;
-
-        const response2 = await axios.get(`${URL}/user/email/${email}`);
-        const { id, username, img, coin, roleEnum, point } =
-          response2.data.data;
+        const { id, email, username, img, coin, roleEnum, point } =
+          response.data.data;
 
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
