@@ -187,7 +187,7 @@ export default function Navbar() {
 
   const fetchSystemInfo = () => {
     axios
-      .get(`${URL}/admin/system-info/1`, { withCredentials: true })
+      .get(`${URL}/system-info/1`, { withCredentials: true })
       .then((response) => {
         localStorage.setItem("systemName", response.data.data.systemName);
         localStorage.setItem("description", response.data.data.description);
@@ -499,7 +499,11 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
+                {isDarkMode ? (
+                  <FaSun size={isLargeScreen ? 20 : 35} />
+                ) : (
+                  <FaMoon size={isLargeScreen ? 20 : 35} />
+                )}
               </button>
               {/* Language Dropdown */}
               <Dropdown
@@ -518,7 +522,11 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
+                {isDarkMode ? (
+                  <FaSun size={isLargeScreen ? 20 : 35} />
+                ) : (
+                  <FaMoon size={isLargeScreen ? 20 : 35} />
+                )}
               </button>
               {/* Language Dropdown */}
               <Dropdown

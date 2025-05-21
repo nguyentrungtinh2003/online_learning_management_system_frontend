@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { userEnroll } from "../../services/courseapi";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { getCoursesProgress } from "../../services/courseapi";
+import URL from "../../config/URLconfig";
 
 export default function UserCourse() {
   const [completedCourses, setCompletedCourses] = useState([]);
   const [inProgressCourses, setInProgressCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [progressData, setProgressData] = useState(null);
   const userId = localStorage.getItem("id");
   const navigate = useNavigate();
   const language = localStorage.getItem("language") || "en";
-  const [progressData, setProgressData] = useState(null);
 
   const translations = {
     en: {
@@ -26,6 +24,9 @@ export default function UserCourse() {
       inProgress: "In Progress Courses",
       noCompleted: "No completed courses.",
       noInProgress: "No courses in progress.",
+      completedLabel: "Completed",
+      newLabel: "New",
+      almostLabel: "Almost done",
     },
     vi: {
       enrolledCourses: "Khóa học bạn đã tham gia",
@@ -39,6 +40,9 @@ export default function UserCourse() {
       inProgress: "Khóa học đang học",
       noCompleted: "Không có khóa học nào hoàn thành.",
       noInProgress: "Không có khóa học nào đang học.",
+      completedLabel: "Hoàn thành",
+      newLabel: "Mới",
+      almostLabel: "Gần xong",
     },
   };
 
@@ -54,50 +58,38 @@ export default function UserCourse() {
           }
         );
 
-        const data = response.data.data || [];
+        const courseList = response.data.data || [];
 
-        // Ánh xạ và thêm progress từ progressData
-        const mergedCourses = courseList.map((course) => {
-          const progressItem = progressData?.find(
-            (p) => p.courseId === course.courseId
-          );
+        const updatedCourses = courseList.map((course) => {
+          const progressPercent =
+            course.totalLessons > 0
+              ? Math.round(
+                  (course.completedLessons / course.totalLessons) * 100
+                )
+              : 0;
+
           return {
             ...course,
-            progress: progressItem?.progress ?? 0, // fallback nếu không có
+            progress: progressPercent,
           };
         });
 
-        setCourses(courseList);
-        setCompletedCourses(courseList.filter((c) => c.progress === 100));
-        setInProgressCourses(courseList.filter((c) => c.progress < 100));
+        setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
+        setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
       } catch (error) {
         console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
       } finally {
         setLoading(false);
       }
     };
-    if (progressData) {
-      fetchCourses();
-    }
-  }, [userId, progressData]);
 
-  useEffect(() => {
-    const fetchProgress = async () => {
-      try {
-        const progress = await getCoursesProgress(userId);
-        setProgressData(progress.data || []);
-      } catch (error) {
-        console.error("Failed to fetch progress data:", error);
-      }
-    };
-
-    fetchProgress();
+    fetchCoursesProgress();
   }, [userId]);
 
   const renderCourseCard = (item) => (
     <div
       key={item.courseId}
-      className="bg-wcolor dark:text-darkText dark:bg-darkSubbackground border-2 dark:border-darkBorder border-gray-200 dark:border-gray-700 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden hover:-translate-y-1"
+      className="bg-wcolor dark:text-darkText dark:bg-darkSubbackground border-2 dark:border-darkBorder border-gray-200 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden hover:-translate-y-1"
     >
       <img
         src={item.img || "/default.jpg"}
@@ -108,6 +100,7 @@ export default function UserCourse() {
         <h2 className="text-3xl lg:text-xl font-semibold truncate mb-1">
           {item.courseName}
         </h2>
+
         <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
           {item.description || t.noDescription}
         </p>
@@ -120,28 +113,28 @@ export default function UserCourse() {
                 : "bg-yellow-100 text-yellow-700"
             }`}
           >
-            {item.progress === 100 ? "✅ Hoàn thành" : "⏳ Chưa hoàn thành"}
+            {item.progressPercent === 100
+              ? "✅ " + t.completedLabel
+              : "⏳ Chưa hoàn thành"}
           </span>
+
           {item.progressPercent < 20 && (
             <span className="bg-blue-100 text-lg lg:text-xs text-blue-700 px-2 py-1 rounded-full font-medium">
-              🆕 {t("newLabel")}
+              🆕 {t.newLabel}
             </span>
           )}
+
           {item.progressPercent >= 80 && item.progressPercent < 100 && (
             <span className="bg-purple-100 text-lg lg:text-xs text-purple-700 px-2 py-1 rounded-full font-medium">
-              🔥 {t("almostLabel")}
+              🔥 {t.almostLabel}
             </span>
           )}
         </div>
 
-        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
-          {item.description || t.noDescription}
-        </p>
-
         <p className="text-xl lg:text-xs dark:text-darkSubtext mb-2">
           <strong>{t.enrolled}: </strong>
           <span className="text-fcolor">
-            {new Date(...item.enrolledDate).toLocaleDateString("vi-VN")}
+            {/* {new Date(...item.enrolledDate).toLocaleDateString("vi-VN")} */}
           </span>
         </p>
 
@@ -152,11 +145,7 @@ export default function UserCourse() {
           <div
             className="h-full bg-blue-500 transition-all duration-500 ease-in-out"
             style={{
-              width: `${
-                item.totalLessons > 0
-                  ? (item.completedLessons / item.totalLessons) * 100
-                  : 0
-              }%`,
+              width: `${item.progressPercent}%`,
             }}
           ></div>
         </div>
@@ -166,14 +155,14 @@ export default function UserCourse() {
             disabled
             className="mt-auto bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-lg cursor-not-allowed opacity-80"
           >
-            🎉 {t("completedLabel")}
+            🎉 {t.completedLabel}
           </button>
         ) : (
           <button
             onClick={() => navigate(`/view-lesson/${item.courseId}`)}
             className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300"
           >
-            🚀 {t("continueLearning")}
+            🚀 {t.continueLearning}
           </button>
         )}
       </div>
@@ -188,52 +177,43 @@ export default function UserCourse() {
         </div>
       ) : (
         <div className="px-2">
-          {courses.length === 0 ? (
-            <p className="text-center text-gray-600 dark:text-darkText">
+          {completedCourses.length === 0 && inProgressCourses.length === 0 ? (
+            <p className="text-center text-gray-600 dark:text-darkText text-2xl">
               {t.noCourses}
             </p>
           ) : (
             <>
-              {/* Đã hoàn thành */}
-              {completedCourses.length > 0 ? (
-                <section>
-                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder md:text-2xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
-                    ✅ {t.completed} ({completedCourses.length})
-                  </h2>
+              {/* Completed Courses */}
+              <section>
+                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  ✅ {t.completed} ({completedCourses.length})
+                </h2>
+                {completedCourses.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {completedCourses.map((item) => renderCourseCard(item))}
                   </div>
-                </section>
-              ) : (
-                <section>
-                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder lg:text-3xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
-                    ✅ {t.completed} ({completedCourses.length})
-                  </h2>
+                ) : (
                   <p className="text-center text-2xl lg:text-base h-16 text-gray-600 dark:text-darkText">
                     {t.noCompleted}
                   </p>
-                </section>
-              )}
-              {/* Đang học */}
-              {inProgressCourses.length > 0 ? (
-                <section className="mb-10">
-                  <h2 className="text-5xl lg:text-xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
-                    ⏳ {t.inProgress} ({inProgressCourses.length})
-                  </h2>
+                )}
+              </section>
+
+              {/* In-progress Courses */}
+              <section className="mb-10 mt-10">
+                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                  ⏳ {t.inProgress} ({inProgressCourses.length})
+                </h2>
+                {inProgressCourses.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {inProgressCourses.map((item) => renderCourseCard(item))}
                   </div>
-                </section>
-              ) : (
-                <section className="mb-10">
-                  <h2 className="text-5xl lg:text-xl lg:text-3xl dark:border-darkBorder font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
-                    ⏳ {t.inProgress} ({inProgressCourses.length})
-                  </h2>
-                  <p className="text-center text-2xl lg:text-base h-16 text-gray-600 dark:text-darkText mb-8">
-                    ⏳ {t.noInProgress}
+                ) : (
+                  <p className="text-center text-2xl lg:text-base h-16 text-gray-600 dark:text-darkText">
+                    {t.noInProgress}
                   </p>
-                </section>
-              )}
+                )}
+              </section>
             </>
           )}
         </div>
