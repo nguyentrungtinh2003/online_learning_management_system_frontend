@@ -137,12 +137,11 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URL}/user-google`, {
+      const response = await axios.get(`${URLSocket}/oauth2/login/success`, {
         withCredentials: true,
       });
 
-      const { id, email, username, img, coin, roleEnum, point } =
-        response.data.data;
+      const { id, email, username, img, coin, roleEnum, point } = response.data;
 
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
