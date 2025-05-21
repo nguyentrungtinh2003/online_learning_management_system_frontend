@@ -137,30 +137,33 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      // Gọi thử /user-info trước (JWT hoặc session)
+      // Gọi /user-info trước (JWT hoặc session)
       const response = await axios.get(`${URL}/user-info`, {
         withCredentials: true,
       });
 
       const { id, email, username, img, coin, roleEnum, point } =
         response.data.data;
+
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
       localStorage.setItem("username", username);
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
       localStorage.setItem("role", roleEnum);
+      localStorage.setItem("point", point);
 
-      setCoin(coin);
-      setPoint(point);
       setUsername(username);
       setImg(img);
+      setCoin(coin);
+      setPoint(point);
     } catch (error) {
-      // Nếu lỗi → thử gọi /user-google
       try {
+        // Nếu JWT lỗi → thử đăng nhập bằng Google OAuth
         const response = await axios.get(`${URL}/user-google`, {
           withCredentials: true,
         });
+
         const { email } = response.data.data;
 
         const response2 = await axios.get(`${URL}/user/email/${email}`);
@@ -175,12 +178,26 @@ export default function Navbar() {
         localStorage.setItem("role", roleEnum);
         localStorage.setItem("point", point);
 
-        setCoin(coin);
-        setPoint(point);
         setUsername(username);
         setImg(img);
+        setCoin(coin);
+        setPoint(point);
       } catch (err) {
-        console.log("Không tìm thấy thông tin user Google.");
+        console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
+
+        // Xoá localStorage và reset state nếu cả 2 đều thất bại
+        localStorage.removeItem("id");
+        localStorage.removeItem("email");
+        localStorage.removeItem("username");
+        localStorage.removeItem("img");
+        localStorage.removeItem("coin");
+        localStorage.removeItem("role");
+        localStorage.removeItem("point");
+
+        setUsername(null);
+        setImg(null);
+        setCoin(null);
+        setPoint(null);
       }
     }
   };
