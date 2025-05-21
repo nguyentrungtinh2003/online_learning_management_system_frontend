@@ -17,7 +17,7 @@ const OAuthSuccess = () => {
 
     if (token) {
       localStorage.setItem("token", token);
-      localStorage.setItem("userId", id);
+      localStorage.setItem("id", id);
       localStorage.setItem("username", username);
       localStorage.setItem("email", email);
       localStorage.setItem("img", img);
