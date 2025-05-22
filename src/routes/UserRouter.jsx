@@ -23,13 +23,17 @@ import ChatRoom from "../pages/Chat/ChatRoom";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
 import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
+import OAuthSuccess from "../pages/Auth/OAuthSuccess";
+import CodeEditorPage from "../pages/CodeExecute/CodeEditorPage ";
 
 const UserRouter = () => {
   return (
-    <>{/* Thêm ToastContainer */}
+    <>
+      {/* Thêm ToastContainer */}
       <Routes>
         {/* Route không có layout */}
         <Route path="/login" element={<AuthForm />} />
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
         <Route path="/payment-success" element={<PaymentSuccessPayPal />} />
         <Route path="/vnpay-return" element={<VNPaySuccess />} />
         <Route path="/effect" element={<UpLevelEffect />} />
@@ -42,6 +46,8 @@ const UserRouter = () => {
           <Route path="blog" element={<UserViewBlog />} />
           <Route path="ranking" element={<UserRanking />} />
           <Route path="view-course/:id" element={<UserViewCourse />} />
+
+          <Route path="/code-editor" element={<CodeEditorPage />} />
 
           {/* Yêu cầu đăng nhập và quyền tương ứng */}
           <Route

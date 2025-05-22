@@ -20,7 +20,11 @@ export default function Navbar() {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
-  const [img, setImg] = useState(localStorage.getItem("img") || "");
+  const [img, setImg] = useState(localStorage.getItem("img") || "/user.png");
+
+  console.log("Username ", username);
+
+  console.log("Img ", img);
 
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery({ minWidth: 1024 });
@@ -137,35 +141,32 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      // Gọi thử /user-info trước (JWT hoặc session)
-      const response = await axios.get(`${URL}/user-info`, {
+      const response = await axios.get(`${URLSocket}/oauth2/login/success`, {
         withCredentials: true,
       });
 
-      const { id, email, username, img, coin, roleEnum, point } =
-        response.data.data;
+      const { id, email, username, img, coin, roleEnum, point } = response.data;
+
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
       localStorage.setItem("username", username);
       localStorage.setItem("img", img);
       localStorage.setItem("coin", coin);
       localStorage.setItem("role", roleEnum);
+      localStorage.setItem("point", point);
 
-      setCoin(coin);
-      setPoint(point);
       setUsername(username);
       setImg(img);
+      setCoin(coin);
+      setPoint(point);
     } catch (error) {
-      // Nếu lỗi → thử gọi /user-google
       try {
-        const response = await axios.get(`${URL}/user-google`, {
+        const response = await axios.get(`${URL}/user-info`, {
           withCredentials: true,
         });
-        const { email } = response.data.data;
 
-        const response2 = await axios.get(`${URL}/user/email/${email}`);
-        const { id, username, img, coin, roleEnum, point } =
-          response2.data.data;
+        const { id, email, username, img, coin, roleEnum, point } =
+          response.data.data;
 
         localStorage.setItem("id", id);
         localStorage.setItem("email", email);
@@ -175,19 +176,25 @@ export default function Navbar() {
         localStorage.setItem("role", roleEnum);
         localStorage.setItem("point", point);
 
-        setCoin(coin);
-        setPoint(point);
         setUsername(username);
         setImg(img);
+        setCoin(coin);
+        setPoint(point);
       } catch (err) {
-        console.log("Không tìm thấy thông tin user Google.");
+        console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
+
+        localStorage.clear();
+        setUsername(null);
+        setImg(null);
+        setCoin(null);
+        setPoint(null);
       }
     }
   };
 
   const fetchSystemInfo = () => {
     axios
-      .get(`${URL}/admin/system-info/1`, { withCredentials: true })
+      .get(`${URL}/system-info/1`, { withCredentials: true })
       .then((response) => {
         localStorage.setItem("systemName", response.data.data.systemName);
         localStorage.setItem("description", response.data.data.description);
@@ -422,7 +429,8 @@ export default function Navbar() {
           ref={dropdownRef}
           className="relative lg:w-[60%] flex justify-end items-center"
         >
-          {localStorage.getItem("username") ? (
+          {/* {localStorage.getItem("username") ? ( */}{" "}
+          {true ? (
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
                 <div className="flex items-center justify-end gap-2">
@@ -499,7 +507,11 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
+                {isDarkMode ? (
+                  <FaSun size={isLargeScreen ? 20 : 35} />
+                ) : (
+                  <FaMoon size={isLargeScreen ? 20 : 35} />
+                )}
               </button>
               {/* Language Dropdown */}
               <Dropdown
@@ -518,7 +530,11 @@ export default function Navbar() {
                 onClick={toggleDarkMode}
                 className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
               >
-                {isDarkMode ? <FaSun size={isLargeScreen ? 20 : 35} /> : <FaMoon size={isLargeScreen ? 20 : 35} />}
+                {isDarkMode ? (
+                  <FaSun size={isLargeScreen ? 20 : 35} />
+                ) : (
+                  <FaMoon size={isLargeScreen ? 20 : 35} />
+                )}
               </button>
               {/* Language Dropdown */}
               <Dropdown
@@ -537,7 +553,6 @@ export default function Navbar() {
               </button>
             </div>
           )}
-
           {isNotificationOpen && (
             <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
               <h3 className="text-lg w-full dark:text-darkText text-center font-semibold border-b dark:border-darkBorder pb-2">

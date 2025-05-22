@@ -16,6 +16,7 @@ import {
   FaVideo,
   FaWallet,
   FaClipboardList,
+  FaCode,
 } from "react-icons/fa";
 import { MdOutlineKeyboardDoubleArrowLeft, MdMenu } from "react-icons/md";
 import { useTranslation } from "react-i18next";
@@ -116,6 +117,12 @@ export default function Sidebar() {
       label: t("myCourses"),
       icon: <FaBuffer size={isMobile ? 35 : 25} />,
       path: "/user-course",
+    },
+    {
+      id: "CodeEditor",
+      label: t("codeEditor"),
+      icon: <FaCode size={isMobile ? 35 : 25} />,
+      path: "/code-editor",
     },
     {
       id: "Blog",
