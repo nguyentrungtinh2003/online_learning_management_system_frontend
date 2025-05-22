@@ -24,6 +24,7 @@ import UserQuizz from "../pages/Quizz/UserQuizz";
 import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
 import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 import OAuthSuccess from "../pages/Auth/OAuthSuccess";
+import CodeEditorPage from "../pages/CodeExecute/CodeEditorPage ";
 
 const UserRouter = () => {
   return (
@@ -45,6 +46,8 @@ const UserRouter = () => {
           <Route path="blog" element={<UserViewBlog />} />
           <Route path="ranking" element={<UserRanking />} />
           <Route path="view-course/:id" element={<UserViewCourse />} />
+
+          <Route path="/code-editor" element={<CodeEditorPage />} />
 
           {/* Yêu cầu đăng nhập và quyền tương ứng */}
           <Route

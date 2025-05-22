@@ -28,7 +28,7 @@ const OAuthSuccess = () => {
     }
   }, [navigate]);
 
-  return <div>Đang đăng nhập Google...</div>;
+  return <div className="mt-2">Đang đăng nhập Google...</div>;
 };
 
 export default OAuthSuccess;

@@ -20,7 +20,11 @@ export default function Navbar() {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
-  const [img, setImg] = useState(localStorage.getItem("img") || "");
+  const [img, setImg] = useState(localStorage.getItem("img") || "/user.png");
+
+  console.log("Username ", username);
+
+  console.log("Img ", img);
 
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery({ minWidth: 1024 });
@@ -425,7 +429,8 @@ export default function Navbar() {
           ref={dropdownRef}
           className="relative lg:w-[60%] flex justify-end items-center"
         >
-          {localStorage.getItem("username") ? (
+          {/* {localStorage.getItem("username") ? ( */}{" "}
+          {true ? (
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
                 <div className="flex items-center justify-end gap-2">
@@ -548,7 +553,6 @@ export default function Navbar() {
               </button>
             </div>
           )}
-
           {isNotificationOpen && (
             <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
               <h3 className="text-lg w-full dark:text-darkText text-center font-semibold border-b dark:border-darkBorder pb-2">
