@@ -85,7 +85,11 @@ const AdminRoutes = () => {
           element={<AddQuizzByLesson />}
         />
         <Route
-          path="lessons/:lessonId/quizzes/edit/:quizId"
+          path="lessons/:lessonId/quizzes/:quizId/edit"
+          element={<UpdateQuizz />}
+        />
+        <Route
+          path="quizzes/:quizId/edit"
           element={<UpdateQuizz />}
         />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />

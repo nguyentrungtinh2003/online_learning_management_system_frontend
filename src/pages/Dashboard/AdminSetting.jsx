@@ -88,10 +88,10 @@ const AdminSettings = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center text-2xl lg:text-base mb-2 gap-2 cursor-pointer text-gray-600 px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText py-3 lg:py-2 rounded-xl ${
+                className={`flex items-center text-2xl lg:text-base mb-2 gap-2 cursor-pointer text-gray-600 px-8 border-2 dark:border-darkBorder dark:bg-darkBackground py-3 lg:py-2 rounded-xl ${
                   activeTab === tab.key
                     ? "font-bold bg-ficolor dark:bg-wcolor dark:text-black text-wcolor"
-                    : "hover:scale-105 hover:text-gray-900 hover:bg-tcolor dark:hover:bg-darkHover"
+                    : "hover:scale-105 hover:text-gray-900 dark:text-wcolor hover:bg-tcolor dark:hover:bg-darkHover"
                 }`}
               >
                 {tab.icon} {tab.label}

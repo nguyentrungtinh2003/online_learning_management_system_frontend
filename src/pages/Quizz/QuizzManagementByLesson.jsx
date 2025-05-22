@@ -321,7 +321,7 @@ const QuizzManagement = () => {
                         </Link>
 
                         <Link
-                          to={`/admin/quizzes/${quiz.id}/edit`}
+                          to={`${quiz.id}/edit`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa"
                         >

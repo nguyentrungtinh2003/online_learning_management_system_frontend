@@ -410,7 +410,7 @@ export default function ManagementLesson() {
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("lesson.name")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("course.name")}</th>
+                  <th className="p-2">{t("courseName")}</th>
                   <th className="p-2">{t("createdDate")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>

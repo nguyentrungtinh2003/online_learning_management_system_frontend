@@ -11,7 +11,6 @@ export default function UserCourse() {
   const userId = localStorage.getItem("id");
   const navigate = useNavigate();
   const language = localStorage.getItem("language") || "en";
-  const [progressData, setProgressData] = useState(null);
 
   const translations = {
     en: {

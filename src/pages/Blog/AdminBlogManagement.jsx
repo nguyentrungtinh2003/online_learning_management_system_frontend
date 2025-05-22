@@ -226,18 +226,15 @@ export default function AdminBlogManagement() {
           </button>
         </form>
 
-        <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+        <div className="flex-1 w-full overflow-auto h-full overflow-x">
+          <div className="bg-wcolor lg:px-2 px-4 overflow-auto h-full justify-between flex flex-col lg:h-fit dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
                   <th className="p-2">{t("stt")}</th>
                   <th className="p-2">{t("blog.blogTitle")}</th>
                   <th className="p-2">{t("description")}</th>
-                  <th className="p-2">{t("image")}</th>
-                  <th className="p-2">{t("video")}</th>
                   <th className="p-2 whitespace-nowrap">{t("createdDate")}</th>
-                  <th className="p-2">{t("blog.like")}</th>
                   <th className="p-2">{t("blog.author")}</th>
                   <th className="p-2">{t("status")}</th>
                   <th className="p-2">{t("action")}</th>
@@ -265,16 +262,12 @@ export default function AdminBlogManagement() {
                       <td className="p-2 lg:h-[8vh] h-[11vh]">
                         {index + 1 + currentPage * blogsPerPage}
                       </td>
-                      <td className="p-2">{blog.blogName}</td>
-                      <td className="p-2 truncate max-w-xs">{blog.description}</td>
-                      <td className="p-2">
-                        <img
-                          src={blog.img}
-                          alt="blog"
-                          className="w-8 h-8 rounded mx-auto"
-                        />
+                      <td className="p-2 lg:w-48 whitespace-nowrap">
+                        {blog.blogName?.length > 20
+                          ? blog.blogName.slice(0, 20) + "..."
+                          : blog.blogName || "N/A"}
                       </td>
-                      <td className="p-2">{blog.video}</td>
+                      <td className="p-2 truncate max-w-xs">{blog.description}</td>
                       <td className="p-2">
                         {blog.date
                           ? new Date(
@@ -291,7 +284,6 @@ export default function AdminBlogManagement() {
                             })
                           : "N/A"}
                       </td>
-                      <td className="p-2">{blog.likedUsers?.length || 0}</td>
                       <td className="p-2">{blog.user.username}</td>
                       <td className="p-2">
                         {blog.deleted ? (
