@@ -5,9 +5,11 @@ import URL from "../../config/URLconfig";
 import { MdDeleteForever } from "react-icons/md";
 import { Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { ToastContainer, toast, Slide } from "react-toastify";
+import { FaCode } from "react-icons/fa";
 
 const CodeEditorPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("codeeditor");
 
   const [code, setCode] = useState("");
   const [codeId, setCodeId] = useState(null);
@@ -26,12 +28,16 @@ const CodeEditorPage = () => {
         base: "vs-dark",
         inherit: true,
         rules: [
-          { token: "", foreground: "ffffff" }, // toàn bộ chữ trắng
-          { token: "comment", foreground: "999999", fontStyle: "italic" },
-          { token: "keyword", foreground: "00bb00" }, // xanh
-          { token: "number", foreground: "00ffff" }, // xanh ngọc
-          { token: "string", foreground: "00ff00" }, // chuỗi xanh lá
+          { token: "", foreground: "d4d4d4" }, // mặc định (text trắng nhẹ)
+          { token: "comment", foreground: "6a9955", fontStyle: "italic" }, // xanh lá cho comment
+          { token: "keyword", foreground: "569cd6" }, // xanh dương cho keyword (if, else, return)
+          { token: "number", foreground: "b5cea8" }, // xanh nhạt cho số
+          { token: "string", foreground: "ce9178" }, // cam hồng cho chuỗi
+          { token: "type", foreground: "4ec9b0" }, // loại dữ liệu (int, String, etc.)
+          { token: "function", foreground: "dcdcaa" }, // function tên
+          { token: "variable", foreground: "9cdcfe" }, // biến
         ],
+
         colors: {
           "editor.background": "#1e1e1e", // giống VS Code
           "editor.foreground": "#ffffff",
@@ -141,31 +147,45 @@ const CodeEditorPage = () => {
   };
 
   const deleteCodeByUser = (id) => {
-    axios
-      .delete(`${URL}/code/user/delete/${id}`, { withCredentials: true })
-      .then((response) => {
-        historyCodeByUser();
-      })
-      .catch((error) => {
-        console.log("Error delete code  : ", error.message);
-      });
+    const isConfirm = window.confirm(
+      "Bạn có muốn xoá lịch sử code này không ?"
+    );
+
+    if (isConfirm) {
+      axios
+        .delete(`${URL}/code/user/delete/${id}`, { withCredentials: true })
+        .then((response) => {
+          toast.success("Xoá lịch sử code thành công !", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          setTimeout(() => {
+            historyCodeByUser();
+          }, 1000);
+        })
+        .catch((error) => {
+          console.log("Error delete code  : ", error.message);
+        });
+    }
   };
 
   return (
     <div className="w-full bg-[#1e1e1e] rounded-2xl shadow-2xl font-mono">
+      <ToastContainer />
       <div className="flex">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-cyan-500 flex items-center gap-2">
           Code Editor{" "}
-          <span className="text-sm text-gray-400">
-            (Luyện code ngay hôm nay!)
-          </span>
+          <span className="text-sm text-white">(Luyện code ngay hôm nay!)</span>
         </h2>
 
-        {/* Chọn ngôn ngữ */}
-        <div className=" ml-4 flex items-center gap-4">
-          <label className="text-white text-lg">Ngôn ngữ:</label>
+        <div className="ml-4 flex items-center gap-4">
+          <label className="text-white text-lg flex items-center gap-2">
+            <FaCode size={30} className="text-cyan-500" />
+            Ngôn ngữ:
+          </label>
           <select
-            className="bg-[#2d2d2d] text-white border border-gray-600 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="bg-[#1f1f1f] text-white px-4 py-2 border border-gray-600 rounded-xl shadow-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -175,20 +195,35 @@ const CodeEditorPage = () => {
             <option value="java">Java</option>
           </select>
         </div>
+        <div className="ml-4 flex items-center gap-4 text-cyan-500 border border-gray-500 p-2 rounded-lg">
+          <button
+            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+            onClick={() => {
+              setCodeId(null);
+              setCode(null);
+            }}
+          >
+            Clear
+          </button>
+        </div>
       </div>
 
       {/* Màn hình chính */}
       <div className="flex mt-2 h-[410px] gap-4">
         {/* Lịch sử bên trái */}
         <div className="w-1/4 border border-gray-600 rounded-lg overflow-y-auto bg-[#2d2d2d] p-3 space-y-3 max-h-full">
-          <h3 className="text-lg font-semibold text-white mb-2">
+          <h3 className="text-lg font-semibold text-cyan-500 sticky top-0 bg-[#2d2d2d] z-5 py-2">
             Lịch sử chạy code
           </h3>
           {historyCode && historyCode.length > 0 ? (
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className="relative bg-[#1e1e1e] text-white rounded-lg px-3 py-2 border-l-4 border-green-500 shadow"
+                className={`relative bg-[#1e1e1e] text-white rounded-lg px-3 py-2 shadow ${
+                  codeId == hisco.id
+                    ? `border-l-4 border-cyan-500`
+                    : `hover:border-l-4 border-cyan-500`
+                } `}
               >
                 <div
                   onClick={() => {
@@ -198,10 +233,10 @@ const CodeEditorPage = () => {
                   className="cursor-pointer"
                 >
                   <p className="text-sm mb-1">
-                    <span className="font-semibold text-green-400">Mã:</span>{" "}
+                    <span className="font-semibold text-cyan-500">Mã:</span>{" "}
                     {hisco.code}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-cyan-500">
                     <span className="font-semibold">Lúc:</span>{" "}
                     {new Date(
                       hisco.executedAt[0],
@@ -231,12 +266,12 @@ const CodeEditorPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-400">Chưa có lịch sử nào.</p>
+            <p className="text-cyan-500">Chưa có lịch sử nào.</p>
           )}
         </div>
 
         {/* Editor ở giữa */}
-        <div className="flex-1 border border-gray-600 rounded-lg overflow-hidden shadow-inner">
+        <div className="flex-1 border text-gray-500 rounded-lg overflow-hidden shadow-inner">
           <Editor
             height="100%"
             language={language}
@@ -256,17 +291,17 @@ const CodeEditorPage = () => {
       {/* Terminal dưới */}
       <div className="mt-4 border border-gray-600 rounded-lg bg-[#1e1e1e] shadow-inner">
         <div className="flex justify-between items-center px-4 py-2 bg-[#2d2d2d] border-b border-gray-700 rounded-t-lg">
-          <span className="text-white font-semibold">Terminal</span>
+          <span className="text-cyan-500 font-semibold">Terminal</span>
           <button
             onClick={handleRun}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded shadow-sm transition duration-200"
+            className="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-4 py-2 rounded shadow-sm transition duration-200"
           >
             {loading ? <Spinner animation="border" variant="white" /> : "Run"}
           </button>
         </div>
-        <div className="p-4 bg-black rounded-b-lg overflow-auto text-green-400 text-sm leading-relaxed h-[100px]">
+        <div className="p-2 bg-black rounded-b-lg overflow-auto text-white text-sm leading-relaxed h-[100px] font-mono">
           <pre className="whitespace-pre-wrap">
-            {output || "Không có kết quả."}
+            PS {localStorage.getItem("username") || "user"}&gt; {output}
           </pre>
         </div>
       </div>

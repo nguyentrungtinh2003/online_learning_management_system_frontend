@@ -342,6 +342,10 @@ export default function Navbar() {
     try {
       await axios.get(`${URL}/logout/google`, { withCredentials: true });
       localStorage.clear();
+      setUsername(null);
+      setImg(null);
+      setCoin(null);
+      setPoint(null);
       console.log("Logout success:");
       navigate("/"); // Điều hướng đến trang đăng nhập
     } catch (error) {
@@ -481,7 +485,7 @@ export default function Navbar() {
                   <span className="lg:text-lg text-xl whitespace-nowrap w-[160px] overflow-hidden text-ellipsis">
                     {username}
                   </span>
-                  {isDropdownOpen && (
+                  {localStorage.getItem("username") ? (
                     <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
                       <ul className="py-2 font-semibold whitespace-nowrap">
                         <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
@@ -500,6 +504,10 @@ export default function Navbar() {
                         </li>
                       </ul>
                     </div>
+                  ) : (
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                      <Link to="/login">Start</Link>
+                    </button>
                   )}
                 </div>
               </div>
@@ -563,7 +571,7 @@ export default function Navbar() {
                   notifications.map((notification) => (
                     <div key={notification.id} className="flex items-center">
                       <li
-                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 cursor-pointer break-words ${
+                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 text-gray-500 dark:text-darkText break-words ${
                           !notification.read
                             ? "font-bold text-black dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"

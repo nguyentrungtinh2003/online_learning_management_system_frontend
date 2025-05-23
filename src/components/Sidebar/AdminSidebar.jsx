@@ -209,7 +209,7 @@ export default function Sidebar() {
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center w-full h-full items-center pt-8 h-[2.5rem] gap-1 text-xl ${
               activeItem === item.id
-                ? "border-b-4 border-cyan-400 bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
+                ? "border-b-4  bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
                 : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-b dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
             }`}
           >
