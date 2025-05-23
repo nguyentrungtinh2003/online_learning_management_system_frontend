@@ -5,7 +5,7 @@ import URL from "../../config/URLconfig";
 import { MdDeleteForever } from "react-icons/md";
 import { Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { ToastContainer, toast, Slide } from "react-toastify";
+import { toast, Slide } from "react-toastify";
 import { FaCode } from "react-icons/fa";
 
 const CodeEditorPage = () => {
@@ -171,21 +171,22 @@ const CodeEditorPage = () => {
   };
 
   return (
-    <div className="w-full bg-[#1e1e1e] rounded-2xl shadow-2xl font-mono">
-      <ToastContainer />
+    <div className="w-full dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
       <div className="flex">
         <h2 className="text-2xl font-bold text-cyan-500 flex items-center gap-2">
-          Code Editor{" "}
-          <span className="text-sm text-white">(Luyện code ngay hôm nay!)</span>
+          {t('codeEditor.title')}
+          <span className="text-sm text-gray-700 dark:text-darkText">
+            ({t('codeEditor.subtitle')})
+          </span>
         </h2>
 
         <div className="ml-4 flex items-center gap-4">
-          <label className="text-white text-lg flex items-center gap-2">
+          <label className="text-lg flex text-gray-700 dark:text-darkText items-center gap-2">
             <FaCode size={30} className="text-cyan-500" />
-            Ngôn ngữ:
+            {t('codeEditor.language')}:
           </label>
           <select
-            className="bg-[#1f1f1f] text-white px-4 py-2 border border-gray-600 rounded-xl shadow-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
+            className="text-gray-700 bg-wcolor dark:bg-darkSubbackground dark:text-darkText px-4 py-2 border-2 dark:border-darkBorder border-gray-600 rounded-xl shadow-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
           >
@@ -195,31 +196,29 @@ const CodeEditorPage = () => {
             <option value="java">Java</option>
           </select>
         </div>
-        <div className="ml-4 flex items-center gap-4 text-cyan-500 border border-gray-500 p-2 rounded-lg">
-          <button
-            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+        <button
+            className="bg-red-500 ml-2 border-2 dark:border-darkBorder text-white p-2 rounded hover:bg-red-600 transition"
             onClick={() => {
               setCodeId(null);
               setCode(null);
             }}
           >
-            Clear
+            {t('codeEditor.clear')}
           </button>
-        </div>
       </div>
 
       {/* Màn hình chính */}
       <div className="flex mt-2 h-[410px] gap-4">
         {/* Lịch sử bên trái */}
-        <div className="w-1/4 border border-gray-600 rounded-lg overflow-y-auto bg-[#2d2d2d] p-3 space-y-3 max-h-full">
-          <h3 className="text-lg font-semibold text-cyan-500 sticky top-0 bg-[#2d2d2d] z-5 py-2">
-            Lịch sử chạy code
+        <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground p-3 space-y-3 max-h-full">
+          <h3 className="text-lg font-semibold text-cyan-500 sticky top-0 z-5 py-2">
+            {t('codeEditor.history')}
           </h3>
           {historyCode && historyCode.length > 0 ? (
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className={`relative bg-[#1e1e1e] text-white rounded-lg px-3 py-2 shadow ${
+                className={`relative rounded-r-lg px-3 py-2 shadow ${
                   codeId == hisco.id
                     ? `border-l-4 border-cyan-500`
                     : `hover:border-l-4 border-cyan-500`
@@ -233,11 +232,13 @@ const CodeEditorPage = () => {
                   className="cursor-pointer"
                 >
                   <p className="text-sm mb-1">
-                    <span className="font-semibold text-cyan-500">Mã:</span>{" "}
+                    <span className="font-semibold text-cyan-500">
+                      {t('codeEditor.code')}:
+                    </span>{" "}
                     {hisco.code}
                   </p>
                   <p className="text-xs text-cyan-500">
-                    <span className="font-semibold">Lúc:</span>{" "}
+                    <span className="font-semibold">{t('codeEditor.time')}:</span>{" "}
                     {new Date(
                       hisco.executedAt[0],
                       hisco.executedAt[1] - 1,
@@ -258,20 +259,20 @@ const CodeEditorPage = () => {
                 {/* Nút xoá */}
                 <button
                   onClick={() => deleteCodeByUser(hisco.id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                  title="Xoá"
+                  className="absolute -top-1 right-0 text-red-500 hover:text-red-700"
+                  title={t('codeEditor.delete')}
                 >
-                  <MdDeleteForever />
+                  x
                 </button>
               </div>
             ))
           ) : (
-            <p className="text-cyan-500">Chưa có lịch sử nào.</p>
+            <p className="text-cyan-500">{t('codeEditor.noHistory')}</p>
           )}
         </div>
 
-        {/* Editor ở giữa */}
-        <div className="flex-1 border text-gray-500 rounded-lg overflow-hidden shadow-inner">
+        {/* Editor */}
+        <div className="flex-1 border-2 dark:border-darkBorder text-gray-500 rounded-lg overflow-hidden shadow-inner">
           <Editor
             height="100%"
             language={language}
@@ -279,7 +280,7 @@ const CodeEditorPage = () => {
             value={code}
             onChange={(value) => setCode(value)}
             options={{
-              fontSize: 14,
+              fontSize: 15,
               minimap: { enabled: false },
               wordWrap: "on",
               automaticLayout: true,
@@ -288,18 +289,20 @@ const CodeEditorPage = () => {
         </div>
       </div>
 
-      {/* Terminal dưới */}
-      <div className="mt-4 border border-gray-600 rounded-lg bg-[#1e1e1e] shadow-inner">
-        <div className="flex justify-between items-center px-4 py-2 bg-[#2d2d2d] border-b border-gray-700 rounded-t-lg">
-          <span className="text-cyan-500 font-semibold">Terminal</span>
+      {/* Terminal */}
+      <div className="mt-4 border-2 dark:border-darkBorder rounded-lg shadow-inner">
+        <div className="flex justify-between items-center px-4 py-2 border-b dark:border-darkBorder rounded-t-lg">
+          <span className="text-cyan-500 font-semibold">
+            {t('codeEditor.terminal')}
+          </span>
           <button
             onClick={handleRun}
-            className="bg-cyan-600 hover:bg-cyan-500 text-white font-semibold px-4 py-2 rounded shadow-sm transition duration-200"
+            className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold px-4 py-2 rounded shadow-sm transition duration-200"
           >
-            {loading ? <Spinner animation="border" variant="white" /> : "Run"}
+            {loading ? <Spinner animation="border" variant="white" /> : t('codeEditor.run')}
           </button>
         </div>
-        <div className="p-2 bg-black rounded-b-lg overflow-auto text-white text-sm leading-relaxed h-[100px] font-mono">
+        <div className="p-2 rounded-b-lg overflow-auto dark:text-darkText text-sm leading-relaxed h-[100px] font-mono">
           <pre className="whitespace-pre-wrap">
             PS {localStorage.getItem("username") || "user"}&gt; {output}
           </pre>

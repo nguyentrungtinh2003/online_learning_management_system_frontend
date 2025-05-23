@@ -1,6 +1,15 @@
 {
-  "justNow": "Just now",
-  "minutesAgo": "{{count}} minutes ago",
-  "hoursAgo": "{{count}} hours ago",
-  "daysAgo": "{{count}} days ago"
+  "codeEditor": {
+    "title": "Code Editor",
+    "subtitle": "Practice coding now!",
+    "language": "Language",
+    "clear": "Clear",
+    "history": "Code Execution History",
+    "code": "Code",
+    "time": "Time",
+    "delete": "Delete",
+    "noHistory": "No history available.",
+    "terminal": "Terminal",
+    "run": "Run"
+  }
 }
