@@ -434,7 +434,7 @@ export default function Navbar() {
           className="relative lg:w-[60%] flex justify-end items-center"
         >
           {/* {localStorage.getItem("username") ? ( */}{" "}
-          {true ? (
+          {localStorage.getItem("username") ? (
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
                 <div className="flex items-center justify-end gap-2">
@@ -485,7 +485,7 @@ export default function Navbar() {
                   <span className="lg:text-lg text-xl whitespace-nowrap w-[160px] overflow-hidden text-ellipsis">
                     {username}
                   </span>
-                  {localStorage.getItem("username") ? (
+                  {isDropdownOpen && (
                     <div className="absolute top-10 mt-2 text-gray-700 bg-wcolor dark:bg-darkBackground dark:text-darkText border-1 dark:border-darkBorder rounded-lg shadow-lg z-20">
                       <ul className="py-2 font-semibold whitespace-nowrap">
                         <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
@@ -504,10 +504,6 @@ export default function Navbar() {
                         </li>
                       </ul>
                     </div>
-                  ) : (
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                      <Link to="/login">Start</Link>
-                    </button>
                   )}
                 </div>
               </div>
