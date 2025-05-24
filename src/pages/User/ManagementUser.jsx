@@ -226,10 +226,7 @@ export default function UserManagement() {
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-              {loading
-                ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-                : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-              {/* Nếu không phải loading, hiển thị thông tin page */}
+              {t("page")} {currentPage + 1} {t("of")} {totalPages}
             </p>
           <div className="space-x-2">
             <button

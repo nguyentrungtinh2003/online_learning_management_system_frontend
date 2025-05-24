@@ -31,6 +31,20 @@
     "message": "Thông báo",
     "success": "Thành công",
     "fail": "Thất bại",
-    "count": "Số lượng"
+    "count": "Số lượng",
+    "alertTitle": "🚨 Cảnh báo",
+    "alertHigh": "Cảnh báo mức cao",
+    "alertMedium": "Cảnh báo mức trung bình",
+    "alertLow": "Cảnh báo mức thấp",
+    "alertUnknown": "Cảnh báo không xác định",
+    "chart.visits": "Lượt truy cập",
+    "table.loginHistory": "📄 Chi tiết lịch sử đăng nhập",
+    "table.id": "ID",
+    "table.username": "Tên người dùng",
+    "table.ip": "Địa chỉ IP",
+    "table.status": "Trạng thái",
+    "table.message": "Thông báo",
+    "table.time": "Thời gian",
+    "likedUser" : "Lượt người thích"
   }
   

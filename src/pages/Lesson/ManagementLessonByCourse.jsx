@@ -532,10 +532,7 @@ export default function ManagementLesson() {
         {/* Pagination gắn liền bên dưới */}
         <div className="flex dark:text-darkText lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-            {loading
-              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-            {/* Nếu không phải loading, hiển thị thông tin page */}
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button

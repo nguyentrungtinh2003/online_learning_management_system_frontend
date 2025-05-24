@@ -234,7 +234,7 @@ const QuestionManagement = () => {
 
         <div className="flex justify-between mt-4">
           <p>
-            {t("question.page")} {currentPage + 1} {t("question.of")} {totalPages}
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button

@@ -31,5 +31,19 @@
     "message": "Message",
     "success": "Success",
     "fail": "Failed",
-    "count": "Count"
+    "count": "Count",
+    "alertTitle": "🚨 Alerts",
+    "alertHigh": "High Alert",
+    "alertMedium": "Medium Alert",
+    "alertLow": "Low Alert",
+    "alertUnknown": "Unknown Alert",
+    "chart.visits": "Visits",
+    "table.loginHistory": "📄 Login History Details",
+    "table.id": "ID",
+    "table.username": "Username",
+    "table.ip": "IP",
+    "table.status": "Status",
+    "table.message": "Message",
+    "table.time": "Time",
+    "likedUser" : "Liked User"
 }
