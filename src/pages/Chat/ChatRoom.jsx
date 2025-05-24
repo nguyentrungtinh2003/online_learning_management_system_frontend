@@ -62,7 +62,7 @@ const ChatRoom = () => {
 
   const fetchTeachers = useCallback(async () => {
     try {
-      const response = await axios.get(`${URL}/user/all`, {
+      const response = await axios.get(`${URL}/user/role/TEACHER`, {
         withCredentials: true,
       });
       const allTeachers = response.data.data.filter((t) => t.id !== user1Id);
@@ -374,9 +374,7 @@ const ChatRoom = () => {
                     }
                   }}
                 />
-                <button
-                  onClick={addChat}
-                >
+                <button onClick={addChat}>
                   <PiPaperPlaneRightFill className="" size={25} />
                 </button>
               </div>

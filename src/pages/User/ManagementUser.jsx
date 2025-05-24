@@ -12,6 +12,9 @@ import {
   FaEdit,
   FaUserPlus,
   FaTimes,
+  FaEye,
+  FaLockOpen,
+  FaLock,
 } from "react-icons/fa";
 import {
   MdNavigateNext,
@@ -19,21 +22,23 @@ import {
   MdNavigateBefore,
 } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { UserSearch } from "lucide-react";
 
 export default function UserManagement() {
   const { t } = useTranslation("adminmanagement");
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const [usersSearch, setUsersSearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState("All");
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -52,6 +57,10 @@ export default function UserManagement() {
   };
 
   useEffect(() => {
+    fetchUsers();
+  }, [currentPage]); // nhớ thêm currentPage vào dependencies
+
+  const fetchUsers = () => {
     setLoading(true);
     axios
       .get(`${URL}/admin/user/page?page=${currentPage}&size=${usersPerPage}`, {
@@ -72,7 +81,32 @@ export default function UserManagement() {
         });
         setLoading(false);
       });
-  }, [currentPage]); // nhớ thêm currentPage vào dependencies
+  };
+
+  useEffect(() => {
+    searchUser();
+  }, [search]);
+
+  const searchUser = () => {
+    if (search.trim() !== "") {
+      axios
+        .get(`${URL}/admin/user/search?keyword=${search}`, {
+          withCredentials: true,
+        })
+        .then((response) => {
+          setUsers(response.data.data.content); // hoặc response.data nếu không có .data.content
+        })
+        .catch((error) => {
+          toast.error("Lỗi khi tìm kiếm người dùng!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+        });
+    } else {
+      fetchUsers(); // Gọi lại danh sách người dùng ban đầu
+    }
+  };
 
   const handleDeleteUser = (id, name) => {
     if (window.confirm(`Bạn có muốn xoá người dùng ${name} không ?`)) {
@@ -84,7 +118,12 @@ export default function UserManagement() {
             autoClose: 3000,
             transition: Slide,
           });
-          setUsers(users.filter((user) => user.id !== id));
+          // Nếu muốn cập nhật lại trạng thái người dùng thay vì xoá khỏi danh sách
+          setUsers(
+            users.map((user) =>
+              user.id === id ? { ...user, deleted: true } : user
+            )
+          );
         })
         .catch(() => {
           toast.error("Lỗi khi xoá người dùng!", {
@@ -92,6 +131,35 @@ export default function UserManagement() {
             autoClose: 3000,
             transition: Slide,
           });
+        });
+    }
+  };
+
+  const handleRestoreUser = (id, name) => {
+    if (window.confirm(`Bạn có muốn mở khoá người dùng ${name} không ?`)) {
+      axios
+        .put(`${URL}/admin/user/restore/${id}`, {}, { withCredentials: true })
+        .then(() => {
+          toast.success("Mở khoá người dùng thành công!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+
+          // Nếu muốn cập nhật lại trạng thái người dùng thay vì xoá khỏi danh sách
+          setUsers(
+            users.map((user) =>
+              user.id === id ? { ...user, deleted: false } : user
+            )
+          );
+        })
+        .catch((error) => {
+          toast.error("Lỗi khi mở khoá người dùng!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Slide,
+          });
+          console.log("Lỗi restore user : " + error.message);
         });
     }
   };
@@ -106,15 +174,15 @@ export default function UserManagement() {
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
             <FaUsers size={isMobile ? 50 : 30} />
-            <MdNavigateNext size={isMobile ? 60 : 30}/>
+            <MdNavigateNext size={isMobile ? 60 : 30} />
             <h2 className="text-4xl lg:text-lg font-bold">{t("user.title")}</h2>
           </div>
-        <Link
-          className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
-          to="/admin/users/add-user"
-        >
-          <FaUserPlus size={isMobile ? 50 : 30} />
-        </Link>
+          <Link
+            className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
+            to="/admin/users/add-user"
+          >
+            <FaUserPlus size={isMobile ? 50 : 30} />
+          </Link>
         </div>
         <div className="flex flex-col lg:flex-row gap-2 mb-2">
           {/* Ô tìm kiếm */}
@@ -168,7 +236,9 @@ export default function UserManagement() {
               </thead>
               <tbody>
                 {loading ? (
-                  [...Array(1)].map((_, index) => <DataTableSkeleton key={index} />)
+                  [...Array(1)].map((_, index) => (
+                    <DataTableSkeleton key={index} />
+                  ))
                 ) : filteredUsers.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center p-4">
@@ -202,35 +272,55 @@ export default function UserManagement() {
                       </td>
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
+                          to={`/admin/users/view-user/${user.id}`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-cyan-400 hover:bg-cyan-300 text-white"
+                          title="Chỉnh sửa người dùng"
+                        >
+                          <FaEye />
+                        </Link>
+                        <Link
                           to={`/admin/users/edit-user/${user.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa người dùng"
                         >
                           <FaEdit />
                         </Link>
-                        <button
-                          onClick={() => handleDeleteUser(user.id, user.username)}
-                          className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
-                          title="Xoá người dùng"
-                        >
-                          <MdDeleteForever />
-                        </button>
+                        {user.deleted ? (
+                          <button
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
+                            onClick={() =>
+                              handleRestoreUser(user.id, user.username)
+                            }
+                            title="Khôi phục người dùng"
+                          >
+                            <FaLockOpen />
+                          </button>
+                        ) : (
+                          <button
+                            className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                            onClick={() =>
+                              handleDeleteUser(user.id, user.username)
+                            }
+                            title="Khóa người dùng"
+                          >
+                            <FaLock />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
-
             </table>
           </div>
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-              {loading
-                ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-                : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-              {/* Nếu không phải loading, hiển thị thông tin page */}
-            </p>
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
           <div className="space-x-2">
             <button
               className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"

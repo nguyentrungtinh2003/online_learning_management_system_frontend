@@ -84,11 +84,10 @@ export default function AdminBlogManagement() {
     fetchBlogs();
   }, [currentPage, search, statusFilter]);
 
-  const handleSearch = async (e) => {
-    const value = e.target.value;
-    setSearch(value);
+  useEffect(() => {});
 
-    if (value.trim() === "") {
+  const handleSearch = async () => {
+    if (search.trim() === "") {
       setCurrentPage(0);
       setLoading(true);
       try {
@@ -179,12 +178,9 @@ export default function AdminBlogManagement() {
             <MdNavigateNext size={isMobile ? 60 : 30} />
             <h2 className="text-4xl lg:text-lg font-bold">{t("blog.title")}</h2>
           </div>
-          <Link
-            to="/admin/blog/add-blog"
-            className="hover:text-ficolor"
-          >
+          <Link to="/blog" className="hover:text-ficolor">
             <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-               <FaPlus size={isMobile ? 50 : 30} />
+              <FaPlus size={isMobile ? 50 : 30} />
             </button>
           </Link>
         </div>
@@ -267,7 +263,9 @@ export default function AdminBlogManagement() {
                           ? blog.blogName.slice(0, 20) + "..."
                           : blog.blogName || "N/A"}
                       </td>
-                      <td className="p-2 truncate max-w-xs">{blog.description}</td>
+                      <td className="p-2 truncate max-w-xs">
+                        {blog.description}
+                      </td>
                       <td className="p-2">
                         {blog.date
                           ? new Date(
@@ -287,9 +285,17 @@ export default function AdminBlogManagement() {
                       <td className="p-2">{blog.user.username}</td>
                       <td className="p-2">
                         {blog.deleted ? (
-                          <span className="text-red-600 font-semibold">Deleted</span>
+                          <span
+                            onClick={() => restoreBlog(blog.id, blog.blogName)}
+                            className="text-red-600 font-semibold"
+                          ></span>
                         ) : (
-                          <span className="text-green-600 font-semibold">Active</span>
+                          <span
+                            onClick={() => deleteBlog(blog.id, blog.blogName)}
+                            className="text-green-600 font-semibold"
+                          >
+                            Active
+                          </span>
                         )}
                       </td>
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
@@ -312,34 +318,33 @@ export default function AdminBlogManagement() {
                   ))
                 )}
               </tbody>
-
             </table>
-        </div>
+          </div>
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
-        <p className="mx-2">
+          <p className="mx-2">
             {loading
               ? t("Loading") // Hiển thị "Loading..." nếu đang tải
               : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
             {/* Nếu không phải loading, hiển thị thông tin page */}
           </p>
-        <div className="flex gap-2">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
-          >
-            <MdNavigateBefore size={isMobile ? 55 : 30} />
-          </button>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
-            className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
-          >
-            <MdNavigateNext size={isMobile ? 55 : 30} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 0}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateBefore size={isMobile ? 55 : 30} />
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateNext size={isMobile ? 55 : 30} />
+            </button>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );
