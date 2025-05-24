@@ -123,6 +123,7 @@ export default function ManagementLesson() {
         }
 
         fetchedLessons = data.data.content;
+        console.log("Fetch lesson by course : ", fetchedLessons);
 
         // Lọc theo lessonSearch
         if (lessonByCourseSearch.trim() !== "") {

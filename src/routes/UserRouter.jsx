@@ -25,6 +25,7 @@ import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
 import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 import OAuthSuccess from "../pages/Auth/OAuthSuccess";
 import CodeEditorPage from "../pages/CodeExecute/CodeEditorPage ";
+import ViewUser from "../pages/User/ViewUser";
 
 const UserRouter = () => {
   return (

@@ -32,9 +32,12 @@ export const getLessonById = async (lessonId) => {
 // 🟢 Lấy bài học theo course ID
 export const getLessonByCourseId = async (courseId) => {
   try {
-    const response = await axios.get(`${URL}/lessons/${courseId}`, {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${URL}/teacher/lessons/courses/${courseId}/page`,
+      {
+        withCredentials: true,
+      }
+    );
     return response.data; // Dữ liệu API trả về
   } catch (error) {
     console.error("❌ Lỗi lấy khóa học:", error);

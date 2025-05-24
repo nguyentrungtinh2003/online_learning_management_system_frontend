@@ -370,6 +370,8 @@ export default function Navbar() {
   return (
     <nav className="px-4 bg-wcolor py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
+        <Link
+        to={"/"}>
         <img
           src={
             localStorage.getItem("systemImg") !== "null"
@@ -379,6 +381,7 @@ export default function Navbar() {
           className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
           alt="logo"
         />
+        </Link>
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
           <div className="flex lg:h-10 h-14 lg:w-full justify-center gap-2 items-center border-1 dark:bg-darkBackground dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />

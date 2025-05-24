@@ -224,6 +224,7 @@ const CodeEditorPage = () => {
         {/* Lịch sử bên trái */}
         <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground px-2 space-y-3 max-h-full">
           <h3 className="text-lg bg-wcolor dark:bg-darkSubbackground font-semibold text-cyan-500 sticky top-0 z-5 py-2">
+
             {t("codeEditor.history")}
           </h3>
           {historyCode && historyCode.length > 0 ? (
@@ -243,7 +244,7 @@ const CodeEditorPage = () => {
                   }}
                   className="cursor-pointer dark:text-darkText"
                 >
-                  <p className="text-sm mb-1">
+                  <p className="text-sm text-gray-400 mb-1">
                     <span className="font-semibold text-cyan-500">
                       {t("codeEditor.code")}:
                     </span>{" "}

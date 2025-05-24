@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Edit } from "lucide-react";
+import { Edit, Trash2, Eye } from "lucide-react";
 import { FaLock, FaPlus, FaLockOpen } from "react-icons/fa";
+
 import { Link } from "react-router-dom";
 import { MdNavigateNext, MdNavigateBefore, MdPayment } from "react-icons/md";
 import URL from "../../config/URLconfig";
 import axios from "axios";
+import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import { useTranslation } from "react-i18next";
 
 export default function TransactionAdmin() {
@@ -43,11 +45,10 @@ export default function TransactionAdmin() {
         withCredentials: true,
       })
       .then((response) => {
-        const res = response.data?.data;
-        setTransactions(res.content);
-        setTotalPages(res.totalPages);
+        setTransactions(response.data?.data.content);
         setLoading(false);
       })
+
       .catch((error) => {
         console.log("Error get transaction " + error.message);
         setLoading(false);
@@ -55,27 +56,22 @@ export default function TransactionAdmin() {
   };
 
   useEffect(() => {
-    setCurrentPage(0); // Gọi lần đầu
-    if (keyword) {
+    fetchTransaction();
+    if (keyword != null) {
       handleSearch();
     }
   }, []);
 
-  useEffect(() => {
-    fetchTransaction(currentPage);
-  }, [currentPage]);
-
   const handleSearch = () => {
-    if (keyword === "") {
-      fetchTransaction(0);
-      return;
-    }
     axios
       .get(`${URL}/payments/search?keyword=${keyword}`, {
         withCredentials: true,
       })
       .then((response) => {
         setTransactions(response.data.data);
+        if (keyword == "") {
+          fetchTransaction();
+        }
       })
       .catch((error) => {
         console.log("Error get transaction " + error.message);
@@ -118,8 +114,6 @@ export default function TransactionAdmin() {
             </button>
           </Link>
         </div>
-
-        {/* Search */}
         <div className="flex lg:h-12 h-24 gap-2 mb-2">
           <input
             type="text"
@@ -127,38 +121,45 @@ export default function TransactionAdmin() {
             className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
-          <select className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48">
+          <select
+            // value={statusFilter}
+            // onChange={(e) => setStatusFilter(e.target.value)}
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
+          >
             <option value="All">{t("all")}</option>
             <option value="Deleted">{t("deleted")}</option>
             <option value="Active">{t("active")}</option>
           </select>
         </div>
 
-        {/* Table */}
         <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-            {transactions?.length === 0 ? (
-              <p className="text-center text-4xl lg:text-base">
-                {t("payment.noTransaction")}
-              </p>
-            ) : (
-              <table className="lg:w-full w-[200%] h-fit">
-                <thead className="sticky top-0 z-10 dark:text-darkText">
-                  <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText font-bold">
-                    <th className="p-2">{t("stt")}</th>
-                    <th className="p-2">{t("user.username")}</th>
-                    <th className="p-2">{t("payment.amount")} (VNĐ)</th>
-                    <th className="p-2">{t("payment.coin")}</th>
-                    <th className="p-2">{t("status")}</th>
-                    <th className="p-2">{t("createdDate")}</th>
-                    <th className="p-2">{t("deleted")}</th>
-                    <th className="p-2">{t("action")}</th>
+          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+            <table className="lg:w-full w-[200%] h-fit">
+              <thead className="sticky top-0 z-10 dark:text-darkText">
+                <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
+                  <th className="p-2">{t("stt")}</th>
+                  <th className="p-2">{t("user.username")}</th>
+                  <th className="p-2">{t("payment.amount")} (VNĐ)</th>
+                  <th className="p-2">{t("payment.coin")}</th>
+                  <th className="p-2">{t("status")}</th>
+                  <th className="p-2">{t("createdDate")}</th>
+                  <th className="p-2">{t("deleted")}</th>
+                  <th className="p-2">{t("action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <DataTableSkeleton rows={6} cols={8} />
+                ) : transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      {t("payment.noTranstraction")}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {transactions.map((t, index) => (
+                ) : (
+                  Array.isArray(transactions) &&
+                  transactions.map((t, index) => (
                     <tr
                       key={t.id}
                       className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
@@ -172,7 +173,7 @@ export default function TransactionAdmin() {
                         {new Date(t.date).toLocaleString("vi-VN")}
                       </td>
                       <td className="p-2">
-                        {t.deleted ? (
+                        {t.deleted === true ? (
                           <span className="text-red-600 font-semibold">
                             Yes
                           </span>
@@ -182,14 +183,14 @@ export default function TransactionAdmin() {
                           </span>
                         )}
                       </td>
-                      <td className="px-2 flex items-center justify-center gap-1">
+                      <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
                           to={`/admin/transactions/edit/${t.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                         >
                           <Edit />
                         </Link>
-                        {t.deleted ? (
+                        {t.deleted === true ? (
                           <button
                             onClick={() => handleRestore(t.id)}
                             className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-green-500 text-white"
@@ -208,14 +209,12 @@ export default function TransactionAdmin() {
                         )}
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-
-        {/* Pagination */}
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
             {t("page")} {currentPage + 1} {t("of")} {totalPages}
