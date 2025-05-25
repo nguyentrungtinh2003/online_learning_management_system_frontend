@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Edit, Trash2, Eye } from "lucide-react";
-import { FaLock, FaPlus, FaLockOpen } from "react-icons/fa";
+import { FaLock, FaPlus, FaLockOpen, FaEye } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 import { MdNavigateNext, MdNavigateBefore, MdPayment } from "react-icons/md";
@@ -185,12 +185,12 @@ export default function TransactionAdmin() {
                       </td>
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
-                          to={`/admin/transactions/edit/${t.id}`}
-                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                          to={`/admin/transactions/view-payment/${t.id}`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-400 hover:bg-yellow-300 text-white"
                         >
-                          <Edit />
+                          <FaEye />
                         </Link>
-                        {t.deleted === true ? (
+                        {/* {t.deleted === true ? (
                           <button
                             onClick={() => handleRestore(t.id)}
                             className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-green-500 text-white"
@@ -206,7 +206,7 @@ export default function TransactionAdmin() {
                           >
                             <FaLockOpen />
                           </button>
-                        )}
+                        )} */}
                       </td>
                     </tr>
                   ))

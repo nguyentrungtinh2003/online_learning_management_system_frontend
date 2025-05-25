@@ -23,12 +23,15 @@ const AdminEditBlog = () => {
     description: "",
     userId: "",
     username: "",
-    img: "",
-    video: "",
+    img: null,
+    video: null,
     date: "",
     interactions: 0,
     views: 0,
   });
+
+  const [img, setImg] = useState(null);
+  const [video, setVideo] = useState(null);
 
   useEffect(() => {
     fetchBlog();
@@ -46,12 +49,13 @@ const AdminEditBlog = () => {
         description: data.description,
         userId: data.user?.id,
         username: data.user?.username,
-        img: data.img,
-        video: data.video,
+
         date: data.date,
         interactions: data.interactions,
         views: data.views,
       });
+      setImg(data.img);
+      setVideo(data.video);
     } catch (error) {
       console.error("Error fetching blog:", error);
     }
@@ -62,6 +66,10 @@ const AdminEditBlog = () => {
     setBlogData({ ...blogData, [name]: value });
   };
 
+  const handleImageChange = (e) => {
+    setImg(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = {
@@ -69,11 +77,16 @@ const AdminEditBlog = () => {
       blogName: blogData.blogName,
       description: blogData.description,
       userId: blogData.userId,
-      img: blogData.img,
-      video: blogData.video,
     };
+
+    const formData = new FormData();
+    if (img) formData.append("img", img);
+    formData.append(
+      "blog",
+      new Blob([JSON.stringify(payload)], { type: "application/json" })
+    );
     try {
-      await axios.put(`${URL}/blogs/update/${id}`, payload, {
+      await axios.put(`${URL}/blogs/update/${id}`, formData, {
         withCredentials: true,
       });
       alert("Cập nhật blog thành công!");
@@ -164,11 +177,11 @@ const AdminEditBlog = () => {
             <input
               type="text"
               name="img"
-              value={blogData.img}
-              onChange={handleChange}
+              value={img}
+              onChange={handleImageChange}
               className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground"
             />
-            <img src={blogData.img} className="w-20 h-20" alt="" />
+            <img src={img} className="w-20 h-20" alt="" />
           </div>
 
           <div className="flex items-center space-x-4">

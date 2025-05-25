@@ -28,6 +28,7 @@ export default function UserManagement() {
   const { t } = useTranslation("adminmanagement");
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const [allUser, setAllUser] = useState([]);
   const [usersSearch, setUsersSearch] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState("All");
@@ -57,8 +58,25 @@ export default function UserManagement() {
   };
 
   useEffect(() => {
+    fetchAllUser();
+  }, []);
+
+  useEffect(() => {
     fetchUsers();
   }, [currentPage]); // nhớ thêm currentPage vào dependencies
+
+  const fetchAllUser = () => {
+    axios
+      .get(`${URL}/user/all`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        const fetchedUsers = response.data.data;
+        setAllUser(fetchedUsers.sort((a, b) => b.id - a.id)); // sắp xếp theo ID
+      })
+
+      .catch((error) => {});
+  };
 
   const fetchUsers = () => {
     setLoading(true);
@@ -164,9 +182,15 @@ export default function UserManagement() {
     }
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    if (roleFilter === "ALL") {
+      fetchUsers(); // gọi API có phân trang
+    } else {
+      const filtered = allUser.filter((user) => user.roleEnum === roleFilter);
+      setUsers(filtered);
+    }
+    setCurrentPage(0);
+  }, [roleFilter, allUser]);
 
   return (
     <div className="h-full flex-1 bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
@@ -212,8 +236,9 @@ export default function UserManagement() {
               }}
               className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
             >
-              <option value="All">{t("all")}</option>
-              <option value="USER">User</option>
+              <option value="ALL">{t("all")}</option>
+              <option value="STUDENT">User</option>
+              <option value="TEACHER">Teacher</option>
               <option value="ADMIN">Admin</option>
             </select>
           </div>
@@ -239,14 +264,14 @@ export default function UserManagement() {
                   [...Array(1)].map((_, index) => (
                     <DataTableSkeleton key={index} />
                   ))
-                ) : filteredUsers.length === 0 ? (
+                ) : users.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center p-4">
                       {t("user.noUserFound")}
                     </td>
                   </tr>
                 ) : (
-                  filteredUsers.map((user, index) => (
+                  users.map((user, index) => (
                     <tr
                       key={user.id}
                       className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
@@ -316,8 +341,8 @@ export default function UserManagement() {
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-              {t("page")} {currentPage + 1} {t("of")} {totalPages}
-            </p>
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
+          </p>
           <div className="space-x-2">
             <button
               className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
