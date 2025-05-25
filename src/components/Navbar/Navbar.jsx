@@ -141,11 +141,12 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URLSocket}/oauth2/login/success`, {
+      const response = await axios.get(`${URL}/user-info`, {
         withCredentials: true,
       });
 
-      const { id, email, username, img, coin, roleEnum, point } = response.data;
+      const { id, email, username, img, coin, roleEnum, point } =
+        response.data.data;
 
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
@@ -159,36 +160,14 @@ export default function Navbar() {
       setImg(img);
       setCoin(coin);
       setPoint(point);
-    } catch (error) {
-      try {
-        const response = await axios.get(`${URL}/user-info`, {
-          withCredentials: true,
-        });
+    } catch (err) {
+      console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
 
-        const { id, email, username, img, coin, roleEnum, point } =
-          response.data.data;
-
-        localStorage.setItem("id", id);
-        localStorage.setItem("email", email);
-        localStorage.setItem("username", username);
-        localStorage.setItem("img", img);
-        localStorage.setItem("coin", coin);
-        localStorage.setItem("role", roleEnum);
-        localStorage.setItem("point", point);
-
-        setUsername(username);
-        setImg(img);
-        setCoin(coin);
-        setPoint(point);
-      } catch (err) {
-        console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
-
-        localStorage.clear();
-        setUsername(null);
-        setImg(null);
-        setCoin(null);
-        setPoint(null);
-      }
+      localStorage.clear();
+      setUsername(null);
+      setImg(null);
+      setCoin(null);
+      setPoint(null);
     }
   };
 
@@ -370,17 +349,16 @@ export default function Navbar() {
   return (
     <nav className="px-4 bg-wcolor py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
-        <Link
-        to={"/"}>
-        <img
-          src={
-            localStorage.getItem("systemImg") !== "null"
-              ? localStorage.getItem("systemImg")
-              : "/logo.png"
-          }
-          className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
-          alt="logo"
-        />
+        <Link to={"/"}>
+          <img
+            src={
+              localStorage.getItem("systemImg") !== "null"
+                ? localStorage.getItem("systemImg")
+                : "/logo.png"
+            }
+            className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
+            alt="logo"
+          />
         </Link>
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
           <div className="flex lg:h-10 h-14 lg:w-full justify-center gap-2 items-center border-1 dark:bg-darkBackground dark:border-darkBorder p-2 rounded-xl relative">
