@@ -159,7 +159,7 @@ export default function UserCourse() {
           </button>
         ) : (
           <button
-            onClick={() => navigate(`/view-lesson/${item.courseId}`)}
+            onClick={() => navigate(`/user-course/view-lesson/${item.courseId}`)}
             className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300"
           >
             🚀 {t.continueLearning}

@@ -75,15 +75,17 @@ export default function UserRanking() {
       ? topWeekly
       : topMonthly;
 
+  // Ẩn user có point < 0
+  const filteredListUser = listUser.filter((user) => Number(user.point) >= 0);
+
   const currentUserId = parseInt(localStorage.getItem("id"));
 
-  const currentUser = listUser.find(
-    (user) => user.user.id === currentUserId
-  ) || {
-    rankEnum: "",
-    user: { username: `Bạn không ở trong Top`, avatar: unknowAva },
-    point: "0",
-  };
+  const currentUser =
+    filteredListUser.find((user) => user.user.id === currentUserId) || {
+      rankEnum: "",
+      user: { username: `Bạn không ở trong Top`, avatar: unknowAva },
+      point: "0",
+    };
 
   return (
     <div className="w-full px-4 py-10">
@@ -116,7 +118,7 @@ export default function UserRanking() {
       {/* Top 3 Podium */}
       <div className="flex flex-wrap justify-center items-end gap-6 mb-12">
         {[1, 0, 2].map((rank) => {
-          const player = listUser[rank] || {};
+          const player = filteredListUser[rank] || {};
           const rankColors = [
             "from-yellow-400 to-orange-500",
             "from-sky-400 to-blue-600",
@@ -149,9 +151,9 @@ export default function UserRanking() {
 
       {/* Full Leaderboard */}
       <div className="mx-auto space-y-4">
-        {listUser.length > 0 ? (
+        {filteredListUser.length > 0 ? (
           <>
-            {listUser.slice(0, 50).map((player, index) => {
+            {filteredListUser.slice(0, 50).map((player, index) => {
               const isCurrentUser = player.user.id === currentUserId;
               const rankColor =
                 index === 0
@@ -196,8 +198,9 @@ export default function UserRanking() {
               );
             })}
 
-            {/* Nếu user không nằm trong top 50 thì hiển thị dòng riêng */}
-            {!listUser.some((player) => player.user.id === currentUserId) && (
+            {!filteredListUser.some(
+              (player) => player.user.id === currentUserId
+            ) && (
               <div className="flex justify-between items-center px-5 py-3 rounded-xl bg-blue-600 border-2 border-blue-400 font-semibold shadow-md mt-6">
                 <div className="flex items-center gap-4">
                   <span className="text-xl font-bold w-6 text-center text-gray-300">
@@ -210,7 +213,7 @@ export default function UserRanking() {
                     className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
                   />
                   <div>
-                    <p className="text-white font-medium truncate max-w-[140px]">
+                    <p className="text-white font-medium truncate">
                       {currentUser.user.username}
                     </p>
                     <p className="text-xs text-gray-400">{t("points")}</p>

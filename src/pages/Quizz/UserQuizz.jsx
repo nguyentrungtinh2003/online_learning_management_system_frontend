@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
 import { getQuizById } from "../../services/quizapi";
-import { PiYoutubeLogo } from "react-icons/pi";
 import { submitQuiz } from "../../services/quizapi";
 import { savePointHistory } from "../../services/quizapi";
 
@@ -86,17 +85,21 @@ export default function UserQuizz() {
   };
 
   if (!quiz || !quiz.questions || quiz.questions.length === 0) {
-    return <p>Đang tải quiz hoặc không có câu hỏi nào.</p>;
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
 
   return (
-    <div className="h-full w-full flex text-sm font-semibold box-border relative">
-      <div className="h-full flex-1 overflow-y-auto bg-white flex-row p-4 z-0">
+    <div className="h-full w-full dark:border dark:text-darkText dark:border-darkBorder p-2 rounded-lg flex text-sm font-semibold box-border relative">
+      <div className="h-full flex-1 overflow-y-auto flex-row p-4 z-0">
         <div className="quiz-container px-2">
           <h2 className="text-xl font-bold mb-2">{quiz.quizName}</h2>
-          <p className="text-gray-500 mb-4">
+          <p className="text-gray-500 dark:text-darkSubtext mb-4">
             Câu {currentQuestionIndex + 1} / {quiz.questions.length}
           </p>
 
@@ -120,11 +123,11 @@ export default function UserQuizz() {
                   <label
                     key={idx}
                     htmlFor={inputId}
-                    className={`flex items-start gap-3 cursor-pointer border rounded-xl p-4 transition-all duration-200
+                    className={`flex items-start gap-3 dark:border-darkBorder cursor-pointer border-2 rounded-xl p-4 transition-all duration-200
                     ${
                       selectedAnswers[currentQuestionIndex] === choiceValue
-                        ? "bg-blue-100 border-blue-500"
-                        : "hover:bg-blue-50"
+                        ? "bg-blue-100 dark:bg-darkBorder"
+                        : "hover:bg-blue-50 dark:hover:bg-darkHover"
                     }`}
                   >
                     <input
@@ -132,7 +135,7 @@ export default function UserQuizz() {
                       name={`answer-${currentQuestionIndex}`}
                       value={choiceValue}
                       id={inputId}
-                      className="mt-1 accent-blue-500"
+                      className="mt-1 accent-cyan-500"
                       checked={
                         selectedAnswers[currentQuestionIndex] === choiceValue
                       }
@@ -140,8 +143,8 @@ export default function UserQuizz() {
                         handleAnswerChange(currentQuestionIndex, choiceValue)
                       }
                     />
-                    <div className="text-sm">
-                      <span className="font-bold">{choiceLabel}:</span>{" "}
+                    <div className="text-base">
+                      <span className="font-bold">{choiceLabel}.</span>{" "}
                       {choiceValue}
                     </div>
                   </label>
@@ -158,7 +161,7 @@ export default function UserQuizz() {
                 setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))
               }
               disabled={currentQuestionIndex === 0}
-              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover disabled:opacity-50"
             >
               <MdNavigateBefore /> Trước
             </button>
@@ -169,7 +172,7 @@ export default function UserQuizz() {
                 )
               }
               disabled={currentQuestionIndex === quiz.questions.length - 1}
-              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover disabled:opacity-50"
             >
               Sau <MdNavigateNext />
             </button>
@@ -177,16 +180,19 @@ export default function UserQuizz() {
         </div>
       </div>
 
-      <div className="shadow h-full p-4 pb-2 space-y-4 mx-2 justify-between flex flex-col rounded-xl w-[250px]">
+      <div className="shadow h-full dark:border dark:border-darkBorder p-4 pb-2 space-y-4 mx-2 justify-between flex flex-col rounded-xl w-[250px]">
         <div className="space-y-4">
           <p className="text-2xl font-bold">Nội dung khóa học</p>
           <div className="flex gap-2 flex-wrap">
             {/* Đảm bảo các ô vuông có thể xuống dòng nếu không đủ không gian */}
             {lessons.map((lesson, index) => (
               <div
-                className="cursor-pointer flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 hover:bg-blue-500 transition-all duration-200"
+                className={`cursor-pointer flex items-center justify-center w-12 h-12 rounded-full border-2 dark:border-darkBorder hover:bg-fcolor transition-all duration-200
+                  ${selectedAnswers[index] ? "bg-fcolor" : ""}
+                  ${currentQuestionIndex === index ? "ring-2 ring-cyan-400" : ""}
+                `}
                 key={index}
-                onClick={() => setCurrentQuestionIndex(index)} // Thêm chức năng chuyển câu hỏi khi click vào ô
+                onClick={() => setCurrentQuestionIndex(index)}
               >
                 <span className="text-sm font-bold">{index + 1}</span>
               </div>
@@ -194,7 +200,7 @@ export default function UserQuizz() {
           </div>
           <button
             onClick={handleSubmitQuiz} // Update this line
-            className="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition-all duration-200"
+            className="mt-4 border-2 dark:border-darkBorder py-2 px-6 rounded-lg hover:bg-fcolor transition-all duration-200"
           >
             Nộp bài
           </button>

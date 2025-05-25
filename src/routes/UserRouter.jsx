@@ -97,7 +97,7 @@ const UserRouter = () => {
           />
 
           <Route
-            path="view-lesson/:courseId"
+            path="user-course/view-lesson/:courseId"
             element={
               <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
                 <UserViewLesson />
@@ -115,7 +115,7 @@ const UserRouter = () => {
           />
 
           <Route
-            path="view-quiz/:quizId"
+            path="user-course/view-lesson/:courseId/view-quiz/:quizId"
             element={
               <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
                 <UserQuizz />
