@@ -8,7 +8,15 @@ import { FaStar } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { toast, Slide } from "react-toastify";
 import { Spinner } from "react-bootstrap";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from "recharts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -69,7 +77,9 @@ const Profile = () => {
     const endDate = end.toISOString().split("T")[0];
 
     axios
-      .get(`${URL}/user-point-history/${userId}?start=${startDate}&end=${endDate}`)
+      .get(
+        `${URL}/user-point-history/${userId}?start=${startDate}&end=${endDate}`
+      )
       .then((response) => {
         const data = response.data.data.map((item) => ({
           day: new Date(item.date).toLocaleDateString("vi-VN", {
@@ -174,7 +184,9 @@ const Profile = () => {
     <div className="h-full overflow-y-auto shadow flex-1">
       {/* Header Section */}
       <div className="relative h-fit mb-32">
-        <div className="bg-gradient-to-b from-cyan-300 to-blue-500 items-center flex justify-center text-3xl font-bold font-serif text-white text-uppercase  h-60 rounded-2xl m-2">{localStorage.getItem("slogan")}</div>
+        <div className="bg-gradient-to-b from-cyan-300 to-blue-500 items-center flex justify-center text-3xl font-bold font-serif text-white text-uppercase  h-60 rounded-2xl m-2">
+          {localStorage.getItem("slogan")}
+        </div>
 
         <div className="absolute top-40 left-10 z-10 flex items-center">
           <label className="relative cursor-pointer">
@@ -399,7 +411,7 @@ const Profile = () => {
             <p className="text-lg flex items-center gap-1 font-medium mb-2 dark:text-darkText">
               {t("totalPointThisWeek")}:{" "}
               {weeklyPoints.reduce((sum, d) => sum + d.point, 0)}
-              <FaStar color="gold" size={15}/>
+              <FaStar color="gold" size={15} />
             </p>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={weeklyPoints}>
@@ -423,50 +435,50 @@ const Profile = () => {
                 <p className="dark:text-darkText">{t("noTopup")}</p>
               ) : (
                 topupHistory.map((topup, index) => {
-                // Convert mảng date thành đối tượng Date
-                const formattedDate = new Date(
-                  topup.date[0],
-                  topup.date[1] - 1, // Tháng trong JS tính từ 0
-                  topup.date[2],
-                  topup.date[3],
-                  topup.date[4],
-                  topup.date[5]
-                ).toLocaleString("vi-VN", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                });
+                  // Convert mảng date thành đối tượng Date
+                  const formattedDate = new Date(
+                    topup.date[0],
+                    topup.date[1] - 1, // Tháng trong JS tính từ 0
+                    topup.date[2],
+                    topup.date[3],
+                    topup.date[4],
+                    topup.date[5]
+                  ).toLocaleString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
 
-                return (
-                  <li
-                    key={index}
-                    className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
-                  >
-                    <div>
-                      <p className="text-lg dark:text-darkText">
-                        {t("topupAmount")}:{" "}
-                        <span className="font-semibold text-green-600 dark:text-green-400">
-                          {topup.amount.toLocaleString()} VND
-                        </span>
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("coinReceived") || "Xu nhận được"}:{" "}
-                        <span className="font-medium text-yellow-600 dark:text-yellow-400">
-                          {topup.coinAmount.toLocaleString()} xu
-                        </span>
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("date")}: {formattedDate}
-                      </p>
-                    </div>
-                    <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
-                      {topup.status || "Success"}
-                    </span>
-                  </li>
-                );
-              })
+                  return (
+                    <li
+                      key={index}
+                      className="flex justify-between items-center p-4 bg-wcolor dark:bg-darkSubbackground border-2 dark:border-darkBorder rounded-lg shadow-sm"
+                    >
+                      <div>
+                        <p className="text-lg dark:text-darkText">
+                          {t("topupAmount")}:{" "}
+                          <span className="font-semibold text-green-600 dark:text-green-400">
+                            {topup.amount.toLocaleString()} VND
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {t("coinReceived") || "Xu nhận được"}:{" "}
+                          <span className="font-medium text-yellow-600 dark:text-yellow-400">
+                            {topup.coinAmount.toLocaleString()} xu
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {t("date")}: {formattedDate}
+                        </p>
+                      </div>
+                      <span className="text-sm font-medium px-2 py-1 bg-blue-100 text-blue-700 rounded dark:bg-blue-800 dark:text-white">
+                        {topup.status || "Success"}
+                      </span>
+                    </li>
+                  );
+                })
               )}
             </ul>
           </div>
@@ -488,7 +500,7 @@ const Profile = () => {
                   return (
                     <li
                       key={index}
-                      className="w-full text-gray-600 dark:text-darkSubtext font-medium flex justify-between items-center border-l-8 border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
+                      className="w-full text-gray-600 dark:text-darkSubtext font-medium flex justify-between items-center border-l-8 hover:border-cyan-400 bg-wcolor dark:bg-darkBackground px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
                     >
                       <span className="text-gray-800 dark:text-darkText">
                         Bạn đã nhận được {uh.point} điểm

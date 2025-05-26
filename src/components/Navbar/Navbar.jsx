@@ -331,7 +331,7 @@ export default function Navbar() {
       setCoin(null);
       setPoint(null);
 
-      // navigate("/"); // chuyển trang
+      navigate("/"); // chuyển trang
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {

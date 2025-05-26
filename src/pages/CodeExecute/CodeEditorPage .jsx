@@ -6,10 +6,10 @@ import { MdDeleteForever } from "react-icons/md";
 import { Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { toast, Slide } from "react-toastify";
-import { FaCode } from "react-icons/fa";
+import { FaCode, FaTrash } from "react-icons/fa";
 
 const CodeEditorPage = () => {
-  const { t } = useTranslation("codeeditor");
+  const { t, i18n } = useTranslation("codeeditor");
 
   const [code, setCode] = useState("");
   const [codeId, setCodeId] = useState(null);
@@ -64,12 +64,13 @@ const CodeEditorPage = () => {
     if (!Array.isArray(dateArray) || dateArray.length < 6) return "N/A";
 
     const postDate = new Date(
-      dateArray[0],
-      dateArray[1] - 1,
-      dateArray[2],
-      dateArray[3],
-      dateArray[4],
-      dateArray[5]
+      dateArray[0], // year
+      dateArray[1] - 1, // ✅ month (JS: 0-indexed)
+      dateArray[2], // day
+      dateArray[3], // hour
+      dateArray[4], // minute
+      dateArray[5] // second
+      // dateArray[6] là nano giây, không cần thiết ở đây
     );
 
     const now = new Date();
@@ -99,7 +100,6 @@ const CodeEditorPage = () => {
       return t("daysAgo", { count: days });
     }
   }
-  //-
 
   useEffect(() => {
     historyCodeByUser();
@@ -183,19 +183,19 @@ const CodeEditorPage = () => {
   };
 
   return (
-    <div className="w-full h-fit dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
+    <div className="w-full h-500 dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
       <div className="flex">
         <h2 className="text-2xl font-bold text-cyan-500 flex items-center gap-2">
-          {t("codeEditor.title")}
+          {t("title")}
           <span className="text-sm text-gray-700 dark:text-darkText">
-            ({t("codeEditor.subtitle")})
+            ({t("subtitle")})
           </span>
         </h2>
 
         <div className="ml-4 flex items-center gap-4">
           <label className="text-lg flex text-gray-700 dark:text-darkText items-center gap-2">
             <FaCode size={30} className="text-cyan-500" />
-            {t("codeEditor.language")}:
+            {t("language")}:
           </label>
           <select
             className="text-gray-700 bg-wcolor dark:bg-darkSubbackground dark:text-darkText px-4 py-2 border-2 dark:border-darkBorder border-gray-600 rounded-xl shadow-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
@@ -215,74 +215,69 @@ const CodeEditorPage = () => {
             setCode(null);
           }}
         >
-          {t("codeEditor.clear")}
+          {t("clear")}
         </button>
       </div>
 
       {/* Màn hình chính */}
-      <div className="flex mt-2 h-[410px] gap-4">
+      <div className="flex m-2 h-[415px] gap-4">
         {/* Lịch sử bên trái */}
         <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground px-2 space-y-3 max-h-full">
-          <h3 className="text-lg bg-wcolor dark:bg-darkSubbackground font-semibold text-cyan-500 sticky top-0 z-5 py-2">
-
-            {t("codeEditor.history")}
+          <h3 className="text-lg h-10 m-2 w-full bg-black dark:bg-darkSubbackground font-semibold text-cyan-500 sticky  top-0 z-10 py-2 px-2 rounded">
+            {t("history")}
           </h3>
           {historyCode && historyCode.length > 0 ? (
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className={`relativegit rounded-r-lg px-3 py-2 shadow ${
-                  codeId == hisco.id
-                    ? `border-l-4 border-cyan-500`
-                    : `hover:border-l-4 border-cyan-500`
-                } `}
+                className={`relative rounded-md px-3 py-2 transition-all duration-200 ${
+                  codeId === hisco.id
+                    ? "border-l-4 border-cyan-500 bg-cyan-50 dark:bg-darkHover"
+                    : "hover:bg-gray-100 dark:hover:bg-darkHover hover:border-l-4 border-cyan-500"
+                }`}
               >
                 <div
                   onClick={() => {
                     setCode(hisco.code);
                     setCodeId(hisco.id);
                   }}
-                  className="cursor-pointer dark:text-darkText"
+                  className="cursor-pointer dark:text-darkText space-y-1"
                 >
-                  <p className="text-sm text-gray-400 mb-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     <span className="font-semibold text-cyan-500">
-                      {t("codeEditor.code")}:
+                      {t("code")}:
                     </span>{" "}
                     {hisco.code}
                   </p>
-                  <p className="text-xs text-cyan-500">
-                    <span className="font-semibold">
-                      {t("codeEditor.time")}:
+
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <span className="font-semibold text-cyan-500">
+                      {t("time")}:
                     </span>{" "}
-                    {new Date(
-                      hisco.executedAt[0],
-                      hisco.executedAt[1] - 1,
-                      hisco.executedAt[2],
-                      hisco.executedAt[3],
-                      hisco.executedAt[4],
-                      hisco.executedAt[5]
-                    ).toLocaleDateString("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                      ? formatDate(hisco.executedAt)
-                      : "N/A"}
+                    {formatDate(hisco.executedAt)}
                   </p>
+
+                  {hisco.updateDate != null && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="font-semibold text-cyan-500">
+                        {t("update")}:
+                      </span>{" "}
+                      {formatDate(hisco.updateDate)}
+                    </p>
+                  )}
                 </div>
 
-                {/* Nút xoá */}
                 <button
                   onClick={() => deleteCodeByUser(hisco.id)}
-                  className="absolute -top-1 right-0 text-red-500 hover:text-red-700"
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
                   title={t("codeEditor.delete")}
                 >
-                  x
+                  <FaTrash />
                 </button>
               </div>
             ))
           ) : (
-            <p className="text-cyan-500">{t("codeEditor.noHistory")}</p>
+            <p className="text-cyan-500 px-2">{t("noHistory")}</p>
           )}
         </div>
 
@@ -305,11 +300,9 @@ const CodeEditorPage = () => {
       </div>
 
       {/* Terminal */}
-      <div className="mt-4 border-2 dark:border-darkBorder rounded-lg shadow-inner">
+      <div className="m-2 border-2 dark:border-darkBorder rounded-lg shadow-inner">
         <div className="flex justify-between items-center px-4 py-2 border-b dark:border-darkBorder rounded-t-lg">
-          <span className="text-cyan-500 font-semibold">
-            {t("codeEditor.terminal")}
-          </span>
+          <span className="text-cyan-500 font-semibold">{t("terminal")}</span>
           <button
             onClick={handleRun}
             className="bg-cyan-500 hover:bg-cyan-400 text-white font-semibold px-4 py-2 rounded shadow-sm transition duration-200"
@@ -317,11 +310,11 @@ const CodeEditorPage = () => {
             {loading ? (
               <Spinner animation="border" variant="white" />
             ) : (
-              t("codeEditor.run")
+              t("run")
             )}
           </button>
         </div>
-        <div className="p-2 rounded-b-lg overflow-auto dark:text-darkText text-sm leading-relaxed h-[100px] font-mono">
+        <div className="p-2 rounded-b-lg overflow-auto dark:text-darkText text-sm leading-relaxed h-[95px] font-mono">
           <pre className="whitespace-pre-wrap">
             PS {localStorage.getItem("username") || "user"}&gt; {output}
           </pre>

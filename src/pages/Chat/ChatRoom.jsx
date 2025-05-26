@@ -63,7 +63,7 @@ const ChatRoom = () => {
 
   const fetchTeachers = useCallback(async () => {
     try {
-      const response = await axios.get(`${URL}/user/role/TEACHER`, {
+      const response = await axios.get(`${URL}/user/all`, {
         withCredentials: true,
       });
       const allTeachers = response.data.data.filter((t) => t.id !== user1Id);

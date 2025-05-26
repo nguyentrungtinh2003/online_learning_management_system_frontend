@@ -43,10 +43,15 @@ export default function UserRanking() {
     fetchTopMonth(month, year);
   }, []);
 
+  console.log(topDaily);
+  console.log(topWeekly);
+  console.log(topMonthly);
+
   const fetchTopDate = (date) => {
     axios
       .get(`${URL}/rankings/day?date=${date}`, { withCredentials: true })
       .then((response) => setTopDaily(response.data.data))
+
       .catch((error) => console.error("Error get top date ", error.message));
   };
 
@@ -76,16 +81,17 @@ export default function UserRanking() {
       : topMonthly;
 
   // Ẩn user có point < 0
-  const filteredListUser = listUser.filter((user) => Number(user.point) >= 0);
+  const filteredListUser = listUser;
 
   const currentUserId = parseInt(localStorage.getItem("id"));
 
-  const currentUser =
-    filteredListUser.find((user) => user.user.id === currentUserId) || {
-      rankEnum: "",
-      user: { username: `Bạn không ở trong Top`, avatar: unknowAva },
-      point: "0",
-    };
+  const currentUser = filteredListUser.find(
+    (user) => user.user.id === currentUserId
+  ) || {
+    rankEnum: "",
+    user: { username: `Bạn không ở trong Top`, img: unknowAva },
+    point: "0",
+  };
 
   return (
     <div className="w-full px-4 py-10">
@@ -179,7 +185,7 @@ export default function UserRanking() {
                     >
                       {index + 1}
                     </span>
-                    <RankChangeIcon rankEnum={player.rankEnum} />
+                    <RankChangeIcon rankEnum={player.user?.rankEnum} />
                     <img
                       src={player.user?.img || unknowAva}
                       alt="avatar"

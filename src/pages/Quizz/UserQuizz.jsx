@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
-import { getQuizById } from "../../services/quizapi";
-import { submitQuiz } from "../../services/quizapi";
-import { savePointHistory } from "../../services/quizapi";
+import axios from "axios";
+import {
+  getQuizById,
+  submitQuiz,
+  savePointHistory,
+} from "../../services/quizapi";
+import URL from "../../config/URLconfig";
 
 export default function UserQuizz() {
   const navigate = useNavigate();
@@ -11,6 +15,8 @@ export default function UserQuizz() {
   const [quiz, setQuiz] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [hasDoneQuiz, setHasDoneQuiz] = useState(null);
+  const userId = parseInt(localStorage.getItem("id"));
 
   const lessons = [
     { title: "Khái niệm cần biết", duration: "11:35" },
@@ -19,20 +25,33 @@ export default function UserQuizz() {
   ];
 
   useEffect(() => {
-    const fetchQuiz = async () => {
+    const fetchQuizStatus = async () => {
       try {
-        const data = await getQuizById(quizId);
-        if (data && data.statusCode === 200) {
-          setQuiz(data.data);
+        const res = await axios.get(
+          `${URL}/quizzes/check/${userId}/${quizId}`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        if (res.data.data === false) {
+          setHasDoneQuiz(false);
+          const data = await getQuizById(quizId);
+          if (data && data.statusCode === 200) {
+            setQuiz(data.data);
+          } else {
+            console.error("Không thể tải dữ liệu quiz:", data);
+          }
         } else {
-          console.error("Lỗi tải quiz hoặc dữ liệu không hợp lệ", data);
+          setHasDoneQuiz(true);
         }
-      } catch (error) {
-        console.error("Có lỗi xảy ra khi gọi API", error);
+      } catch (err) {
+        console.error("Lỗi khi kiểm tra trạng thái quiz:", err);
       }
     };
-    fetchQuiz();
-  }, [quizId]);
+
+    fetchQuizStatus();
+  }, [quizId, userId]);
 
   const handleAnswerChange = (questionIndex, value) => {
     setSelectedAnswers((prev) => ({
@@ -42,52 +61,55 @@ export default function UserQuizz() {
   };
 
   const handleSubmitQuiz = async () => {
-    const answersUser = Object.values(selectedAnswers); // Câu trả lời của người dùng
-    const userId = parseInt(localStorage.getItem("id"));
-    const id = parseInt(quizId);
+    const answers = Object.values(selectedAnswers);
+    const quizID = parseInt(quizId);
 
     try {
-      const response = await submitQuiz(id, userId, answersUser);
+      const res = await submitQuiz(quizID, userId, answers);
 
-      if (response.statusCode === 200) {
-        const point = response.data;
-        console.log("Dữ liệu API trả về:", response.data);
+      if (res.statusCode === 200) {
+        const point = res.data;
+        const score = (point / quiz.questions.length) * 100;
 
-        const totalQuestions = quiz.questions.length;
-        const score = (point / totalQuestions) * 100;
-        console.log("Điểm số tính được:", score);
-
-        // ✅ Lưu vào localStorage
         localStorage.setItem(
           "quizResult",
-          JSON.stringify({
-            quiz,
-            selectedAnswers,
-            score,
-            point,
-          })
+          JSON.stringify({ quiz, selectedAnswers, score, point })
         );
 
-        // ✅ Gọi API để lưu lại lịch sử điểm
-        await savePointHistory(userId, point); // Lưu lịch sử điểm
+        // await savePointHistory(userId, point);
 
-        // ✅ Điều hướng đến trang kết quả
         setTimeout(() => {
           navigate(`/view-result/${quizId}`);
         }, 1000);
       } else {
-        alert("Có lỗi xảy ra khi nộp bài. Vui lòng thử lại.");
+        alert("Nộp bài thất bại. Vui lòng thử lại.");
       }
-    } catch (error) {
-      console.error("Có lỗi khi nộp bài:", error);
-      alert("Có lỗi xảy ra khi nộp bài. Vui lòng thử lại.");
+    } catch (err) {
+      console.error("Lỗi khi nộp bài:", err);
+      alert("Đã xảy ra lỗi khi nộp bài.");
     }
   };
 
+  if (hasDoneQuiz === null) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (hasDoneQuiz === true) {
+    return (
+      <div className="text-center text-xl font-semibold p-6 text-red-500">
+        Bạn đã làm quiz này rồi.
+      </div>
+    );
+  }
+
   if (!quiz || !quiz.questions || quiz.questions.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      <div className="text-center p-4 text-gray-500">
+        Không có câu hỏi nào trong quiz.
       </div>
     );
   }
@@ -95,73 +117,68 @@ export default function UserQuizz() {
   const currentQuestion = quiz.questions[currentQuestionIndex];
 
   return (
-    <div className="h-full w-full dark:border dark:text-darkText dark:border-darkBorder p-2 rounded-lg flex text-sm font-semibold box-border relative">
-      <div className="h-full flex-1 overflow-y-auto flex-row p-4 z-0">
+    <div className="h-full w-full dark:text-darkText dark:bg-darkBackground flex text-sm font-semibold box-border relative">
+      <div className="flex-1 overflow-y-auto p-4">
         <div className="quiz-container px-2">
           <h2 className="text-xl font-bold mb-2">{quiz.quizName}</h2>
           <p className="text-gray-500 dark:text-darkSubtext mb-4">
             Câu {currentQuestionIndex + 1} / {quiz.questions.length}
           </p>
 
-          <div className="">
-            <p className="text-lg font-semibold mb-4">
-              {currentQuestion.questionName}
-            </p>
-            {currentQuestion.img && (
-              <img
-                className="w-full h-40 object-contain mb-4"
-                src={currentQuestion.img}
-                alt="Hình minh họa"
-              />
-            )}
+          <p className="text-lg font-semibold mb-4">
+            {currentQuestion.questionName}
+          </p>
+          {currentQuestion.img && (
+            <img
+              className="w-full h-40 object-contain mb-4"
+              src={currentQuestion.img}
+              alt="Hình minh họa"
+            />
+          )}
 
-            <div className="grid grid-cols-1 gap-4">
-              {["A", "B", "C", "D"].map((choiceLabel, idx) => {
-                const choiceValue = currentQuestion[`answer${choiceLabel}`];
-                const inputId = `choice-${currentQuestionIndex}-${choiceLabel}`;
-                return (
-                  <label
-                    key={idx}
-                    htmlFor={inputId}
-                    className={`flex items-start gap-3 dark:border-darkBorder cursor-pointer border-2 rounded-xl p-4 transition-all duration-200
+          <div className="grid grid-cols-1 gap-4">
+            {["A", "B", "C", "D"].map((label, idx) => {
+              const value = currentQuestion[`answer${label}`];
+              const inputId = `choice-${currentQuestionIndex}-${label}`;
+              return (
+                <label
+                  key={idx}
+                  htmlFor={inputId}
+                  className={`flex items-start gap-3 border-2 rounded-xl p-4 cursor-pointer
                     ${
-                      selectedAnswers[currentQuestionIndex] === choiceValue
+                      selectedAnswers[currentQuestionIndex] === value
                         ? "bg-blue-100 dark:bg-darkBorder"
                         : "hover:bg-blue-50 dark:hover:bg-darkHover"
                     }`}
-                  >
-                    <input
-                      type="radio"
-                      name={`answer-${currentQuestionIndex}`}
-                      value={choiceValue}
-                      id={inputId}
-                      className="mt-1 accent-cyan-500"
-                      checked={
-                        selectedAnswers[currentQuestionIndex] === choiceValue
-                      }
-                      onChange={() =>
-                        handleAnswerChange(currentQuestionIndex, choiceValue)
-                      }
-                    />
-                    <div className="text-base">
-                      <span className="font-bold">{choiceLabel}.</span>{" "}
-                      {choiceValue}
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
+                >
+                  <input
+                    type="radio"
+                    name={`answer-${currentQuestionIndex}`}
+                    id={inputId}
+                    value={value}
+                    checked={selectedAnswers[currentQuestionIndex] === value}
+                    onChange={() =>
+                      handleAnswerChange(currentQuestionIndex, value)
+                    }
+                    className="mt-1 accent-cyan-500"
+                  />
+                  <div className="text-base">
+                    <span className="font-bold">{label}.</span> {value}
+                  </div>
+                </label>
+              );
+            })}
           </div>
 
           <hr className="my-6 border-t" />
 
-          <div className="navigation-buttons flex justify-between gap-4">
+          <div className="flex justify-between gap-4">
             <button
               onClick={() =>
                 setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))
               }
               disabled={currentQuestionIndex === 0}
-              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 hover:bg-tcolor dark:border-darkBorder dark:hover:bg-darkHover disabled:opacity-50"
             >
               <MdNavigateBefore /> Trước
             </button>
@@ -172,7 +189,7 @@ export default function UserQuizz() {
                 )
               }
               disabled={currentQuestionIndex === quiz.questions.length - 1}
-              className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 hover:bg-tcolor dark:border-darkBorder dark:hover:bg-darkHover disabled:opacity-50"
             >
               Sau <MdNavigateNext />
             </button>
@@ -180,33 +197,31 @@ export default function UserQuizz() {
         </div>
       </div>
 
-      <div className="shadow h-full dark:border dark:border-darkBorder p-4 pb-2 space-y-4 mx-2 justify-between flex flex-col rounded-xl w-[250px]">
-        <div className="space-y-4">
-          <p className="text-2xl font-bold">Nội dung khóa học</p>
-          <div className="flex gap-2 flex-wrap">
-            {/* Đảm bảo các ô vuông có thể xuống dòng nếu không đủ không gian */}
-            {lessons.map((lesson, index) => (
-              <div
-                className={`cursor-pointer flex items-center justify-center w-12 h-12 rounded-full border-2 dark:border-darkBorder hover:bg-fcolor transition-all duration-200
-                  ${selectedAnswers[index] ? "bg-fcolor" : ""}
-                  ${currentQuestionIndex === index ? "ring-2 ring-cyan-400" : ""}
-                `}
-                key={index}
-                onClick={() => setCurrentQuestionIndex(index)}
-              >
-                <span className="text-sm font-bold">{index + 1}</span>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={handleSubmitQuiz} // Update this line
-            className="mt-4 border-2 dark:border-darkBorder py-2 px-6 rounded-lg hover:bg-fcolor transition-all duration-200"
-          >
-            Nộp bài
-          </button>
+      <div className="w-[250px] p-4 space-y-4 border-l dark:border-darkBorder">
+        <p className="text-xl font-bold">Danh sách câu hỏi</p>
+        <div className="flex gap-2 flex-wrap">
+          {lessons.map((_, index) => (
+            <div
+              key={index}
+              onClick={() => setCurrentQuestionIndex(index)}
+              className={`w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer
+              ${
+                currentQuestionIndex === index
+                  ? "ring-2 ring-cyan-400"
+                  : "hover:bg-fcolor dark:hover:bg-darkHover"
+              }
+              ${selectedAnswers[index] ? "bg-fcolor" : ""}`}
+            >
+              {index + 1}
+            </div>
+          ))}
         </div>
-
-        <p className="flex-end w-fit text-lg">1. Khái niệm kỹ thuật cần biết</p>
+        <button
+          onClick={handleSubmitQuiz}
+          className="w-full mt-4 border-2 py-2 px-6 rounded-lg hover:bg-fcolor dark:border-darkBorder"
+        >
+          Nộp bài
+        </button>
       </div>
     </div>
   );
