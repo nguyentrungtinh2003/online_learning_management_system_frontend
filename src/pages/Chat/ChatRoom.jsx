@@ -6,6 +6,7 @@ import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
 import { useTranslation } from "react-i18next";
 import { PiPaperPlaneRightFill } from "react-icons/pi";
+import unknowAva from "../../assets/unknownAvatar.png";
 
 const ChatRoom = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,7 +63,7 @@ const ChatRoom = () => {
 
   const fetchTeachers = useCallback(async () => {
     try {
-      const response = await axios.get(`${URL}/user/all`, {
+      const response = await axios.get(`${URL}/user/role/TEACHER`, {
         withCredentials: true,
       });
       const allTeachers = response.data.data.filter((t) => t.id !== user1Id);
@@ -230,9 +231,13 @@ const ChatRoom = () => {
                 onClick={() => setCurrentTeacher(teacher.id)}
               >
                 <img
-                  src={teacher.img || "/user.png"}
+                  src={teacher.img || unknowAva}
                   alt={teacher.username}
                   className="w-12 h-12 rounded-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null; // Ngăn vòng lặp vô hạn nếu unknowAva cũng lỗi
+                    e.target.src = unknowAva;
+                  }}
                 />
                 <div className="flex flex-col overflow-hidden">
                   <div className="font-semibold truncate">
@@ -374,9 +379,7 @@ const ChatRoom = () => {
                     }
                   }}
                 />
-                <button
-                  onClick={addChat}
-                >
+                <button onClick={addChat}>
                   <PiPaperPlaneRightFill className="" size={25} />
                 </button>
               </div>

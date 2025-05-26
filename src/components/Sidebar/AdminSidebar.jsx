@@ -16,6 +16,7 @@ import {
   FaVideo,
   FaWallet,
   FaClipboardList,
+  FaCode,
 } from "react-icons/fa";
 import { MdOutlineKeyboardDoubleArrowLeft, MdMenu } from "react-icons/md";
 import { useTranslation } from "react-i18next";
@@ -118,6 +119,12 @@ export default function Sidebar() {
       path: "/user-course",
     },
     {
+      id: "CodeEditor",
+      label: t("codeEditor"),
+      icon: <FaCode size={isMobile ? 35 : 25} />,
+      path: "/code-editor",
+    },
+    {
       id: "Blog",
       label: t("blog"),
       icon: <MdForum size={isMobile ? 35 : 25} />,
@@ -202,7 +209,7 @@ export default function Sidebar() {
             onClick={() => handleNavigate(item.id, item.path)}
             className={`flex flex-col items-center w-full h-full items-center pt-8 h-[2.5rem] gap-1 text-xl ${
               activeItem === item.id
-                ? "border-b-4 border-cyan-400 bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
+                ? "border-b-4  bg-gradient-to-b from-transparent to-[rgba(34,211,238,.1)] dark:to-[rgba(34,211,238,.1)] text-cyan-500"
                 : "text-lightText hover:text-gray-900 hover:scale-105 border-gray-400 hover:border-b dark:text-darkSubtext hover:font-bold  dark:hover:text-darkText"
             }`}
           >
@@ -217,7 +224,7 @@ export default function Sidebar() {
   // Sidebar DỌC cho desktop như cũ
   return (
     <div
-      className={`h-full relative bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 transition-all duration-200 ${
+      className={`h-full relative bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 ${
         isCollapsed ? "w-[90px]" : "w-56"
       }`}
     >

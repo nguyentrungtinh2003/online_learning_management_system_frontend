@@ -312,14 +312,14 @@ export default function UserViewLesson() {
       {/* Main Layout */}
       <div
         ref={mainLayoutRef}
-        className="h-full flex-1 overflow-y-auto bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground flex-row p-4 z-0"
+        className="h-full flex-1 rounded-lg overflow-y-auto bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground flex-row p-3 z-0"
       >
         <div className="flex w-full gap-4">
           <div className="flex-1 relative">
             {/* Navigation buttons */}
             {mainRect && (
               <div
-                className="fixed dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText justify-between px-4 flex h-fit bottom-0 border-t-2 border-gray-300 items-center gap-14 bg-wcolor py-2 z-50"
+                className="fixed dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText justify-between px-4 flex h-fit bottom-0 border-2 border-gray-300 items-center gap-14 bg-wcolor py-2 z-50"
                 style={{
                   width: mainRect.width,
                   left: mainRect.left,
@@ -388,7 +388,7 @@ export default function UserViewLesson() {
                     {lessons[currentLessonIndex]?.lessonName}
                     {/* Hiển thị icon check nếu bài học hoàn thành */}
                   </h1>
-                  <button className="bg-scolor dark:text-darkText border py-2 px-10 hover:shadow duration-700 rounded-xl">
+                  <button className="hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText border-2 dark:border-darkBorder py-2 px-10 hover:shadow duration-300 rounded-xl">
                     Thêm ghi chú tại 00:00:00
                   </button>
                 </div>
@@ -462,7 +462,7 @@ export default function UserViewLesson() {
                           <ul className="ml-6 mt-2 flex flex-col gap-1">
                             {lesson.quizzes.map((quiz, qIndex) => (
                               <Link
-                                to={`/view-quiz/${quiz.id}`}
+                                to={`/user-course/view-lesson/:courseId/view-quiz/${quiz.id}`}
                                 className="hover:text-blue-500"
                               >
                                 <li

@@ -24,6 +24,8 @@ import UserQuizz from "../pages/Quizz/UserQuizz";
 import UserQuizzResult from "../pages/Quizz/UserQuizzResult";
 import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 import OAuthSuccess from "../pages/Auth/OAuthSuccess";
+import CodeEditorPage from "../pages/CodeExecute/CodeEditorPage ";
+import ViewUser from "../pages/User/ViewUser";
 
 const UserRouter = () => {
   return (
@@ -45,6 +47,8 @@ const UserRouter = () => {
           <Route path="blog" element={<UserViewBlog />} />
           <Route path="ranking" element={<UserRanking />} />
           <Route path="view-course/:id" element={<UserViewCourse />} />
+
+          <Route path="/code-editor" element={<CodeEditorPage />} />
 
           {/* Yêu cầu đăng nhập và quyền tương ứng */}
           <Route
@@ -93,7 +97,7 @@ const UserRouter = () => {
           />
 
           <Route
-            path="view-lesson/:courseId"
+            path="user-course/view-lesson/:courseId"
             element={
               <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
                 <UserViewLesson />
@@ -111,7 +115,7 @@ const UserRouter = () => {
           />
 
           <Route
-            path="view-quiz/:quizId"
+            path="user-course/view-lesson/:courseId/view-quiz/:quizId"
             element={
               <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
                 <UserQuizz />

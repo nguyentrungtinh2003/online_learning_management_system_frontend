@@ -20,12 +20,12 @@ const AdminAddUser = () => {
   });
   const [image, setImage] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-    
-      useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-      }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +52,7 @@ const AdminAddUser = () => {
     }
 
     await axios
-      .post(`${URL}/api/auth/admin-register-user`, data)
+      .post(`${URL}/admin/register/user`, data, { withCredentials: true })
       .then(() => {
         toast.success(<p>{t("addUser.success")}</p>, {
           position: "top-right",
@@ -80,7 +80,9 @@ const AdminAddUser = () => {
           <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-4xl lg:text-lg font-bold">{t("user.title")}</h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("addUser.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("addUser.title")}
+          </h2>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -88,17 +90,35 @@ const AdminAddUser = () => {
         >
           <div className="space-y-4">
             {[
-              { label: <p>{t("addUser.username")}</p>, name: "username", type: "text" },
-              { label: <p>{t("addUser.password")}</p>, name: "password", type: "password" },
+              {
+                label: <p>{t("addUser.username")}</p>,
+                name: "username",
+                type: "text",
+              },
+              {
+                label: <p>{t("addUser.password")}</p>,
+                name: "password",
+                type: "password",
+              },
               { label: "Email", name: "email", type: "email" },
-              { label: <p>{t("addUser.phoneNumber")}</p>, name: "phoneNumber", type: "text" },
-              { label: <p>{t("addUser.birthDay")}</p>, name: "birthDay", type: "date" },
-              { label: <p>{t("addUser.address")}</p>, name: "address", type: "text" },
+              {
+                label: <p>{t("addUser.phoneNumber")}</p>,
+                name: "phoneNumber",
+                type: "text",
+              },
+              {
+                label: <p>{t("addUser.birthDay")}</p>,
+                name: "birthDay",
+                type: "date",
+              },
+              {
+                label: <p>{t("addUser.address")}</p>,
+                name: "address",
+                type: "text",
+              },
             ].map((field) => (
               <div key={field.name} className="flex items-center space-x-4">
-                <label className="w-1/4 font-medium">
-                  {field.label}
-                </label>
+                <label className="w-1/4 font-medium">{field.label}</label>
                 <input
                   type={field.type}
                   name={field.name}
@@ -111,15 +131,21 @@ const AdminAddUser = () => {
             ))}
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium"><p>{t("addUser.role")}</p></label>
+              <label className="w-1/4 font-medium">
+                <p>{t("addUser.role")}</p>
+              </label>
               <select
                 name="roleEnum"
                 value={formData.roleEnum}
                 onChange={handleInputChange}
                 className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
               >
-                <option value="STUDENT"><p>{t("addUser.student")}</p></option>
-                <option value="TEACHER"><p>{t("addUser.teacher")}</p></option>
+                <option value="STUDENT">
+                  <p>{t("addUser.student")}</p>
+                </option>
+                <option value="TEACHER">
+                  <p>{t("addUser.teacher")}</p>
+                </option>
               </select>
             </div>
 

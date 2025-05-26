@@ -1,19 +1,19 @@
 {
-    "dashboard": "Bảng Điều Khiển",
-    "courses": "Khóa Học",
-    "lessons": "Bài Học",
-    "quizzes": "Câu Đố",
-    "questions": "Câu Hỏi",
-    "users": "Người Dùng",
-    "payments": "Thanh Toán",
-    "blog": "Bài Viết",
-    "settings": "Cài Đặt",
-    "home": "Trang Chủ",
-    "myCourses": "Khóa Học Của Tôi",
-    "ranking": "Xếp Hạng",
-    "profile": "Hồ Sơ",
-    "eWallet": "Ví Điện Tử",
-    "chatting": "Tin Nhắn",
-    "codeArena": "Code Arena"
-  }
-
+  "dashboard": "Bảng Điều Khiển",
+  "courses": "Khóa Học",
+  "lessons": "Bài Học",
+  "quizzes": "Câu Đố",
+  "questions": "Câu Hỏi",
+  "users": "Người Dùng",
+  "payments": "Thanh Toán",
+  "blog": "Bài Viết",
+  "settings": "Cài Đặt",
+  "home": "Trang Chủ",
+  "myCourses": "Khóa Học Của Tôi",
+  "codeEditor": "Viết Code",
+  "ranking": "Xếp Hạng",
+  "profile": "Hồ Sơ",
+  "eWallet": "Ví Điện Tử",
+  "chatting": "Tin Nhắn",
+  "codeArena": "Code Arena"
+}

@@ -45,6 +45,9 @@ import viUserCourse from "./locales/vi/usercourse.json";
 import enAuthForm from "./locales/en/authform.json";
 import viAuthForm from "./locales/vi/authform.json";
 
+import enCodeEditor from "./locales/en/codeeditor.json";
+import viCodeEditor from "./locales/vi/codeeditor.json";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -54,7 +57,7 @@ i18n
     debug: true,
     ns: ["settings", "navbar", "sidebar", "blog", "ranking",
        "profile", "payment","chatroom","dashboard","adminmanagement",
-      "adminsetting","homepage","usercourse","authform",],// thêm 'ranking'
+      "adminsetting","homepage","usercourse","authform","codeeditor",],// thêm 'ranking'
     defaultNS: "settings",
     resources: {
       en: {
@@ -72,6 +75,7 @@ i18n
         homepage: enHomePage,
         usercourse: enUserCourse,
         authform: enAuthForm,
+        codeeditor: enCodeEditor,
       },
       vi: {
         settings: viSettings,
@@ -88,6 +92,7 @@ i18n
         homepage: viHomePage,
         usercourse: viUserCourse,
         authform: viAuthForm,
+        codeeditor: viCodeEditor,
       },
     },
     interpolation: {

@@ -4,7 +4,6 @@ import URL from "../../config/URLconfig";
 import axios from "axios";
 import { TbCoin } from "react-icons/tb";
 import { FaStar } from "react-icons/fa";
-import { PiEyeBold } from "react-icons/pi";
 import { RiContactsBook3Fill } from "react-icons/ri";
 import {
   BarChart,
@@ -379,7 +378,7 @@ const StatisticalTable = () => {
               stroke="#06b6d4"
               strokeWidth={3}
               dot={{ r: 5 }}
-              name="Liked Users"
+              name={t("likedUser")}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -554,7 +553,7 @@ const StatisticalTable = () => {
           {Alerts.length > 0 && (
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-2 dark:text-darkText">
-                🚨 Cảnh báo
+                {t("alertTitle")}
               </h3>
               <div className="space-y-3 max-h-[250px] overflow-auto">
                 {Alerts.map((alert, idx) => {
@@ -598,7 +597,15 @@ const StatisticalTable = () => {
                     >
                       <span className="text-xl">{icon}</span>
                       <div>
-                        <div className="font-semibold">{alert.type} Alert</div>
+                        <div className="font-semibold">
+                          {alert.type === "High"
+                            ? t("alertHigh")
+                            : alert.type === "Medium"
+                            ? t("alertMedium")
+                            : alert.type === "Low"
+                            ? t("alertLow")
+                            : t("alertUnknown")}
+                        </div>
                         <div className="text-sm">{alert.message}</div>
                       </div>
                     </div>
@@ -629,7 +636,7 @@ const StatisticalTable = () => {
                 stroke="#06b6d4"
                 strokeWidth={3}
                 dot={{ r: 5 }}
-                name="Lượt truy cập"
+                name={t("chart.visits")}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -637,17 +644,17 @@ const StatisticalTable = () => {
           {/* Bảng lịch sử đăng nhập */}
           <div className="overflow-auto max-h-[400px]">
             <h3 className="text-lg font-medium mb-2 dark:text-darkText">
-              📄 Chi tiết lịch sử đăng nhập
+              {t("table.loginHistory")}
             </h3>
             <table className="w-full text-sm text-center dark:text-darkText">
               <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-slate-900">
-                <tr className="bg-gray-100 dark:bg-slate-900 text-gray-700 dark:text-darkText">
-                  <th className="py-2">ID</th>
-                  <th>Username</th>
-                  <th>IP</th>
-                  <th>Trạng thái</th>
-                  <th>Thông báo</th>
-                  <th>Thời gian</th>
+                <tr className="bg-gray-100 text-base dark:bg-slate-900 text-gray-700 dark:text-darkText">
+                  <th className="py-2">{t("table.id")}</th>
+                  <th>{t("table.username")}</th>
+                  <th>{t("table.ip")}</th>
+                  <th>{t("table.status")}</th>
+                  <th>{t("table.message")}</th>
+                  <th>{t("table.time")}</th>
                 </tr>
               </thead>
               <tbody>

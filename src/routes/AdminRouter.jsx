@@ -33,6 +33,8 @@ import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz";
 import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
 import UserViewCourse from "../pages/Course/UserViewCourse";
+import ViewUser from "../pages/User/ViewUser";
+import ViewPayment from "../pages/Payment/ViewPayment";
 
 const AdminRoutes = () => {
   return (
@@ -68,6 +70,23 @@ const AdminRoutes = () => {
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
 
         <Route
+          path="/users/view-user/:userId"
+          element={
+            <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+              <ViewUser />
+            </ProtectedRouter>
+          }
+        />
+        <Route
+          path="/transactions/view-payment/:id"
+          element={
+            <ProtectedRouter requiredRoles={["STUDENT", "ADMIN", "TEACHER"]}>
+              <ViewPayment />
+            </ProtectedRouter>
+          }
+        />
+
+        <Route
           path="courses/:courseId/lessons"
           element={<ManagementlessonByCourse />}
         />
@@ -85,9 +104,10 @@ const AdminRoutes = () => {
           element={<AddQuizzByLesson />}
         />
         <Route
-          path="lessons/:lessonId/quizzes/edit/:quizId"
+          path="lessons/:lessonId/quizzes/:quizId/edit"
           element={<UpdateQuizz />}
         />
+        <Route path="quizzes/:quizId/edit" element={<UpdateQuizz />} />
         <Route path="quiz-test/:quizId" element={<UserQuizz />} />
         <Route
           path="quizzes/:quizId/questions"

@@ -1,35 +1,20 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Container,
-  Spinner,
-  Alert,
-  Button,
-} from "react-bootstrap";
+import { Container, Spinner, Alert } from "react-bootstrap";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { useParams } from "react-router-dom";
-import {
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaBirthdayCake,
-  FaGraduationCap,
-} from "react-icons/fa";
-import { MdOutlineDateRange } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 const ViewUser = () => {
-  const { id } = useParams();
+  const { t } = useTranslation("profile");
+  const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch user data by ID
     axios
-      .get(`${URL}/api/auth/user/${id}`)
+      .get(`${URL}/user/${userId}`, { withCredentials: true })
       .then((response) => {
         setUser(response.data.data);
         setLoading(false);
@@ -38,11 +23,11 @@ const ViewUser = () => {
         setError("Error fetching user data");
         setLoading(false);
       });
-  }, [id]);
+  }, [userId]);
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="flex justify-center items-center h-screen">
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -57,74 +42,71 @@ const ViewUser = () => {
   }
 
   return (
-    <Container className="m-4">
-      <Card className="shadow-lg border-0 p-4" style={{ borderRadius: "15px" }}>
-        <Row>
-          <Col md={4} className="text-center">
-            <img
-              src={user.img || "https://via.placeholder.com/150"}
-              alt={user.username}
-              className="img-fluid rounded-circle mb-3"
-              style={{ width: "180px", height: "180px", objectFit: "cover" }}
-            />
-            <h4 className="text-primary">{user.username}</h4>
-            <p className="text-muted">{user.roleEnum}</p>
-          </Col>
-          <Col md={8}>
-            <Row>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Email</p>
-                <h6 className="text-dark">
-                  <FaEnvelope className="me-2 text-primary" /> {user.email}
-                </h6>
-              </Col>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Phone</p>
-                <h6 className="text-dark">
-                  <FaPhone className="me-2 text-primary" /> {user.phoneNumber}
-                </h6>
-              </Col>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Address</p>
-                <h6 className="text-dark">
-                  <FaMapMarkerAlt className="me-2 text-primary" />{" "}
-                  {user.address}
-                </h6>
-              </Col>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Birth Day</p>
-                <h6 className="text-dark">
-                  <FaBirthdayCake className="me-2 text-primary" />{" "}
-                  {user.birthDay}
-                </h6>
-              </Col>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Courses Enrolled</p>
-                <h6 className="text-dark">
-                  <FaGraduationCap className="me-2 text-primary" />{" "}
-                  {user.coursesCount || 0}
-                </h6>
-              </Col>
-              <Col md={6} className="mb-3">
-                <p className="mb-1 text-muted">Date Joined</p>
-                <h6 className="text-dark">
-                  <MdOutlineDateRange className="me-2 text-primary" />{" "}
-                  {new Date(user.date).toLocaleDateString()}
-                </h6>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <div className="d-flex justify-content-center mt-4">
-          <Button variant="primary" className="px-4">
-            Edit Profile
-          </Button>
-          <Button variant="outline-secondary" className="ms-3 px-4">
-            View Progress
-          </Button>
+    <div className="h-full overflow-y-auto shadow flex-1">
+      {/* Header */}
+      <div className="relative h-fit mb-32">
+        <div className="bg-gradient-to-b from-cyan-300 to-blue-500 items-center flex justify-center text-3xl font-bold font-serif text-white uppercase h-60 rounded-2xl m-2">
+          {localStorage.getItem("slogan")}
         </div>
-      </Card>
-    </Container>
+
+        <div className="absolute top-40 left-10 z-10 flex items-center">
+          <img
+            className="profile-avatar w-48 h-48 rounded-full object-cover"
+            src={user.img || "/user.png"}
+            alt="Profile"
+          />
+
+          <div className="mt-20 ml-4">
+            <h2 className="text-3xl font-semibold text-gray-800 dark:text-darkText">
+              {user.username}
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="mt-6 px-6">
+        <div className="grid grid-cols-2 gap-8 bg-wcolor dark:bg-darkBackground p-6 rounded-lg shadow-xl dark:border dark:border-darkBorder text-black">
+          {/* Left Column */}
+          <div>
+            <label className="block font-semibold">{t("username")}</label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.username}
+            </div>
+
+            <label className="block mt-4 font-semibold">{t("email")}</label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.email}
+            </div>
+
+            <label className="block mt-4 font-semibold">
+              {t("phoneNumber")}
+            </label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.phoneNumber}
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div>
+            <label className="block font-semibold">{t("birthDay")}</label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.birthDay}
+            </div>
+
+            <label className="block mt-4 font-semibold">{t("address")}</label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.address}
+            </div>
+
+            <label className="block mt-4 font-semibold">{t("role")}</label>
+            <div className="mt-2 p-2 border border-gray-300 rounded bg-white">
+              {user.roleEnum}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

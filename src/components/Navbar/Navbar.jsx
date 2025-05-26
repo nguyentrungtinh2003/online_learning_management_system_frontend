@@ -20,7 +20,11 @@ export default function Navbar() {
   const [username, setUsername] = useState(
     localStorage.getItem("username") || ""
   );
-  const [img, setImg] = useState(localStorage.getItem("img") || "");
+  const [img, setImg] = useState(localStorage.getItem("img") || "/user.png");
+
+  console.log("Username ", username);
+
+  console.log("Img ", img);
 
   const navigate = useNavigate();
   const isLargeScreen = useMediaQuery({ minWidth: 1024 });
@@ -137,11 +141,12 @@ export default function Navbar() {
 
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(`${URLSocket}/oauth2/login/success`, {
+      const response = await axios.get(`${URL}/user-info`, {
         withCredentials: true,
       });
 
-      const { id, email, username, img, coin, roleEnum, point } = response.data;
+      const { id, email, username, img, coin, roleEnum, point } =
+        response.data.data;
 
       localStorage.setItem("id", id);
       localStorage.setItem("email", email);
@@ -155,36 +160,14 @@ export default function Navbar() {
       setImg(img);
       setCoin(coin);
       setPoint(point);
-    } catch (error) {
-      try {
-        const response = await axios.get(`${URL}/user-info`, {
-          withCredentials: true,
-        });
+    } catch (err) {
+      console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
 
-        const { id, email, username, img, coin, roleEnum, point } =
-          response.data.data;
-
-        localStorage.setItem("id", id);
-        localStorage.setItem("email", email);
-        localStorage.setItem("username", username);
-        localStorage.setItem("img", img);
-        localStorage.setItem("coin", coin);
-        localStorage.setItem("role", roleEnum);
-        localStorage.setItem("point", point);
-
-        setUsername(username);
-        setImg(img);
-        setCoin(coin);
-        setPoint(point);
-      } catch (err) {
-        console.log("⚠️ Không tìm thấy thông tin user (Google hoặc JWT).");
-
-        localStorage.clear();
-        setUsername(null);
-        setImg(null);
-        setCoin(null);
-        setPoint(null);
-      }
+      localStorage.clear();
+      setUsername(null);
+      setImg(null);
+      setCoin(null);
+      setPoint(null);
     }
   };
 
@@ -336,10 +319,19 @@ export default function Navbar() {
   const handleLogout = async () => {
     setLoadingLogout(true);
     try {
-      await axios.get(`${URL}/logout/google`, { withCredentials: true });
+      const response = await axios.get(`${URL}/logout/google`, {
+        withCredentials: true,
+      });
+      console.log("Logout success!", response.data.data);
+
+      // Reset localStorage và state
       localStorage.clear();
-      console.log("Logout success:");
-      navigate("/"); // Điều hướng đến trang đăng nhập
+      setUsername(null);
+      setImg(null);
+      setCoin(null);
+      setPoint(null);
+
+      // navigate("/"); // chuyển trang
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
@@ -362,15 +354,17 @@ export default function Navbar() {
   return (
     <nav className="px-4 bg-wcolor py-3 dark:bg-darkBackground dark:text-darkText">
       <div className="flex justify-between items-center">
-        <img
-          src={
-            localStorage.getItem("systemImg") !== "null"
-              ? localStorage.getItem("systemImg")
-              : "/logo.png"
-          }
-          className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
-          alt="logo"
-        />
+        <Link to={"/"}>
+          <img
+            src={
+              localStorage.getItem("systemImg") !== "null"
+                ? localStorage.getItem("systemImg")
+                : "/logo.png"
+            }
+            className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
+            alt="logo"
+          />
+        </Link>
         <div className="lg:flex-1 w-fit flex lg:justify-end w-fit lg:ml-4">
           <div className="flex lg:h-10 h-14 lg:w-full justify-center gap-2 items-center border-1 dark:bg-darkBackground dark:border-darkBorder p-2 rounded-xl relative">
             <FaSearch className="text-gray-500 dark:text-darkSubtext cursor-pointer" />
@@ -425,6 +419,7 @@ export default function Navbar() {
           ref={dropdownRef}
           className="relative lg:w-[60%] flex justify-end items-center"
         >
+          {/* {localStorage.getItem("username") ? ( */}{" "}
           {localStorage.getItem("username") ? (
             <div className="flex w-full items-center justify-between ml-2 space-x-4">
               <div className="flex flex-1 items-center justify-end lg:gap-4 gap-2">
@@ -548,7 +543,6 @@ export default function Navbar() {
               </button>
             </div>
           )}
-
           {isNotificationOpen && (
             <div className="absolute right-10 top-10 w-[600px] p-2 mt-2 bg-wcolor dark:bg-darkBackground border-1 dark:border-darkBorder rounded-xl shadow-lg z-20">
               <h3 className="text-lg w-full dark:text-darkText text-center font-semibold border-b dark:border-darkBorder pb-2">
@@ -559,7 +553,7 @@ export default function Navbar() {
                   notifications.map((notification) => (
                     <div key={notification.id} className="flex items-center">
                       <li
-                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 cursor-pointer break-words ${
+                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 text-gray-500 dark:text-darkText break-words ${
                           !notification.read
                             ? "font-bold text-black dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"

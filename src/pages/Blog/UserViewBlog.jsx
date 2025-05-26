@@ -651,7 +651,9 @@ export default function Blog() {
                     >
                       <PiChatCircle />
                       <span className="text-3xl lg:text-lg">
-                        {post.blogComments ? post.blogComments.length : 0}
+                        {selectedPost === post.id
+                          ? comments.length
+                          : post.blogComments?.length ?? 0}
                       </span>
                     </button>
                     <button className="flex text-5xl lg:text-3xl items-center space-x-1">

@@ -1,0 +1,15 @@
+{
+  "codeEditor": {
+    "title": "Trình soạn thảo mã",
+    "subtitle": "Luyện code ngay hôm nay!",
+    "language": "Ngôn ngữ",
+    "clear": "Xoá",
+    "history": "Lịch sử chạy code",
+    "code": "Mã",
+    "time": "Lúc",
+    "delete": "Xoá",
+    "noHistory": "Chưa có lịch sử nào.",
+    "terminal": "Terminal",
+    "run": "Chạy"
+  }
+}
