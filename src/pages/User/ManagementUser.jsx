@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { ToastContainer, toast, Slide } from "react-toastify";
-import { Link } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import {
   FaUsers,
@@ -22,18 +23,20 @@ import { useTranslation } from "react-i18next";
 
 export default function UserManagement() {
   const { t } = useTranslation("adminmanagement");
+  const navigate = useNavigate();
+
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState("All");
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -106,15 +109,15 @@ export default function UserManagement() {
         <div className="flex mb-2 items-center justify-between">
           <div className="flex items-center mx-2 gap-2 dark:text-darkText">
             <FaUsers size={isMobile ? 50 : 30} />
-            <MdNavigateNext size={isMobile ? 60 : 30}/>
+            <MdNavigateNext size={isMobile ? 60 : 30} />
             <h2 className="text-4xl lg:text-lg font-bold">{t("user.title")}</h2>
           </div>
-        <Link
-          className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
-          to="/admin/users/add-user"
-        >
-          <FaUserPlus size={isMobile ? 50 : 30} />
-        </Link>
+          <Link
+            className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl"
+            to="/admin/users/add-user"
+          >
+            <FaUserPlus size={isMobile ? 50 : 30} />
+          </Link>
         </div>
         <div className="flex flex-col lg:flex-row gap-2 mb-2">
           {/* Ô tìm kiếm */}
@@ -168,7 +171,9 @@ export default function UserManagement() {
               </thead>
               <tbody>
                 {loading ? (
-                  [...Array(1)].map((_, index) => <DataTableSkeleton key={index} />)
+                  [...Array(1)].map((_, index) => (
+                    <DataTableSkeleton key={index} />
+                  ))
                 ) : filteredUsers.length === 0 ? (
                   <tr>
                     <td colSpan="8" className="text-center p-4">
@@ -209,7 +214,9 @@ export default function UserManagement() {
                           <FaEdit />
                         </Link>
                         <button
-                          onClick={() => handleDeleteUser(user.id, user.username)}
+                          onClick={() =>
+                            handleDeleteUser(user.id, user.username)
+                          }
                           className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
                           title="Xoá người dùng"
                         >
@@ -220,17 +227,16 @@ export default function UserManagement() {
                   ))
                 )}
               </tbody>
-
             </table>
           </div>
         </div>
         <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
           <p className="mx-2">
-              {loading
-                ? t("Loading") // Hiển thị "Loading..." nếu đang tải
-                : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
-              {/* Nếu không phải loading, hiển thị thông tin page */}
-            </p>
+            {loading
+              ? t("Loading") // Hiển thị "Loading..." nếu đang tải
+              : `${t("page")} ${currentPage + 1} ${t("of")} ${totalPages}`}{" "}
+            {/* Nếu không phải loading, hiển thị thông tin page */}
+          </p>
           <div className="space-x-2">
             <button
               className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"

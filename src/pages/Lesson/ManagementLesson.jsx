@@ -31,6 +31,7 @@ export default function ManagementLesson() {
   const [loading, setLoading] = useState(true);
   const [lessonSearch, setLessonSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const lessonsPerPage = 6;
@@ -423,6 +424,7 @@ export default function ManagementLesson() {
               type="text"
               placeholder={t("searchPlaceholder")}
               className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={lessonSearch}
               onChange={handleSearchInput}
             />
             {lessonSearch && (
