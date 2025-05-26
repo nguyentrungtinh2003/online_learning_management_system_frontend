@@ -311,14 +311,19 @@ export default function Navbar() {
   const handleLogout = async () => {
     setLoadingLogout(true);
     try {
-      await axios.get(`${URL}/logout/google`, { withCredentials: true });
+      const response = await axios.get(`${URL}/logout/google`, {
+        withCredentials: true,
+      });
+      console.log("Logout success!", response.data.data);
+
+      // Reset localStorage và state
       localStorage.clear();
       setUsername(null);
       setImg(null);
       setCoin(null);
       setPoint(null);
-      console.log("Logout success:");
-      navigate("/"); // Điều hướng đến trang đăng nhập
+
+      // navigate("/"); // chuyển trang
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
