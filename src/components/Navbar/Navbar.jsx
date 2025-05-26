@@ -111,14 +111,6 @@ export default function Navbar() {
     };
   }, [i18n]);
 
-  const handleLanguageChange = (e) => {
-    const selectedLang = e.target.value;
-    i18n.changeLanguage(selectedLang);
-    localStorage.setItem("language", selectedLang);
-    setLanguage(selectedLang);
-    window.location.reload(); // Thêm dòng này để reload trang
-  };
-
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     if (isDarkMode) {
@@ -555,7 +547,7 @@ export default function Navbar() {
                       <li
                         className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 text-gray-500 dark:text-darkText break-words ${
                           !notification.read
-                            ? "font-bold text-black dark:text-darkText"
+                            ? "font-black dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"
                         }`}
                       >

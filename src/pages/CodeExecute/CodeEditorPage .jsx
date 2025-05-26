@@ -230,11 +230,11 @@ const CodeEditorPage = () => {
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className={`relative rounded-md px-3 py-2 transition-all duration-200 ${
-                  codeId === hisco.id
-                    ? "border-l-4 border-cyan-500 bg-cyan-50 dark:bg-darkHover"
-                    : "hover:bg-gray-100 dark:hover:bg-darkHover hover:border-l-4 border-cyan-500"
-                }`}
+                className={`relativegit rounded-r-lg px-3 py-2 shadow ${
+                  codeId == hisco.id
+                    ? `border-l-4 border-cyan-500`
+                    : `hover:border-l-4 border-cyan-500`
+                } `}
               >
                 <div
                   onClick={() => {

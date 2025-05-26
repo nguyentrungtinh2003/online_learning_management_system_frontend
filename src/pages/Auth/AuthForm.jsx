@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaSignInAlt, FaUserPlus, FaEye, FaEyeSlash } from "react-icons/fa"; // Import Font Awesome icons
+import { FaSignInAlt, FaUserPlus, FaSun, FaMoon, FaEye, FaEyeSlash } from "react-icons/fa"; // Import Font Awesome icons
 import "./AuthForm.css";
 import axios from "axios";
 import URL from "../../config/URLconfig";
@@ -10,44 +10,88 @@ import gglogo from "../../assets/google-color.svg";
 import URLSocket from "../../config/URLsocket";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Dropdown from "../../components/Button/Dropdown";
+import vietnamFlag from "../../assets/vietnamflag.webp";
+import englishFlag from "../../assets/english.png";
 
 export default function AuthForm() {
   const { t, i18n } = useTranslation("authform");
   const [language, setLanguage] = useState(i18n.language || "en");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const languageOptions = [
+    {
+      value: "en",
+      label: (
+        <div className="flex items-center gap-2">
+          <img
+            src={englishFlag}
+            alt="English"
+            className="lg:h-6 lg:w-6 h-10 w-10 object-cover"
+          />
+          <span className="lg:block hidden">EN</span>
+        </div>
+      ),
+    },
+    {
+      value: "vi",
+      label: (
+        <div className="flex items-center gap-2">
+          <img
+            src={vietnamFlag}
+            alt="Vietnamese"
+            className="lg:h-6 lg:w-6 h-10 w-10 object-cover"
+          />
+          <span className="lg:block hidden">VI</span>
+        </div>
+      ),
+    },
+  ];
 
   // Load theme & language từ localStorage
   useEffect(() => {
-    const savedTheme = localStorage.getItem("darkMode");
-    const savedLang = localStorage.getItem("language");
-
-    if (savedTheme === "true") {
-      setIsDarkMode(true);
-      document.body.classList.add("dark");
-    } else {
-      setIsDarkMode(false);
-      document.body.classList.remove("dark");
-    }
-
-    if (savedLang && savedLang !== i18n.language) {
-      i18n.changeLanguage(savedLang);
-      setLanguage(savedLang);
-    }
-  }, [i18n]);
-
-  const handleLanguageChange = (e) => {
-    const selectedLang = e.target.value;
-    i18n.changeLanguage(selectedLang);
-    localStorage.setItem("language", selectedLang);
-    setLanguage(selectedLang);
-  };
-
-  const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    localStorage.setItem("darkMode", newMode.toString());
-    document.body.classList.toggle("dark", newMode);
-  };
+      let savedTheme = localStorage.getItem("darkMode");
+      const savedLang = localStorage.getItem("language");
+  
+      if (savedTheme === null) {
+        // Mặc định dark mode nếu chưa có key
+        savedTheme = "true";
+        localStorage.setItem("darkMode", "true");
+      }
+  
+      if (savedTheme === "true") {
+        setIsDarkMode(true);
+        document.body.classList.add("dark");
+      } else {
+        setIsDarkMode(false);
+        document.body.classList.remove("dark");
+      }
+  
+      if (savedLang && savedLang !== i18n.language) {
+        i18n.changeLanguage(savedLang);
+        setLanguage(savedLang);
+      }
+    }, [i18n]);
+  
+    useEffect(() => {
+      const handleLangChange = () => {
+        setLanguage(i18n.language);
+      };
+      i18n.on("languageChanged", handleLangChange);
+      return () => {
+        i18n.off("languageChanged", handleLangChange);
+      };
+    }, [i18n]);
+  
+    const toggleDarkMode = () => {
+      setIsDarkMode((prev) => !prev);
+      if (isDarkMode) {
+        document.body.classList.remove("dark");
+        localStorage.setItem("darkMode", "false");
+      } else {
+        document.body.classList.add("dark");
+        localStorage.setItem("darkMode", "true");
+      }
+    };
   const navigate = useNavigate();
   const [fromLogin, setFromLogin] = useState({
     username: "",
@@ -251,43 +295,25 @@ export default function AuthForm() {
   return (
     <div className="h-screen relative flex justify-center items-center dark:bg-darkBackground bg-gray-100">
       <ToastContainer />
-      <div className="max-w-2xl top-0 left-0 absolute mx-auto p-6 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-          {t("title")}
-        </h1>
-
-        <div className="space-y-4">
-          {/* Language selector */}
-          <div>
-            <label className="block text-gray-700 dark:text-gray-200 mb-1">
-              {t("languageLabel")}
-            </label>
-            <select
-              value={language}
-              onChange={handleLanguageChange}
-              className="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-            >
-              <option value="en">English</option>
-              <option value="vi">Tiếng Việt</option>
-            </select>
-          </div>
-
-          {/* Dark mode toggle */}
-          <div>
-            <label className="block text-gray-700 dark:text-gray-200 mb-1">
-              {t("darkModeLabel")}
-            </label>
-            <button
-              onClick={toggleDarkMode}
-              className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-500"
-            >
-              {isDarkMode ? t("darkModeOn") : t("darkModeOff")}
-            </button>
-          </div>
-        </div>
+      <div className="flex top-2 right-2 absolute p-2 dark:bg-darkSubbackground bg-wcolor rounded-xl shadow-md">
+        <Dropdown
+            options={languageOptions}
+            selected={language}
+            onChange={(lang) => {
+              i18n.changeLanguage(lang);
+              localStorage.setItem("language", lang);
+            }}
+            placeholder="Select Language"
+          />
+          <button
+            onClick={toggleDarkMode}
+            className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+          >
+            {isDarkMode ? <FaSun size={25} /> : <FaMoon size={25} />}
+          </button>
       </div>
       <div
-        className="h-[40vh] lg:h-auto shadow-lg rounded-lg w-[80vw] lg:w-[35%] p-8 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkSubbackground"
+        className="h-[40vh] lg:h-auto shadow-lg rounded-lg w-[80vw] lg:w-[40%] p-8 bg-gradient-to-l from-cyan-300 to-transparent dark:border dark:border-darkBorder dark:bg-darkSubbackground"
         ref={formContainerRef}
       >
         {isForgotPassword || isCreatePassword ? (
@@ -302,7 +328,7 @@ export default function AuthForm() {
               <ArrowBackIosNewIcon fontSize="small" className="mr-4 mb-2" />
             </button>
             <h1 className="text-center text-2xl font-semibold text-gray-500 mb-2">
-              Forgot Password
+              {t("forgotPassword")}
             </h1>
           </div>
         ) : (
@@ -342,7 +368,7 @@ export default function AuthForm() {
               <input
                 className="border-2 w-full h-12 pl-4 rounded-xl text-lg"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("enterEmail")}
                 id="email"
                 name="email"
                 value={emailOTP}
@@ -378,12 +404,12 @@ export default function AuthForm() {
               Verify Code
             </button> */}
             <p className="text-rose-600 text-sm text-center mt-4">
-              Back to Sign In?
+              {t("backToLogin")}
               <Link
                 className="cursor-pointer ml-1"
                 onClick={() => setIsForgotPassword(false)}
               >
-                Click here
+                {t("clickHere")}
               </Link>
             </p>
           </div>
@@ -402,7 +428,7 @@ export default function AuthForm() {
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showNewPassword ? "text" : "password"}
-                placeholder="New Password"
+                placeholder={t("newPassword")}
                 id="newPassword"
                 name="newPassword"
                 value={newPassword}
@@ -421,7 +447,7 @@ export default function AuthForm() {
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
+                placeholder={t("confirmPassword")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -441,7 +467,7 @@ export default function AuthForm() {
               {changePassLoading ? (
                 <Spinner animation="border" variant="white" />
               ) : (
-                "Change"
+                t("change")
               )}
             </button>
           </div>
@@ -450,7 +476,7 @@ export default function AuthForm() {
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
               type="text"
-              placeholder="Username"
+              placeholder={t("username")}
               id="username"
               name="username"
               value={fromLogin.username}
@@ -460,7 +486,7 @@ export default function AuthForm() {
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder={t("password")}
                 id="password"
                 name="password"
                 value={fromLogin.password}
@@ -487,7 +513,7 @@ export default function AuthForm() {
                 setIsForgotPassword(true);
               }}
             >
-              Forget your Password? Click here!
+              {t("forgotPrompt")}
             </Link>
 
             <button
@@ -499,23 +525,23 @@ export default function AuthForm() {
               {loginLoading ? (
                 <Spinner animation="border" variant="white" />
               ) : (
-                "Sign In"
+                t("signIn")
               )}
             </button>
             <p className="text-center text-lg m-2">Or</p>
             <button className="border-2 dark:hover:text-darkBackground bg-wcolor dark:bg-darkSubbackground dark:text-darkText dark:border-darkBorder flex items-center justify-center rounded-2xl py-2 w-full dark:hover:bg-cyan-300 hover:bg-cyan-300">
               <img className="ml-3 w-6" src={gglogo} alt="Google logo" />
               <p className="ml-4" onClick={() => handleGoogleLogin()}>
-                Login with Google
+                {t("loginGoogle")}
               </p>
             </button>
             <p className="text-rose-600 text-sm text-center mt-4">
-              You don't have an account?{" "}
+              {t("noAccount")}{" "}
               <Link
                 className="cursor-pointer"
                 onClick={() => setIsLogin(false)}
               >
-                Sign Up Now
+                {t("signUpNow")}
               </Link>
             </p>
           </div>
@@ -524,7 +550,7 @@ export default function AuthForm() {
             <input
               className="border-2 h-12 pl-4 rounded-xl text-lg"
               type="text"
-              placeholder="Username"
+              placeholder={t("username")}
               id="username"
               name="username"
               value={fromData.username}
@@ -543,7 +569,7 @@ export default function AuthForm() {
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showPassword ? "text" : "password"}
-                placeholder="Password"
+                placeholder={t("password")}
                 id="password"
                 name="password"
                 value={fromData.password}
@@ -562,7 +588,7 @@ export default function AuthForm() {
               <input
                 className="border-2 h-12 pl-4 pr-10 rounded-xl text-lg w-full"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm Password"
+                placeholder={t("confirmPassword")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -584,13 +610,13 @@ export default function AuthForm() {
               {registerLoading ? (
                 <Spinner animation="border" variant="white" />
               ) : (
-                "Sign Up"
+                t("signUp")
               )}
             </button>
             <p className="text-rose-600 text-sm text-center">
-              You already have an account?{" "}
+              {t("hasAccount")}{" "}
               <Link className="cursor-pointer" onClick={() => setIsLogin(true)}>
-                Sign In Now
+                {t("signInNow")}
               </Link>
             </p>
           </div>
