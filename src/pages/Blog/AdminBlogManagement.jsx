@@ -329,24 +329,26 @@ export default function AdminBlogManagement() {
           </div>
         </div>
 
-        <div className="flex justify-center items-center mt-4 gap-4">
-          <button
-            onClick={handlePrevPage}
-            disabled={currentPage === 0}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 dark:bg-darkSubbackground dark:text-darkText dark:border dark:border-darkBorder"
-          >
-            <MdNavigateBefore />
-          </button>
-          <span>
-            {currentPage + 1} / {totalPages}
-          </span>
-          <button
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
-            className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 dark:bg-darkSubbackground dark:text-darkText dark:border dark:border-darkBorder"
-          >
-            <MdNavigateNext />
-          </button>
+        <div className="flex lg:text-base text-3xl pt-2 items-center justify-between">
+          <p className="mx-2">
+            {t("page")} {currentPage + 1} {t("of")} {totalPages}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 0}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateBefore size={isMobile ? 55 : 30} />
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
+            >
+              <MdNavigateNext size={isMobile ? 55 : 30} />
+            </button>
+          </div>
         </div>
         <ToastContainer />
       </div>

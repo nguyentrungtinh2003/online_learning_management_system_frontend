@@ -1,7 +1,21 @@
 {
-  "title": "Cài đặt",
-  "languageLabel": "Chọn ngôn ngữ",
-  "darkModeLabel": "Chế độ tối",
-  "darkModeOn": "Tắt chế độ tối",
-  "darkModeOff": "Bật chế độ tối"
+  "forgotPassword": "Quên mật khẩu",
+    "enterEmail": "Nhập email của bạn",
+    "clickHere": "Bấm vào đây",
+    "backToLogin": "Quay lại đăng nhập?",
+    "newPassword": "Mật khẩu mới",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "change": "Đổi mật khẩu",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "forgotPrompt": "Quên mật khẩu? Bấm vào đây!",
+    "signIn": "Đăng nhập",
+    "or": "Hoặc",
+    "loginGoogle": "Đăng nhập bằng Google",
+    "noAccount": "Bạn chưa có tài khoản?",
+    "signUpNow": "Đăng ký ngay",
+    "email": "Email",
+    "signUp": "Đăng ký",
+    "hasAccount": "Bạn đã có tài khoản?",
+    "signInNow": "Đăng nhập ngay"
 }

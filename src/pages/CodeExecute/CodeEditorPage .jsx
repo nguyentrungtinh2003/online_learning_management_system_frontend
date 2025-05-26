@@ -231,7 +231,7 @@ const CodeEditorPage = () => {
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className={`relativegit rounded-r-lg px-3 py-2 shadow ${
+                className={`relative rounded-r-lg px-3 py-2 shadow ${
                   codeId == hisco.id
                     ? `border-l-4 border-cyan-500`
                     : `hover:border-l-4 border-cyan-500`
