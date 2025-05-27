@@ -13,6 +13,7 @@ import {
   getLessonByCourseIdAndPage,
   restoreLesson,
 } from "../../services/lessonapi";
+import { getCourseById } from "../../services/courseapi";
 import { FaLockOpen, FaLock, FaTimes, FaCoins } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
@@ -32,6 +33,11 @@ export default function ManagementLesson() {
   const lessonsPerPage = 6;
   const [cache, setCache] = useState(new Map());
   const [reloadTrigger, setReloadTrigger] = useState(false);
+  const [courseName, setCourseName] = useState("Loading...");
+
+  const triggerReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi giá trị để các useEffect phụ thuộc vào reloadTrigger chạy lại
+  };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
@@ -40,6 +46,21 @@ export default function ManagementLesson() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const fetchCourseName = async () => {
+      const response = await getCourseById(courseId);
+      if (response?.data?.courseName) {
+        setCourseName(response.data.courseName);
+      } else {
+        setCourseName("N/A");
+      }
+    };
+
+    if (courseId) {
+      fetchCourseName();
+    }
+  }, [courseId]);
 
   // ---------------------------------------------------------------------------------------------------
   // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
@@ -55,7 +76,12 @@ export default function ManagementLesson() {
   // **Effect 2: Lắng nghe sự kiện triggerLLessonReload**
   useEffect(() => {
     const handleReload = () => {
-      triggerReload(); // Gọi trigger để re-fetch cache và courses
+      const savedCache = localStorage.getItem("lessonCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+        setCache(parsedCache);
+        setCurrentPage(0);
+      }
     };
     window.addEventListener("triggerLessonByCourseReload", handleReload);
 
@@ -192,7 +218,7 @@ export default function ManagementLesson() {
   // **Effect 5: Lưu lại các giá trị của lessonSearch, filterType, và statusFilter vào localStorage**
   useEffect(() => {
     localStorage.setItem("lessonByCourseSearch", lessonByCourseSearch);
-    localStorage.setItem("lessonByCourseStatusFilter", statusFilter);
+    localStorage.setItem("statusFilter", statusFilter);
   }, [lessonByCourseSearch, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
   // ---------------------------------------------------------------------------------------------------
@@ -342,6 +368,12 @@ export default function ManagementLesson() {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
+
   return (
     <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
       <div className="w-full flex flex-col h-full">
@@ -404,7 +436,7 @@ export default function ManagementLesson() {
 
         {/* Danh sách bài học + Pagination dưới bảng */}
         <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
@@ -442,17 +474,19 @@ export default function ManagementLesson() {
                           : lesson.lessonName || "N/A"}
                       </td>
 
-                      <td className="p-2 lg:w-72 whitespace-nowrap">
+                      <td className="py-2 lg:w-56 whitespace-nowrap">
                         {lesson.description
-                          ? lesson.description.slice(0, 25) +
-                            (lesson.description.length > 25 ? "..." : "")
+                          ? stripHtml(lesson.description).slice(0, 25) +
+                            (stripHtml(lesson.description).length > 20
+                              ? "..."
+                              : "")
                           : "No description"}
                       </td>
 
                       <td className="p-2 text-center lg:w-48 whitespace-nowrap">
-                        {lesson.courseName?.length > 20
-                          ? lesson.courseName.slice(0, 20) + "..."
-                          : lesson.courseName || "N/A"}
+                        {courseName.length > 20
+                          ? courseName.slice(0, 20) + "..."
+                          : courseName || "N/A"}
                       </td>
 
                       <td className="p-2 lg:w-32 whitespace-nowrap">
@@ -472,8 +506,16 @@ export default function ManagementLesson() {
                           : "N/A"}
                       </td>
 
-                      <td className="p-2 lg:w-32 whitespace-nowrap">
-                        {lesson.deleted ? "Deleted" : "Active"}
+                      <td className="p-2 w-40">
+                        {lesson.deleted ? (
+                          <p className="text-red-600 font-semibold">
+                            {t("deleted")}
+                          </p>
+                        ) : (
+                          <p className="text-green-600 font-semibold">
+                            {t("active")}
+                          </p>
+                        )}
                       </td>
 
                       <td className="px-2 h-full items-center flex flex-1 justify-center gap-1">

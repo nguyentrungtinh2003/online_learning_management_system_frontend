@@ -163,7 +163,7 @@ const QuestionManagement = () => {
             </div>
     
             <div className="flex-1 w-full overflow-auto overflow-x">
-              <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+              <div className="bg-wcolor px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
                 {loading ? (
                   <p className="text-center">{t("question.loading")}</p>
                 ) : (

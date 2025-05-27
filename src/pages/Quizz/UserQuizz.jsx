@@ -5,7 +5,6 @@ import axios from "axios";
 import {
   getQuizById,
   submitQuiz,
-  savePointHistory,
 } from "../../services/quizapi";
 import URL from "../../config/URLconfig";
 
@@ -100,16 +99,54 @@ export default function UserQuizz() {
 
   if (hasDoneQuiz === true) {
     return (
-      <div className="text-center text-xl font-semibold p-6 text-red-500">
-        Bạn đã làm quiz này rồi.
+      <div className="flex flex-col items-center justify-center w-full h-full text-center p-6 text-red-500">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-20 w-20 text-red-400 mb-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V5a1 1 0 10-2 0v2a1 1 0 102 0zm0 2a1 1 0 10-2 0v4a1 1 0 002 0v-4z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <p className="text-xl font-bold">Bạn đã hoàn thành quiz này</p>
+        <p className="text-gray-600 dark:text-darkSubtext mt-2">
+          Không thể làm lại bài quiz. Hãy kiểm tra kết quả của bạn nhé!
+        </p>
+        <button
+          onClick={() => navigate(`/view-result/${quizId}`)}
+          className="mt-4 px-5 py-2 rounded-lg border-2 text-sm hover:bg-fcolor dark:border-darkBorder"
+        >
+          Xem kết quả
+        </button>
       </div>
     );
   }
 
   if (!quiz || !quiz.questions || quiz.questions.length === 0) {
     return (
-      <div className="text-center p-4 text-gray-500">
-        Không có câu hỏi nào trong quiz.
+      <div className="flex flex-col items-center justify-center h-full w-full text-center p-6 text-gray-500 dark:text-darkSubtext">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-20 w-20 text-gray-400 mb-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9.75 9.75h.008v.008H9.75V9.75zM14.25 9.75h.008v.008h-.008V9.75zM12 15h.008v.008H12V15zM21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"
+          />
+        </svg>
+        <p className="text-xl font-bold">Quiz chưa có câu hỏi</p>
+        <p className="mt-2">
+          Vui lòng quay lại sau khi admin thêm nội dung vào quiz này.
+        </p>
       </div>
     );
   }

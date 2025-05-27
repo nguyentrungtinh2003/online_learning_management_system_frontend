@@ -223,7 +223,7 @@ export default function UserViewLesson() {
       {/* Overlay + Form */}
       {showCommentForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-[95%] max-w-3xl relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-wcolor p-6 rounded-xl shadow-lg w-[95%] max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setShowCommentForm(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-black text-xl"
@@ -237,6 +237,7 @@ export default function UserViewLesson() {
               <img
                 src="/logo.png"
                 className="w-10 h-10 bg-gray-300 rounded-full"
+                alt="logo"
               />
               <div className="flex-1 border rounded-xl">
                 <ReactQuill
@@ -266,22 +267,20 @@ export default function UserViewLesson() {
             <div className="space-y-4">
               {comments?.map((cmt) => (
                 <div key={cmt.id} className="border-b pb-3">
-                  <div className="flex items-center gap-3">
+                  <div className="relative flex items-center gap-3">
                     <img
                       src={cmt.img || "/user.png"}
                       className="w-10 h-10 bg-gray-300 rounded-full"
                     />
-                    <div>
+                    <div className="flex flex-col items-left w-full">
                       <p className="font-semibold">{cmt.username}</p>
-                      <p className="text-xs text-gray-500">{cmt.time}</p>
+                      <p className="text-xs text-gray-400">{cmt.time}</p>
+                      <p
+                        className="text-gray-600"
+                        dangerouslySetInnerHTML={{ __html: cmt.content }}
+                      ></p>
                     </div>
-                  </div>
-                  <p
-                    className="mt-2 ml-12"
-                    dangerouslySetInnerHTML={{ __html: cmt.content }}
-                  ></p>
-                  {cmt.username === localStorage.getItem("username") ? (
-                    <>
+                    {cmt.username === localStorage.getItem("username") ? (
                       <button
                         onClick={() =>
                           deleteLessonComment(
@@ -289,14 +288,14 @@ export default function UserViewLesson() {
                             localStorage.getItem("id")
                           )
                         }
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
+                        className="w-5 h-5 absolute right-0 top-0 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white text-sm"
                       >
                         X
                       </button>
-                    </>
-                  ) : (
-                    ""
-                  )}
+                    ) : (
+                      ""
+                    )}
+                  </div>
 
                   {/* <div className="ml-12 text-sm text-blue-500 mt-1 flex gap-3">
                     <button>Thích</button>
@@ -325,13 +324,13 @@ export default function UserViewLesson() {
                   left: mainRect.left,
                 }}
               >
-                <div className="flex justify-center flex-1 justify-center gap-4">
+                <div className="relative w-full flex justify-center flex-1 justify-center gap-4">
                   <button
                     onClick={() =>
                       setCurrentLessonIndex((prev) => Math.max(0, prev - 1))
                     }
                     disabled={currentLessonIndex === 0}
-                    className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkBorder disabled:opacity-50"
                   >
                     <MdNavigateBefore /> Bài trước
                   </button>
@@ -342,14 +341,14 @@ export default function UserViewLesson() {
                       )
                     }
                     disabled={currentLessonIndex === lessons.length - 1}
-                    className="nav-button flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-scolor disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkBorder disabled:opacity-50"
                   >
                     Bài sau <MdNavigateNext />
                   </button>
                 </div>
                 <button
                   onClick={() => setShowCommentForm(true)}
-                  className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 font-semibold py-2 px-4 rounded-xl flex items-center gap-2 z-10"
+                  className="bg-wcolor absolute right-2 dark:border-darkBorder dark:bg-darkSubbackground border-2 font-semibold py-2 px-4 rounded-xl flex items-center gap-2 z-10"
                 >
                   <PiQuestion size={20} />
                   <p>Hỏi Đáp</p>
