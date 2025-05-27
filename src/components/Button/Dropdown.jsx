@@ -34,14 +34,14 @@ const Dropdown = ({
     <div className={`relative text-sm ${className}`} ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="w-full font-semibold flex items-center border-2 border-gray-300 dark:border-darkBorder bg-wcolor dark:bg-darkBackground pl-3 py-1 rounded focus:outline-none text-left"
+        className="w-full dark:text-darkText font-semibold flex items-center border-2 border-gray-300 dark:border-darkBorder bg-wcolor dark:bg-darkBackground pl-3 py-1 rounded focus:outline-none text-left"
       >
         {currentOption?.label || placeholder}
         <RiArrowDropDownLine fontSize={25}/>
       </button>
 
       {isOpen && (
-        <ul className="absolute mt-1 w-full bg-wcolor dark:bg-darkBackground border-2 border-gray-200 dark:border-darkBorder rounded shadow-md z-10">
+        <ul className="absolute mt-1 dark:text-darkText w-full bg-wcolor dark:bg-darkBackground border-2 border-gray-200 dark:border-darkBorder rounded shadow-md z-10">
         {options.map((opt, index) => (
           <React.Fragment key={opt.value}>
             <li

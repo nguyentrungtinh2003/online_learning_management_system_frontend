@@ -652,8 +652,8 @@ export default function Blog() {
                       <PiChatCircle />
                       <span className="text-3xl lg:text-lg">
                         {selectedPost === post.id
-                          ? comments.length
-                          : post.blogComments?.length ?? 0}
+                          ? `${comments.length} Bình luận`
+                          : post.blogComments?.length ?? "Bình luận"}
                       </span>
                     </button>
                     <button className="flex text-5xl lg:text-3xl items-center space-x-1">
@@ -673,7 +673,7 @@ export default function Blog() {
                           >
                             {/* Avatar hoặc icon mặc định */}
                             <img
-                              src={comment.img}
+                              src={comment.img || localStorage.getItem("img")}
                               alt="avatar"
                               className="w-10 h-10 rounded-full object-cover border"
                             />

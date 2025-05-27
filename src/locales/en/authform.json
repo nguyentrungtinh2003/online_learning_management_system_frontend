@@ -1,7 +1,21 @@
 {
-  "title": "Settings",
-  "languageLabel": "Select Language",
-  "darkModeLabel": "Dark Mode",
-  "darkModeOn": "Turn off Dark Mode",
-  "darkModeOff": "Turn on Dark Mode"
+  "forgotPassword": "Forgot Password",
+    "enterEmail": "Enter your email",
+    "clickHere": "Click here",
+    "backToLogin": "Back to Sign In?",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "change": "Change",
+    "username": "Username",
+    "password": "Password",
+    "forgotPrompt": "Forget your Password? Click here!",
+    "signIn": "Sign In",
+    "or": "Or",
+    "loginGoogle": "Login with Google",
+    "noAccount": "You don't have an account?",
+    "signUpNow": "Sign Up Now",
+    "email": "Email",
+    "signUp": "Sign Up",
+    "hasAccount": "You already have an account?",
+    "signInNow": "Sign In Now"
 }
