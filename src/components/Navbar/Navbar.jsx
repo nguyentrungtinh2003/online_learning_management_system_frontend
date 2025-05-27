@@ -353,7 +353,7 @@ export default function Navbar() {
                 ? localStorage.getItem("systemImg")
                 : "/logo.png"
             }
-            className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-2"
+            className="rounded-full lg:w-12 lg:h-12 cursor-pointer object-cover h-20 w-20 mx-1"
             alt="logo"
           />
         </Link>

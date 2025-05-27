@@ -442,7 +442,7 @@ export default function AdminBlogManagement() {
         </form>
 
         <div className="flex-1 w-full overflow-auto h-full overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto h-full justify-between flex flex-col lg:h-fit dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor px-2 overflow-auto h-full justify-between flex flex-col lg:h-fit dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
@@ -513,7 +513,7 @@ export default function AdminBlogManagement() {
                       </td>
                       <td className="p-2 flex justify-center gap-2">
                         <Link to={`/admin/blog/edit-blog/${blog.id}`}>
-                          <button className="hover:text-blue-600">
+                          <button className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white">
                             <FaEdit />
                           </button>
                         </Link>

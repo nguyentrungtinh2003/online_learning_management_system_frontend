@@ -35,6 +35,9 @@ import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
 import UserViewCourse from "../pages/Course/UserViewCourse";
 import ViewUser from "../pages/User/ViewUser";
 import ViewPayment from "../pages/Payment/ViewPayment";
+import ManagementCourseMaterial from "../pages/CourseMaterial/ManagementCourseMaterial";
+import AddCourseMaterial from "../pages/CourseMaterial/AddCourseMaterial";
+import EditCourseMaterial from "../pages/CourseMaterial/EditCourseMaterial";
 
 const AdminRoutes = () => {
   return (
@@ -68,6 +71,12 @@ const AdminRoutes = () => {
         <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
+        <Route path="course-material" element={<ManagementCourseMaterial />} />
+        <Route path="course-material/add" element={<AddCourseMaterial />} />
+        <Route
+          path="course-material/edit/:id"
+          element={<EditCourseMaterial />}
+        />
 
         <Route
           path="/users/view-user/:userId"

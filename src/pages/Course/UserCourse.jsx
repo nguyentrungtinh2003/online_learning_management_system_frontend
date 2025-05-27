@@ -190,7 +190,7 @@ export default function UserCourse() {
             <>
               {/* Completed Courses */}
               <section>
-                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b dark:border-darkBorder pb-2">
                   ✅ {t.completed} ({completedCourses.length})
                 </h2>
                 {completedCourses.length > 0 ? (
@@ -206,7 +206,7 @@ export default function UserCourse() {
 
               {/* In-progress Courses */}
               <section className="mb-10 mt-10">
-                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b pb-2">
+                <h2 className="text-5xl lg:text-xl font-semibold text-gray-800 dark:text-white mb-4 border-b dark:border-darkBorder pb-2">
                   ⏳ {t.inProgress} ({inProgressCourses.length})
                 </h2>
                 {inProgressCourses.length > 0 ? (

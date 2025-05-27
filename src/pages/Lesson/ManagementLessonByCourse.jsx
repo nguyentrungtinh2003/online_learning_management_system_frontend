@@ -436,7 +436,7 @@ export default function ManagementLesson() {
 
         {/* Danh sách bài học + Pagination dưới bảng */}
         <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">

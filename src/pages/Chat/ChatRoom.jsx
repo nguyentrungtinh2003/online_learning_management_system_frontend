@@ -16,6 +16,7 @@ const ChatRoom = () => {
   const [chatRoomId, setChatRoomId] = useState(null);
   const [content, setContent] = useState("");
   const [loadingChatRoom, setLoadingChatRoom] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const { t } = useTranslation("chatroom");
 
   const stompClientRef = useRef(null);
@@ -36,6 +37,7 @@ const ChatRoom = () => {
   const fetchChatRoomAndMessages = useCallback(
     async (teacherId) => {
       setLoadingChatRoom(true);
+      setDataLoading(false);
       try {
         const roomRes = await axios.post(
           `${URL}/chat-room/add`,
@@ -205,6 +207,14 @@ const ChatRoom = () => {
       )
     );
   }, [messages, teachers.length, user1Id]);
+  
+  if (dataLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 h-full lg:items-start items-center flex">
