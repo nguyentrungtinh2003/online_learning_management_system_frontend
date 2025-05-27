@@ -86,6 +86,17 @@ export default function UserCourse() {
     fetchCoursesProgress();
   }, [userId]);
 
+  const claimReward = (point) => {
+    axios
+      .post(`${URL}/claim-reward/${userId}/${parseInt(point)}`)
+      .then((response) => {
+        alert("Reward success");
+      })
+      .catch((error) => {
+        alert("Fail claim reward");
+      });
+  };
+
   const renderCourseCard = (item) => (
     <div
       key={item.courseId}
@@ -152,14 +163,16 @@ export default function UserCourse() {
 
         {item.progressPercent === 100 ? (
           <button
-            disabled
+            onClick={() => claimReward(item.completedLessons * 2)}
             className="mt-auto bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-lg cursor-not-allowed opacity-80"
           >
             🎉 {t.completedLabel}
           </button>
         ) : (
           <button
-            onClick={() => navigate(`/user-course/view-lesson/${item.courseId}`)}
+            onClick={() =>
+              navigate(`/user-course/view-lesson/${item.courseId}`)
+            }
             className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300"
           >
             🚀 {t.continueLearning}

@@ -105,36 +105,38 @@ export default function UserViewCourse() {
   };
 
   const buyCourse = async (id) => {
-  if (!requireLogin()) return;
-  setBuyLoading(true);
-  const userId = localStorage.getItem("id");
+    if (!requireLogin()) return;
+    setBuyLoading(true);
+    const userId = localStorage.getItem("id");
 
-  if (!userId) {
-    toast.error("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
-    setBuyLoading(false);
-    return;
-  }
-
-  try {
-    const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
-    const result = response.data;
-
-    if (result.statusCode === 200) {
-      toast.success("🎉 Mua khoá học thành công!");
-    } else {
-      if (result.message?.toLowerCase().includes("not enough")) {
-        toast.error("❌ Số xu trong ví không đủ để mua khoá học.");
-      } else {
-        toast.error(`⚠️ ${result.message || "Không thể mua khoá học"}`);
-      }
+    if (!userId) {
+      toast.error(
+        "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại."
+      );
+      setBuyLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Đã xảy ra lỗi trong quá trình mua. Vui lòng thử lại sau.");
-  } finally {
-    setBuyLoading(false);
-  }
-};
+
+    try {
+      const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
+      const result = response.data;
+
+      if (result.statusCode === 200) {
+        toast.success("🎉 Mua khoá học thành công!");
+      } else {
+        if (result.message?.toLowerCase().includes("not enough")) {
+          toast.error("❌ Số xu trong ví không đủ để mua khoá học.");
+        } else {
+          toast.error(`⚠️ ${result.message || "Không thể mua khoá học"}`);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Đã xảy ra lỗi trong quá trình mua. Vui lòng thử lại sau.");
+    } finally {
+      setBuyLoading(false);
+    }
+  };
 
   const toggleShowAllLessons = () => {
     setShowAllLessons(!showAllLessons);
@@ -255,7 +257,7 @@ export default function UserViewCourse() {
           <video
             className="rounded-xl w-full shadow-lg"
             controls
-            src={course.previewURL}
+            src={course?.lessons[0]?.videoURL}
           />
           <div className="mt-6 text-center">
             <button

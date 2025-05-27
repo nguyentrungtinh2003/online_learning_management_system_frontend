@@ -15,12 +15,14 @@ import { getAllQuizzesByLessonId } from "../../services/quizapi";
 import { Link } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
+import { Spinner } from "react-bootstrap";
 
 export default function UserViewLesson() {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
   const [lessons, setLessons] = useState([]);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [videoDurations, setVideoDurations] = useState({});
   const videoRefs = useRef([]);
@@ -134,31 +136,32 @@ export default function UserViewLesson() {
     console.log("LessonId in socket : " + lessonId);
     if (!lessonId) return; // Không gọi nếu chưa có ID hợp lệ
 
-    const socket = new SockJS(`${URLSocket}/ws`);
-    const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      onConnect: () => {
-        // Subscribe to the specific lesson for real-time comments
-        if (lessonId) {
-          client.subscribe(`/topic/lesson/${lessonId}`, (message) => {
-            const newComment = JSON.parse(message.body);
-            setComments((prevComments) => [...prevComments, newComment]);
-          });
-        }
-      },
-    });
+    // const socket = new SockJS(`${URLSocket}/ws`);
+    // const client = new Client({
+    //   webSocketFactory: () => socket,
+    //   reconnectDelay: 5000,
+    //   onConnect: () => {
+    //     // Subscribe to the specific lesson for real-time comments
+    //     if (lessonId) {
+    //       client.subscribe(`/topic/lesson/${lessonId}`, (message) => {
+    //         const newComment = JSON.parse(message.body);
+    //         setComments((prevComments) => [...prevComments, newComment]);
+    //       });
+    //     }
+    //   },
+    // });
 
-    client.activate();
-    setStompClient(client);
+    // client.activate();
+    // setStompClient(client);
 
-    return () => {
-      client.deactivate();
-    };
+    // return () => {
+    //   client.deactivate();
+    // };
   }, [currentLessonIndex, lessons]);
 
   // Handling comment submission
   const addLessonComment = () => {
+    setCommentLoading(true);
     axios
       .post(
         `${URL}/lesson-comment/add`,
@@ -167,6 +170,8 @@ export default function UserViewLesson() {
       )
       .then((response) => {
         console.log("Comment added successfully!");
+        setCommentLoading(false);
+        fetchComments();
         setContent(""); // Reset comment input after successful submission
       })
       .catch((err) => {
@@ -235,7 +240,7 @@ export default function UserViewLesson() {
             </h2>
             <div className="flex gap-3 mb-6">
               <img
-                src="/logo.png"
+                src={localStorage.getItem("img") || "/user.png"}
                 className="w-10 h-10 bg-gray-300 rounded-full"
                 alt="logo"
               />
@@ -258,7 +263,11 @@ export default function UserViewLesson() {
                     onClick={addLessonComment}
                     className="px-4 py-1 text-sm bg-scolor text-white rounded-full hover:bg-fcolor"
                   >
-                    Comment
+                    {commentLoading ? (
+                      <Spinner animation="border" variant="gray" />
+                    ) : (
+                      "Comment"
+                    )}
                   </button>
                 </div>
               </div>
@@ -274,7 +283,7 @@ export default function UserViewLesson() {
                     />
                     <div className="flex flex-col items-left w-full">
                       <p className="font-semibold">{cmt.username}</p>
-                      <p className="text-xs text-gray-400">{cmt.time}</p>
+                      <p className="text-xs text-gray-400">{cmt.date}</p>
                       <p
                         className="text-gray-600"
                         dangerouslySetInnerHTML={{ __html: cmt.content }}
