@@ -249,3 +249,53 @@ export const getCoursesProgress = async (userId) => {
     throw error;
   }
 };
+
+export const fetchFreeCourses = async () => {
+  const [courseRes, enrollRes] = await Promise.all([
+    axios.get(`${URL}/courses/all`),
+    axios.get(`${URL}/enroll/top-enrollments`),
+  ]);
+
+  const allCourses = courseRes?.data?.data || [];
+  const topEnrollCourseIds =
+    enrollRes?.data?.data?.map((ce) => ce.course?.id) || [];
+
+  const isNewCourse = (dateArray) => {
+    if (!Array.isArray(dateArray) || dateArray.length < 3) return false;
+    const courseDate = new Date(...dateArray);
+    const now = new Date();
+    return (now - courseDate) / (1000 * 60 * 60 * 24) <= 7;
+  };
+
+  const freeCourses = allCourses
+    .filter(
+      (course) =>
+        course.price === 0 &&
+        Array.isArray(course.lessons) &&
+        course.lessons.length > 0
+    )
+    .map((course) => ({
+      ...course,
+      isNew: isNewCourse(course.date),
+      isPopular: topEnrollCourseIds.includes(course.id),
+    }))
+    .sort((a, b) => new Date(...b.date) - new Date(...a.date));
+
+  return freeCourses;
+};
+
+export const isNewCourse = (dateArr) => {
+  if (!Array.isArray(dateArray) || dateArray.length < 3) return false;
+  const courseDate = new Date(
+    dateArr[0],
+    (dateArr[1] || 1) - 1,
+    dateArr[2],
+    dateArr[3] || 0,
+    dateArr[4] || 0,
+    dateArr[5] || 0
+  );
+  const now = new Date();
+  const diffTime = now - courseDate;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  return diffDays <= 7;
+};

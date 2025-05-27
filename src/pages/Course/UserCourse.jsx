@@ -101,9 +101,12 @@ export default function UserCourse() {
           {item.courseName}
         </h2>
 
-        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
-          {item.description || t.noDescription}
-        </p>
+        <div
+          className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]"
+          dangerouslySetInnerHTML={{
+            __html: item.description || t.noDescription,
+          }}
+        ></div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs my-2">
           <span
@@ -159,7 +162,9 @@ export default function UserCourse() {
           </button>
         ) : (
           <button
-            onClick={() => navigate(`/user-course/view-lesson/${item.courseId}`)}
+            onClick={() =>
+              navigate(`/user-course/view-lesson/${item.courseId}`)
+            }
             className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300"
           >
             🚀 {t.continueLearning}
