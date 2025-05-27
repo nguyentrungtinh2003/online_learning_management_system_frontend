@@ -31,6 +31,7 @@ export default function ManagementLesson() {
   const [loading, setLoading] = useState(true);
   const [lessonSearch, setLessonSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const lessonsPerPage = 6;
@@ -423,6 +424,7 @@ export default function ManagementLesson() {
               type="text"
               placeholder={t("searchPlaceholder")}
               className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={lessonSearch}
               onChange={handleSearchInput}
             />
             {lessonSearch && (
@@ -476,7 +478,7 @@ export default function ManagementLesson() {
 
         {/* Danh sách bài học + Pagination dưới bảng */}
         <div className="flex-1 w-full overflow-auto overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">

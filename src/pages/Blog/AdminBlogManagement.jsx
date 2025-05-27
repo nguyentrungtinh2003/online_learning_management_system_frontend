@@ -1,7 +1,7 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState, useEffect } from "react";
-import { FaEdit, FaLock, FaLockOpen, FaPlus } from "react-icons/fa";
+import { FaEdit, FaLock, FaLockOpen, FaPlus, FaTimes } from "react-icons/fa";
 import {
   MdNavigateNext,
   MdDeleteForever,
@@ -21,6 +21,7 @@ import {
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 import URL from "../../config/URLsocket";
+import { useLocation } from "react-router-dom";
 
 export default function AdminBlogManagement() {
   const { t } = useTranslation("adminmanagement");
@@ -29,12 +30,19 @@ export default function AdminBlogManagement() {
   const [blogs, setBlogs] = useState([]);
   const [allBlog, setAllBlog] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [cache, setCache] = useState(new Map());
+  const [blogSearch, setBlogSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const location = useLocation();
+
+  const triggerReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi giá trị để các useEffect phụ thuộc vào reloadTrigger chạy lại
+  };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [reloadTrigger, setReloadTrigger] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -44,65 +52,270 @@ export default function AdminBlogManagement() {
 
   const blogsPerPage = 6;
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 1: Lấy thông tin từ localStorage khi trang load (Lần đầu)**
   useEffect(() => {
-    fetchAllBlog();
-  }, []);
+    const savedSearch = localStorage.getItem("blogSearch");
+    const savedStatusFilter = localStorage.getItem("statusFilter");
 
-  const fetchAllBlog = () => {
-    axios
-      .get(`${URL}/blogs/all`, { withCredentials: true })
-      .then((response) => {
-        setAllBlog(response.data.data);
-      });
-  };
+    if (savedSearch) setBlogSearch(savedSearch);
+    if (savedStatusFilter) setStatusFilter(savedStatusFilter);
+  }, []); // Chạy một lần khi trang load lần đầu
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 2: Lắng nghe sự kiện triggerCourseReload**
+  useEffect(() => {
+    const handleReload = () => {
+      const savedCache = localStorage.getItem("blogCache");
+      if (savedCache) {
+        const parsedCache = new Map(JSON.parse(savedCache));
+        setCache(parsedCache);
+        setCurrentPage(0);
+      }
+    };
+    window.addEventListener("triggerBlogReload", handleReload);
+
+    return () => {
+      window.removeEventListener("triggerBlogReload", handleReload);
+    };
+  }, []); // Lắng nghe sự kiện reload từ các trang khác
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 3: Lọc khóa học từ cache và phân trang khi cache thay đổi**
+  useEffect(() => {
+    if (!cache.has("ALL-BLOGS")) return;
+
+    let filteredBlogs = cache.get("ALL-BLOGS");
+
+    // Lọc theo search
+    if (blogSearch.trim() !== "") {
+      filteredBlogs = filteredBlogs.filter((blog) =>
+        blog.blogName.toLowerCase().includes(blogSearch.trim().toLowerCase())
+      );
+    }
+
+    // Lọc theo trạng thái
+    if (statusFilter === "Deleted") {
+      filteredBlogs = filteredBlogs.filter((blog) => blog.deleted);
+    } else if (statusFilter === "Active") {
+      filteredBlogs = filteredBlogs.filter((blog) => !blog.deleted);
+    }
+
+    // Phân trang
+    const startIndex = currentPage * blogsPerPage;
+    const endIndex = startIndex + blogsPerPage;
+    const paginatedCourses = filteredBlogs.slice(startIndex, endIndex);
+
+    setBlogs(paginatedCourses.sort((a, b) => b.id - a.id));
+    setTotalPages(Math.ceil(filteredBlogs.length / blogsPerPage));
+    setLoading(false);
+  }, [cache, blogSearch, statusFilter, currentPage]); // Khi cache hoặc các bộ lọc thay đổi, chạy lại
+
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
+  useEffect(() => {
+    fetchBlogs();
+  }, [cache, currentPage, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
 
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const data = await getBlogsByPage(currentPage, blogsPerPage);
-      if (!data?.content && !data?.data?.content)
-        throw new Error("Invalid API Response");
+      const cacheKey = `${blogSearch.trim()}-${statusFilter}`;
 
-      const fetchedBlogs = data.data.content;
-      setBlogs(fetchedBlogs.sort((a, b) => b.id - a.id));
-      setTotalPages(data.data.totalPages);
+      let fetchedBlogs;
+
+      // ⚡ Nếu đã cache rồi thì dùng lại
+      if (cache.has(cacheKey)) {
+        console.log("Using cache...");
+        fetchedBlogs = cache.get(cacheKey);
+      } else {
+        // Gọi API
+        const data = await getBlogsByPage(0, 1000);
+
+        if (!data || !data.data || !data.data.content) {
+          throw new Error("Invalid API Response");
+        }
+
+        fetchedBlogs = data.data.content;
+
+        // Lọc theo search
+        if (blogSearch.trim() !== "") {
+          fetchedBlogs = fetchedBlogs.filter((blog) =>
+            blog.blogName
+              .toLowerCase()
+              .includes(blogSearch.trim().toLowerCase())
+          );
+        }
+
+        const ALL_KEY = "ALL-BLOGS";
+        if (!cache.has(ALL_KEY)) {
+          const data = await getBlogsByPage(0, 1000);
+
+          if (!data?.data?.content) throw new Error("Invalid API Response");
+
+          const allCourses = data.data.content;
+
+          const newCache = new Map(cache.set(ALL_KEY, allCourses));
+          setCache(newCache);
+          localStorage.setItem(
+            "blogCache",
+            JSON.stringify(Array.from(newCache.entries()))
+          );
+        }
+
+        // Lọc theo trạng thái
+        if (statusFilter === "Deleted") {
+          fetchedBlogs = fetchedBlogs.filter((blog) => blog.deleted);
+        } else if (statusFilter === "Active") {
+          fetchedBlogs = fetchedBlogs.filter((blog) => !blog.deleted);
+        }
+
+        const newCache = new Map(cache.set(cacheKey, fetchedBlogs));
+        setCache(newCache);
+        localStorage.setItem(
+          "blogCache",
+          JSON.stringify(Array.from(newCache.entries()))
+        );
+      }
+
+      // Kiểm tra nếu không có kết quả
+      if (fetchedBlogs.length === 0 && blogSearch.trim() !== "") {
+        toast.info("No courses found for your search.", {
+          position: "top-right",
+          autoClose: 1500,
+        });
+      }
+
+      // Phân trang
+      const startIndex = currentPage * blogsPerPage;
+      const endIndex = startIndex + blogsPerPage;
+      const paginatedCourses = fetchedBlogs.slice(startIndex, endIndex);
+
+      setBlogs(paginatedCourses.sort((a, b) => b.id - a.id));
+      setTotalPages(Math.ceil(fetchedBlogs.length / blogsPerPage));
     } catch (error) {
-      console.error("Lỗi tải blog:", error);
+      console.error("Error loading courses:", error);
       setBlogs([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 5: Lưu lại các giá trị của search, filterType, và statusFilter vào localStorage**
+  // Gọi cái này sau khi add/edit/delete course
   useEffect(() => {
-    fetchBlogs();
-  }, [currentPage]);
+    localStorage.setItem("blogSearch", blogSearch);
+    localStorage.setItem("statusFilter", statusFilter);
+  }, [blogSearch, statusFilter]); // Lưu lại mỗi khi có thay đổi trong các bộ lọc
 
-  const handleSearch = async () => {
-    setLoading(true);
+  // ---------------------------------------------------------------------------------------------------
+  // **Effect 6: Lấy dữ liệu từ localStorage và cập nhật cache khi reloadTrigger thay đổi**
+  useEffect(() => {
+    const savedCache = localStorage.getItem("blogCache");
+    const savedNewBlogs = localStorage.getItem("newBlogs");
 
-    try {
-      const data = await searchBlogs(search, currentPage, blogsPerPage);
-      setBlogs(data.data.content);
-      setTotalPages(data.data.totalPages);
-    } catch (error) {
-      console.error("Lỗi tìm kiếm blog:", error);
-    } finally {
-      setLoading(false);
+    if (savedCache) {
+      const parsedCache = new Map(JSON.parse(savedCache));
+
+      if (savedNewBlogs) {
+        const newBlogs = JSON.parse(savedNewBlogs);
+        const key = `${blogSearch.trim()}-${statusFilter}`;
+
+        const updatedBlogs = [...(parsedCache.get(key) || []), ...newBlogs];
+        parsedCache.set(key, updatedBlogs);
+
+        // Lưu lại cache mới vào localStorage
+        localStorage.setItem(
+          "blogCache",
+          JSON.stringify(Array.from(parsedCache.entries()))
+        );
+
+        // Xóa courses mới đã dùng
+        localStorage.removeItem("newBlogs");
+      }
+
+      setCache(parsedCache);
     }
+  }, [reloadTrigger]); // Chạy một lần khi trang được load lần đầu tiên
+
+  // ---------------------------------------------------------------------------------------------------
+  // Effect 7: Reset lessonSearch khi có sự thay đổi từ trang khác
+  useEffect(() => {
+    if (location.pathname.includes("blog")) {
+      setBlogSearch(""); // Reset khi chuyển sang trang lesson
+    }
+  }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
+
+  const handleSearchInput = (e) => {
+    setBlogSearch(e.target.value);
+    setCurrentPage(0);
   };
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [search]);
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    fetchCourses();
+  };
 
-  useEffect(() => {
-    if (search.trim() !== "") {
-      handleSearch();
-    } else {
-      fetchBlogs();
-    }
-  }, []);
+  // useEffect(() => {
+  //   fetchAllBlog();
+  // }, []);
+
+  // const fetchAllBlog = () => {
+  //   axios
+  //     .get(`${URL}/blogs/all`, { withCredentials: true })
+  //     .then((response) => {
+  //       setAllBlog(response.data.data);
+  //     });
+  // };
+
+  // const fetchBlogs = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const data = await getBlogsByPage(currentPage, blogsPerPage);
+  //     if (!data?.content && !data?.data?.content)
+  //       throw new Error("Invalid API Response");
+
+  //     const fetchedBlogs = data.data.content;
+  //     setBlogs(fetchedBlogs.sort((a, b) => b.id - a.id));
+  //     setTotalPages(data.data.totalPages);
+  //   } catch (error) {
+  //     console.error("Lỗi tải blog:", error);
+  //     setBlogs([]);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchBlogs();
+  // }, [currentPage]);
+
+  // const handleSearch = async () => {
+  //   setLoading(true);
+
+  //   try {
+  //     const data = await searchBlogs(search, currentPage, blogsPerPage);
+  //     setBlogs(data.data.content);
+  //     setTotalPages(data.data.totalPages);
+  //   } catch (error) {
+  //     console.error("Lỗi tìm kiếm blog:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   setCurrentPage(0);
+  // }, [search]);
+
+  // useEffect(() => {
+  //   if (search.trim() !== "") {
+  //     handleSearch();
+  //   } else {
+  //     fetchBlogs();
+  //   }
+  // }, []);
 
   const handleDelete = async (id, title, userId) => {
     if (!window.confirm(`Bạn có chắc muốn xóa blog "${title}" không?`)) return;
@@ -153,13 +366,13 @@ export default function AdminBlogManagement() {
     }
   };
 
-  useEffect(() => {
-    if (statusFilter === "ALL") {
-      fetchBlogs();
-    } else {
-      setBlogs(allBlog.filter((blog) => blog.deleted === statusFilter));
-    }
-  }, [statusFilter, allBlog]);
+  // useEffect(() => {
+  //   if (statusFilter === "ALL") {
+  //     fetchBlogs();
+  //   } else {
+  //     setBlogs(allBlog.filter((blog) => blog.deleted === statusFilter));
+  //   }
+  // }, [statusFilter, allBlog]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
@@ -185,32 +398,41 @@ export default function AdminBlogManagement() {
           </Link>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSearch();
-          }}
-          className="mb-2 lg:h-12 h-24 flex gap-2"
-        >
-          <input
-            type="text"
-            placeholder={t("searchPlaceholder")}
-            className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
+          <div className="relative h-24 lg:h-12 w-full">
+            <input
+              type="text"
+              placeholder={t("searchPlaceholder")}
+              className="lg:py-2 lg:placeholder:text-base text-4xl lg:text-base placeholder:text-3xl h-full h- px-3 pr-10 dark:bg-darkSubbackground dark:border-darkBorder dark:placeholder:text-darkSubtext border-2 rounded w-full focus:outline-none"
+              value={blogSearch}
+              onChange={handleSearchInput}
+            />
+            {blogSearch && (
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
+                onClick={() => {
+                  setSearch("");
+                }}
+              >
+                <FaTimes size={18} />
+              </button>
+            )}
+          </div>
+
           <select
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
               setCurrentPage(0);
             }}
-            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded w-72 lg:w-48"
+            className="p-2 lg:text-base text-3xl dark:bg-darkSubbackground dark:text-darkText border-2 dark:border-darkBorder rounded"
           >
-            <option value="ALL">{t("all")}</option>
-            <option value="true">{t("deleted")}</option>
-            <option value="false">{t("active")}</option>
+            <option value="All">{t("all")}</option>
+            <option value="Deleted">{t("deleted")}</option>
+            <option value="Active">{t("active")}</option>
           </select>
+
           <button
             type="submit"
             className="bg-wcolor lg:text-base text-3xl hover:bg-tcolor dark:hover:bg-darkHover dark:bg-darkSubbackground dark:border-darkBorder border-2 whitespace-nowrap px-4 py-2 rounded hover:scale-105"
@@ -220,7 +442,7 @@ export default function AdminBlogManagement() {
         </form>
 
         <div className="flex-1 w-full overflow-auto h-full overflow-x">
-          <div className="bg-wcolor lg:px-2 px-4 overflow-auto h-full justify-between flex flex-col lg:h-fit dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
+          <div className="bg-wcolor px-2 overflow-auto h-full justify-between flex flex-col lg:h-fit dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
             <table className="lg:w-full w-[200%] h-fit">
               <thead className="sticky top-0 z-10 dark:text-darkText">
                 <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
@@ -291,7 +513,7 @@ export default function AdminBlogManagement() {
                       </td>
                       <td className="p-2 flex justify-center gap-2">
                         <Link to={`/admin/blog/edit-blog/${blog.id}`}>
-                          <button className="hover:text-blue-600">
+                          <button className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white">
                             <FaEdit />
                           </button>
                         </Link>
