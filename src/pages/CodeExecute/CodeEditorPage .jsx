@@ -183,8 +183,8 @@ const CodeEditorPage = () => {
   };
 
   return (
-    <div className="w-full h-500 dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
-      <div className="flex">
+    <div className="w-full flex flex-col gap-2 h-fit dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
+      <div className="flex px-2">
         <h2 className="text-2xl font-bold text-cyan-500 flex items-center gap-2">
           {t("title")}
           <span className="text-sm text-gray-700 dark:text-darkText">
@@ -220,17 +220,17 @@ const CodeEditorPage = () => {
       </div>
 
       {/* Màn hình chính */}
-      <div className="flex m-2 h-[415px] gap-4">
+      <div className="flex h-[415px] gap-2">
         {/* Lịch sử bên trái */}
-        <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground px-2 space-y-3 max-h-full">
-          <h3 className="text-lg h-10 m-2 w-full bg-black dark:bg-darkSubbackground font-semibold text-cyan-500 sticky  top-0 z-10 py-2 px-2 rounded">
+        <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground space-y-3 max-h-full">
+          <h3 className="text-lg h-10 w-full bg-wcolor dark:bg-darkSubbackground font-semibold text-cyan-500 sticky  top-0 z-10 py-2 px-3 rounded">
             {t("history")}
           </h3>
           {historyCode && historyCode.length > 0 ? (
             historyCode.map((hisco, index) => (
               <div
                 key={index}
-                className={`relativegit rounded-r-lg px-3 py-2 shadow ${
+                className={`relative mx-2 rounded-r-lg px-3 py-2 shadow ${
                   codeId == hisco.id
                     ? `border-l-4 border-cyan-500`
                     : `hover:border-l-4 border-cyan-500`
@@ -284,7 +284,7 @@ const CodeEditorPage = () => {
         {/* Editor */}
         <div className="flex-1 border-2 dark:border-darkBorder text-gray-500 rounded-lg overflow-hidden shadow-inner">
           <Editor
-            height="100%"
+            height="110%"
             language={language}
             theme={isDarkMode ? "custom-dark" : "custom-light"}
             value={code}
@@ -300,8 +300,8 @@ const CodeEditorPage = () => {
       </div>
 
       {/* Terminal */}
-      <div className="m-2 border-2 dark:border-darkBorder rounded-lg shadow-inner">
-        <div className="flex justify-between items-center px-4 py-2 border-b dark:border-darkBorder rounded-t-lg">
+      <div className="border-2 dark:border-darkBorder rounded-lg shadow-inner">
+        <div className="flex justify-between items-center p-2 border-b dark:border-darkBorder rounded-t-lg">
           <span className="text-cyan-500 font-semibold">{t("terminal")}</span>
           <button
             onClick={handleRun}
