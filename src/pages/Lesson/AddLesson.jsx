@@ -9,7 +9,6 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
 
-
 const AddLesson = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
@@ -63,7 +62,7 @@ const AddLesson = () => {
   const filteredCourses = courses.filter((course) =>
     course.courseName.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   // /// EFFECT 1: Đăng ký lắng nghe sự kiện reload từ nơi khác trong app
   useEffect(() => {
     const handleReload = () => {
@@ -263,9 +262,13 @@ const AddLesson = () => {
         <div className="flex gap-2 dark:text-darkText">
           <FaVideo size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.main")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold mb-4">
+            {t("addLesson.main")}
+          </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.add")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold mb-4">
+            {t("addLesson.add")}
+          </h2>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -274,7 +277,9 @@ const AddLesson = () => {
           <div className="space-y-4">
             {/* Chọn khoá học */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("addLesson.selectCourse")}</label>
+              <label className="w-1/4 font-medium">
+                {t("addLesson.selectCourse")}
+              </label>
               <select
                 name="courseId"
                 value={lessonData.courseId}
@@ -282,7 +287,9 @@ const AddLesson = () => {
                 className="flex-1 px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
                 required
               >
-                <option value="">{t("addLesson.selectCoursePlaceholder")}</option>
+                <option value="">
+                  {t("addLesson.selectCoursePlaceholder")}
+                </option>
                 {courses.map((course) => (
                   <option key={course.id} value={course.id}>
                     {course.courseName}
@@ -370,7 +377,10 @@ const AddLesson = () => {
               disabled={loading}
             >
               {loading ? (
-                <p>{t("processing")}</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
               ) : isSubmitted ? (
                 <p>{t("submitted")}</p>
               ) : (

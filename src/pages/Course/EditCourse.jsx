@@ -1,14 +1,10 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Form, Button } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { getCourseById, updateCourse } from "../../services/courseapi";
-import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
@@ -263,6 +259,12 @@ const EditCourse = () => {
       setLoading(false);
     }
   };
+  if (loading)
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -270,9 +272,13 @@ const EditCourse = () => {
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaBuffer size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("courseManagement")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("courseManagement")}
+          </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("editCourse.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("editCourse.title")}
+          </h2>
         </div>
 
         <form
@@ -321,12 +327,12 @@ const EditCourse = () => {
 
           {/* Current Image */}
           {courseData.img && !imgPreview && (
-            <div className="mt-4 text-center">
-              <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
+            <div className="mt-4 items-center flex space-x-4">
+              <h3 className="font-medium w-1/4">{t("editCourse.currentImage")}</h3>
               <img
                 src={courseData.img}
                 alt="Current Image"
-                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+                className="mt-2 max-w-[200px] h-auto border-2 dark:border-darkBorder border-gray-300 rounded-lg"
               />
             </div>
           )}
@@ -373,7 +379,7 @@ const EditCourse = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <button
               onClick={() => !loading && navigate(-1)}
-              disabled={loading || isSubmitted}
+              disabled={isSubmitted}
               className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
               {t("cancel")}
@@ -381,17 +387,20 @@ const EditCourse = () => {
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg ${
-                loading || isSubmitted
+                isSubmitted
                   ? "bg-gray-400"
                   : "bg-scolor text-ficolor hover:bg-opacity-80 "
               }`}
-              disabled={loading || isSubmitted}
+              disabled={isSubmitted}
             >
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>

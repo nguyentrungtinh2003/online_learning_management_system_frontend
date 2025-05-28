@@ -1,5 +1,6 @@
 {
   "courseMaterialManagement": "Course Material Management",
+  "editMaterial.title": "Edit Course Material",
   "title": "Title",
   "file": "File",
   "uploadDate": "Upload Date",
@@ -13,7 +14,7 @@
   "all": "All",
   "free": "Free",
   "paid": "Paid",
-  "deleted": "Deleted",
+  "deleted": "Blocked",
   "active": "Active",
   "search": "Search",
   "noCoursesFound": "No courses found for your search.",
@@ -48,6 +49,7 @@
   "submit": "Submit",
   "submitted": "Submitted",
   "processing": "Processing...",
+  "currentImage": "Current Image",
   "back": "Back",
   "addCourse": {
     "title": "Add New Course",
@@ -196,6 +198,9 @@
     "birthDay": "Birth Day",
     "address": "Address",
     "role": "Role",
+    "point": "Point",
+    "coin": "Coin",
+    "status": "Status",
     "student": "STUDENT",
     "teacher": "LECTURE",
     "profileImage": "Profile Image",

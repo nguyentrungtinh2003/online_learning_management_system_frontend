@@ -124,10 +124,11 @@ const EditLesson = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra nếu đang loading hoặc đã submit rồi
-    if (loading || isSubmitted) return;
+    // Nếu đang submit, chặn
+    if (isSubmitted) return;
 
-    // Kiểm tra xem dữ liệu có thay đổi không
+    setIsSubmitted(true); // ✅ dùng biến mới
+
     const isDataUnchanged =
       lessons.lessonName === initialLesson.lessonName &&
       lessons.description === initialLesson.description &&
@@ -135,15 +136,12 @@ const EditLesson = () => {
       lessons.img === initialLesson.img &&
       !img;
 
-    // Nếu dữ liệu không thay đổi, chỉ cần quay lại
     if (isDataUnchanged) {
-      navigate(-1); // Quay lại trang trước
+      navigate(-1);
       return;
     }
 
     const missingFields = [];
-
-    // Kiểm tra các trường bắt buộc
     if (!lessons.lessonName.trim()) missingFields.push(t("lessonName"));
     if (!lessons.description.trim()) missingFields.push(t("description"));
     if (!img && !lessons.img) missingFields.push(t("image"));
@@ -160,52 +158,12 @@ const EditLesson = () => {
         </div>,
         { autoClose: 1000 }
       );
+      setIsSubmitted(false); // ✅ reset
       return;
     }
 
-    setLoading(true);
-
-    const formData = new FormData();
-    if (img) formData.append("img", img);
-    if (video) formData.append("video", video);
-    formData.append(
-      "lesson",
-      new Blob([JSON.stringify(lessons)], { type: "application/json" })
-    );
-
     try {
       const result = await updateLesson(id, lessons, img, video);
-
-      // ✅ Cập nhật localStorage nếu có khóa học trong cache
-      const savedCache = localStorage.getItem("lessonCache");
-      if (savedCache) {
-        const parsedCache = new Map(JSON.parse(savedCache));
-
-        const key = `--ALL--ALL`; // hoặc tùy theo bộ lọc thực tế đang dùng
-        const existingLessons = parsedCache.get(key) || [];
-
-        // Cập nhật khóa học trong danh sách
-        const updatedLessons = existingLessons.map((lesson) =>
-          lesson.id === id
-            ? {
-                ...lesson,
-                lessonName: lessons.lessonName,
-                description: lessons.description,
-                img: result.img || lesson.img,
-                video: lessons.video,
-              }
-            : lesson
-        );
-
-        parsedCache.set(key, updatedLessons);
-
-        localStorage.setItem(
-          "lessonCache",
-          JSON.stringify(Array.from(parsedCache.entries()))
-        );
-      }
-
-      window.dispatchEvent(new Event("triggerLessonReload"));
 
       toast.success("Cập nhật bài học thành công!", {
         position: "top-right",
@@ -225,11 +183,16 @@ const EditLesson = () => {
         autoClose: 1000,
       });
     } finally {
-      setLoading(false);
+      setIsSubmitted(false); // ✅ reset
     }
   };
 
-  if (loading) return <div>Đang tải dữ liệu bài học...</div>;
+  if (loading)
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
@@ -290,12 +253,12 @@ const EditLesson = () => {
 
           {/* Current Image */}
           {lessons.img && !imgPreview && (
-            <div className="mt-4 text-center">
-              <h3 className="font-medium">{t("editCourse.currentImage")}</h3>
+            <div className="mt-4 items-center flex space-x-4">
+              <h3 className="w-1/4 font-medium">{t("currentImage")}</h3>
               <img
                 src={lessons.img}
                 alt="Current Image"
-                className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+                className="mt-2 max-w-[200px] h-auto border-2 dark:border-darkBorder border-gray-300 rounded-lg"
               />
             </div>
           )}
@@ -334,25 +297,28 @@ const EditLesson = () => {
           <div className="flex justify-end space-x-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
-              disabled={loading || isSubmitted}
+              disabled={isSubmitted}
               className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
               {t("cancel")}
             </Link>
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitted}
               className={`px-6 py-2 rounded-lg ${
-                loading || isSubmitted
+                isSubmitted
                   ? "bg-gray-400 text-white"
                   : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
             >
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}{" "}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>

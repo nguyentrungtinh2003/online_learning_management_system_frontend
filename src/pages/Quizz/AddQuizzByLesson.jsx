@@ -153,22 +153,30 @@ const AddQuizz = () => {
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
-            <Link
-              onClick={() => navigate(-1)}
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading}
+              className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
               {t("cancel")}
-            </Link>
+            </button>
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg ${
                 loading
                   ? "bg-gray-400"
-                  : "bg-scolor text-wcolor hover:bg-opacity-80"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
               disabled={loading}
             >
-              {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                <p>{t("submit")}</p>
+              )}{" "}
             </button>
           </div>
         </form>
