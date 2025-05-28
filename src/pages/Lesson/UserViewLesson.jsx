@@ -36,6 +36,8 @@ export default function UserViewLesson() {
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
   const [doneQuizzes, setDoneQuizzes] = useState({});
 
+  const [courseProgress, setCourseProgress] = useState(0);
+
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [lastAllowedTime, setLastAllowedTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -70,6 +72,39 @@ export default function UserViewLesson() {
 
     fetchDoneQuizzes();
   }, [lessons]);
+
+  useEffect(() => {
+    const fetchCourseProgress = async () => {
+      try {
+        const response = await axios.get(
+          `${URL}/user/${parseInt(userId)}/courses-progress`,
+          { withCredentials: true }
+        );
+
+        const courseList = response.data.data || [];
+        const currentCourse = courseList.find(
+          (course) => course.courseId === parseInt(courseId)
+        );
+
+        if (currentCourse) {
+          const progressPercent =
+            currentCourse.totalLessons > 0
+              ? Math.round(
+                  (currentCourse.completedLessons /
+                    currentCourse.totalLessons) *
+                    100
+                )
+              : 0;
+
+          setCourseProgress(progressPercent);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải tiến độ khóa học:", error);
+      }
+    };
+
+    fetchCourseProgress();
+  }, [courseId, userId]);
 
   // useEffect(() => {
   //   const fetchCoursesProgress = async () => {
@@ -559,14 +594,15 @@ export default function UserViewLesson() {
             {/* Progress bar */}
             <div className="mt-4">
               <div className="text-center">
-                Tiến độ video: {Math.round(watchedPercent)}%
+                Tiến độ khóa học: {Math.round(courseProgress)}%
               </div>
               <progress
-                value={watchedPercent}
+                value={courseProgress}
                 max="100"
                 className="w-full"
               ></progress>
             </div>
+
             <div>
               <ul className="flex flex-col gap-2">
                 {[...lessons]
