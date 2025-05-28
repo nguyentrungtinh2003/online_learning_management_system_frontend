@@ -540,28 +540,27 @@ export default function Navbar() {
               <h3 className="text-lg w-full dark:text-darkText text-center font-semibold border-b dark:border-darkBorder pb-2">
                 {t("notifications")}
               </h3>
-              <ul className="py-2 h-[40%] overflow-auto">
+              <ul className="py-2 h-[40vh] overflow-auto">
                 {notifications.length > 0 ? (
                   notifications.map((notification) => (
                     <div key={notification.id} className="flex items-center">
                       <li
-                        className={`hover:bg-tcolor dark:hover:bg-darkHover px-4 py-2 text-gray-500 dark:text-darkText break-words ${
+                        className={`hover:bg-tcolor gap-2 flex items-center justify-between w-full relative w-full dark:hover:bg-darkHover pl-4 pr-2 py-2 text-gray-500 dark:text-darkText break-words ${
                           !notification.read
                             ? "font-black dark:text-darkText"
                             : "text-gray-700 dark:text-darkSubtext"
                         }`}
                       >
                         {notification.message}
+                        <button
+                          onClick={() =>
+                            readNotifications(parseInt(notification.id))
+                          }
+                          className="btn btn-primary text-sm"
+                        >
+                          Read
+                        </button>
                       </li>
-
-                      <button
-                        onClick={() =>
-                          readNotifications(parseInt(notification.id))
-                        }
-                        className="btn btn-primary text-sm"
-                      >
-                        Read
-                      </button>
                     </div>
                   ))
                 ) : (
