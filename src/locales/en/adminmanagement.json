@@ -1,4 +1,13 @@
 {
+  "courseMaterialManagement": "Course Material Management",
+  "title": "Title",
+  "file": "File",
+  "uploadDate": "Upload Date",
+  "updateDate": "Update Date",
+  "course": "Course",
+  "delete": "Delete",
+  "restore": "Restore",
+  "noCourseMaterial": "No course materials found.",
   "courseManagement": "Course Management",
   "searchPlaceholder": "Search...",
   "all": "All",
@@ -48,6 +57,15 @@
     "toastMissingFields": "❌ Please fill in all fields before submitting.",
     "toastPriceError": "❌ Please enter a price greater than 0 for paid courses.",
     "toastError": "❌ An error occurred while adding the course."
+  },
+   "addMaterial": {
+    "title": "Add Material",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter title",
+    "descriptionPlaceholder": "Enter description",
+    "selectFile": "Select File",
+    "selectCourse": "Select Course",
+    "searchAndSelect": "Search and select course"
   },
   "editCourse": {
     "title": "Edit Course",

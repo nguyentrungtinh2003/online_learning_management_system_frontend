@@ -3,8 +3,6 @@ import { useParams } from "react-router-dom";
 import URL from "../../config/URLconfig";
 import { getCourseById } from "../../services/courseapi";
 import axios from "axios";
-import Spinner from "react-bootstrap/Spinner";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -105,36 +103,38 @@ export default function UserViewCourse() {
   };
 
   const buyCourse = async (id) => {
-  if (!requireLogin()) return;
-  setBuyLoading(true);
-  const userId = localStorage.getItem("id");
+    if (!requireLogin()) return;
+    setBuyLoading(true);
+    const userId = localStorage.getItem("id");
 
-  if (!userId) {
-    toast.error("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
-    setBuyLoading(false);
-    return;
-  }
-
-  try {
-    const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
-    const result = response.data;
-
-    if (result.statusCode === 200) {
-      toast.success("🎉 Mua khoá học thành công!");
-    } else {
-      if (result.message?.toLowerCase().includes("not enough")) {
-        toast.error("❌ Số xu trong ví không đủ để mua khoá học.");
-      } else {
-        toast.error(`⚠️ ${result.message || "Không thể mua khoá học"}`);
-      }
+    if (!userId) {
+      toast.error(
+        "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại."
+      );
+      setBuyLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Đã xảy ra lỗi trong quá trình mua. Vui lòng thử lại sau.");
-  } finally {
-    setBuyLoading(false);
-  }
-};
+
+    try {
+      const response = await axios.post(`${URL}/courses/buy/${userId}/${id}`);
+      const result = response.data;
+
+      if (result.statusCode === 200) {
+        toast.success("🎉 Mua khoá học thành công!");
+      } else {
+        if (result.message?.toLowerCase().includes("not enough")) {
+          toast.error("❌ Số xu trong ví không đủ để mua khoá học.");
+        } else {
+          toast.error(`⚠️ ${result.message || "Không thể mua khoá học"}`);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Đã xảy ra lỗi trong quá trình mua. Vui lòng thử lại sau.");
+    } finally {
+      setBuyLoading(false);
+    }
+  };
 
   const toggleShowAllLessons = () => {
     setShowAllLessons(!showAllLessons);
@@ -142,8 +142,8 @@ export default function UserViewCourse() {
 
   if (loading) {
     return (
-      <div className="flex-1 h-full flex items-center justify-center">
-        <Spinner animation="border" variant="primary" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -173,9 +173,9 @@ export default function UserViewCourse() {
   const lessonsToDisplay = showAllLessons ? lessons : lessons.slice(0, 4);
 
   return (
-    <div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white rounded-lg">
       {/* Hero Section */}
-      <section className="relative h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center px-10">
+      <section className="relative rounded-t-lg h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center px-10">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-5xl font-bold leading-tight mb-4">
@@ -209,48 +209,48 @@ export default function UserViewCourse() {
       </section>
 
       {/* What You’ll Learn */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      <section className="py-20 bg-wcolor dark:bg-darkSubbackground">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-10">
             Bạn sẽ học được gì?
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="p-6 bg-gradient-to-r from-pink-500 to-red-500 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                🎯 Kỹ năng thực chiến
-              </h4>
-              <p className="text-sm opacity-90">
-                Làm dự án thật, không chỉ lý thuyết
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-green-500 to-emerald-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                💡 Tư duy giải quyết vấn đề
-              </h4>
-              <p className="text-sm opacity-90">
-                Học cách phân tích, gỡ bug, tối ưu
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-blue-500 to-sky-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">🧠 Logic lập trình</h4>
-              <p className="text-sm opacity-90">
-                Hiểu rõ thuật toán và cấu trúc dữ liệu
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-yellow-500 to-orange-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                🚀 Tự tin phỏng vấn
-              </h4>
-              <p className="text-sm opacity-90">
-                Sẵn sàng cho mọi vòng tuyển dụng
-              </p>
-            </div>
+            {[
+              {
+                title: "🎯 Kỹ năng thực chiến",
+                desc: "Làm dự án thật, không chỉ lý thuyết",
+                colors: "from-pink-500 to-red-500",
+              },
+              {
+                title: "💡 Tư duy giải quyết vấn đề",
+                desc: "Học cách phân tích, gỡ bug, tối ưu",
+                colors: "from-green-500 to-emerald-400",
+              },
+              {
+                title: "🧠 Logic lập trình",
+                desc: "Hiểu rõ thuật toán và cấu trúc dữ liệu",
+                colors: "from-blue-500 to-sky-400",
+              },
+              {
+                title: "🚀 Tự tin phỏng vấn",
+                desc: "Sẵn sàng cho mọi vòng tuyển dụng",
+                colors: "from-yellow-500 to-orange-400",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`p-6 bg-gradient-to-r ${item.colors} rounded-xl text-white shadow-lg`}
+              >
+                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+                <p className="text-sm opacity-90">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Video Preview */}
-      <section className="bg-black py-20 relative">
+      <section className="bg-black py-10 relative">
         <div className="max-w-4xl mx-auto px-4">
           <video
             className="rounded-xl w-full shadow-lg"
@@ -270,23 +270,72 @@ export default function UserViewCourse() {
         </div>
       </section>
 
+      {/* Course Content */}
+      <section className="py-10 bg-wcolor dark:bg-darkSubbackground">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-10 text-gray-800 dark:text-white">
+            Nội dung khóa học
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-10 space-y-6">
+            {lessonsToDisplay.map((lesson, index) => (
+              <div
+                key={lesson._id || index}
+                className="flex items-start justify-between border-b border-gray-200 dark:border-gray-700 pb-4"
+              >
+                <div>
+                  <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                    {lesson.lessonName}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {lesson.videoURL
+                      ? formatDuration(videoDurations[index])
+                      : "Chưa có video"}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {lesson.videoURL ? (
+                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full dark:bg-green-900 dark:text-green-300">
+                      Có video
+                    </span>
+                  ) : (
+                    <span className="px-3 py-1 bg-red-100 text-red-700 text-xs rounded-full dark:bg-red-900 dark:text-red-300">
+                      Thiếu video
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+            {lessons.length > 4 && !showAllLessons && (
+              <div className="text-center pt-4">
+                <button
+                  onClick={toggleShowAllLessons}
+                  className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                >
+                  Xem tất cả bài học
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Instructor and Testimonial */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 bg-gray-50 dark:bg-darkSubbackground">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
           <div className="text-center">
             <img
               src={course.user.img || "/user.png"}
-              className="rounded-full w-40 h-40 object-cover mx-auto mb-4"
+              className="rounded-full w-40 h-40 object-cover mx-auto mb-4 border-4 border-indigo-300 dark:border-indigo-500 shadow-lg"
               alt="Instructor"
             />
             <h3 className="text-2xl font-bold">{course.user.username}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
+            <p className="text-gray-600 dark:text-darkText mt-2">
               Fullstack Developer, Mentor @ Code Arena
             </p>
           </div>
           <div>
             <h3 className="text-2xl font-bold mb-4">Học viên nói gì?</h3>
-            <blockquote className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow">
+            <blockquote className="bg-wcolor dark:bg-darkHover p-6 rounded-xl shadow">
               <p className="text-lg italic">
                 "Khóa học cực kỳ thực tế và dễ hiểu. Mình đã xin được job ngay
                 sau khi học xong!"

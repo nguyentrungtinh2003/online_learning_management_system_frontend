@@ -2,7 +2,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
 import {
-  FaUsers,
   FaBuffer,
   FaEdit,
   FaEye,
