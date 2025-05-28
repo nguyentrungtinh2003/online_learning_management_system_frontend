@@ -41,6 +41,7 @@ export default function Blog() {
   const [newPostVideo, setNewPostVideo] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [comments, setComments] = useState([]);
   const [stompClient, setStompClient] = useState(null);
   const [content, setcontent] = useState("");
@@ -155,12 +156,12 @@ export default function Blog() {
     });
 
     client.onConnect = () => {
-      if (selectedPost) {
-        client.subscribe(`/topic/blog/${selectedPost}`, (message) => {
-          const comment = JSON.parse(message.body);
-          setComments((prev) => [...prev, comment]);
-        });
-      }
+      // if (selectedPost) {
+      //   client.subscribe(`/topic/blog/${selectedPost}`, (message) => {
+      //     const comment = JSON.parse(message.body);
+      //     setComments((prev) => [...prev, comment]);
+      //   });
+      // }
 
       if (currentLikePost) {
         client.subscribe(`/topic/like/${currentLikePost}`, (message) => {
@@ -292,6 +293,7 @@ export default function Blog() {
   };
 
   const addBlogComment = (blogId, userId, content) => {
+    setCommentLoading(true);
     if (!requireLogin()) return;
     axios
       .post(
@@ -301,6 +303,9 @@ export default function Blog() {
       )
       .then((response) => {
         console.log("add blog comment success");
+        handleGetComments();
+        setcontent("");
+        setCommentLoading(false);
       })
       .catch((error) => {
         console.log("Error add blog comment");
@@ -749,7 +754,11 @@ export default function Blog() {
                             addBlogComment(selectedPost, userId, content)
                           }
                         >
-                          <PiPaperPlaneRightFill className="" size={25} />
+                          {commentLoading ? (
+                            <Spinner animation="border" variant="gray" />
+                          ) : (
+                            <PiPaperPlaneRightFill className="" size={25} />
+                          )}
                         </button>
                       </div>
                     </div>
