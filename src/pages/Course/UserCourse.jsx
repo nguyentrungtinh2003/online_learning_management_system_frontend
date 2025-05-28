@@ -112,9 +112,12 @@ export default function UserCourse() {
           {item.courseName}
         </h2>
 
-        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]">
-          {item.description || t.noDescription}
-        </p>
+        <div
+          className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug h-[2.5rem]"
+          dangerouslySetInnerHTML={{
+            __html: item.description || t.noDescription,
+          }}
+        ></div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs my-2">
           <span

@@ -72,6 +72,7 @@ export default function UserViewLesson() {
       }
 
       await updateLessonProcess(userId, courseId, lessonId);
+      fetchLessonsCompleted();
       console.log("✅ Đã cập nhật tiến độ bài học thành công");
     } catch (error) {
       console.error("❌ Lỗi khi đánh dấu bài học hoàn thành:", error);
@@ -208,6 +209,7 @@ export default function UserViewLesson() {
         console.error("Error fetching comments:", err.message);
       });
   };
+
   // Fetching comments for the current lesson
   useEffect(() => {
     const lessonId = lessons[currentLessonIndex]?.id;
@@ -222,6 +224,26 @@ export default function UserViewLesson() {
     setWatchedPercent(0);
     setLastAllowedTime(0);
   }, [currentLessonIndex]);
+
+  useEffect(() => {
+    fetchLessonsCompleted();
+  }, []);
+
+  //fetch lesson completed by userId, courseId
+  const [idLessonsCompleted, setIdLessonCompleted] = useState([]);
+
+  const fetchLessonsCompleted = () => {
+    axios
+      .get(`${URL}/lessons/completed/${userId}/${courseId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setIdLessonCompleted(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get lesson completed " + error.message);
+      });
+  };
 
   return (
     <div className="flex flex-1 text-sm font-semibold box-border relative">
@@ -450,7 +472,9 @@ export default function UserViewLesson() {
                           <span>{lesson.lessonName}</span>
 
                           {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
-                          {currentLessonIndex === index && isCompleted && (
+                          {idLessonsCompleted.some(
+                            (lessonComplete) => lessonComplete === lesson.id
+                          ) && (
                             <FaCheckCircle className="text-green-500 ml-2" />
                           )}
 

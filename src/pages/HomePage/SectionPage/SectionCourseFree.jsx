@@ -4,85 +4,29 @@ import axios from "axios";
 import { PiArrowFatLinesDown, PiMonitorPlayFill } from "react-icons/pi";
 import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
 import { useTranslation } from "react-i18next";
+import { fetchFreeCourses } from "../../../services/courseapi";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import { isNewCourse } from "../../../services/courseapi";
 
 export default function SectionCourseFree() {
-  const [courses, setCourses] = useState([]);
-  const [userEnroll, setUserEnroll] = useState([]);
+  const {
+    data: courses = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["freeCourses"],
+    queryFn: fetchFreeCourses,
+    staleTime: 1000 * 60 * 15,
+    cacheTime: 1000 * 60 * 15,
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
+
   const [loading, setLoading] = useState(true);
   const [visibleCourses, setVisibleCourses] = useState(4);
   const { t } = useTranslation("homepage");
-
-  const isNewCourse = (dateArray) => {
-    if (!Array.isArray(dateArray) || dateArray.length < 3) return false;
-    const courseDate = new Date(
-      dateArray[0],
-      dateArray[1] - 1,
-      dateArray[2],
-      dateArray[3] || 0,
-      dateArray[4] || 0,
-      dateArray[5] || 0
-    );
-    const now = new Date();
-    const diffTime = now - courseDate;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    return diffDays <= 7;
-  };
-
-  useEffect(() => {
-    fetchCourseUserEnroll();
-  }, []);
-
-  useEffect(() => {
-    const fetchCoursesAndEnrollments = async () => {
-      try {
-        const [courseRes, enrollRes] = await Promise.all([
-          axios.get(`${URL}/courses/all`),
-          axios.get(`${URL}/enroll/top-enrollments`),
-        ]);
-
-        const allCourses = courseRes?.data?.data || [];
-        const topEnrollCourseIds =
-          enrollRes?.data?.data?.map((ce) => ce.course?.id) || [];
-
-        const freeCourses = allCourses
-          .filter(
-            (course) =>
-              course.price === 0 &&
-              !userEnroll.some((enroll) => enroll.courseId === course.id)
-          )
-          .map((course) => ({
-            ...course,
-            isNew: isNewCourse(course.date),
-            isPopular: topEnrollCourseIds.includes(course.id),
-          }))
-          .sort((a, b) => {
-            const dateA = new Date(...a.date);
-            const dateB = new Date(...b.date);
-            return dateB - dateA;
-          });
-
-        setCourses(freeCourses);
-      } catch (error) {
-        console.error("Error fetching courses or enrollments:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoursesAndEnrollments();
-  }, []);
-
-  //fetch course user enroll
-  const fetchCourseUserEnroll = () => {
-    axios
-      .get(`${URL}/enroll/${parseInt(localStorage.getItem("id"))}`)
-      .then((response) => {
-        setUserEnroll(response.data.data);
-      })
-      .catch((error) => {
-        console.log("Error fetch course enroll user", error.message);
-      });
-  };
 
   const handleShowMore = () => {
     setVisibleCourses((prev) => prev + 4);
@@ -157,19 +101,11 @@ export default function SectionCourseFree() {
           </p>
         )}
 
-        {userEnroll.some((enroll) => enroll.courseId === course.id) ? (
-          <a href={`/user-course`}>
-            <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
-              {t("course.myCourse")}
-            </button>
-          </a>
-        ) : (
-          <a href={`/view-course/${course.id}`}>
-            <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
-              {t("course.viewCourse")}
-            </button>
-          </a>
-        )}
+        <Link to={`/view-course/${course.id}`}>
+          <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-lg font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
+            {t("course.view")}
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -181,9 +117,13 @@ export default function SectionCourseFree() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {loading ? (
+        {isLoading && courses.length === 0 ? (
           <div className="col-span-full">
             <SkeletonSection />
+          </div>
+        ) : isError ? (
+          <div className="col-span-full text-center text-xl font-semibold text-red-500">
+            {t("course.error")} - {error.message}
           </div>
         ) : courses.length > 0 ? (
           courses
