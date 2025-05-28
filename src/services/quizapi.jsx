@@ -157,12 +157,9 @@ export const restoreQuiz = async (id) => {
 // 8. GET ALL Quizzes By Lesson Id
 export const getAllQuizzesByLessonId = async (lessonId) => {
   try {
-    const response = await axios.get(
-      `${URL}/teacher/quizzes/lessons/${lessonId}/all`,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.get(`${URL}/quizzes/lessons/${lessonId}/all`, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching quizzes by lessonId:", error);

@@ -296,7 +296,7 @@ export default function UserViewCourse() {
           <video
             className="rounded-xl w-full shadow-lg"
             controls
-            src={course.lessons[0].videoURL}
+            src={course?.lessons[0]?.videoURL}
           />
           <div className="mt-6 text-center">
             <button

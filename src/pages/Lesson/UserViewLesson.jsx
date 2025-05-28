@@ -15,12 +15,14 @@ import { getAllQuizzesByLessonId } from "../../services/quizapi";
 import { Link } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
+import { Spinner } from "react-bootstrap";
 
 export default function UserViewLesson() {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
   const [lessons, setLessons] = useState([]);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [videoDurations, setVideoDurations] = useState({});
   const videoRefs = useRef([]);
@@ -32,6 +34,7 @@ export default function UserViewLesson() {
   const [mainRect, setMainRect] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
+  const [doneQuizzes, setDoneQuizzes] = useState({});
 
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [lastAllowedTime, setLastAllowedTime] = useState(0);
@@ -40,42 +43,71 @@ export default function UserViewLesson() {
   const userId = parseInt(localStorage.getItem("id"));
 
   useEffect(() => {
-    const fetchCoursesProgress = async () => {
-      try {
-        const response = await axios.get(
-          `${URL}/user/${parseInt(userId)}/courses-progress`,
-          {
+    const fetchDoneQuizzes = async () => {
+      const userId = parseInt(localStorage.getItem("id"));
+      const doneStatus = {};
+
+      const quizList = lessons
+        .flatMap((lesson) => lesson.quizzes || [])
+        .filter((quiz) => quiz.questions && quiz.questions.length > 0);
+
+      const requests = quizList.map((quiz) =>
+        axios
+          .get(`${URL}/quizzes/check/${userId}/${quiz.id}`, {
             withCredentials: true,
-          }
-        );
+          })
+          .then((res) => {
+            doneStatus[quiz.id] = res.data.data === true;
+          })
+          .catch((err) => {
+            console.error("Lỗi khi kiểm tra quiz:", quiz.id, err);
+          })
+      );
 
-        const courseList = response.data.data || [];
-
-        const updatedCourses = courseList.map((course) => {
-          const progressPercent =
-            course.totalLessons > 0
-              ? Math.round(
-                  (course.completedLessons / course.totalLessons) * 100
-                )
-              : 0;
-
-          return {
-            ...course,
-            progress: progressPercent,
-          };
-        });
-
-        setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
-        setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
-      } catch (error) {
-        console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
-      } finally {
-        setLoading(false);
-      }
+      await Promise.all(requests); // Chờ tất cả yêu cầu hoàn tất
+      setDoneQuizzes(doneStatus);
     };
 
-    fetchCoursesProgress();
-  }, [userId]);
+    fetchDoneQuizzes();
+  }, [lessons]);
+
+  // useEffect(() => {
+  //   const fetchCoursesProgress = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${URL}/user/${parseInt(userId)}/courses-progress`,
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
+
+  //       const courseList = response.data.data || [];
+
+  //       const updatedCourses = courseList.map((course) => {
+  //         const progressPercent =
+  //           course.totalLessons > 0
+  //             ? Math.round(
+  //                 (course.completedLessons / course.totalLessons) * 100
+  //               )
+  //             : 0;
+
+  //         return {
+  //           ...course,
+  //           progress: progressPercent,
+  //         };
+  //       });
+
+  //       setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
+  //       setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
+  //     } catch (error) {
+  //       console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCoursesProgress();
+  // }, [userId]);
 
   const handleWatchProgress = (e) => {
     const video = e.target;
@@ -98,7 +130,6 @@ export default function UserViewLesson() {
   const markLessonAsCompleted = async () => {
     try {
       const lessonId = lessons[currentLessonIndex]?.id;
-      const courseId = 78; // Lấy courseId từ đối tượng course
       if (!userId || !courseId || !lessonId) {
         console.warn("Thiếu thông tin để cập nhật tiến độ bài học", {
           userId,
@@ -109,6 +140,7 @@ export default function UserViewLesson() {
       }
 
       await updateLessonProcess(userId, courseId, lessonId);
+      fetchLessonsCompleted();
       console.log("✅ Đã cập nhật tiến độ bài học thành công");
     } catch (error) {
       console.error("❌ Lỗi khi đánh dấu bài học hoàn thành:", error);
@@ -121,21 +153,27 @@ export default function UserViewLesson() {
 
   useEffect(() => {
     const fetchQuizzes = async () => {
-      if (currentLessonIndex !== null) {
+      // Kiểm tra nếu currentLessonIndex hợp lệ và lessons đã có dữ liệu
+      if (
+        currentLessonIndex !== null &&
+        Array.isArray(lessons) &&
+        lessons.length > currentLessonIndex &&
+        lessons[currentLessonIndex]
+      ) {
         const lessonId = lessons[currentLessonIndex].id;
         const result = await getAllQuizzesByLessonId(lessonId);
         if (result?.statusCode === 200) {
           setQuizzes(result.data);
-          setHasQuiz(result.data.length > 0); // Kiểm tra nếu có quiz
+          setHasQuiz(result.data.length > 0);
         } else {
           setQuizzes([]);
-          setHasQuiz(false); // Không có quiz
+          setHasQuiz(false);
         }
       }
     };
 
     fetchQuizzes();
-  }, [currentLessonIndex, lessons]); // Đảm bảo rằng quiz được load lại khi index bài học thay đổi
+  }, [currentLessonIndex, lessons]);
 
   useEffect(() => {
     if (mainLayoutRef.current) {
@@ -149,6 +187,7 @@ export default function UserViewLesson() {
       return () => window.removeEventListener("resize", updateRect);
     }
   }, []);
+
   // Fetching course and lessons data
   useEffect(() => {
     const fetchCourse = async () => {
@@ -173,31 +212,32 @@ export default function UserViewLesson() {
     console.log("LessonId in socket : " + lessonId);
     if (!lessonId) return; // Không gọi nếu chưa có ID hợp lệ
 
-    const socket = new SockJS(`${URLSocket}/ws`);
-    const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      onConnect: () => {
-        // Subscribe to the specific lesson for real-time comments
-        if (lessonId) {
-          client.subscribe(`/topic/lesson/${lessonId}`, (message) => {
-            const newComment = JSON.parse(message.body);
-            setComments((prevComments) => [...prevComments, newComment]);
-          });
-        }
-      },
-    });
+    // const socket = new SockJS(`${URLSocket}/ws`);
+    // const client = new Client({
+    //   webSocketFactory: () => socket,
+    //   reconnectDelay: 5000,
+    //   onConnect: () => {
+    //     // Subscribe to the specific lesson for real-time comments
+    //     if (lessonId) {
+    //       client.subscribe(`/topic/lesson/${lessonId}`, (message) => {
+    //         const newComment = JSON.parse(message.body);
+    //         setComments((prevComments) => [...prevComments, newComment]);
+    //       });
+    //     }
+    //   },
+    // });
 
-    client.activate();
-    setStompClient(client);
+    // client.activate();
+    // setStompClient(client);
 
-    return () => {
-      client.deactivate();
-    };
+    // return () => {
+    //   client.deactivate();
+    // };
   }, [currentLessonIndex, lessons]);
 
   // Handling comment submission
   const addLessonComment = () => {
+    setCommentLoading(true);
     axios
       .post(
         `${URL}/lesson-comment/add`,
@@ -206,6 +246,8 @@ export default function UserViewLesson() {
       )
       .then((response) => {
         console.log("Comment added successfully!");
+        setCommentLoading(false);
+        fetchComments();
         setContent(""); // Reset comment input after successful submission
       })
       .catch((err) => {
@@ -242,6 +284,7 @@ export default function UserViewLesson() {
         console.error("Error fetching comments:", err.message);
       });
   };
+
   // Fetching comments for the current lesson
   useEffect(() => {
     const lessonId = lessons[currentLessonIndex]?.id;
@@ -256,6 +299,26 @@ export default function UserViewLesson() {
     setWatchedPercent(0);
     setLastAllowedTime(0);
   }, [currentLessonIndex]);
+
+  useEffect(() => {
+    fetchLessonsCompleted();
+  }, []);
+
+  //fetch lesson completed by userId, courseId
+  const [idLessonsCompleted, setIdLessonCompleted] = useState([]);
+
+  const fetchLessonsCompleted = () => {
+    axios
+      .get(`${URL}/lessons/completed/${userId}/${courseId}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        setIdLessonCompleted(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get lesson completed " + error.message);
+      });
+  };
 
   return (
     <div className="flex flex-1 text-sm font-semibold box-border relative">
@@ -274,7 +337,7 @@ export default function UserViewLesson() {
             </h2>
             <div className="flex gap-3 mb-6">
               <img
-                src="/logo.png"
+                src={localStorage.getItem("img") || "/user.png"}
                 className="w-10 h-10 bg-gray-300 rounded-full"
                 alt="logo"
               />
@@ -297,7 +360,11 @@ export default function UserViewLesson() {
                     onClick={addLessonComment}
                     className="px-4 py-1 text-sm bg-scolor text-white rounded-full hover:bg-fcolor"
                   >
-                    Comment
+                    {commentLoading ? (
+                      <Spinner animation="border" variant="gray" />
+                    ) : (
+                      "Comment"
+                    )}
                   </button>
                 </div>
               </div>
@@ -313,7 +380,7 @@ export default function UserViewLesson() {
                     />
                     <div className="flex flex-col items-left w-full">
                       <p className="font-semibold">{cmt.username}</p>
-                      <p className="text-xs text-gray-400">{cmt.time}</p>
+                      <p className="text-xs text-gray-400">{cmt.date}</p>
                       <p
                         className="text-gray-600"
                         dangerouslySetInnerHTML={{ __html: cmt.content }}
@@ -510,47 +577,61 @@ export default function UserViewLesson() {
                         onClick={() => setCurrentLessonIndex(index)}
                         className={`cursor-pointer py-2 px-3 rounded-xl ${
                           currentLessonIndex === index
-                            ? "bg-scolor text-white shadow-lg"
+                            ? "bg-blue-700 text-white shadow-lg"
                             : "hover:bg-gray-100 dark:hover:bg-darkBorder"
                         }`}
                       >
                         <span className="flex items-center gap-2">
                           <span>{lesson.lessonName}</span>
 
-                          {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
-                          {currentLessonIndex === index && isCompleted && (
-                            <FaCheckCircle className="text-green-500 ml-2" />
+                          {/* Đánh dấu đã hoàn thành */}
+                          {idLessonsCompleted.some(
+                            (lessonComplete) => lessonComplete === lesson.id
+                          ) && (
+                            <FaCheckCircle className="text-green-500 ml-2 drop-shadow-sm" />
                           )}
 
-                          {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
-                          {lesson.quizzes && lesson.quizzes.length > 0 && (
-                            <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
-                              Quiz
-                            </span>
-                          )}
+                          {/* Có quiz */}
+                          {lesson.quizzes &&
+                            lesson.quizzes.some(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            ) && (
+                              <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                                Quiz
+                              </span>
+                            )}
                         </span>
                       </div>
 
-                      {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
-                      {currentLessonIndex === index &&
-                        lesson.quizzes &&
-                        lesson.quizzes.length > 0 && (
-                          <ul className="ml-6 mt-2 flex flex-col gap-1">
-                            {lesson.quizzes.map((quiz, qIndex) => (
+                      {/* CHỈ hiện quiz nếu đang chọn bài học này */}
+                      {currentLessonIndex === index && (
+                        <ul className="ml-6 mt-2 flex flex-col gap-1">
+                          {lesson.quizzes
+                            .filter(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            )
+                            .map((quiz, qIndex) => (
                               <Link
-                                to={`/user-course/view-lesson/:courseId/view-quiz/${quiz.id}`}
-                                className="hover:text-blue-500"
+                                key={quiz.id || qIndex}
+                                to={`/user-course/view-lesson/${courseId}/view-quiz/${quiz.id}`}
+                                className="hover:no-underline"
                               >
-                                <li
-                                  key={quiz.id || qIndex}
-                                  className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
-                                >
-                                  📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                <li className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-all duration-200">
+                                  <span>
+                                    📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                  </span>
+                                  {doneQuizzes[quiz.id] && (
+                                    <span className="text-green-500 text-lg ml-2">
+                                      ✅
+                                    </span>
+                                  )}
                                 </li>
                               </Link>
                             ))}
-                          </ul>
-                        )}
+                        </ul>
+                      )}
                     </li>
                   ))}
               </ul>
