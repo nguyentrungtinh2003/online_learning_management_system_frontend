@@ -1,68 +1,80 @@
-import React, { useEffect, useState } from "react";
-import URL from "../../../config/URLconfig";
+import React, { useState } from "react";
 import axios from "axios";
-import { PiArrowFatLinesDown, PiMonitorPlayFill } from "react-icons/pi";
-import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
-import { TbCoin } from "react-icons/tb";
+import URL from "../../../config/URLconfig";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
+import { PiArrowFatLinesDown, PiMonitorPlayFill } from "react-icons/pi";
+import { TbCoin } from "react-icons/tb";
+import SkeletonSection from "../../../components/SkeletonLoading/SkeletonSection";
+import { Link } from "react-router-dom";
+
+const isNewCourse = (dateArr) => {
+  if (!dateArr) return false;
+  const courseDate = new Date(
+    dateArr[0],
+    (dateArr[1] || 1) - 1,
+    dateArr[2] || 1,
+    dateArr[3] || 0,
+    dateArr[4] || 0,
+    dateArr[5] || 0
+  );
+  const now = new Date();
+  const diffDays = (now - courseDate) / (1000 * 60 * 60 * 24);
+  return diffDays <= 30;
+};
+
+const fetchProCourses = async () => {
+  const [courseRes, enrollRes] = await Promise.all([
+    axios.get(`${URL}/courses/all`),
+    axios.get(`${URL}/enroll/top-enrollments`),
+  ]);
+
+  const allCourses = courseRes?.data?.data || [];
+  const topEnrollCourseIds =
+    enrollRes?.data?.data?.map((ce) => ce.course?.id) || [];
+
+  const paidCourses = allCourses
+    .filter(
+      (course) =>
+        course.price > 0 &&
+        Array.isArray(course.lessons) &&
+        course.lessons.length > 0
+    )
+    .map((course) => ({
+      ...course,
+      isNew: isNewCourse(course.date),
+      isPopular: topEnrollCourseIds.includes(course.id),
+    }))
+    .sort((a, b) => {
+      const dateA = new Date(...(a.date || [0, 1, 1]));
+      const dateB = new Date(...(b.date || [0, 1, 1]));
+      return dateB - dateA;
+    });
+
+  return paidCourses;
+};
 
 export default function SectionCoursePro() {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [visibleCourses, setVisibleCourses] = useState(4);
   const { t } = useTranslation("homepage");
+  const [visibleCourses, setVisibleCourses] = useState(4);
 
-  useEffect(() => {
-    const isNewCourse = (dateArr) => {
-      if (!dateArr) return false;
-      const courseDate = new Date(
-        dateArr[0],
-        (dateArr[1] || 1) - 1,
-        dateArr[2] || 1,
-        dateArr[3] || 0,
-        dateArr[4] || 0,
-        dateArr[5] || 0
-      );
-      const now = new Date();
-      const diffDays = (now - courseDate) / (1000 * 60 * 60 * 24);
-      return diffDays <= 30;
-    };
+  const {
+    data: courses = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["proCourses"],
+    queryFn: fetchProCourses,
+    staleTime: 1000 * 60 * 15,
+    cacheTime: 1000 * 60 * 15,
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
 
-    const fetchCoursesAndEnrollments = async () => {
-      try {
-        const [courseRes, enrollRes] = await Promise.all([
-          axios.get(`${URL}/courses/all`),
-          axios.get(`${URL}/enroll/top-enrollments`)
-        ]);
-
-        const allCourses = courseRes?.data?.data || [];
-        const topEnrollCourseIds =
-          enrollRes?.data?.data?.map((ce) => ce.course?.id) || [];
-
-        const paidCourses = allCourses
-          .filter((course) => course.price > 0)
-          .map((course) => ({
-            ...course,
-            isNew: isNewCourse(course.date),
-            isPopular: topEnrollCourseIds.includes(course.id),
-          }))
-          .sort((a, b) => {
-            const dateA = new Date(...(a.date || [0, 1, 1]));
-            const dateB = new Date(...(b.date || [0, 1, 1]));
-            return dateB - dateA;
-          });
-
-        setCourses(paidCourses);
-      } catch (error) {
-        console.error("Error fetching courses or enrollments:", error);
-        setCourses([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCoursesAndEnrollments();
-  }, []);
+  const handleShowMore = () => {
+    setVisibleCourses((prev) => prev + 4);
+  };
 
   const CourseCard = ({ course }) => (
     <div className="font-semibold h-full dark:bg-darkSubbackground dark:text-darkSubtext dark:border-darkBorder border-sicolor border-1 text-gray-600 rounded-2xl overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl duration-300">
@@ -89,15 +101,17 @@ export default function SectionCoursePro() {
           {course.courseName || t("course.defaultCourseName")}
         </h3>
 
-        <p className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug lg:h-[2.5rem]">
-          {course.description || t("course.defaultDescription")}
-        </p>
+        <p
+          className="text-xl lg:text-sm mt-2 overflow-hidden text-ellipsis line-clamp-2 leading-snug lg:h-[2.5rem]"
+          dangerouslySetInnerHTML={{
+            __html: course.description || t("course.defaultDescription"),
+          }}
+        ></p>
 
         <p className="text-sm my-2">
           <span className="text-fcolor flex items-center gap-1 text-3xl lg:text-2xl font-semibold">
             <span className="line-through flex gap-1 justify-center items-center text-gray-400">
               {(course.price * 2).toLocaleString()}
-              <TbCoin color="gold" size={25} />
             </span>
             <span>{course.price.toLocaleString()}</span>
             <TbCoin color="gold" size={25} />
@@ -106,7 +120,11 @@ export default function SectionCoursePro() {
 
         <div className="flex items-center w-full justify-between">
           <p className="text-xl lg:text-sm mt-1 flex w-full gap-2 items-center">
-            <img className="h-6 w-6" alt={course.user?.username} src={course.user?.img} />
+            <img
+              className="h-6 w-6"
+              alt={course.user?.username}
+              src={course.user?.img}
+            />
             <span>{course.user?.username}</span>
           </p>
           <p className="mt-1 gap-2 text-xl lg:text-sm flex items-center">
@@ -129,18 +147,14 @@ export default function SectionCoursePro() {
           </p>
         )}
 
-        <a href={`/view-course/${course.id}`}>
+        <Link to={`/view-course/${course.id}`}>
           <button className="mt-4 w-full bg-wcolor border-2 hover:text-wcolor dark:text-darkText dark:border-darkBorder dark:bg-darkSubbackground text-gray-600 text-xl font-semibold py-2 rounded-lg dark:hover:bg-fcolor hover:bg-fcolor transition duration-300">
             {t("course.viewCourse")}
           </button>
-        </a>
+        </Link>
       </div>
     </div>
   );
-
-  const handleShowMore = () => {
-    setVisibleCourses((prev) => prev + 4);
-  };
 
   return (
     <div className="w-full mx-auto px-4 pt-4 sm:px-6 lg:px-8">
@@ -149,14 +163,18 @@ export default function SectionCoursePro() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {loading ? (
+        {isLoading ? (
           <div className="col-span-full">
             <SkeletonSection />
           </div>
+        ) : isError ? (
+          <div className="col-span-full text-center text-xl font-semibold text-red-500">
+            {t("course.error")} - {error.message}
+          </div>
         ) : courses.length > 0 ? (
-          courses.slice(0, visibleCourses).map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))
+          courses
+            .slice(0, visibleCourses)
+            .map((course) => <CourseCard key={course.id} course={course} />)
         ) : (
           <div className="col-span-full text-center text-xl font-semibold text-gray-500">
             {t("course.noCourses")}
@@ -164,7 +182,7 @@ export default function SectionCoursePro() {
         )}
       </div>
 
-      {!loading && visibleCourses < courses.length && (
+      {visibleCourses < courses.length && (
         <div className="w-full justify-center items-center mt-12 flex">
           <button
             onClick={handleShowMore}

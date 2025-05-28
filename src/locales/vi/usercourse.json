@@ -10,5 +10,35 @@
   "newLabel": "Mới học",
   "almostLabel": "Gần hoàn thành",
   "noCompleted": "Không có khóa học nào hoàn thành.",
-  "noInProgress": "Không có khóa học nào đang học."
+  "noInProgress": "Không có khóa học nào đang học.",
+  "course": {
+    "buyWithCoin": "Tham gia với {{price}} coin",
+    "joinFree": "Tham gia miễn phí",
+    "watchPreview": "Xem video giới thiệu",
+    "whatYouWillLearn": "Bạn sẽ học được gì?",
+    "learn": {
+      "skill": "🎯 Kỹ năng thực chiến",
+      "desc1": "Làm dự án thật, không chỉ lý thuyết",
+      "thinking": "💡 Tư duy giải quyết vấn đề",
+      "desc2": "Học cách phân tích, gỡ bug, tối ưu",
+      "logic": "🧠 Logic lập trình",
+      "desc3": "Hiểu rõ thuật toán và cấu trúc dữ liệu",
+      "confidence": "🚀 Tự tin phỏng vấn",
+      "desc4": "Sẵn sàng cho mọi vòng tuyển dụng"
+    },
+    "enrollNow": "Đăng ký ngay - {{price}} coin",
+    "learnNowFree": "Học ngay miễn phí",
+    "content": "Nội dung khóa học",
+    "noVideo": "Chưa có video",
+    "hasVideo": "Có video",
+    "missingVideo": "Thiếu video",
+    "seeAllLessons": "Xem tất cả bài học",
+    "instructorTitle": "Fullstack Developer, Mentor @ Code Arena",
+    "testimonialTitle": "Học viên nói gì?",
+    "testimonial": "“Khóa học cực kỳ thực tế và dễ hiểu. Mình đã xin được job ngay sau khi học xong!”",
+    "readyTitle": "Sẵn sàng để bắt đầu?",
+    "readyDesc": "Tham gia ngay và bắt đầu hành trình lập trình chuyên nghiệp của bạn.",
+    "buyCourse": "Mua khóa học - {{price}} coin",
+    "startFree": "Bắt đầu miễn phí"
+  }
 }
