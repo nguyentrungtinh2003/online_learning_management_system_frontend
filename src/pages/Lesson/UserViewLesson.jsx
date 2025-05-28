@@ -587,7 +587,7 @@ export default function UserViewLesson() {
       </div>
 
       {/* Sidebar */}
-      <div className="shadow dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
+      <div className="shadow dark:text-darkText w-[20vw] dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
         <div className="sticky top-5">
           <div className="space-y-6">
             <div className="text-center">Danh sách bài học</div>
@@ -604,7 +604,7 @@ export default function UserViewLesson() {
             </div>
 
             <div>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-2 h-[60vh] overflow-auto">
                 {[...lessons]
                   .sort((a, b) => a.id - b.id)
                   .map((lesson, index) => (

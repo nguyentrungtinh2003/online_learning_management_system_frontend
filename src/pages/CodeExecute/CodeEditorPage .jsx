@@ -169,7 +169,7 @@ const CodeEditorPage = () => {
         .then((response) => {
           toast.success("Xoá lịch sử code thành công !", {
             position: "top-right",
-            autoClose: 3000,
+            autoClose: 2000,
             transition: Slide,
           });
           setTimeout(() => {
@@ -183,7 +183,7 @@ const CodeEditorPage = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-2 h-fit dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
+    <div className="w-full flex flex-col gap-2 h-full dark:border dark:border-darkBorder p-2 bg-wcolor dark:bg-darkBackground rounded-2xl shadow-2xl font-mono">
       <div className="flex px-2">
         <h2 className="text-2xl font-bold text-cyan-500 flex items-center gap-2">
           {t("title")}
@@ -220,9 +220,9 @@ const CodeEditorPage = () => {
       </div>
 
       {/* Màn hình chính */}
-      <div className="flex h-[415px] gap-2">
+      <div className="flex h-full gap-2">
         {/* Lịch sử bên trái */}
-        <div className="w-1/4 border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground space-y-3 max-h-full">
+        <div className="w-1/4 overflow-x-hidden border-2 dark:border-darkBorder rounded-lg overflow-y-auto bg-wcolor dark:bg-darkSubbackground space-y-3 max-h-full">
           <h3 className="text-lg h-10 w-full bg-wcolor dark:bg-darkSubbackground font-semibold text-cyan-500 sticky  top-0 z-10 py-2 px-3 rounded">
             {t("history")}
           </h3>
@@ -247,7 +247,9 @@ const CodeEditorPage = () => {
                     <span className="font-semibold text-cyan-500">
                       {t("code")}:
                     </span>{" "}
-                    {hisco.code}
+                    {hisco.code.length > 15
+                      ? hisco.code.slice(0, 15) + "..."
+                      : hisco.code}
                   </p>
 
                   <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -267,13 +269,15 @@ const CodeEditorPage = () => {
                   )}
                 </div>
 
-                <button
-                  onClick={() => deleteCodeByUser(hisco.id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                  title={t("codeEditor.delete")}
-                >
-                  <FaTrash />
-                </button>
+                {codeId === hisco.id && (
+                  <button
+                    onClick={() => deleteCodeByUser(hisco.id)}
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                    title={t("codeEditor.delete")}
+                  >
+                    <FaTrash />
+                  </button>
+                )}
               </div>
             ))
           ) : (
@@ -284,7 +288,6 @@ const CodeEditorPage = () => {
         {/* Editor */}
         <div className="flex-1 border-2 dark:border-darkBorder text-gray-500 rounded-lg overflow-hidden shadow-inner">
           <Editor
-            height="110%"
             language={language}
             theme={isDarkMode ? "custom-dark" : "custom-light"}
             value={code}
@@ -294,6 +297,10 @@ const CodeEditorPage = () => {
               minimap: { enabled: false },
               wordWrap: "on",
               automaticLayout: true,
+              padding: {
+                top: 15,
+                bottom: 12,
+              },
             }}
           />
         </div>
