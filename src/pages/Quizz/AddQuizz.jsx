@@ -38,7 +38,6 @@ const AddQuizz = () => {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
   const [lessons, setLessons] = useState([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [imgPreview, setImgPreview] = useState(null);
 
   const customStyles = {
@@ -189,7 +188,7 @@ const AddQuizz = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading || isSubmitted) return;
+    if (loading) return;
 
     const missingFields = [];
 
@@ -274,7 +273,6 @@ const AddQuizz = () => {
         position: "top-right",
         autoClose: 1000,
       });
-      setIsSubmitted(true);
       handleReload();
 
       setTimeout(() => {
@@ -444,20 +442,30 @@ const AddQuizz = () => {
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Link
-              onClick={() => navigate(-1)}
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading}
+              className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
               {t("cancel")}
-            </Link>
+            </button>
             <button
               type="submit"
-              disabled={loading}
-              className={`px-6 py-2 rounded text-white ${
-                loading ? "bg-gray-400" : "bg-scolor hover:bg-opacity-80"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
+              disabled={loading}
             >
-              {loading ? <p>{t("processing")}</p> : <p>{t("submit")}</p>}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                <p>{t("submit")}</p>
+              )}{" "}
             </button>
           </div>
         </form>

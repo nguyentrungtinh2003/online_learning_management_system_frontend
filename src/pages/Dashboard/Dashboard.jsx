@@ -12,14 +12,7 @@ const Dashboard = () => {
   const [countCourse, setCountCourse] = useState(0);
   const [amount, setAmount] = useState(0);
   const [logData, setLogData] = useState([]);
-
-  useEffect(() => {
-    fetchTotalUser();
-    fetchTotalCourse();
-    fetchTotalAmount();
-    fetchLog();
-  }, []);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
   useEffect(() => {
@@ -28,65 +21,43 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const fetchTotalUser = () => {
-    axios
-      .get(`${URL}/user/count`)
-      .then((response) => {
-        setCountUser(response.data.data);
-      })
-      .catch((error) => {
-        console.log("Error get count user " + error.message);
-      });
-  };
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true);
 
-  const fetchTotalCourse = () => {
-    axios
-      .get(`${URL}/courses/count`)
-      .then((response) => {
-        setCountCourse(response.data.data);
-      })
-      .catch((error) => {
-        console.log("Error get count course " + error.message);
-      });
-  };
+        const [userRes, courseRes, amountRes, logRes] = await Promise.all([
+          axios.get(`${URL}/user/count`),
+          axios.get(`${URL}/courses/count`),
+          axios.get(`${URL}/payments/total`),
+          axios.get(`${URL}/admin/logs/all`, { withCredentials: true }),
+        ]);
 
-  const fetchTotalAmount = () => {
-    axios
-      .get(`${URL}/payments/total`)
-      .then((response) => {
-        setAmount(response.data.data);
-      })
-      .catch((error) => {
-        console.log("Error get amount " + error.message);
-      });
-  };
+        setCountUser(userRes.data.data);
+        setCountCourse(courseRes.data.data);
+        setAmount(amountRes.data.data);
 
-  const fetchLog = () => {
-    axios
-      .get(`${URL}/admin/logs/all`, { withCredentials: true })
-      .then((response) => {
+        // Xử lý log trong 30 ngày
         const now = new Date();
         const past30Days = new Date();
         past30Days.setDate(now.getDate() - 30);
 
-        const logs = response.data.data;
-
-        // Lọc log trong 30 ngày gần nhất
+        const logs = logRes.data.data;
         const recentLogs = logs.filter((log) => {
-          const logDate = new Date(...log.timestamp); // timestamp là mảng như [2024, 6, 30, 12, 34, 56]
+          const logDate = new Date(...log.timestamp);
           return logDate >= past30Days;
         });
 
-        // Tổng số lượt truy cập mới (đếm số lượng log hợp lệ)
-        const accessCount = recentLogs.length;
+        setLogData(recentLogs.length);
+      } catch (error) {
+        console.log("Error fetching data:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-        // Gán giá trị cho state
-        setLogData(accessCount); // bạn cần tạo state accessCount
-      })
-      .catch((error) =>
-        console.log("Error fetching access logs: " + error.message)
-      );
-  };
+    fetchAllData();
+  }, []);
 
   const stats = [
     {
@@ -116,6 +87,13 @@ const Dashboard = () => {
       ),
     },
   ];
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 h-full">

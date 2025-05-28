@@ -10,6 +10,8 @@ const AdminEditBlog = () => {
   const navigate = useNavigate();
   const { t } = useTranslation("adminmanagement");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -39,6 +41,7 @@ const AdminEditBlog = () => {
   }, []);
 
   const fetchBlog = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.get(`${URL}/blogs/${id}`, {
         withCredentials: true,
@@ -50,7 +53,6 @@ const AdminEditBlog = () => {
         description: data.description,
         userId: data.user?.id,
         username: data.user?.username,
-
         date: data.date,
         interactions: data.interactions,
         views: data.views,
@@ -60,6 +62,8 @@ const AdminEditBlog = () => {
       setVideo(data.video);
     } catch (error) {
       console.error("Error fetching blog:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,6 +84,7 @@ const AdminEditBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitted(true);
     const payload = {
       id: blogData.id,
       blogName: blogData.blogName,
@@ -106,9 +111,17 @@ const AdminEditBlog = () => {
     } catch (error) {
       alert("Lỗi khi cập nhật blog!");
       console.error(error);
+    } finally {
+      setIsSubmitted(false);
     }
   };
-
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
   return (
     <div className="w-full">
       <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
@@ -253,9 +266,17 @@ const AdminEditBlog = () => {
             </Link>
             <button
               type="submit"
-              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80"
+              className="px-6 py-2 bg-scolor text-ficolor rounded-lg hover:bg-opacity-80 flex items-center gap-2 disabled:opacity-60"
+              disabled={isSubmitted}
             >
-              {t("editBlog.submit")}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("editBlog.submit")
+              )}
             </button>
           </div>
         </form>

@@ -170,6 +170,19 @@ export const updateLessonProcess = async (userId, courseId, lessonId) => {
         withCredentials: true,
       }
     );
+    console.log(
+      "Request URL:",
+      `${URL}/process/update/${userId}/${courseId}/${lessonId}`
+    );
+    console.log(
+      "UserId:",
+      userId,
+      "CourseId:",
+      courseId,
+      "LessonId:",
+      lessonId
+    );
+
     return response.data; // Trả về dữ liệu từ backend
   } catch (error) {
     if (error.response) {

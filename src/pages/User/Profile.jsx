@@ -526,6 +526,7 @@ const Profile = () => {
                   value={user.roleEnum}
                   variant="outlined"
                   InputProps={{
+                    readOnly: true,
                     sx: {
                       "& fieldset": { borderColor: "rgb(75 85 99)" },
                       "& input": {
@@ -544,10 +545,17 @@ const Profile = () => {
               <div className="col-span-2 flex text-black justify-end">
                 <button
                   onClick={() => updateUser()}
-                  className="border-2 border-sicolor dark:bg-darkText dark:hover:text-darkText dark:hover:bg-darkSubbackground hover:bg-sicolor hover:text-darkText rounded font-semibold py-2 px-4"
+                  className={`px-6 py-2 rounded-lg ${
+                    loadingUpdate
+                      ? "bg-gray-400 text-white"
+                      : "bg-scolor text-ficolor hover:bg-opacity-80"
+                  }`}
                 >
                   {loadingUpdate ? (
-                    <Spinner animation="border" variant="blue" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                      {t("processing")}
+                    </div>
                   ) : (
                     t("saveChange")
                   )}

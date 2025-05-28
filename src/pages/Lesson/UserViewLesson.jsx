@@ -16,11 +16,13 @@ import { Link } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
 import { Spinner } from "react-bootstrap";
+import { FiDownload } from "react-icons/fi";
 
 export default function UserViewLesson() {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
+  const [courses, setCourses] = useState({});
   const [lessons, setLessons] = useState([]);
   const [commentLoading, setCommentLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -34,12 +36,124 @@ export default function UserViewLesson() {
   const [mainRect, setMainRect] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
+  const [doneQuizzes, setDoneQuizzes] = useState({});
+
+  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "material"
+
+  const [courseProgress, setCourseProgress] = useState(0);
 
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [lastAllowedTime, setLastAllowedTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  const [visibleMaterials, setVisibleMaterials] = useState(4);
+
+  const handleShowMore = () => {
+    setVisibleMaterials((prev) => prev + 4); // mỗi lần nhấn hiển thị thêm 5 tài liệu
+  };
+
   const userId = parseInt(localStorage.getItem("id"));
+
+  useEffect(() => {
+    const fetchDoneQuizzes = async () => {
+      const userId = parseInt(localStorage.getItem("id"));
+      const doneStatus = {};
+
+      const quizList = lessons
+        .flatMap((lesson) => lesson.quizzes || [])
+        .filter((quiz) => quiz.questions && quiz.questions.length > 0);
+
+      const requests = quizList.map((quiz) =>
+        axios
+          .get(`${URL}/quizzes/check/${userId}/${quiz.id}`, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            doneStatus[quiz.id] = res.data.data === true;
+          })
+          .catch((err) => {
+            console.error("Lỗi khi kiểm tra quiz:", quiz.id, err);
+          })
+      );
+
+      await Promise.all(requests); // Chờ tất cả yêu cầu hoàn tất
+      setDoneQuizzes(doneStatus);
+    };
+
+    fetchDoneQuizzes();
+  }, [lessons]);
+
+  useEffect(() => {
+    const fetchCourseProgress = async () => {
+      try {
+        const response = await axios.get(
+          `${URL}/user/${parseInt(userId)}/courses-progress`,
+          { withCredentials: true }
+        );
+
+        const courseList = response.data.data || [];
+        const currentCourse = courseList.find(
+          (course) => course.courseId === parseInt(courseId)
+        );
+
+        if (currentCourse) {
+          const progressPercent =
+            currentCourse.totalLessons > 0
+              ? Math.round(
+                  (currentCourse.completedLessons /
+                    currentCourse.totalLessons) *
+                    100
+                )
+              : 0;
+
+          setCourseProgress(progressPercent);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải tiến độ khóa học:", error);
+      }
+    };
+
+    fetchCourseProgress();
+  }, [courseId, userId]);
+
+  // useEffect(() => {
+  //   const fetchCoursesProgress = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${URL}/user/${parseInt(userId)}/courses-progress`,
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
+
+  //       const courseList = response.data.data || [];
+
+  //       const updatedCourses = courseList.map((course) => {
+  //         const progressPercent =
+  //           course.totalLessons > 0
+  //             ? Math.round(
+  //                 (course.completedLessons / course.totalLessons) * 100
+  //               )
+  //             : 0;
+
+  //         return {
+  //           ...course,
+  //           progress: progressPercent,
+  //         };
+  //       });
+
+  //       setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
+  //       setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
+  //     } catch (error) {
+  //       console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCoursesProgress();
+  // }, [userId]);
+
   const handleWatchProgress = (e) => {
     const video = e.target;
     const current = video.currentTime;
@@ -61,7 +175,6 @@ export default function UserViewLesson() {
   const markLessonAsCompleted = async () => {
     try {
       const lessonId = lessons[currentLessonIndex]?.id;
-      // Lấy courseId từ đối tượng course
       if (!userId || !courseId || !lessonId) {
         console.warn("Thiếu thông tin để cập nhật tiến độ bài học", {
           userId,
@@ -85,21 +198,27 @@ export default function UserViewLesson() {
 
   useEffect(() => {
     const fetchQuizzes = async () => {
-      if (currentLessonIndex !== null) {
+      // Kiểm tra nếu currentLessonIndex hợp lệ và lessons đã có dữ liệu
+      if (
+        currentLessonIndex !== null &&
+        Array.isArray(lessons) &&
+        lessons.length > currentLessonIndex &&
+        lessons[currentLessonIndex]
+      ) {
         const lessonId = lessons[currentLessonIndex].id;
         const result = await getAllQuizzesByLessonId(lessonId);
         if (result?.statusCode === 200) {
           setQuizzes(result.data);
-          setHasQuiz(result.data.length > 0); // Kiểm tra nếu có quiz
+          setHasQuiz(result.data.length > 0);
         } else {
           setQuizzes([]);
-          setHasQuiz(false); // Không có quiz
+          setHasQuiz(false);
         }
       }
     };
 
     fetchQuizzes();
-  }, [currentLessonIndex, lessons]); // Đảm bảo rằng quiz được load lại khi index bài học thay đổi
+  }, [currentLessonIndex, lessons]);
 
   useEffect(() => {
     if (mainLayoutRef.current) {
@@ -113,6 +232,7 @@ export default function UserViewLesson() {
       return () => window.removeEventListener("resize", updateRect);
     }
   }, []);
+
   // Fetching course and lessons data
   useEffect(() => {
     const fetchCourse = async () => {
@@ -120,6 +240,8 @@ export default function UserViewLesson() {
         const response = await getCourseById(courseId);
         if (response && response.statusCode === 200) {
           setLessons(response.data.lessons);
+          setCourses(response.data);
+          console.log("Course data:", courses);
         } else {
           console.error("Error loading course data", response);
         }
@@ -413,25 +535,169 @@ export default function UserViewLesson() {
             {/* Thông tin bài học */}
             {!loadingVideo && (
               <div className="space-y-2 mb-40 dark:text-darkSubtext">
-                <div className="flex w-full justify-between my-4">
-                  <h1 className="text-xl font-bold dark:text-darkText">
-                    {lessons[currentLessonIndex]?.lessonName}
-                    {/* Hiển thị icon check nếu bài học hoàn thành */}
-                  </h1>
-                  <button className="hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText border-2 dark:border-darkBorder py-2 px-10 hover:shadow duration-300 rounded-xl">
-                    Thêm ghi chú tại 00:00:00
+                {/* Thanh chọn tab */}
+                <div className="flex space-x-4 mb-4">
+                  <button
+                    className={`py-2 px-4 rounded-t-lg ${
+                      activeTab === "overview"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    Tổng quan
+                  </button>
+                  <button
+                    className={`py-2 px-4 rounded-t-lg ${
+                      activeTab === "material"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("material")}
+                  >
+                    Tài liệu
                   </button>
                 </div>
-                <h2>Cập nhật tháng 11 năm 2024</h2>
-                <p className="text-lg">
-                  Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
-                  xem Code Arena có gì mới nhé
-                </p>
-                <ul>
-                  <li>Fanpage: http://psdvsnv.com</li>
-                  <li>Group: http://psdvsnv.com</li>
-                  <li>Youtube: http://psdvsnv.com</li>
-                </ul>
+
+                {/* Nội dung tab */}
+                {activeTab === "overview" && (
+                  <>
+                    <div className="flex w-full justify-between my-4">
+                      <h1 className="text-xl font-bold dark:text-darkText">
+                        {lessons[currentLessonIndex]?.lessonName}
+                      </h1>
+                      <button className="hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText border-2 dark:border-darkBorder py-2 px-10 hover:shadow duration-300 rounded-xl">
+                        Thêm ghi chú tại 00:00:00
+                      </button>
+                    </div>
+                    <h2>
+                      Cập nhật{" "}
+                      {lessons[currentLessonIndex]?.updated
+                        ? new Date(
+                            lessons[currentLessonIndex].updated
+                          ).toLocaleDateString("vi-VN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "Null"}
+                    </h2>
+                    <p className="text-lg">
+                      Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám
+                      thính” xem Code Arena có gì mới nhé
+                    </p>
+                    <ul>
+                      <li>
+                        Fanpage:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Fanpage
+                        </a>
+                      </li>
+                      <li>
+                        Group:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Group
+                        </a>
+                      </li>
+                      <li>
+                        Youtube:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Youtube Channel
+                        </a>
+                      </li>
+                    </ul>
+                  </>
+                )}
+
+                {activeTab === "material" && (
+                  <>
+                    <h2 className="text-xl font-semibold dark:text-darkText mb-4">
+                      Tài liệu khóa học
+                    </h2>
+                    {courses?.courseMaterials?.length > 0 ? (
+                      <>
+                        <ul className="space-y-3">
+                          {courses.courseMaterials
+                            .slice(0, visibleMaterials) // Chỉ hiển thị tối đa visibleMaterials
+                            .map((material, idx) => (
+                              <li
+                                key={idx}
+                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                              >
+                                <div>
+                                  <h3 className="text-lg font-medium dark:text-darkText">
+                                    {material.title}
+                                  </h3>
+                                  <h3 className="text-sm text-gray-500 dark:text-darkSubtext mt-1">
+                                    {material.uploadDate
+                                      ? new Date(
+                                          material.uploadDate[0],
+                                          material.uploadDate[1] - 1,
+                                          material.uploadDate[2],
+                                          material.uploadDate[3] || 0,
+                                          material.uploadDate[4] || 0,
+                                          material.uploadDate[5] || 0
+                                        ).toLocaleDateString("vi-VN", {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                        })
+                                      : "N/A"}
+                                  </h3>
+
+                                  <p className="text-sm text-gray-600 dark:text-darkSubtext mt-0.5">
+                                    {material.description}
+                                  </p>
+                                </div>
+                                <a
+                                  href={material.file}
+                                  download
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 font-semibold mt-2 sm:mt-0"
+                                >
+                                  <FiDownload className="mr-1" />
+                                  Tải tài liệu
+                                </a>
+                              </li>
+                            ))}
+                        </ul>
+
+                        {/* Nút Xem thêm khi còn tài liệu chưa hiển thị đủ */}
+                        {visibleMaterials < courses.courseMaterials.length && (
+                          <div
+                            className="space-y-2 dark:text-darkSubtext"
+                            style={{ paddingBottom: "150px" }}
+                          >
+                            <button
+                              onClick={handleShowMore}
+                              className="font-semibold text-gray-500 flex flex-col items-center hover:text-blue-600 transition duration-300"
+                            >
+                              {/* Bạn có thể thay icon nếu muốn */}
+                              <FiDownload size={25} />
+                              <p>Xem thêm</p>
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-gray-500 dark:text-darkSubtext">
+                        Chưa có tài liệu nào cho bài học này.
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -439,23 +705,24 @@ export default function UserViewLesson() {
       </div>
 
       {/* Sidebar */}
-      <div className="shadow dark:text-darkText dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
+      <div className="shadow dark:text-darkText w-[20vw] dark:border dark:border-darkBorder dark:bg-darkSubbackground h-full p-4 space-y-4 mx-2 justify-between flex flex-col rounded-xl">
         <div className="sticky top-5">
           <div className="space-y-6">
             <div className="text-center">Danh sách bài học</div>
             {/* Progress bar */}
             <div className="mt-4">
               <div className="text-center">
-                Tiến độ video: {Math.round(watchedPercent)}%
+                Tiến độ khóa học: {Math.round(courseProgress)}%
               </div>
               <progress
-                value={watchedPercent}
+                value={courseProgress}
                 max="100"
                 className="w-full"
               ></progress>
             </div>
+
             <div>
-              <ul className="flex flex-col gap-2">
+              <ul className="pr-2 flex flex-col gap-2 h-[60vh] overflow-auto">
                 {[...lessons]
                   .sort((a, b) => a.id - b.id)
                   .map((lesson, index) => (
@@ -464,49 +731,61 @@ export default function UserViewLesson() {
                         onClick={() => setCurrentLessonIndex(index)}
                         className={`cursor-pointer py-2 px-3 rounded-xl ${
                           currentLessonIndex === index
-                            ? "bg-scolor text-white shadow-lg"
+                            ? "bg-blue-700 text-white shadow-lg"
                             : "hover:bg-gray-100 dark:hover:bg-darkBorder"
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <span>{lesson.lessonName}</span>
+                          <span className="truncate max-w-[200px] whitespace-nowrap overflow-hidden">
+                            {lesson.lessonName}
+                          </span>
 
-                          {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
+                          {/* Đánh dấu đã hoàn thành */}
                           {idLessonsCompleted.some(
                             (lessonComplete) => lessonComplete === lesson.id
                           ) && (
-                            <FaCheckCircle className="text-green-500 ml-2" />
+                            <FaCheckCircle className="text-green-500 shrink-0 ml-2 drop-shadow-sm" />
                           )}
 
-                          {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
-                          {lesson.quizzes && lesson.quizzes.length > 0 && (
-                            <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
-                              Quiz
-                            </span>
-                          )}
+                          {/* Có quiz */}
+                          {lesson.quizzes &&
+                            lesson.quizzes.some(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            ) && (
+                              <span className="text-xs shrink-0 text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                                Quiz
+                              </span>
+                            )}
                         </span>
                       </div>
 
-                      {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
-                      {currentLessonIndex === index &&
-                        lesson.quizzes &&
-                        lesson.quizzes.length > 0 && (
-                          <ul className="ml-6 mt-2 flex flex-col gap-1">
-                            {lesson.quizzes.map((quiz, qIndex) => (
+                      {/* CHỈ hiện quiz nếu đang chọn bài học này */}
+                      {currentLessonIndex === index && (
+                        <ul className=" mt-2 flex flex-col gap-1">
+                          {lesson.quizzes
+                            .filter(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            )
+                            .map((quiz, qIndex) => (
                               <Link
-                                to={`/user-course/view-lesson/:courseId/view-quiz/${quiz.id}`}
-                                className="hover:text-blue-500"
+                                key={quiz.id || qIndex}
+                                to={`/user-course/view-lesson/${courseId}/view-quiz/${quiz.id}`}
+                                className="hover:no-underline"
                               >
-                                <li
-                                  key={quiz.id || qIndex}
-                                  className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
-                                >
-                                  📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                <li className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-all duration-200">
+                                  <span>
+                                    📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                  </span>
+                                  {doneQuizzes[quiz.id] && (
+                                    <FaCheckCircle className="text-green-500 shrink-0 ml-2 drop-shadow-sm" />
+                                  )}
                                 </li>
                               </Link>
                             ))}
-                          </ul>
-                        )}
+                        </ul>
+                      )}
                     </li>
                   ))}
               </ul>

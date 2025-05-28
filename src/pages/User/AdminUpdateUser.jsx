@@ -4,7 +4,6 @@ import axios from "axios";
 import URL from "../../config/URLconfig";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
-import { Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
 const AdminUpdateUser = () => {
@@ -66,8 +65,8 @@ const AdminUpdateUser = () => {
 
   if (loading)
     return (
-      <div className="container text-center my-5">
-        <Spinner animation="border" variant="primary" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
 
@@ -96,7 +95,7 @@ const AdminUpdateUser = () => {
             {/* Username */}
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("editUser.username")}
+                {t("addUser.username")}
               </label>
               <input
                 type="text"
@@ -109,7 +108,7 @@ const AdminUpdateUser = () => {
 
             {/* Email */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("editUser.email")}</label>
+              <label className="w-1/4 font-medium">{t("addUser.email")}</label>
               <input
                 type="email"
                 name="email"
@@ -121,7 +120,7 @@ const AdminUpdateUser = () => {
 
             {/* Phone */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("editUser.phone")}</label>
+              <label className="w-1/4 font-medium">{t("addUser.phoneNumber")}</label>
               <input
                 type="tel"
                 name="phoneNumber"
@@ -134,7 +133,7 @@ const AdminUpdateUser = () => {
             {/* Address */}
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("editUser.address")}
+                {t("addUser.address")}
               </label>
               <input
                 type="text"
@@ -148,7 +147,7 @@ const AdminUpdateUser = () => {
             {/* Birth Day */}
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("editUser.birthDay")}
+                {t("addUser.birthDay")}
               </label>
               <input
                 type="date"
@@ -174,7 +173,7 @@ const AdminUpdateUser = () => {
 
             {/* Point */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("editUser.point")}</label>
+              <label className="w-1/4 font-medium">{t("addUser.point")}</label>
               <input
                 type="number"
                 name="point"
@@ -186,7 +185,7 @@ const AdminUpdateUser = () => {
 
             {/* Coin */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("editUser.coin")}</label>
+              <label className="w-1/4 font-medium">{t("addUser.coin")}</label>
               <input
                 type="number"
                 name="coin"
@@ -198,7 +197,7 @@ const AdminUpdateUser = () => {
 
             {/* Role */}
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">{t("editUser.role")}</label>
+              <label className="w-1/4 font-medium">{t("addUser.role")}</label>
               <select
                 name="roleEnum"
                 value={userData.roleEnum}
@@ -213,7 +212,7 @@ const AdminUpdateUser = () => {
             {/* Status */}
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("editUser.status")}
+                {t("addUser.status")}
               </label>
               <select
                 name="statusUserEnum"
@@ -221,8 +220,8 @@ const AdminUpdateUser = () => {
                 onChange={handleChange}
                 className="flex-1 px-2 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
               >
-                <option value="ACTIVE">{t("editUser.active")}</option>
-                <option value="BLOCKED">{t("editUser.blocked")}</option>
+                <option value="ACTIVE">{t("active")}</option>
+                <option value="BLOCKED">{t("deleted")}</option>
               </select>
             </div>
 
