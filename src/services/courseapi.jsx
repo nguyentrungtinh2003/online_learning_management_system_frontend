@@ -299,3 +299,24 @@ export const isNewCourse = (dateArr) => {
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
   return diffDays <= 7;
 };
+
+export const checkEnrollment = async (userId, courseId) => {
+  try {
+    const response = await axios.get(`${URL}/enroll/${userId}`);
+
+    // Giả sử dữ liệu trả về dạng:
+    // { statusCode: 200, data: [{ courseId: 1 }, { courseId: 2 }] }
+
+    const result = response.data;
+
+    if (!Array.isArray(result?.data)) {
+      console.error("Enrollment data is not an array:", result);
+      return false;
+    }
+
+    return result.data.some((item) => item.courseId === courseId);
+  } catch (error) {
+    console.error("Error checking enrollment", error);
+    return false;
+  }
+};

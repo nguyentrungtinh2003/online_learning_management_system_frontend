@@ -38,6 +38,45 @@ export default function UserViewLesson() {
   const [isCompleted, setIsCompleted] = useState(false);
 
   const userId = parseInt(localStorage.getItem("id"));
+
+  useEffect(() => {
+    const fetchCoursesProgress = async () => {
+      try {
+        const response = await axios.get(
+          `${URL}/user/${parseInt(userId)}/courses-progress`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        const courseList = response.data.data || [];
+
+        const updatedCourses = courseList.map((course) => {
+          const progressPercent =
+            course.totalLessons > 0
+              ? Math.round(
+                  (course.completedLessons / course.totalLessons) * 100
+                )
+              : 0;
+
+          return {
+            ...course,
+            progress: progressPercent,
+          };
+        });
+
+        setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
+        setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoursesProgress();
+  }, [userId]);
+
   const handleWatchProgress = (e) => {
     const video = e.target;
     const current = video.currentTime;
@@ -391,15 +430,53 @@ export default function UserViewLesson() {
                     Thêm ghi chú tại 00:00:00
                   </button>
                 </div>
-                <h2>Cập nhật tháng 11 năm 2024</h2>
+                <h2>
+                  Cập nhật{" "}
+                  {lessons[currentLessonIndex]?.updated
+                    ? new Date(
+                        lessons[currentLessonIndex].updated
+                      ).toLocaleDateString("vi-VN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "Null"}
+                </h2>
                 <p className="text-lg">
                   Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
                   xem Code Arena có gì mới nhé
                 </p>
                 <ul>
-                  <li>Fanpage: http://psdvsnv.com</li>
-                  <li>Group: http://psdvsnv.com</li>
-                  <li>Youtube: http://psdvsnv.com</li>
+                  <li>
+                    Fanpage:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Fanpage
+                    </a>
+                  </li>
+                  <li>
+                    Group:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Group
+                    </a>
+                  </li>
+                  <li>
+                    Youtube:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Youtube Channel
+                    </a>
+                  </li>
                 </ul>
               </div>
             )}

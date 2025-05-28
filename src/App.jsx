@@ -42,7 +42,7 @@ function App() {
             <Route path="/500" element={<ServerError />} />
           </Routes>
         </Router>
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </>
   );
