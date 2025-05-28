@@ -203,7 +203,10 @@ export default function Blog() {
       .get(`${URL}/blogs/all`, { withCredentials: true })
       .then((response) => {
         const posts = response.data.data;
-        setData(posts);
+
+        const allPost = posts.filter((post) => post.deleted === false);
+        setData(allPost);
+
         const initialLikedMap = {};
         posts.forEach((post) => {
           initialLikedMap[post.id] = post.likedUsers.map((user) => user.id); // hoặc post.likedUsers nếu là danh sách id
@@ -553,8 +556,8 @@ export default function Blog() {
       {Array.isArray(data) &&
         data.map((post) => {
           const currentUserId = parseInt(localStorage.getItem("id"));
-          const usersWhoLiked = likedUsersMap[post.id] || post.likedUsers;
-          const isLiked = usersWhoLiked.includes(currentUserId);
+          const usersWhoLiked = likedUsersMap[post?.id] || post?.likedUsers;
+          const isLiked = usersWhoLiked?.includes(currentUserId);
           console.log(isLiked);
 
           return (

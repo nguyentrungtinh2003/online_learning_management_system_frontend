@@ -26,6 +26,7 @@ import ViewLessonDetail from "../pages/Lesson/ViewLessonDetail";
 import OAuthSuccess from "../pages/Auth/OAuthSuccess";
 import CodeEditorPage from "../pages/CodeExecute/CodeEditorPage ";
 import ViewUser from "../pages/User/ViewUser";
+import AdminEditBlog from "../pages/Blog/AdminEditBlog";
 
 const UserRouter = () => {
   return (
@@ -47,7 +48,7 @@ const UserRouter = () => {
           <Route path="blog" element={<UserViewBlog />} />
           <Route path="ranking" element={<UserRanking />} />
           <Route path="view-course/:id" element={<UserViewCourse />} />
-
+          <Route path="blog/edit-blog/:id" element={<AdminEditBlog />} />
           <Route path="/code-editor" element={<CodeEditorPage />} />
 
           {/* Yêu cầu đăng nhập và quyền tương ứng */}

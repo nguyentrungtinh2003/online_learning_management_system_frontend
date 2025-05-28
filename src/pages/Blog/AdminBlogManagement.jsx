@@ -337,8 +337,8 @@ export default function AdminBlogManagement() {
         fetchBlogs();
       }
     } catch (error) {
-      toast.error("Xóa blog thất bại!");
       console.error(error);
+      fetchBlogs();
     }
   };
 
@@ -361,7 +361,7 @@ export default function AdminBlogManagement() {
         fetchBlogs();
       }
     } catch (error) {
-      toast.error("Khôi phục blog thất bại!");
+      fetchBlogs();
       console.error(error);
     }
   };

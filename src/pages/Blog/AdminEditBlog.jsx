@@ -31,6 +31,7 @@ const AdminEditBlog = () => {
   });
 
   const [img, setImg] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [video, setVideo] = useState(null);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const AdminEditBlog = () => {
         views: data.views,
       });
       setImg(data.img);
+      setPreviewImage(data.img);
       setVideo(data.video);
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -66,8 +68,14 @@ const AdminEditBlog = () => {
     setBlogData({ ...blogData, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    setImg(e.target.files[0]);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImg(file); // Lưu file để gửi lên server
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviewImage(e.target.result); // Hiển thị preview
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -90,6 +98,10 @@ const AdminEditBlog = () => {
         withCredentials: true,
       });
       alert("Cập nhật blog thành công!");
+
+      if (localStorage.getItem("role") !== "ADMIN") {
+        navigate(-1);
+      }
       navigate("/admin/blog");
     } catch (error) {
       alert("Lỗi khi cập nhật blog!");
@@ -175,13 +187,12 @@ const AdminEditBlog = () => {
               {t("editBlog.image")} (URL):
             </label>
             <input
-              type="text"
+              type="file"
               name="img"
-              value={img}
               onChange={handleImageChange}
               className="flex-1 px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground"
             />
-            <img src={img} className="w-20 h-20" alt="" />
+            <img src={previewImage} className="w-20 h-20" alt="" />
           </div>
 
           <div className="flex items-center space-x-4">

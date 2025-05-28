@@ -86,17 +86,6 @@ export default function UserCourse() {
     fetchCoursesProgress();
   }, [userId]);
 
-  const claimReward = (point) => {
-    axios
-      .post(`${URL}/claim-reward/${userId}/${parseInt(point)}`)
-      .then((response) => {
-        alert("Reward success");
-      })
-      .catch((error) => {
-        alert("Fail claim reward");
-      });
-  };
-
   const renderCourseCard = (item) => (
     <div
       key={item.courseId}
@@ -166,7 +155,9 @@ export default function UserCourse() {
 
         {item.progressPercent === 100 ? (
           <button
-            onClick={() => claimReward(item.completedLessons * 2)}
+            onClick={() =>
+              navigate(`/user-course/view-lesson/${item.courseId}`)
+            }
             className="mt-auto bg-green-500 text-white text-sm font-semibold py-2 px-4 rounded-lg cursor-not-allowed opacity-80"
           >
             🎉 {t.completedLabel}

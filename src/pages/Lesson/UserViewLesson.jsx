@@ -61,7 +61,7 @@ export default function UserViewLesson() {
   const markLessonAsCompleted = async () => {
     try {
       const lessonId = lessons[currentLessonIndex]?.id;
-      const courseId = 78; // Lấy courseId từ đối tượng course
+      // Lấy courseId từ đối tượng course
       if (!userId || !courseId || !lessonId) {
         console.warn("Thiếu thông tin để cập nhật tiến độ bài học", {
           userId,

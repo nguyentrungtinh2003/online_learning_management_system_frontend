@@ -7,6 +7,7 @@ import URL from "../../config/URLconfig";
 import { useTranslation } from "react-i18next";
 import { PiPaperPlaneRightFill } from "react-icons/pi";
 import unknowAva from "../../assets/unknownAvatar.png";
+import { Spinner } from "react-bootstrap";
 
 const ChatRoom = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +19,7 @@ const ChatRoom = () => {
   const [loadingChatRoom, setLoadingChatRoom] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const { t } = useTranslation("chatroom");
+  const [sendLoading, setSendLoading] = useState(false);
 
   const stompClientRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -111,6 +113,7 @@ const ChatRoom = () => {
   }, [user1Id]);
 
   const addChat = async () => {
+    setSendLoading(true);
     if (!content.trim()) return;
     try {
       const res = await axios.post(
@@ -126,6 +129,7 @@ const ChatRoom = () => {
         });
       }
       setContent("");
+      setSendLoading(false);
     } catch (error) {
       console.log("Error sending message:", error);
     }
@@ -207,7 +211,7 @@ const ChatRoom = () => {
       )
     );
   }, [messages, teachers.length, user1Id]);
-  
+
   if (dataLoading) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
@@ -309,7 +313,7 @@ const ChatRoom = () => {
                         }`}
                       >
                         <p className="break-words">
-                          {msg.isDeleted ? (
+                          {msg.deleted ? (
                             <i className="text-sm text-gray-400">
                               Tin nhắn đã bị xóa
                             </i>
@@ -320,21 +324,13 @@ const ChatRoom = () => {
                       </div>
 
                       {msg.user1Id === user1Id && !msg.isDeleted && (
-                        <div className="absolute top-10 -left-10 -translate-y-full">
-                          <div className="relative">
-                            <button className="text-wcolor text-sm bg-gray-500 rounded-full w-6 h-6 flex items-center justify-center">
-                              ⋯
-                            </button>
-                            <div className="hidden group group-hover:block absolute right-0 mt-1 w-20 bg-wcolor border-2 dark:border-darkBorder rounded shadow-md z-10">
-                              <button
-                                onClick={() => deleteChat(parseInt(msg.id))}
-                                className="block w-full text-left px-3 py-2 dark:bg-darkBackground text-sm text-red-600 hover:bg-gray-100"
-                              >
-                                {t("delete")}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <button
+                          onClick={() => deleteChat(parseInt(msg.id))}
+                          className="absolute top-0 right-0 mt-1 mr-1 hidden group-hover:block px-2 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 shadow"
+                          title="Xoá tin nhắn"
+                        >
+                          🗑
+                        </button>
                       )}
 
                       <div
@@ -390,7 +386,11 @@ const ChatRoom = () => {
                   }}
                 />
                 <button onClick={addChat}>
-                  <PiPaperPlaneRightFill className="" size={25} />
+                  {sendLoading ? (
+                    <Spinner animation="border" variant="white" />
+                  ) : (
+                    <PiPaperPlaneRightFill className="" size={25} />
+                  )}
                 </button>
               </div>
             </>

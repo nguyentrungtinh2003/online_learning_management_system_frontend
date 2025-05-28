@@ -4,10 +4,11 @@ import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import URL from "../../config/URLconfig";
 import axios from "axios";
-import { FaStar } from "react-icons/fa";
+import { FaEdit, FaLock, FaLockOpen, FaStar } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { toast, Slide } from "react-toastify";
 import { Spinner } from "react-bootstrap";
+import { deleteBlog, restoreBlog } from "../../services/blogapi";
 import {
   ResponsiveContainer,
   LineChart,
@@ -17,6 +18,20 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
+
+import {
+  PiDotsThreeBold,
+  PiBackspace,
+  PiHeartFill,
+  PiChatCircle,
+  PiShareFatLight,
+  PiPaperPlaneRightFill,
+  PiEyeClosed,
+  PiArrowsClockwise,
+  PiGlobeThin,
+  PiImageDuotone,
+} from "react-icons/pi";
+import { Link, useSearchParams } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -40,9 +55,96 @@ const Profile = () => {
   const [userHistory, setUserHistory] = useState([]);
   const [weeklyPoints, setWeeklyPoints] = useState([]);
   const [topupHistory, setTopupHistory] = useState([]);
+  const [myBlog, setMyBlog] = useState([]);
+  const [menuOpenPost, setMenuOpenPost] = useState(null);
+  const [hiddenPosts, setHiddenPosts] = useState([]);
+  const postRefs = useRef({});
+  const { i18n } = useTranslation("blog");
+
+  const [searchParams] = useSearchParams();
+  const scrollToId = searchParams.get("scrollTo");
+  function formatPostDate(dateArray) {
+    if (!Array.isArray(dateArray) || dateArray.length < 6) return "N/A";
+
+    const postDate = new Date(
+      dateArray[0],
+      dateArray[1] - 1,
+      dateArray[2],
+      dateArray[3],
+      dateArray[4],
+      dateArray[5]
+    );
+
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - postDate) / 1000);
+    const secondsIn20Days = 20 * 24 * 60 * 60;
+
+    if (diffInSeconds >= secondsIn20Days) {
+      return postDate.toLocaleString(i18n.language, {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    if (diffInSeconds < 60) {
+      return t("justNow");
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return t("minutesAgo", { count: minutes });
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return t("hoursAgo", { count: hours });
+    } else {
+      const days = Math.floor(diffInSeconds / 86400);
+      return t("daysAgo", { count: days });
+    }
+  }
+
+  //scrollToId
+  useEffect(() => {
+    if (scrollToId && postRefs.current[scrollToId]) {
+      postRefs.current[scrollToId].scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [myBlog, scrollToId]);
+
+  const hidePost = (postId) => {
+    setHiddenPosts((prevHiddenPosts) => [...prevHiddenPosts, postId]);
+  };
+
+  const restorePost = (postId) => {
+    setHiddenPosts((prevHiddenPosts) =>
+      prevHiddenPosts.filter((id) => id !== postId)
+    );
+  };
+
+  const reportPost = (postId) => {
+    alert("Bài viết đã được báo cáo.");
+    setMenuOpenPost(null); // Đóng menu sau khi báo cáo
+  };
+  const handleOpenCreatePost = () => {
+    if (!requireLogin()) return;
+    setIsCreatingPost(true);
+  };
 
   const userId = localStorage.getItem("id");
   const { t } = useTranslation("profile");
+
+  const fetchMyBlog = () => {
+    axios
+      .get(`${URL}/blogs/user/${userId}`)
+      .then((response) => {
+        setMyBlog(response.data.data);
+      })
+      .catch((error) => {
+        console.log("Error get my course" + error.message);
+      });
+  };
 
   const fetchUserInfo = () => {
     axios.get(`${URL}/user/${userId}`).then((response) => {
@@ -54,7 +156,7 @@ const Profile = () => {
 
   const fetchUserHistory = () => {
     axios.get(`${URL}/user-point-history/${userId}`).then((response) => {
-      setUserHistory(response.data.data);
+      setUserHistory(response.data.data.reverse());
     });
   };
 
@@ -160,6 +262,7 @@ const Profile = () => {
     fetchUserHistory();
     fetchWeeklyPoints();
     fetchTopupHistory();
+    fetchMyBlog();
   }, [tab]);
 
   const handleImageChange = (event) => {
@@ -169,6 +272,55 @@ const Profile = () => {
       const reader = new FileReader();
       reader.onload = (e) => setPreviewImage(e.target.result); // Hiển thị preview
       reader.readAsDataURL(file);
+    }
+  };
+  //delete/
+  const handleDelete = async (id, title, userId) => {
+    if (!window.confirm(`Bạn có chắc muốn xóa blog "${title}" không?`)) return;
+
+    if (!userId) {
+      toast.error("Thiếu userId! Không thể xóa blog.");
+      return;
+    }
+
+    try {
+      console.log("userId:", userId);
+      const data = await deleteBlog(id, parseInt(userId));
+
+      if (data.status === 200 || data.status === 204) {
+        toast.success("Xóa blog thành công!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        fetchMyBlog();
+      }
+    } catch (error) {
+      console.error(error.message);
+      fetchMyBlog();
+    }
+  };
+
+  const handleRestore = async (id, name, userId) => {
+    if (!window.confirm(`Bạn có chắc muốn khôi phục blog "${name}" không?`))
+      return;
+
+    if (!userId) {
+      toast.error("Thiếu userId! Không thể khôi phục blog.");
+      return;
+    }
+
+    try {
+      const data = await restoreBlog(id, parseInt(userId));
+      if (data.status === 200 || data.status === 204) {
+        toast.success("Khôi phụcblog thành công!", {
+          position: "top-right",
+          autoClose: 1000,
+        });
+        fetchMyBlog();
+      }
+    } catch (error) {
+      console.error(error.message);
+      fetchMyBlog();
     }
   };
 
@@ -219,6 +371,7 @@ const Profile = () => {
           { label: t("introduce"), key: "introduce" },
           { label: t("rank"), key: "rank" },
           { label: t("topupHistory"), key: "topupHistory" },
+          { label: t("myBlog"), key: "myBlog" },
         ].map((item) => (
           <button
             key={item.key}
@@ -511,6 +664,156 @@ const Profile = () => {
                 })}
               </ul>
             </div>
+          </div>
+        )}
+
+        {tab === "myBlog" && (
+          <div className="p-6 bg-wcolor dark:bg-darkBackground dark:text-darkText shadow rounded-lg">
+            {myBlog.map((post) => {
+              return (
+                <div
+                  key={post.id}
+                  ref={(el) => (postRefs.current[post.id] = el)}
+                >
+                  {!hiddenPosts.includes(post.id) ? (
+                    <div className="pt-4 px-4 pb-2 mt-2 border-1 dark:border-darkBorder rounded-2xl">
+                      {/* Header */}
+                      <div className="flex justify-between dark:text-darkText">
+                        <div className="flex items-center mb-2">
+                          <img
+                            src={post.user.img || "/user.png"}
+                            alt="avatar"
+                            className="w-16 h-16 lg:w-10 lg:h-10 rounded-full"
+                          />
+
+                          <div className="ml-2">
+                            <h4 className="font-bold text-2xl lg:text-lg text-gray-600 dark:text-darkText mx-1">
+                              {post.user.username}
+                            </h4>
+                            <p className="text-sm ml-1 text-gray-500">
+                              {formatPostDate(post.date) || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Post Menu */}
+                        <div className="flex text-5xl lg:text-3xl items-center gap-2 relative">
+                          <button
+                            onClick={() =>
+                              setMenuOpenPost(
+                                menuOpenPost === post.id ? null : post.id
+                              )
+                            }
+                          >
+                            <PiDotsThreeBold />
+                          </button>
+                          {menuOpenPost === post.id && (
+                            <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
+                              <button
+                                className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
+                                onClick={() => reportPost(post.id)}
+                              >
+                                {t("report")}
+                              </button>
+                            </div>
+                          )}
+                          <button onClick={() => hidePost(post.id)}>
+                            <PiBackspace />
+                          </button>
+                          <Link to={`/blog/edit-blog/${post.id}`}>
+                            <button className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white">
+                              <FaEdit />
+                            </button>
+                          </Link>
+                          {post.deleted ? (
+                            <button
+                              className="p-2 border-2 dark:border-darkBorder rounded bg-blue-600 hover:bg-blue-500 text-white"
+                              onClick={() =>
+                                handleRestore(post.id, post.blogName, userId)
+                              }
+                              title="Khôi phục bài viết"
+                            >
+                              <FaLockOpen />
+                            </button>
+                          ) : (
+                            <button
+                              className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                              onClick={() =>
+                                handleDelete(post.id, post.blogName, userId)
+                              }
+                              title="Khóa bài viết"
+                            >
+                              <FaLock />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <h2 className="mb-2 text-3xl lg:text-base">
+                        {post.blogName}
+                      </h2>
+                      <p className="mb-2 text-2xl lg:text-base">
+                        {post.description}
+                      </p>
+                      {post.img && (
+                        <img
+                          src={post.img}
+                          alt="Post"
+                          className="w-full lg:h-60 object-cover rounded-lg mb-2"
+                        />
+                      )}
+
+                      {/* Buttons */}
+                      <div className="flex dark:text-darkText justify-between text-gray-600 text-sm border-t dark:border-darkBorder pt-2">
+                        <button className="flex text-5xl lg:text-3xl items-center gap-2">
+                          <PiHeartFill color={"gray"} />
+                          <span className="text-3xl lg:text-lg">
+                            {post.likedUsers.length} {t("like")}
+                          </span>
+                        </button>
+
+                        <button
+                          className="flex text-5xl lg:text-3xl items-center space-x-1"
+                          onClick={() =>
+                            setSelectedPost(
+                              post.id === selectedPost ? null : post.id
+                            )
+                          }
+                        >
+                          <PiChatCircle />
+                          <span className="text-3xl lg:text-lg">
+                            {/* {selectedPost === post.id
+                              ? `${comments.length} Bình luận`
+                              : post.blogComments?.length ?? "Bình luận"} */}
+                            {post.likedUsers.length} {t("comment")}
+                          </span>
+                        </button>
+
+                        <button className="flex text-5xl lg:text-3xl items-center space-x-1">
+                          <PiShareFatLight />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    // Nếu post bị ẩn
+                    <div className="px-4 py-3 border-1 dark:border-darkBorder dark:text-darkText flex justify-between items-center rounded-xl">
+                      <span className="flex items-center gap-2">
+                        <PiEyeClosed size={25} />
+                        {t("hiddenPost")}
+                      </span>
+                      <button
+                        onClick={() => restorePost(post.id)}
+                        className="bg-scolor text-wcolor px-4 py-2 rounded-lg flex gap-2"
+                      >
+                        <PiArrowsClockwise size={25} />
+                        {t("undo")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
