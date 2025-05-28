@@ -26,7 +26,7 @@ const ManagementCourseMaterial = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const size = 10; // số lượng mỗi trang
+  const size = 6; // số lượng mỗi trang
 
   // Hàm gọi API với các tham số filter, search, page
   const fetchCourseMaterials = () => {
@@ -295,7 +295,7 @@ const ManagementCourseMaterial = () => {
                           : material.courseName || "N/A"}
                       </td>
 
-                      <td className="p-2">{material.lecturerName || "N/A"}</td>
+                      <td className="p-2 whitespace-nowrap">{material.lecturerName || "N/A"}</td>
 
                       <td className="flex gap-1 items-center justify-center p-2">
                         {!material.isDeleted ? (

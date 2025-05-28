@@ -16,13 +16,12 @@ const AddLesson = () => {
   const [imgPreview, setImgPreview] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth < 1024);
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { courseId, id } = useParams();
   const [lessonData, setLessonData] = useState({
@@ -58,11 +57,11 @@ const AddLesson = () => {
   };
 
   const [reloadTrigger, setReloadTrigger] = useState(false);
-  
-    // Hàm xử lý khi có sự kiện "triggerCourseReload" từ component khác
-    const handleReload = () => {
-      setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect reload dữ liệu
-    };
+
+  // Hàm xử lý khi có sự kiện "triggerCourseReload" từ component khác
+  const handleReload = () => {
+    setReloadTrigger((prev) => !prev); // Đổi trạng thái để kích hoạt useEffect reload dữ liệu
+  };
 
   const handleVideoChange = (e) => {
     setVideo(e.target.files[0]);
@@ -187,110 +186,117 @@ const AddLesson = () => {
 
   return (
     <div className="w-full">
-          <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
-            <div className="flex gap-2 dark:text-darkText">
-              <FaVideo size={isMobile ? 50 : 30} />
-              <MdNavigateNext size={isMobile ? 60 : 30} />
-              <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.main")}</h2>
-              <MdNavigateNext size={isMobile ? 60 : 30} />
-              <h2 className="text-4xl lg:text-lg font-bold mb-4">{t("addLesson.add")}</h2>
-            </div>
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4 p-2 text-gray-700 dark:text-darkText"
-            >
-              <div className="space-y-4">
-                {/* Các trường nhập bài học */}
-                <div className="flex items-center space-x-4">
-                  <label className="w-1/4 font-medium">
-                    {t("addLesson.lessonTitle")}
-                  </label>
-                  <input
-                    type="text"
-                    name="lessonName"
-                    value={lessonData.lessonName}
-                    onChange={handleChange}
-                    placeholder={t("addLesson.enterLesson")}
-                    className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-                    required
-                  />
-                </div>
-    
-                <div className="flex items-center space-x-4">
-                  <label className="w-1/4 font-medium">{t("image")}</label>
-                  <input
-                    type="file"
-                    onChange={handleImageChange}
-                    className="flex-1 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
-                  />
-                </div>
-    
-                {/* Image Preview */}
-                {imgPreview && (
-                  <div className="mt-4 text-center">
-                    {" "}
-                    {/* Thêm text-center để căn giữa */}
-                    <h3 className="font-medium">{t("addLesson.imagePreview")}</h3>
-                    <img
-                      src={imgPreview}
-                      alt="Preview"
-                      className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
-                    />
-                  </div>
-                )}
-    
-                <div className="flex items-center space-x-4">
-                  <label className="w-1/4 font-medium">{t("video")}</label>
-                  <input
-                    type="file"
-                    onChange={handleVideoChange}
-                    className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
-                  />
-                </div>
-    
-                <div className="flex items-center space-x-4">
-                  <label className="w-1/4 font-medium">{t("description")}</label>
-                  <ReactQuill
-                    theme="snow"
-                    value={lessonData.description}
-                    onChange={handleDescriptionChange}
-                    placeholder={t("Enter Description")}
-                    className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
-                    style={{ minHeight: "300px" }}
-                  />
-                </div>
-              </div>
-    
-              <div className="flex justify-end space-x-2 mt-6">
-                <button
-                  onClick={() => !loading && navigate(-1)}
-                  disabled={loading || isSubmitted}
-                  className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
-                >
-                  {t("cancel")}
-                </button>
-                <button
-                  type="submit"
-                  className={`px-6 py-2 rounded-lg ${
-                    loading
-                      ? "bg-gray-400"
-                      : "bg-scolor text-ficolor hover:bg-opacity-80"
-                  }`}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <p>{t("processing")}</p>
-                  ) : isSubmitted ? (
-                    <p>{t("submitted")}</p>
-                  ) : (
-                    <p>{t("submit")}</p>
-                  )}{" "}
-                </button>
-              </div>
-            </form>
-            <ToastContainer />
-          </div>
+      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+        <div className="flex gap-2 dark:text-darkText">
+          <FaVideo size={isMobile ? 50 : 30} />
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-4xl lg:text-lg font-bold mb-4">
+            {t("addLesson.main")}
+          </h2>
+          <MdNavigateNext size={isMobile ? 60 : 30} />
+          <h2 className="text-4xl lg:text-lg font-bold mb-4">
+            {t("addLesson.add")}
+          </h2>
         </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+        >
+          <div className="space-y-4">
+            {/* Các trường nhập bài học */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("addLesson.lessonTitle")}
+              </label>
+              <input
+                type="text"
+                name="lessonName"
+                value={lessonData.lessonName}
+                onChange={handleChange}
+                placeholder={t("addLesson.enterLesson")}
+                className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                required
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("image")}</label>
+              <input
+                type="file"
+                onChange={handleImageChange}
+                className="flex-1 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+              />
+            </div>
+
+            {/* Image Preview */}
+            {imgPreview && (
+              <div className="mt-4 text-center">
+                {" "}
+                {/* Thêm text-center để căn giữa */}
+                <h3 className="font-medium">{t("addLesson.imagePreview")}</h3>
+                <img
+                  src={imgPreview}
+                  alt="Preview"
+                  className="mt-2 max-w-[400px] h-auto border-2 border-gray-300 rounded-lg mx-auto"
+                />
+              </div>
+            )}
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("video")}</label>
+              <input
+                type="file"
+                onChange={handleVideoChange}
+                className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("description")}</label>
+              <ReactQuill
+                theme="snow"
+                value={lessonData.description}
+                onChange={handleDescriptionChange}
+                placeholder={t("Enter Description")}
+                className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+                style={{ minHeight: "300px" }}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-2 mt-6">
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
+            >
+              {t("cancel")}
+            </button>
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : isSubmitted ? (
+                <p>{t("submitted")}</p>
+              ) : (
+                <p>{t("submit")}</p>
+              )}{" "}
+            </button>
+          </div>
+        </form>
+        <ToastContainer />
+      </div>
+    </div>
   );
 };
 

@@ -287,18 +287,13 @@ export default function TransactionAdmin() {
       <div className="flex-1 w-full flex flex-col h-full">
         {/* Header */}
         <div className="flex mb-2 items-center justify-between">
-          <div className="flex items-center mx-2 gap-2 dark:text-darkText">
+          <div className="flex h-12 items-center mx-2 gap-2 dark:text-darkText">
             <MdPayment size={isMobile ? 50 : 30} />
             <MdNavigateNext size={isMobile ? 60 : 30} />
             <h2 className="text-4xl lg:text-lg font-bold">
               {t("payment.title")}
             </h2>
           </div>
-          <Link className="hover:text-ficolor" to="/admin/transactions/add">
-            <button className="hover:bg-tcolor cursor-pointer text-gray-600 bg-wcolor px-8 border-2 dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText hover:scale-105 hover:text-gray-900 dark:hover:bg-darkHover py-2 rounded-xl">
-              <FaPlus size={isMobile ? 50 : 30} />
-            </button>
-          </Link>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="mb-2 flex gap-2">
@@ -386,7 +381,7 @@ export default function TransactionAdmin() {
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
                           to={`/admin/transactions/view-payment/${t.id}`}
-                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-400 hover:bg-yellow-300 text-white"
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-opacity-80 text-white"
                         >
                           <FaEye />
                         </Link>

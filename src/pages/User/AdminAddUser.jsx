@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import URL from "../../config/URLconfig";
 import { FaUsers } from "react-icons/fa";
@@ -8,6 +8,8 @@ import { ToastContainer, toast, Slide } from "react-toastify";
 import { useTranslation } from "react-i18next";
 
 const AdminAddUser = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation("adminmanagement");
   const [formData, setFormData] = useState({
     username: "",
@@ -41,6 +43,7 @@ const AdminAddUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const data = new FormData();
     data.append(
@@ -162,17 +165,30 @@ const AdminAddUser = () => {
             </div>
           </div>
           <div className="flex justify-end space-x-2 mt-6">
-            <Link
-              to="/admin/users"
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading}
+              className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
-              <p>{t("cancel")}</p>
-            </Link>
+              {t("cancel")}
+            </button>
             <button
               type="submit"
-              className="px-6 py-2 bg-scolor text-wcolor rounded-lg hover:bg-opacity-80"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              }`}
+              disabled={loading}
             >
-              <p>{t("submit")}</p>
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                <p>{t("submit")}</p>
+              )}{" "}
             </button>
           </div>
         </form>

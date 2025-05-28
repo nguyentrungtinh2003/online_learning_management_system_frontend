@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import FormData from "form-data";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
-
-import URL from "../../config/URLconfig";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { addCourse } from "../../services/courseapi";
@@ -324,13 +320,14 @@ const AddCourse = () => {
                   : "bg-scolor text-wcolor hover:bg-opacity-80"
               }`}
             >
-              {loading ? (
-                <p>{t("processing")}</p>
-              ) : isSubmitted ? (
-                <p>{t("submitted")}</p>
-              ) : (
-                <p>{t("submit")}</p>
+              {loading && (
+                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
               )}
+              {loading
+                ? t("processing")
+                : isSubmitted
+                ? t("submitted")
+                : t("submit")}
             </button>
           </div>
         </form>

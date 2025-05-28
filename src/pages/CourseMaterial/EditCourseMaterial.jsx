@@ -70,10 +70,12 @@ const EditCourseMaterial = () => {
           lecturerId: data.lecturerId,
           lecturerName: data.lecturerName,
         });
-
-        console.log("material " + materialData);
+        setLoading(false); // ✅ Thêm dòng này để dừng loading
       })
-      .catch((err) => console.error("Lỗi lấy tài liệu:", err));
+      .catch((err) => {
+        console.error("Lỗi lấy tài liệu:", err);
+        setLoading(false); // ✅ Dù có lỗi cũng phải dừng loading
+      });
   }, [id]);
 
   const handleChange = (e) => {
@@ -92,79 +94,89 @@ const EditCourseMaterial = () => {
     setFile(e.target.files[0]);
   };
   const handleUpdate = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (loading || isSubmitted) return;
+    if (loading || isSubmitted) return;
 
-  const isDataUnchanged =
-    materialData.title === initialMaterial.title &&
-    materialData.description === initialMaterial.description &&
-    !file;
+    const isDataUnchanged =
+      materialData.title === initialMaterial.title &&
+      materialData.description === initialMaterial.description &&
+      !file;
 
-  if (isDataUnchanged) {
-    navigate(-1); // Quay lại nếu không có thay đổi
-    return;
-  }
+    if (isDataUnchanged) {
+      navigate(-1); // Quay lại nếu không có thay đổi
+      return;
+    }
 
-  const missingFields = [];
+    const missingFields = [];
 
-  if (!materialData.title.trim()) missingFields.push(t("title"));
-  if (!materialData.description.trim()) missingFields.push(t("description"));
-  if (!file && !materialData.fileUrl) missingFields.push(t("file"));
+    if (!materialData.title.trim()) missingFields.push(t("title"));
+    if (!materialData.description.trim()) missingFields.push(t("description"));
+    if (!file && !materialData.fileUrl) missingFields.push(t("file"));
 
-  if (missingFields.length > 0) {
-    toast.error(
-      <div>
-        <p>{t("Thiếu thông tin !")}</p>
-        <ul className="list-disc list-inside">
-          {missingFields.map((field, index) => (
-            <li key={index}>{field}</li>
-          ))}
-        </ul>
-      </div>,
-      { autoClose: 1000 }
+    if (missingFields.length > 0) {
+      toast.error(
+        <div>
+          <p>{t("Thiếu thông tin !")}</p>
+          <ul className="list-disc list-inside">
+            {missingFields.map((field, index) => (
+              <li key={index}>{field}</li>
+            ))}
+          </ul>
+        </div>,
+        { autoClose: 1000 }
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    const formData = new FormData();
+    const blob = new Blob([JSON.stringify(materialData)], {
+      type: "application/json",
+    });
+    formData.append("course-material", blob);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      await axios.put(
+        `${URL}/course-materials/update/${parseInt(id)}`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      // ❗Tuỳ chọn: Cập nhật localStorage nếu cần như bên courseCache
+
+      toast.success(t("Cập nhật tài liệu thành công!"), {
+        autoClose: 1000,
+        position: "top-right",
+      });
+
+      setIsSubmitted(true);
+
+      setTimeout(() => {
+        navigate("/admin/course-material", { state: { reload: true } });
+      }, 1000);
+    } catch (error) {
+      console.error("Lỗi cập nhật tài liệu:", error.message);
+      toast.error(t("Cập nhật thất bại!"), {
+        autoClose: 1000,
+        position: "top-right",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (loading)
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
     );
-    return;
-  }
-
-  setLoading(true);
-
-  const formData = new FormData();
-  const blob = new Blob([JSON.stringify(materialData)], {
-    type: "application/json",
-  });
-  formData.append("course-material", blob);
-  if (file) {
-    formData.append("file", file);
-  }
-
-  try {
-    await axios.put(`${URL}/course-materials/update/${parseInt(id)}`, formData, {
-      withCredentials: true,
-    });
-
-    // ❗Tuỳ chọn: Cập nhật localStorage nếu cần như bên courseCache
-
-    toast.success(t("Cập nhật tài liệu thành công!"), {
-      autoClose: 1000,
-      position: "top-right",
-    });
-
-    setIsSubmitted(true);
-
-    setTimeout(() => {
-      navigate("/admin/course-material", { state: { reload: true } });
-    }, 1000);
-  } catch (error) {
-    console.error("Lỗi cập nhật tài liệu:", error.message);
-    toast.error(t("Cập nhật thất bại!"), {
-      autoClose: 1000,
-      position: "top-right",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <div className="w-full">
@@ -173,11 +185,11 @@ const EditCourseMaterial = () => {
           <FaFileAlt size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-4xl lg:text-lg font-bold">
-            {t("materialManagement")}
+            {t("courseMaterialManagement")}
           </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-4xl lg:text-lg font-bold">
-            {t("addMaterial.title")}
+            {t("editMaterial.title")}
           </h2>
         </div>
 
@@ -254,13 +266,20 @@ const EditCourseMaterial = () => {
               {t("addMaterial.selectCourse")}
             </label>
             <div className="flex-1">
-              <Select
-                options={courses}
-                onChange={handleCourseSelect}
-                value={courses.find((c) => c.value === materialData.courseId)}
-                placeholder={t("addMaterial.searchAndSelect")}
-                className="text-black dark:text-darkText"
-              />
+              <select
+                name="courseId"
+                value={materialData.courseId}
+                onChange={handleChange}
+                className="flex-1 w-full px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                required
+              >
+                <option value="">{t("addMaterial.searchAndSelect")}</option>
+                {courses.map((course) => (
+                  <option key={course.value} value={course.value}>
+                    {course.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
@@ -268,26 +287,30 @@ const EditCourseMaterial = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <button
               onClick={() => !loading && navigate(-1)}
-              disabled={loading || isSubmitted}
+              disabled={isSubmitted}
               type="button"
               className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
               {t("cancel")}
             </button>
+
             <button
               type="submit"
-              className={`px-6 py-2 rounded-lg ${
-                loading || isSubmitted
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                isSubmitted
                   ? "bg-gray-400"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80 "
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
-              disabled={loading || isSubmitted}
+              disabled={isSubmitted}
             >
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>

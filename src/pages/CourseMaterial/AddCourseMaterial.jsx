@@ -6,6 +6,7 @@ import Select from "react-select";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 const AddCourseMaterial = () => {
   const { t } = useTranslation("adminmanagement");
@@ -59,6 +60,7 @@ const AddCourseMaterial = () => {
 
   // Xử lý submit form
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const formData = new FormData();
@@ -85,11 +87,17 @@ const AddCourseMaterial = () => {
         },
         withCredentials: true,
       });
-      alert("Thêm tài liệu thành công!");
+      toast.success("🎉 Thêm tài liệu thành công!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       navigate("/admin/course-material");
     } catch (error) {
       console.error("Lỗi khi thêm tài liệu:", error);
-      alert("Đã xảy ra lỗi!");
+      toast.error("❌ Đã xảy ra lỗi khi thêm tài liệu!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -177,20 +185,21 @@ const AddCourseMaterial = () => {
             </button>
             <button
               type="submit"
-              disabled={loading || isSubmitted}
-              className={`px-6 py-2 rounded-lg ${
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
                 loading || isSubmitted
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-scolor text-wcolor hover:bg-opacity-80"
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
+              disabled={loading || isSubmitted}
             >
-              {loading ? (
-                <p>{t("processing")}</p>
-              ) : isSubmitted ? (
-                <p>{t("submitted")}</p>
-              ) : (
-                <p>{t("submit")}</p>
+              {loading && (
+                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
               )}
+              {loading
+                ? t("processing")
+                : isSubmitted
+                ? t("submitted")
+                : t("submit")}
             </button>
           </div>
         </form>

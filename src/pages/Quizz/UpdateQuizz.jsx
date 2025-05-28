@@ -32,6 +32,7 @@ const UpdateQuizz = () => {
 
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -90,6 +91,12 @@ const UpdateQuizz = () => {
       setLoading(false);
     }
   };
+  if (loading)
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -97,9 +104,13 @@ const UpdateQuizz = () => {
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaBuffer size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("updateQuiz.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("updateQuiz.title")}
+          </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("updateQuiz.edit")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("updateQuiz.edit")}
+          </h2>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -107,7 +118,7 @@ const UpdateQuizz = () => {
         >
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 {t("updateQuiz.quizName")}:
               </label>
               <input
@@ -119,7 +130,7 @@ const UpdateQuizz = () => {
               />
             </div>
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 {t("updateQuiz.price")}:
               </label>
               <input
@@ -131,26 +142,26 @@ const UpdateQuizz = () => {
               />
             </div>
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 {t("updateQuiz.image")}:
               </label>
-              <div className="flex-1">
-                {quiz.img && (
-                  <img
-                    src={quiz.img}
-                    alt="Quiz"
-                    className="w-40 h-40 object-cover rounded-md mb-2"
-                  />
-                )}
+              <div className="flex-1 gap-2 flex flex-col">
                 <input
                   type="file"
                   onChange={handleImageChange}
                   className="flex-1 p-2 border-2 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl  border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
                 />
+                {quiz.img && (
+                  <img
+                    src={quiz.img}
+                    alt="Quiz"
+                    className="mt-2 max-w-[200px] h-auto border-2 dark:border-darkBorder border-gray-300 rounded-lg"
+                  />
+                )}
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 {t("updateQuiz.description")}:
               </label>
               <textarea
@@ -158,11 +169,11 @@ const UpdateQuizz = () => {
                 rows={3}
                 value={quiz.description}
                 onChange={handleChange}
-                className="flex-1 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
+                className="flex-1 px-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg"
               ></textarea>
             </div>
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 text-gray-700 font-medium">
+              <label className="w-1/4 font-medium">
                 {t("updateQuiz.type")}:
               </label>
               <select
@@ -178,23 +189,31 @@ const UpdateQuizz = () => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2 mt-6">
+          <div className="flex justify-end space-x-2 pt-4">
             <Link
               onClick={() => navigate(-1)}
+              disabled={isSubmitted}
               className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
-              {t("updateQuiz.cancel")}
+              {t("cancel")}
             </Link>
             <button
               type="submit"
+              disabled={isSubmitted}
               className={`px-6 py-2 rounded-lg ${
-                loading
-                  ? "bg-gray-400"
+                isSubmitted
+                  ? "bg-gray-400 text-white"
                   : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
-              disabled={loading}
             >
-              {loading ? t("updateQuiz.processing") : t("updateQuiz.submit")}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>
