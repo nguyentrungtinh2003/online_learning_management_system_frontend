@@ -247,8 +247,8 @@ const CodeEditorPage = () => {
                     <span className="font-semibold text-cyan-500">
                       {t("code")}:
                     </span>{" "}
-                    {hisco.code.length > 15
-                      ? hisco.code.slice(0, 15) + "..."
+                    {hisco.code.length > 50
+                      ? hisco.code.slice(0, 50) + "..."
                       : hisco.code}
                   </p>
 
