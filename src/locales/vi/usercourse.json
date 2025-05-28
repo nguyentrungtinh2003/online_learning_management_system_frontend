@@ -1,4 +1,9 @@
 {
+  "noCoursesDescription": "Bạn chưa đăng ký khóa học nào. Hãy bắt đầu học điều gì đó mới hôm nay!",
+  "exploreCourses": "Khám phá khóa học",
+  "enrolledCourses": "Khóa học bạn đã tham gia",
+  "showMore": "Hiển thị thêm",
+  "showLess": "Thu gọn",
   "completed": "Khóa học đã hoàn thành",
   "inProgress": "Khóa học đang học",
   "noCourses": "Bạn chưa tham gia khóa học nào.",

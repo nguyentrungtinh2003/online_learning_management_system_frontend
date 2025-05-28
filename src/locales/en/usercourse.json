@@ -1,4 +1,9 @@
 {
+  "noCoursesDescription": "You haven’t enrolled in any courses yet. Start learning something new today!",
+  "exploreCourses": "Explore Courses",
+  "enrolledCourses": "Your Enrolled Courses",
+  "showMore": "Show More",
+  "showLess": "Show Less",
   "completed": "Completed Courses",
   "inProgress": "In Progress Courses",
   "noCourses": "You haven't enrolled in any course yet.",
