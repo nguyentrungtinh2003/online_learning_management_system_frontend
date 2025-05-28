@@ -34,12 +34,81 @@ export default function UserViewLesson() {
   const [mainRect, setMainRect] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
+  const [doneQuizzes, setDoneQuizzes] = useState({});
 
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [lastAllowedTime, setLastAllowedTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const userId = parseInt(localStorage.getItem("id"));
+
+  useEffect(() => {
+    const fetchDoneQuizzes = async () => {
+      const userId = parseInt(localStorage.getItem("id"));
+      const doneStatus = {};
+
+      const quizList = lessons
+        .flatMap((lesson) => lesson.quizzes || [])
+        .filter((quiz) => quiz.questions && quiz.questions.length > 0);
+
+      const requests = quizList.map((quiz) =>
+        axios
+          .get(`${URL}/quizzes/check/${userId}/${quiz.id}`, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            doneStatus[quiz.id] = res.data.data === true;
+          })
+          .catch((err) => {
+            console.error("Lỗi khi kiểm tra quiz:", quiz.id, err);
+          })
+      );
+
+      await Promise.all(requests); // Chờ tất cả yêu cầu hoàn tất
+      setDoneQuizzes(doneStatus);
+    };
+
+    fetchDoneQuizzes();
+  }, [lessons]);
+
+  // useEffect(() => {
+  //   const fetchCoursesProgress = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${URL}/user/${parseInt(userId)}/courses-progress`,
+  //         {
+  //           withCredentials: true,
+  //         }
+  //       );
+
+  //       const courseList = response.data.data || [];
+
+  //       const updatedCourses = courseList.map((course) => {
+  //         const progressPercent =
+  //           course.totalLessons > 0
+  //             ? Math.round(
+  //                 (course.completedLessons / course.totalLessons) * 100
+  //               )
+  //             : 0;
+
+  //         return {
+  //           ...course,
+  //           progress: progressPercent,
+  //         };
+  //       });
+
+  //       setCompletedCourses(updatedCourses.filter((c) => c.progress === 100));
+  //       setInProgressCourses(updatedCourses.filter((c) => c.progress < 100));
+  //     } catch (error) {
+  //       console.error("Lỗi khi tải dữ liệu tiến độ khóa học:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchCoursesProgress();
+  // }, [userId]);
+
   const handleWatchProgress = (e) => {
     const video = e.target;
     const current = video.currentTime;
@@ -61,7 +130,6 @@ export default function UserViewLesson() {
   const markLessonAsCompleted = async () => {
     try {
       const lessonId = lessons[currentLessonIndex]?.id;
-      const courseId = 78; // Lấy courseId từ đối tượng course
       if (!userId || !courseId || !lessonId) {
         console.warn("Thiếu thông tin để cập nhật tiến độ bài học", {
           userId,
@@ -85,21 +153,27 @@ export default function UserViewLesson() {
 
   useEffect(() => {
     const fetchQuizzes = async () => {
-      if (currentLessonIndex !== null) {
+      // Kiểm tra nếu currentLessonIndex hợp lệ và lessons đã có dữ liệu
+      if (
+        currentLessonIndex !== null &&
+        Array.isArray(lessons) &&
+        lessons.length > currentLessonIndex &&
+        lessons[currentLessonIndex]
+      ) {
         const lessonId = lessons[currentLessonIndex].id;
         const result = await getAllQuizzesByLessonId(lessonId);
         if (result?.statusCode === 200) {
           setQuizzes(result.data);
-          setHasQuiz(result.data.length > 0); // Kiểm tra nếu có quiz
+          setHasQuiz(result.data.length > 0);
         } else {
           setQuizzes([]);
-          setHasQuiz(false); // Không có quiz
+          setHasQuiz(false);
         }
       }
     };
 
     fetchQuizzes();
-  }, [currentLessonIndex, lessons]); // Đảm bảo rằng quiz được load lại khi index bài học thay đổi
+  }, [currentLessonIndex, lessons]);
 
   useEffect(() => {
     if (mainLayoutRef.current) {
@@ -113,6 +187,7 @@ export default function UserViewLesson() {
       return () => window.removeEventListener("resize", updateRect);
     }
   }, []);
+
   // Fetching course and lessons data
   useEffect(() => {
     const fetchCourse = async () => {
@@ -422,15 +497,53 @@ export default function UserViewLesson() {
                     Thêm ghi chú tại 00:00:00
                   </button>
                 </div>
-                <h2>Cập nhật tháng 11 năm 2024</h2>
+                <h2>
+                  Cập nhật{" "}
+                  {lessons[currentLessonIndex]?.updated
+                    ? new Date(
+                        lessons[currentLessonIndex].updated
+                      ).toLocaleDateString("vi-VN", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "Null"}
+                </h2>
                 <p className="text-lg">
                   Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
                   xem Code Arena có gì mới nhé
                 </p>
                 <ul>
-                  <li>Fanpage: http://psdvsnv.com</li>
-                  <li>Group: http://psdvsnv.com</li>
-                  <li>Youtube: http://psdvsnv.com</li>
+                  <li>
+                    Fanpage:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Fanpage
+                    </a>
+                  </li>
+                  <li>
+                    Group:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Group
+                    </a>
+                  </li>
+                  <li>
+                    Youtube:{" "}
+                    <a
+                      href="http://psdvsnv.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      PSD Youtube Channel
+                    </a>
+                  </li>
                 </ul>
               </div>
             )}
@@ -464,49 +577,61 @@ export default function UserViewLesson() {
                         onClick={() => setCurrentLessonIndex(index)}
                         className={`cursor-pointer py-2 px-3 rounded-xl ${
                           currentLessonIndex === index
-                            ? "bg-scolor text-white shadow-lg"
+                            ? "bg-blue-700 text-white shadow-lg"
                             : "hover:bg-gray-100 dark:hover:bg-darkBorder"
                         }`}
                       >
                         <span className="flex items-center gap-2">
                           <span>{lesson.lessonName}</span>
 
-                          {/* Kiểm tra nếu bài học này được chọn và đã hoàn thành */}
+                          {/* Đánh dấu đã hoàn thành */}
                           {idLessonsCompleted.some(
                             (lessonComplete) => lessonComplete === lesson.id
                           ) && (
-                            <FaCheckCircle className="text-green-500 ml-2" />
+                            <FaCheckCircle className="text-green-500 ml-2 drop-shadow-sm" />
                           )}
 
-                          {/* Hiển thị chữ "Quiz" bên cạnh tên bài học nếu có quiz */}
-                          {lesson.quizzes && lesson.quizzes.length > 0 && (
-                            <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
-                              Quiz
-                            </span>
-                          )}
+                          {/* Có quiz */}
+                          {lesson.quizzes &&
+                            lesson.quizzes.some(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            ) && (
+                              <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                                Quiz
+                              </span>
+                            )}
                         </span>
                       </div>
 
-                      {/* Hiển thị danh sách quiz nếu đang chọn bài này */}
-                      {currentLessonIndex === index &&
-                        lesson.quizzes &&
-                        lesson.quizzes.length > 0 && (
-                          <ul className="ml-6 mt-2 flex flex-col gap-1">
-                            {lesson.quizzes.map((quiz, qIndex) => (
+                      {/* CHỈ hiện quiz nếu đang chọn bài học này */}
+                      {currentLessonIndex === index && (
+                        <ul className="ml-6 mt-2 flex flex-col gap-1">
+                          {lesson.quizzes
+                            .filter(
+                              (quiz) =>
+                                quiz.questions && quiz.questions.length > 0
+                            )
+                            .map((quiz, qIndex) => (
                               <Link
-                                to={`/user-course/view-lesson/:courseId/view-quiz/${quiz.id}`}
-                                className="hover:text-blue-500"
+                                key={quiz.id || qIndex}
+                                to={`/user-course/view-lesson/${courseId}/view-quiz/${quiz.id}`}
+                                className="hover:no-underline"
                               >
-                                <li
-                                  key={quiz.id || qIndex}
-                                  className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full"
-                                >
-                                  📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                <li className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-100 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-lg transition-all duration-200">
+                                  <span>
+                                    📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
+                                  </span>
+                                  {doneQuizzes[quiz.id] && (
+                                    <span className="text-green-500 text-lg ml-2">
+                                      ✅
+                                    </span>
+                                  )}
                                 </li>
                               </Link>
                             ))}
-                          </ul>
-                        )}
+                        </ul>
+                      )}
                     </li>
                   ))}
               </ul>

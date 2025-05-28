@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  getQuizById,
-  submitQuiz,
-} from "../../services/quizapi";
+import { getQuizById, submitQuiz } from "../../services/quizapi";
 import URL from "../../config/URLconfig";
 
 export default function UserQuizz() {
@@ -116,12 +113,20 @@ export default function UserQuizz() {
         <p className="text-gray-600 dark:text-darkSubtext mt-2">
           Không thể làm lại bài quiz. Hãy kiểm tra kết quả của bạn nhé!
         </p>
-        <button
-          onClick={() => navigate(`/view-result/${quizId}`)}
-          className="mt-4 px-5 py-2 rounded-lg border-2 text-sm hover:bg-fcolor dark:border-darkBorder"
-        >
-          Xem kết quả
-        </button>
+        <div className="mt-4 flex gap-4">
+          <button
+            onClick={() => navigate(`/view-result/${quizId}`)}
+            className="px-5 py-2 rounded-lg border-2 text-sm hover:bg-fcolor dark:border-darkBorder"
+          >
+            Xem kết quả
+          </button>
+          <button
+            onClick={() => navigate(-1)} // Quay về trang trước đó
+            className="px-5 py-2 rounded-lg border-2 text-sm hover:bg-gray-200 dark:hover:bg-darkHover dark:border-darkBorder"
+          >
+            Quay về
+          </button>
+        </div>
       </div>
     );
   }
@@ -237,7 +242,7 @@ export default function UserQuizz() {
       <div className="w-[250px] p-4 space-y-4 border-l dark:border-darkBorder">
         <p className="text-xl font-bold">Danh sách câu hỏi</p>
         <div className="flex gap-2 flex-wrap">
-          {lessons.map((_, index) => (
+          {quiz.questions.map((_, index) => (
             <div
               key={index}
               onClick={() => setCurrentQuestionIndex(index)}

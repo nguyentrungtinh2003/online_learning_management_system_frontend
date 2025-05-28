@@ -186,6 +186,9 @@ const AddCourse = () => {
       // Nếu cần, trigger lại reload để tái tạo lại cache trong CourseManagement
       window.dispatchEvent(new Event("triggerCourseReload"));
 
+      queryClient.invalidateQueries(["freeCourses"]);
+      queryClient.invalidateQueries(["proCourses"]);
+
       toast.success(t("Success!"), { autoClose: 1000 });
       setIsSubmitted(true);
 
