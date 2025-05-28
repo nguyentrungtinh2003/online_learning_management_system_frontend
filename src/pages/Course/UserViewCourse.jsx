@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import URL from "../../config/URLconfig";
 import { getCourseById } from "../../services/courseapi";
 import axios from "axios";
-import Spinner from "react-bootstrap/Spinner";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function UserViewCourse() {
+  const { t } = useTranslation("usercourse");
+  const videoRef = useRef(null);
   const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [lessons, setLessons] = useState([]);
@@ -144,8 +145,8 @@ export default function UserViewCourse() {
 
   if (loading) {
     return (
-      <div className="flex-1 h-full flex items-center justify-center">
-        <Spinner animation="border" variant="primary" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
   }
@@ -175,10 +176,10 @@ export default function UserViewCourse() {
   const lessonsToDisplay = showAllLessons ? lessons : lessons.slice(0, 4);
 
   return (
-    <div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+    <div className="w-full bg-white text-gray-900 dark:bg-gray-900 dark:text-white rounded-lg">
       {/* Hero Section */}
-      <section className="relative h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center px-10">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      <section className="relative rounded-t-lg h-[80vh] bg-gradient-to-br from-indigo-600 to-purple-600 text-white flex items-center px-10">
+        <div className="mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div>
             <h1 className="text-5xl font-bold leading-tight mb-4">
               {course.courseName}
@@ -192,11 +193,16 @@ export default function UserViewCourse() {
                 className="px-6 py-3 bg-yellow-400 text-black font-bold rounded-xl hover:scale-105 transition"
               >
                 {course.price > 0
-                  ? `Tham gia với ${course.price} coin`
-                  : "Tham gia miễn phí"}
+                  ? t('course.buyWithCoin', { price: course.price })
+                  : t('course.joinFree')}
               </button>
-              <button className="text-white underline hover:text-yellow-300">
-                Xem video giới thiệu
+              <button
+                onClick={() =>
+                  videoRef.current?.scrollIntoView({ behavior: "smooth" })
+                }
+                className="text-white underline hover:text-yellow-300"
+              >
+                {t('course.watchPreview')}
               </button>
             </div>
           </div>
@@ -211,48 +217,48 @@ export default function UserViewCourse() {
       </section>
 
       {/* What You’ll Learn */}
-      <section className="py-20 bg-white dark:bg-gray-900">
+      <section className="py-20 bg-wcolor dark:bg-darkSubbackground">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-center mb-10">
-            Bạn sẽ học được gì?
+            {t('course.whatYouWillLearn')}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-            <div className="p-6 bg-gradient-to-r from-pink-500 to-red-500 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                🎯 Kỹ năng thực chiến
-              </h4>
-              <p className="text-sm opacity-90">
-                Làm dự án thật, không chỉ lý thuyết
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-green-500 to-emerald-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                💡 Tư duy giải quyết vấn đề
-              </h4>
-              <p className="text-sm opacity-90">
-                Học cách phân tích, gỡ bug, tối ưu
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-blue-500 to-sky-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">🧠 Logic lập trình</h4>
-              <p className="text-sm opacity-90">
-                Hiểu rõ thuật toán và cấu trúc dữ liệu
-              </p>
-            </div>
-            <div className="p-6 bg-gradient-to-r from-yellow-500 to-orange-400 rounded-xl text-white shadow-lg">
-              <h4 className="text-xl font-semibold mb-2">
-                🚀 Tự tin phỏng vấn
-              </h4>
-              <p className="text-sm opacity-90">
-                Sẵn sàng cho mọi vòng tuyển dụng
-              </p>
-            </div>
+            {[
+              {
+                title: t('course.learn.skill'),
+                desc: t('course.learn.desc1'),
+                colors: "from-pink-500 to-red-500",
+              },
+              {
+                title: t('course.learn.thinking'),
+                desc: t('course.learn.desc2'),
+                colors: "from-green-500 to-emerald-400",
+              },
+              {
+                title: t('course.learn.logic'),
+                desc: t('course.learn.desc3'),
+                colors: "from-blue-500 to-sky-400",
+              },
+              {
+                title: t('course.learn.confidence'),
+                desc: t('course.learn.desc4'),
+                colors: "from-yellow-500 to-orange-400",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className={`p-6 bg-gradient-to-r ${item.colors} rounded-xl text-white shadow-lg`}
+              >
+                <h4 className="text-xl font-semibold mb-2">{item.title}</h4>
+                <p className="text-sm opacity-90">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Video Preview */}
-      <section className="bg-black py-20 relative">
+      <section ref={videoRef} className="bg-black py-10 relative">
         <div className="max-w-4xl mx-auto px-4">
           <video
             className="rounded-xl w-full shadow-lg"
@@ -265,33 +271,81 @@ export default function UserViewCourse() {
               className="bg-yellow-400 text-black font-bold px-8 py-3 rounded-xl shadow-xl hover:scale-105 transition"
             >
               {course.price > 0
-                ? `Đăng ký ngay - ${course.price} coin`
-                : "Học ngay miễn phí"}
+                ? t('course.enrollNow', { price: course.price })
+                : t('course.learnNowFree')}
             </button>
           </div>
         </div>
       </section>
 
+      {/* Course Content */}
+      <section className="py-10 bg-wcolor dark:bg-darkSubbackground">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-10 text-gray-800 dark:text-white">
+            {t('course.content')}
+          </h2>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 md:p-10 space-y-6">
+            {lessonsToDisplay.map((lesson, index) => (
+              <div
+                key={lesson._id || index}
+                className="flex items-start justify-between border-b border-gray-200 dark:border-gray-700 pb-4"
+              >
+                <div className="relative px-4 py-2 w-full rounded-lg hover:bg-tcolor dark:hover:bg-darkHover">
+                  <p className="text-lg font-semibold">
+                    {lesson.lessonName}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    {lesson.videoURL
+                      ? formatDuration(videoDurations[index])
+                      : t('course.noVideo')}
+                  </p>
+                  <div className="flex absolute top-3 right-4 items-center space-x-2">
+                    {lesson.videoURL ? (
+                      <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full dark:bg-green-900 dark:text-green-300">
+                        {t('course.hasVideo')}
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 bg-red-100 text-red-700 text-xs rounded-full dark:bg-red-900 dark:text-red-300">
+                        {t('course.missingVideo')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {lessons.length > 4 && !showAllLessons && (
+              <div className="text-center pt-4">
+                <button
+                  onClick={toggleShowAllLessons}
+                  className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                >
+                  {t('course.seeAllLessons')}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Instructor and Testimonial */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 bg-gray-50 dark:bg-darkSubbackground">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 px-6">
           <div className="text-center">
             <img
               src={course.user.img || "/user.png"}
-              className="rounded-full w-40 h-40 object-cover mx-auto mb-4"
+              className="rounded-full w-40 h-40 object-cover mx-auto mb-4 border-4 border-indigo-300 dark:border-indigo-500 shadow-lg"
               alt="Instructor"
             />
             <h3 className="text-2xl font-bold">{course.user.username}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
-              Fullstack Developer, Mentor @ Code Arena
+            <p className="text-gray-600 dark:text-darkText mt-2">
+              {t('course.instructorTitle')}
             </p>
           </div>
           <div>
-            <h3 className="text-2xl font-bold mb-4">Học viên nói gì?</h3>
-            <blockquote className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow">
+            <h3 className="text-2xl font-bold mb-4">{t('course.testimonialTitle')}</h3>
+            <blockquote className="bg-wcolor dark:bg-darkHover p-6 rounded-xl shadow">
               <p className="text-lg italic">
-                "Khóa học cực kỳ thực tế và dễ hiểu. Mình đã xin được job ngay
-                sau khi học xong!"
+                {t('course.testimonial')}
               </p>
               <footer className="mt-4 text-sm text-gray-500">
                 – Nguyễn Văn A, fresher React
@@ -304,17 +358,17 @@ export default function UserViewCourse() {
       {/* Final CTA */}
       <section className="py-16 bg-gradient-to-r from-indigo-700 to-purple-800 text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-6">Sẵn sàng để bắt đầu?</h2>
+          <h2 className="text-3xl font-bold mb-6">{t('course.readyTitle')}</h2>
           <p className="mb-8">
-            Tham gia ngay và bắt đầu hành trình lập trình chuyên nghiệp của bạn.
+            {t('course.readyDesc')}
           </p>
           <button
             onClick={() => buyCourse(id)}
             className="bg-yellow-400 text-black px-8 py-3 font-bold rounded-xl hover:scale-105 transition"
           >
             {course.price > 0
-              ? `Mua khóa học - ${course.price} coin`
-              : "Bắt đầu miễn phí"}
+              ? t('course.buyCourse', { price: course.price })
+              : t('course.startFree')}
           </button>
         </div>
       </section>

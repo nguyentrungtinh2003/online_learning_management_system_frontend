@@ -1,4 +1,13 @@
 {
+  "courseMaterialManagement": "Quản lý tài liệu khóa học",
+  "title": "Tiêu đề",
+  "file": "Tệp",
+  "uploadDate": "Ngày tải lên",
+  "updateDate": "Ngày cập nhật",
+  "course": "Khóa học",
+  "delete": "Xóa",
+  "restore": "Khôi phục",
+  "noCourseMaterial": "Không tìm thấy tài liệu khóa học nào.",
   "courseManagement": "Quản Lý Khóa Học",
   "searchPlaceholder": "Tìm kiếm...",
   "all": "Tất cả",
@@ -48,6 +57,15 @@
     "toastMissingFields": "❌ Vui lòng điền đầy đủ thông tin trước khi gửi.",
     "toastPriceError": "❌ Vui lòng nhập giá lớn hơn 0 cho khóa học trả phí.",
     "toastError": "❌ Đã xảy ra lỗi khi thêm khóa học."
+  },
+  "addMaterial": {
+    "title": "Thêm tài liệu",
+    "titleLabel": "Tiêu đề",
+    "titlePlaceholder": "Nhập tiêu đề",
+    "descriptionPlaceholder": "Nhập mô tả",
+    "selectFile": "Chọn file",
+    "selectCourse": "Chọn khóa học",
+    "searchAndSelect": "Tìm kiếm và chọn khóa học"
   },
   "lesson": {
     "noLesson": "Không có bài học có sẳn",

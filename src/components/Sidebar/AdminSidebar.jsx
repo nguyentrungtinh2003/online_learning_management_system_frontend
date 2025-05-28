@@ -6,6 +6,9 @@ import {
   MdSettingsSuggest,
   MdMessage,
   MdPayment,
+  MdOutlineKeyboardDoubleArrowLeft,
+  MdMenu,
+  MdDriveFileMoveOutline,
 } from "react-icons/md";
 import {
   FaBuffer,
@@ -18,7 +21,6 @@ import {
   FaClipboardList,
   FaCode,
 } from "react-icons/fa";
-import { MdOutlineKeyboardDoubleArrowLeft, MdMenu } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -66,6 +68,12 @@ export default function Sidebar() {
       label: t("courses"),
       icon: <FaBuffer size={isMobile ? 35 : 25} />,
       path: "/admin/courses",
+    },
+    {
+      id: "Courses-Material",
+      label: t("courses_material"),
+      icon: <MdDriveFileMoveOutline size={isMobile ? 35 : 25} />,
+      path: "/admin/course-material",
     },
     {
       id: "Lessons",

@@ -10,5 +10,35 @@
   "newLabel": "New",
   "almostLabel": "Almost Done",
   "noCompleted": "No completed courses.",
-  "noInProgress": "No courses in progress."
+  "noInProgress": "No courses in progress.",
+  "course": {
+    "buyWithCoin": "Join with {{price}} coins",
+    "joinFree": "Join for free",
+    "watchPreview": "Watch Preview Video",
+    "whatYouWillLearn": "What You’ll Learn",
+    "learn": {
+      "skill": "🎯 Practical Skills",
+      "desc1": "Real-world projects, not just theory",
+      "thinking": "💡 Problem Solving",
+      "desc2": "Learn to debug and optimize",
+      "logic": "🧠 Programming Logic",
+      "desc3": "Understand algorithms and data structures",
+      "confidence": "🚀 Interview Confidence",
+      "desc4": "Ready for any interview round"
+    },
+    "enrollNow": "Enroll Now - {{price}} coins",
+    "learnNowFree": "Learn Now for Free",
+    "content": "Course Content",
+    "noVideo": "No video available",
+    "hasVideo": "Video available",
+    "missingVideo": "Missing video",
+    "seeAllLessons": "See all lessons",
+    "instructorTitle": "Fullstack Developer, Mentor @ Code Arena",
+    "testimonialTitle": "What students say?",
+    "testimonial": "“This course is super practical and easy to understand. I landed a job right after finishing it!”",
+    "readyTitle": "Ready to start?",
+    "readyDesc": "Join now and begin your professional programming journey.",
+    "buyCourse": "Buy Course - {{price}} coins",
+    "startFree": "Start for Free"
+  }
 }
