@@ -13,6 +13,7 @@ export default function UserQuizz() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [hasDoneQuiz, setHasDoneQuiz] = useState(null);
   const userId = parseInt(localStorage.getItem("id"));
+  const [isLoading, setIsLoading] = useState(true);
 
   const lessons = [
     { title: "Khái niệm cần biết", duration: "11:35" },
@@ -43,6 +44,8 @@ export default function UserQuizz() {
         }
       } catch (err) {
         console.error("Lỗi khi kiểm tra trạng thái quiz:", err);
+      } finally {
+        setIsLoading(false); // <-- Đặt đây để tắt loading sau khi fetch xong, dù thành công hay lỗi
       }
     };
 
@@ -127,6 +130,15 @@ export default function UserQuizz() {
             Quay về
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full w-full text-center p-6 text-gray-500 dark:text-darkSubtext">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-xl font-bold">Đang tải quiz...</p>
       </div>
     );
   }
@@ -247,20 +259,29 @@ export default function UserQuizz() {
               key={index}
               onClick={() => setCurrentQuestionIndex(index)}
               className={`w-10 h-10 flex items-center justify-center rounded-full border-2 cursor-pointer
-              ${
-                currentQuestionIndex === index
-                  ? "ring-2 ring-cyan-400"
-                  : "hover:bg-fcolor dark:hover:bg-darkHover"
-              }
-              ${selectedAnswers[index] ? "bg-fcolor" : ""}`}
+                ${
+                  currentQuestionIndex === index
+                    ? "ring-2 ring-cyan-400"
+                    : "hover:bg-fcolor dark:hover:bg-darkHover"
+                }
+                ${
+                  selectedAnswers[index]
+                    ? "bg-green-200 dark:bg-green-700"
+                    : "bg-white dark:bg-darkBackground"
+                }
+              `}
             >
               {index + 1}
             </div>
           ))}
         </div>
+
         <button
           onClick={handleSubmitQuiz}
-          className="w-full mt-4 border-2 py-2 px-6 rounded-lg hover:bg-fcolor dark:border-darkBorder"
+          disabled={
+            Object.keys(selectedAnswers).length !== quiz.questions.length
+          }
+          className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg font-semibold disabled:opacity-50"
         >
           Nộp bài
         </button>

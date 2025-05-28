@@ -1,13 +1,7 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect, useState } from "react";
-import {
-  FaBuffer,
-  FaEdit,
-  FaEye,
-  FaPlus,
-  FaArrowRight,
-} from "react-icons/fa";
+import { FaBuffer, FaEdit, FaEye, FaPlus, FaArrowRight } from "react-icons/fa";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { Link } from "react-router-dom";
 import {
@@ -123,7 +117,7 @@ export default function CourseManagement() {
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
   useEffect(() => {
     fetchCourses();
-  }, [cache, currentPage, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
+  }, [cache, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
 
   const fetchCourses = async () => {
     setLoading(true);
@@ -264,6 +258,8 @@ export default function CourseManagement() {
   useEffect(() => {
     if (location.pathname.includes("course")) {
       setSearch(""); // Reset khi chuyển sang trang lesson
+      setStatusFilter("All");
+      setFilterType("All");
     }
   }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
 

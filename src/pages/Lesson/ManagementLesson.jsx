@@ -136,7 +136,7 @@ export default function ManagementLesson() {
   // **Effect 4: Fetch các khóa học từ API hoặc cache khi cần thiết**
   useEffect(() => {
     fetchLessons();
-  }, [cache, currentPage, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
+  }, [cache, reloadTrigger]); // Khi có thay đổi về các bộ lọc hoặc reloadTrigger
 
   const fetchLessons = async () => {
     setLoading(true);
@@ -265,6 +265,8 @@ export default function ManagementLesson() {
   useEffect(() => {
     if (location.pathname.includes("lesson")) {
       setLessonSearch(""); // Reset khi chuyển sang trang lesson
+      setStatusFilter("All");
+      setCourseIdFilter("All");
     }
   }, [location.pathname]); // Lắng nghe sự thay đổi của location.pathname
 

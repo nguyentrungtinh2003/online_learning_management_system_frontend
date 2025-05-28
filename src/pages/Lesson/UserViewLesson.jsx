@@ -16,11 +16,13 @@ import { Link } from "react-router-dom";
 import { FaCheckCircle } from "react-icons/fa";
 import { updateLessonProcess } from "../../services/lessonapi";
 import { Spinner } from "react-bootstrap";
+import { FiDownload } from "react-icons/fi";
 
 export default function UserViewLesson() {
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
+  const [courses, setCourses] = useState({});
   const [lessons, setLessons] = useState([]);
   const [commentLoading, setCommentLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -36,11 +38,19 @@ export default function UserViewLesson() {
   const [hasQuiz, setHasQuiz] = useState(false); // State kiểm tra có quiz hay không
   const [doneQuizzes, setDoneQuizzes] = useState({});
 
+  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "material"
+
   const [courseProgress, setCourseProgress] = useState(0);
 
   const [watchedPercent, setWatchedPercent] = useState(0);
   const [lastAllowedTime, setLastAllowedTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+
+  const [visibleMaterials, setVisibleMaterials] = useState(4);
+
+  const handleShowMore = () => {
+    setVisibleMaterials((prev) => prev + 4); // mỗi lần nhấn hiển thị thêm 5 tài liệu
+  };
 
   const userId = parseInt(localStorage.getItem("id"));
 
@@ -230,6 +240,8 @@ export default function UserViewLesson() {
         const response = await getCourseById(courseId);
         if (response && response.statusCode === 200) {
           setLessons(response.data.lessons);
+          setCourses(response.data);
+          console.log("Course data:", courses);
         } else {
           console.error("Error loading course data", response);
         }
@@ -523,63 +535,169 @@ export default function UserViewLesson() {
             {/* Thông tin bài học */}
             {!loadingVideo && (
               <div className="space-y-2 mb-40 dark:text-darkSubtext">
-                <div className="flex w-full justify-between my-4">
-                  <h1 className="text-xl font-bold dark:text-darkText">
-                    {lessons[currentLessonIndex]?.lessonName}
-                    {/* Hiển thị icon check nếu bài học hoàn thành */}
-                  </h1>
-                  <button className="hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText border-2 dark:border-darkBorder py-2 px-10 hover:shadow duration-300 rounded-xl">
-                    Thêm ghi chú tại 00:00:00
+                {/* Thanh chọn tab */}
+                <div className="flex space-x-4 mb-4">
+                  <button
+                    className={`py-2 px-4 rounded-t-lg ${
+                      activeTab === "overview"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    Tổng quan
+                  </button>
+                  <button
+                    className={`py-2 px-4 rounded-t-lg ${
+                      activeTab === "material"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300"
+                    }`}
+                    onClick={() => setActiveTab("material")}
+                  >
+                    Tài liệu
                   </button>
                 </div>
-                <h2>
-                  Cập nhật{" "}
-                  {lessons[currentLessonIndex]?.updated
-                    ? new Date(
-                        lessons[currentLessonIndex].updated
-                      ).toLocaleDateString("vi-VN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
-                    : "Null"}
-                </h2>
-                <p className="text-lg">
-                  Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám thính”
-                  xem Code Arena có gì mới nhé
-                </p>
-                <ul>
-                  <li>
-                    Fanpage:{" "}
-                    <a
-                      href="http://psdvsnv.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      PSD Fanpage
-                    </a>
-                  </li>
-                  <li>
-                    Group:{" "}
-                    <a
-                      href="http://psdvsnv.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      PSD Group
-                    </a>
-                  </li>
-                  <li>
-                    Youtube:{" "}
-                    <a
-                      href="http://psdvsnv.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      PSD Youtube Channel
-                    </a>
-                  </li>
-                </ul>
+
+                {/* Nội dung tab */}
+                {activeTab === "overview" && (
+                  <>
+                    <div className="flex w-full justify-between my-4">
+                      <h1 className="text-xl font-bold dark:text-darkText">
+                        {lessons[currentLessonIndex]?.lessonName}
+                      </h1>
+                      <button className="hover:bg-tcolor dark:hover:bg-darkHover dark:text-darkText border-2 dark:border-darkBorder py-2 px-10 hover:shadow duration-300 rounded-xl">
+                        Thêm ghi chú tại 00:00:00
+                      </button>
+                    </div>
+                    <h2>
+                      Cập nhật{" "}
+                      {lessons[currentLessonIndex]?.updated
+                        ? new Date(
+                            lessons[currentLessonIndex].updated
+                          ).toLocaleDateString("vi-VN", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "Null"}
+                    </h2>
+                    <p className="text-lg">
+                      Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám
+                      thính” xem Code Arena có gì mới nhé
+                    </p>
+                    <ul>
+                      <li>
+                        Fanpage:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Fanpage
+                        </a>
+                      </li>
+                      <li>
+                        Group:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Group
+                        </a>
+                      </li>
+                      <li>
+                        Youtube:{" "}
+                        <a
+                          href="http://psdvsnv.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          PSD Youtube Channel
+                        </a>
+                      </li>
+                    </ul>
+                  </>
+                )}
+
+                {activeTab === "material" && (
+                  <>
+                    <h2 className="text-xl font-semibold dark:text-darkText mb-4">
+                      Tài liệu khóa học
+                    </h2>
+                    {courses?.courseMaterials?.length > 0 ? (
+                      <>
+                        <ul className="space-y-3">
+                          {courses.courseMaterials
+                            .slice(0, visibleMaterials) // Chỉ hiển thị tối đa visibleMaterials
+                            .map((material, idx) => (
+                              <li
+                                key={idx}
+                                className="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                              >
+                                <div>
+                                  <h3 className="text-lg font-medium dark:text-darkText">
+                                    {material.title}
+                                  </h3>
+                                  <h3 className="text-sm text-gray-500 dark:text-darkSubtext mt-1">
+                                    {material.uploadDate
+                                      ? new Date(
+                                          material.uploadDate[0],
+                                          material.uploadDate[1] - 1,
+                                          material.uploadDate[2],
+                                          material.uploadDate[3] || 0,
+                                          material.uploadDate[4] || 0,
+                                          material.uploadDate[5] || 0
+                                        ).toLocaleDateString("vi-VN", {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                        })
+                                      : "N/A"}
+                                  </h3>
+
+                                  <p className="text-sm text-gray-600 dark:text-darkSubtext mt-0.5">
+                                    {material.description}
+                                  </p>
+                                </div>
+                                <a
+                                  href={material.file}
+                                  download
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 font-semibold mt-2 sm:mt-0"
+                                >
+                                  <FiDownload className="mr-1" />
+                                  Tải tài liệu
+                                </a>
+                              </li>
+                            ))}
+                        </ul>
+
+                        {/* Nút Xem thêm khi còn tài liệu chưa hiển thị đủ */}
+                        {visibleMaterials < courses.courseMaterials.length && (
+                          <div
+                            className="space-y-2 dark:text-darkSubtext"
+                            style={{ paddingBottom: "150px" }}
+                          >
+                            <button
+                              onClick={handleShowMore}
+                              className="font-semibold text-gray-500 flex flex-col items-center hover:text-blue-600 transition duration-300"
+                            >
+                              {/* Bạn có thể thay icon nếu muốn */}
+                              <FiDownload size={25} />
+                              <p>Xem thêm</p>
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-gray-500 dark:text-darkSubtext">
+                        Chưa có tài liệu nào cho bài học này.
+                      </p>
+                    )}
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -604,7 +722,7 @@ export default function UserViewLesson() {
             </div>
 
             <div>
-              <ul className="flex flex-col gap-2 h-[60vh] overflow-auto">
+              <ul className="pr-2 flex flex-col gap-2 h-[60vh] overflow-auto">
                 {[...lessons]
                   .sort((a, b) => a.id - b.id)
                   .map((lesson, index) => (
@@ -618,13 +736,15 @@ export default function UserViewLesson() {
                         }`}
                       >
                         <span className="flex items-center gap-2">
-                          <span>{lesson.lessonName}</span>
+                          <span className="truncate max-w-[200px] whitespace-nowrap overflow-hidden">
+                            {lesson.lessonName}
+                          </span>
 
                           {/* Đánh dấu đã hoàn thành */}
                           {idLessonsCompleted.some(
                             (lessonComplete) => lessonComplete === lesson.id
                           ) && (
-                            <FaCheckCircle className="text-green-500 ml-2 drop-shadow-sm" />
+                            <FaCheckCircle className="text-green-500 shrink-0 ml-2 drop-shadow-sm" />
                           )}
 
                           {/* Có quiz */}
@@ -633,7 +753,7 @@ export default function UserViewLesson() {
                               (quiz) =>
                                 quiz.questions && quiz.questions.length > 0
                             ) && (
-                              <span className="text-xs text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
+                              <span className="text-xs shrink-0 text-green-600 bg-green-100 dark:bg-green-800 dark:text-green-300 px-2 py-0.5 rounded-full">
                                 Quiz
                               </span>
                             )}
@@ -642,7 +762,7 @@ export default function UserViewLesson() {
 
                       {/* CHỈ hiện quiz nếu đang chọn bài học này */}
                       {currentLessonIndex === index && (
-                        <ul className="ml-6 mt-2 flex flex-col gap-1">
+                        <ul className=" mt-2 flex flex-col gap-1">
                           {lesson.quizzes
                             .filter(
                               (quiz) =>
@@ -659,9 +779,7 @@ export default function UserViewLesson() {
                                     📝 {quiz.quizName || `Quiz ${qIndex + 1}`}
                                   </span>
                                   {doneQuizzes[quiz.id] && (
-                                    <span className="text-green-500 text-lg ml-2">
-                                      ✅
-                                    </span>
+                                    <FaCheckCircle className="text-green-500 shrink-0 ml-2 drop-shadow-sm" />
                                   )}
                                 </li>
                               </Link>
