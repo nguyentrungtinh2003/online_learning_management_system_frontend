@@ -35,9 +35,9 @@ const PaymentSuccessVNPay = () => {
             transition: Slide,
           });
 
-          // setTimeout(() => {
-          //   window.location.replace("/");
-          // }, 3000);
+          setTimeout(() => {
+            window.location.replace("/");
+          }, 3000);
         } else {
           setMessage("Thanh toán thất bại!");
         }
@@ -50,9 +50,9 @@ const PaymentSuccessVNPay = () => {
           transition: Slide,
         });
 
-        // setTimeout(() => {
-        //   window.location.replace("/");
-        // }, 3000);
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 3000);
       } finally {
         setLoading(false);
       }

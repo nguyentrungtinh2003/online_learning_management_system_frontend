@@ -220,10 +220,10 @@ export default function AuthForm() {
     axios
       .post(`${URL}/register`, fromData, { withCredentials: true })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.data);
         console.log("Register success");
         setRegisterLoading(false);
-        toast.success("Đăng nhập thành công!", {
+        toast.success("Đăng ký thành công!", {
           position: "top-right",
           autoClose: 500,
           transition: Slide,
@@ -232,6 +232,9 @@ export default function AuthForm() {
         setTimeout(() => {
           window.location.replace("/login");
         }, 1000);
+      })
+      .catch((error) => {
+        console.log("Error register ", error.message);
       });
   };
   const [isLogin, setIsLogin] = useState(true);
