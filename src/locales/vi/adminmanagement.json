@@ -114,6 +114,26 @@
     "toastError": "Không thể thêm quiz!",
     "toastNoLesson": "Vui lòng chọn bài học!"
   },
+  "updateQuestion": {
+    "edit": "Edit",
+    "title": "Question Management",
+    "addNew": "Add New Question",
+    "course": "Course",
+    "selectCourse": "-- Select Course --",
+    "lesson": "Lesson",
+    "selectLesson": "-- Select Lesson --",
+    "quiz": "Quiz",
+    "selectQuiz": "-- Select Quiz --",
+    "questionText": "Question Text",
+    "image": "Image",
+    "answer": "Answer",
+    "correctAnswer": "Correct Answer",
+    "selectCorrectAnswer": "-- Select Correct Answer --",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "processing": "Processing...",
+    "selectCorrect": "Select Correct"
+  },
   "updateQuiz": {
     "title": "Quản lý Trắc nghiệm",
     "edit": "Chỉnh sửa Trắc nghiệm",

@@ -12,12 +12,14 @@ const UpdateQuestion = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [loading, setLoading] = useState(false);
+  const [img, setImg] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   const [questionData, setQuestionData] = useState({
     questionName: "",
     answerA: "",
@@ -31,7 +33,7 @@ const UpdateQuestion = () => {
 
   useEffect(() => {
     axios
-      .get(`${URL}/api/questions/${questionId}`)
+      .get(`${URL}/questions/${questionId}`)
       .then((response) => {
         setQuestionData(response.data);
       })
@@ -49,7 +51,7 @@ const UpdateQuestion = () => {
     e.preventDefault();
 
     axios
-      .put(`${URL}/api/questions/update/${questionId}`, questionData, {
+      .put(`${URL}/questions/update/${questionId}`, questionData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -69,9 +71,13 @@ const UpdateQuestion = () => {
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaBuffer size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("updateQuestion.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("updateQuestion.title")}
+          </h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("updateQuestion.edit")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("updateQuestion.edit")}
+          </h2>
         </div>
 
         <form
@@ -81,7 +87,7 @@ const UpdateQuestion = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("updateQuestion.questionName")}:
+                {t("updateQuestion.title")}:
               </label>
               <input
                 type="text"
@@ -124,37 +130,6 @@ const UpdateQuestion = () => {
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">
-                {t("updateQuestion.quizId")}:
-              </label>
-              <input
-                type="text"
-                name="quizId"
-                value={questionData.quizId}
-                onChange={handleChange}
-                className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">
-                {t("updateQuestion.isDeleted")}:
-              </label>
-              <input
-                type="checkbox"
-                name="isDeleted"
-                checked={questionData.isDeleted}
-                onChange={(e) =>
-                  setQuestionData({
-                    ...questionData,
-                    isDeleted: e.target.checked,
-                  })
-                }
-                className="w-5 h-5"
-              />
             </div>
           </div>
 

@@ -123,8 +123,8 @@ const AddQuestion = () => {
             </label>
             <input
               type="text"
-              name="questionText"
-              value={questionData.questionText}
+              name="questionName"
+              value={questionData.questionName}
               onChange={handleChange}
               className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
               required
@@ -173,7 +173,7 @@ const AddQuestion = () => {
               {t("addQuestion.correctAnswer")}:
             </label>
             <select
-              name="correctAnswer"
+              name="answerCorrect"
               value={questionData.correctAnswer}
               onChange={handleChange}
               className="flex-1 w-full px-4 py-2 border-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkText focus:outline-none focus:ring-2 focus:ring-scolor"
