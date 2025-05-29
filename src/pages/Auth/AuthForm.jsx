@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaSignInAlt, FaUserPlus, FaSun, FaMoon, FaEye, FaEyeSlash } from "react-icons/fa"; // Import Font Awesome icons
+import {
+  FaSignInAlt,
+  FaUserPlus,
+  FaSun,
+  FaMoon,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa"; // Import Font Awesome icons
 import "./AuthForm.css";
 import axios from "axios";
 import URL from "../../config/URLconfig";
@@ -49,49 +56,49 @@ export default function AuthForm() {
 
   // Load theme & language từ localStorage
   useEffect(() => {
-      let savedTheme = localStorage.getItem("darkMode");
-      const savedLang = localStorage.getItem("language");
-  
-      if (savedTheme === null) {
-        // Mặc định dark mode nếu chưa có key
-        savedTheme = "true";
-        localStorage.setItem("darkMode", "true");
-      }
-  
-      if (savedTheme === "true") {
-        setIsDarkMode(true);
-        document.body.classList.add("dark");
-      } else {
-        setIsDarkMode(false);
-        document.body.classList.remove("dark");
-      }
-  
-      if (savedLang && savedLang !== i18n.language) {
-        i18n.changeLanguage(savedLang);
-        setLanguage(savedLang);
-      }
-    }, [i18n]);
-  
-    useEffect(() => {
-      const handleLangChange = () => {
-        setLanguage(i18n.language);
-      };
-      i18n.on("languageChanged", handleLangChange);
-      return () => {
-        i18n.off("languageChanged", handleLangChange);
-      };
-    }, [i18n]);
-  
-    const toggleDarkMode = () => {
-      setIsDarkMode((prev) => !prev);
-      if (isDarkMode) {
-        document.body.classList.remove("dark");
-        localStorage.setItem("darkMode", "false");
-      } else {
-        document.body.classList.add("dark");
-        localStorage.setItem("darkMode", "true");
-      }
+    let savedTheme = localStorage.getItem("darkMode");
+    const savedLang = localStorage.getItem("language");
+
+    if (savedTheme === null) {
+      // Mặc định dark mode nếu chưa có key
+      savedTheme = "true";
+      localStorage.setItem("darkMode", "true");
+    }
+
+    if (savedTheme === "true") {
+      setIsDarkMode(true);
+      document.body.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.body.classList.remove("dark");
+    }
+
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+      setLanguage(savedLang);
+    }
+  }, [i18n]);
+
+  useEffect(() => {
+    const handleLangChange = () => {
+      setLanguage(i18n.language);
     };
+    i18n.on("languageChanged", handleLangChange);
+    return () => {
+      i18n.off("languageChanged", handleLangChange);
+    };
+  }, [i18n]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prev) => !prev);
+    if (isDarkMode) {
+      document.body.classList.remove("dark");
+      localStorage.setItem("darkMode", "false");
+    } else {
+      document.body.classList.add("dark");
+      localStorage.setItem("darkMode", "true");
+    }
+  };
   const navigate = useNavigate();
   const [fromLogin, setFromLogin] = useState({
     username: "",
@@ -213,8 +220,21 @@ export default function AuthForm() {
     axios
       .post(`${URL}/register`, fromData, { withCredentials: true })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.data);
         console.log("Register success");
+        setRegisterLoading(false);
+        toast.success("Đăng ký thành công!", {
+          position: "top-right",
+          autoClose: 500,
+          transition: Slide,
+        });
+
+        setTimeout(() => {
+          window.location.replace("/login");
+        }, 1000);
+      })
+      .catch((error) => {
+        console.log("Error register ", error.message);
       });
   };
   const [isLogin, setIsLogin] = useState(true);
@@ -297,20 +317,20 @@ export default function AuthForm() {
       <ToastContainer />
       <div className="flex top-2 right-2 absolute p-2 dark:bg-darkSubbackground bg-wcolor rounded-xl shadow-md">
         <Dropdown
-            options={languageOptions}
-            selected={language}
-            onChange={(lang) => {
-              i18n.changeLanguage(lang);
-              localStorage.setItem("language", lang);
-            }}
-            placeholder="Select Language"
-          />
-          <button
-            onClick={toggleDarkMode}
-            className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-          >
-            {isDarkMode ? <FaSun size={25} /> : <FaMoon size={25} />}
-          </button>
+          options={languageOptions}
+          selected={language}
+          onChange={(lang) => {
+            i18n.changeLanguage(lang);
+            localStorage.setItem("language", lang);
+          }}
+          placeholder="Select Language"
+        />
+        <button
+          onClick={toggleDarkMode}
+          className="text-fcolor w-fit dark:text-fcolor p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+        >
+          {isDarkMode ? <FaSun size={25} /> : <FaMoon size={25} />}
+        </button>
       </div>
       <div
         className="h-[40vh] lg:h-auto shadow-lg rounded-lg w-[80vw] lg:w-[40%] p-8 bg-gradient-to-l from-cyan-300 to-transparent dark:border dark:border-darkBorder dark:bg-darkSubbackground"

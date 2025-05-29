@@ -317,20 +317,22 @@ const EditCourseMaterial = () => {
               {t("addMaterial.selectCourse")}
             </label>
             <div className="flex-1">
-              <select
+              <Select
                 name="courseId"
-                value={materialData.courseId}
-                onChange={handleChange}
-                className="flex-1 w-full px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
-                required
-              >
-                <option value="">{t("addMaterial.searchAndSelect")}</option>
-                {courses.map((course) => (
-                  <option key={course.value} value={course.value}>
-                    {course.label}
-                  </option>
-                ))}
-              </select>
+                options={courses}
+                value={materialData.courseName}
+                // onChange={(selectedOption) =>
+                //   handleChange({
+                //     target: {
+                //       name: "courseId",
+                //       value: selectedOption ? selectedOption.value : "",
+                //     },
+                //   })
+                // }
+                placeholder={t("addMaterial.searchAndSelect")}
+                className="react-select-container w-full"
+                classNamePrefix="react-select"
+              />
             </div>
           </div> */}
 
