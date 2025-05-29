@@ -142,9 +142,24 @@ const EditLesson = () => {
     }
 
     const missingFields = [];
-    if (!lessons.lessonName.trim()) missingFields.push(t("lessonName"));
-    if (!lessons.description.trim()) missingFields.push(t("description"));
-    if (!img && !lessons.img) missingFields.push(t("image"));
+
+    if (!lessons.lessonName.trim()) {
+      missingFields.push(t("lessonName"));
+    } else if (lessons.lessonName.length > 255) {
+      toast.error(t("Tên bài học không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
+
+    if (!lessons.description.trim()) {
+      missingFields.push(t("description"));
+    } else if (lessons.description.length > 255) {
+      toast.error(t("Mô tả không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
 
     if (missingFields.length > 0) {
       toast.error(
@@ -295,30 +310,33 @@ const EditLesson = () => {
 
           {/* Nút điều hướng */}
           <div className="flex justify-end space-x-2 pt-4">
-            <Link
-              onClick={() => navigate(-1)}
-              disabled={isSubmitted}
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+            <button
+              onClick={() => !loading && navigate(-1)}
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
               {t("cancel")}
-            </Link>
+            </button>
             <button
               type="submit"
-              disabled={isSubmitted}
-              className={`px-6 py-2 rounded-lg ${
-                isSubmitted
-                  ? "bg-gray-400 text-white"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                loading || isSubmitted
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-scolor text-wcolor hover:bg-opacity-80"
               }`}
+              style={{ minWidth: "120px" }} // bạn có thể tăng hoặc giảm width tùy ý
             >
-              {isSubmitted ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
-                  {t("processing")}
-                </div>
-              ) : (
-                t("submit")
+              {loading && (
+                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
               )}
+              <span>
+                {loading
+                  ? t("processing")
+                  : isSubmitted
+                  ? t("submitted")
+                  : t("submit")}
+              </span>
             </button>
           </div>
         </form>

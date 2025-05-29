@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import URL from "../../config/URLconfig";
@@ -6,7 +8,6 @@ import Select from "react-select";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 
 const AddCourseMaterial = () => {
   const { t } = useTranslation("adminmanagement");
@@ -63,6 +64,8 @@ const AddCourseMaterial = () => {
     setLoading(true);
     e.preventDefault();
 
+    console.log("🔄 Bắt đầu submit form");
+
     const formData = new FormData();
     const courseMaterialDTO = {
       title: materialData.title,
@@ -71,33 +74,50 @@ const AddCourseMaterial = () => {
       lecturerId: materialData.lecturerId,
     };
 
+    console.log("📦 Dữ liệu courseMaterialDTO:", courseMaterialDTO);
+
     const blob = new Blob([JSON.stringify(courseMaterialDTO)], {
       type: "application/json",
     });
 
     formData.append("course-material", blob);
+
     if (file) {
+      console.log("📁 Có file đính kèm:", file.name);
       formData.append("file", file);
+    } else {
+      console.warn("⚠️ Không có file được chọn");
     }
 
     try {
-      await axios.post(`${URL}/course-materials/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${URL}/course-materials/add`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("✅ API trả về:", response.data);
+
       toast.success("🎉 Thêm tài liệu thành công!", {
         position: "top-right",
         autoClose: 3000,
       });
+
       navigate("/admin/course-material");
     } catch (error) {
-      console.error("Lỗi khi thêm tài liệu:", error);
+      console.error("❌ Lỗi khi thêm tài liệu:", error);
+
       toast.error("❌ Đã xảy ra lỗi khi thêm tài liệu!", {
         position: "top-right",
         autoClose: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,6 +224,7 @@ const AddCourseMaterial = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

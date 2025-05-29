@@ -8,6 +8,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { addCourse } from "../../services/courseapi";
 import { useTranslation } from "react-i18next";
+import { QueryClient } from "@tanstack/react-query";
 
 const AddCourse = () => {
   const { t } = useTranslation("adminmanagement");
@@ -19,6 +20,8 @@ const AddCourse = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const queryClient = new QueryClient();
 
   const [courseData, setCourse] = useState({
     courseName: "",
@@ -110,10 +113,27 @@ const AddCourse = () => {
 
     const missingFields = [];
 
-    if (!courseData.courseName.trim()) missingFields.push(t("courseName"));
-    if (!courseData.description.trim()) missingFields.push(t("description"));
+    // Kiểm tra các trường bắt buộc và độ dài
+    if (!courseData.courseName.trim()) {
+      missingFields.push(t("courseName"));
+    } else if (courseData.courseName.length > 255) {
+      toast.error(t("Tên khóa học không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
+
+    if (!courseData.description.trim()) {
+      missingFields.push(t("description"));
+    } else if (courseData.description.length > 255) {
+      toast.error(t("Mô tả không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
+
     if (!courseData.courseEnum.trim()) missingFields.push(t("courseType"));
-    if (!img) missingFields.push(t("image"));
+    if (!img && !courseData.img) missingFields.push(t("image"));
     if (
       courseData.courseEnum === "PAID" &&
       (!courseData.price || parseFloat(courseData.price) <= 0)
@@ -317,20 +337,23 @@ const AddCourse = () => {
             <button
               type="submit"
               disabled={loading || isSubmitted}
-              className={`px-6 py-2 rounded-lg ${
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
                 loading || isSubmitted
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-scolor text-wcolor hover:bg-opacity-80"
               }`}
+              style={{ minWidth: "120px" }} // bạn có thể tăng hoặc giảm width tùy ý
             >
               {loading && (
                 <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
               )}
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}
+              <span>
+                {loading
+                  ? t("processing")
+                  : isSubmitted
+                  ? t("submitted")
+                  : t("submit")}
+              </span>
             </button>
           </div>
         </form>
