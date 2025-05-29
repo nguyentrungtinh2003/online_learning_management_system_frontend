@@ -185,7 +185,7 @@ const QuestionManagement = () => {
                     <th className="p-2">{t("question.answerC")}</th>
                     <th className="p-2">{t("question.answerD")}</th>
                     <th className="p-2">{t("question.correctAnswer")}</th>
-                    <th className="p-2">{t("question.image")}</th>
+                    {/* <th className="p-2">{t("question.image")}</th> */}
                     <th className="p-2">{t("question.action")}</th>
                   </tr>
                 </thead>
@@ -205,7 +205,7 @@ const QuestionManagement = () => {
                         <td className="p-2">{question.answerC}</td>
                         <td className="p-2">{question.answerD}</td>
                         <td className="p-2">{question.answerCorrect}</td>
-                        <td className="p-2">
+                        {/* <td className="p-2">
                           {question.img ? (
                             <img
                               src={question.img}
@@ -215,7 +215,7 @@ const QuestionManagement = () => {
                           ) : (
                             t("question.noImage")
                           )}
-                        </td>
+                        </td> */}
                         <td className="p-2 flex justify-center gap-1">
                           <Link className="p-2 border rounded">
                             <FaEye />

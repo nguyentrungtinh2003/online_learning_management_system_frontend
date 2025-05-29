@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -13,6 +15,7 @@ const UpdateQuestion = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
+  const [initialQuestionData, setInitialQuestionData] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -22,6 +25,7 @@ const UpdateQuestion = () => {
 
   const [questionData, setQuestionData] = useState({
     questionName: "",
+    img: "",
     answerA: "",
     answerB: "",
     answerC: "",
@@ -33,36 +37,98 @@ const UpdateQuestion = () => {
 
   useEffect(() => {
     axios
-      .get(`${URL}/questions/${questionId}`)
+      .get(`${URL}/questions/${questionId}`, { withCredentials: true })
       .then((response) => {
-        setQuestionData(response.data);
+        if (response.data && response.data.data) {
+          setQuestionData((prev) => ({
+            ...prev,
+            ...response.data.data,
+          }));
+          setInitialQuestionData(response.data.data);
+        } else {
+          console.error("Invalid response format:", response.data);
+        }
       })
       .catch((error) => {
         console.error("Error fetching question details:", error);
       });
   }, [questionId]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setQuestionData({ ...questionData, [name]: value });
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImg(e.target.files[0]);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios
-      .put(`${URL}/questions/update/${questionId}`, questionData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then(() => {
-        alert("Question updated successfully!");
-        navigate("/questions");
-      })
-      .catch((error) => {
-        console.error("Error updating question:", error);
+    setLoading(true);
+
+    // Kiểm tra các trường bắt buộc
+    const missingFields = [];
+    if (!questionData.questionName.trim())
+      missingFields.push(t("updateQuestion.title"));
+    if (!questionData.answerA.trim()) missingFields.push("Answer A");
+    if (!questionData.answerB.trim()) missingFields.push("Answer B");
+    if (!questionData.answerC.trim()) missingFields.push("Answer C");
+    if (!questionData.answerD.trim()) missingFields.push("Answer D");
+    if (!questionData.answerCorrect.trim())
+      missingFields.push("Correct Answer");
+
+    if (missingFields.length > 0) {
+      alert("Missing required fields:\n" + missingFields.join("\n"));
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Tạo FormData để gửi multipart/form-data
+      const formData = new FormData();
+      // Đưa questionData dưới dạng JSON string và đóng gói thành Blob mới gửi lên server
+      formData.append(
+        "question",
+        new Blob([JSON.stringify(questionData)], { type: "application/json" })
+      );
+
+      // Nếu có ảnh mới, thêm vào formData
+      if (img) {
+        formData.append("img", img);
+      }
+
+      await axios.put(
+        `${URL}/teacher/questions/update/${questionId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      toast.success("Updated successfully!", {
+        autoClose: 1000,
+        position: "top-right",
       });
+
+      setTimeout(() => {
+        navigate(-1);
+      }, 1000);
+    } catch (error) {
+      console.error("Error updating question:", error);
+      alert("Failed to update question!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setQuestionData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -131,6 +197,32 @@ const UpdateQuestion = () => {
                 ))}
               </select>
             </div>
+
+            {/* Phần hiển thị ảnh hiện tại (nếu có) */}
+            {questionData.img && !img && (
+              <div className="flex items-center space-x-4">
+                <label className="w-1/4 font-medium">
+                  {t("updateQuestion.currentImage")}:
+                </label>
+                <img
+                  src={questionData.img}
+                  alt="Current question"
+                  className="max-w-xs max-h-40 rounded"
+                />
+              </div>
+            )}
+
+            {/* Input để chọn ảnh mới */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("updateQuestion.changeImage")}:
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
           </div>
 
           <div className="flex justify-end space-x-2 mt-6">
@@ -156,6 +248,7 @@ const UpdateQuestion = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
