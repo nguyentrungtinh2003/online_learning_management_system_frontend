@@ -28,13 +28,20 @@ const ViewPayment = () => {
       });
   }, [id]);
 
-  if (loading) {
+  // if (loading) {
+  //   return (
+  //     <div className="text-center mt-5">
+  //       <Spinner animation="border" />
+  //     </div>
+  //   );
+  // }
+
+  if (loading)
     return (
-      <div className="text-center mt-5">
-        <Spinner animation="border" />
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
       </div>
     );
-  }
 
   if (!payment) {
     return <div className="text-center mt-5">Không tìm thấy giao dịch!</div>;
@@ -59,7 +66,24 @@ const ViewPayment = () => {
           <strong>Trạng thái:</strong> {payment.status}
         </p>
         <p>
-          <strong>Thời gian:</strong> {new Date(payment.date).toLocaleString()}
+          <strong>Thời gian:</strong>{" "}
+          {payment.date
+            ? new Date(
+                payment.date[0],
+                payment.date[1] - 1,
+                payment.date[2],
+                payment.date[3],
+                payment.date[4],
+                payment.date[5]
+              ).toLocaleString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })
+            : "N/A"}
         </p>
         <p>
           <strong>Đã xoá:</strong> {payment.deleted ? "Có" : "Không"}

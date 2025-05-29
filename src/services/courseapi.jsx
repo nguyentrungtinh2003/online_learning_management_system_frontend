@@ -167,6 +167,18 @@ export const getCoursesByPage = async (page = 0, size = 6) => {
   return response.data;
 };
 
+// API Lấy danh sách khóa học theo phân trang
+export const getCourseMaterialByPage = async (page = 0, size = 6) => {
+  console.log(document.cookie);
+  const response = await axios.get(
+    `${URL}/course-materials/page?page=${page}&size=${size}`,
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+
 // API Tìm kiếm khóa học có phân trang
 export const searchCourses = async (keyword, page = 0, size = 6) => {
   console.log(document.cookie);

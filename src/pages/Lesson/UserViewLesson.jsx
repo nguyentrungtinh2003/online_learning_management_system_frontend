@@ -185,8 +185,30 @@ export default function UserViewLesson() {
       }
 
       await updateLessonProcess(userId, courseId, lessonId);
-      fetchLessonsCompleted();
-      console.log("✅ Đã cập nhật tiến độ bài học thành công");
+      fetchLessonsCompleted(); // Cập nhật danh sách lesson đã hoàn thành (nếu cần)
+
+      // Giả sử idLessonsCompleted chứa id các lesson đã hoàn thành
+      setIdLessonCompleted((prev) => {
+        if (!prev.includes(lessonId)) {
+          const updated = [...prev, lessonId];
+
+          // Cập nhật phần trăm tiến độ dựa trên updated array
+          const totalLessons = lessons.length;
+          const completedLessons = updated.length;
+          const progressPercent =
+            totalLessons > 0
+              ? Math.round((completedLessons / totalLessons) * 100)
+              : 0;
+          setCourseProgress(progressPercent);
+
+          return updated;
+        }
+        return prev;
+      });
+
+      setIsCompleted(true);
+
+      console.log("✅ Đã cập nhật tiến độ bài học và khóa học thành công");
     } catch (error) {
       console.error("❌ Lỗi khi đánh dấu bài học hoàn thành:", error);
     }
@@ -572,16 +594,17 @@ export default function UserViewLesson() {
                     </div>
                     <h2>
                       Cập nhật{" "}
-                      {lessons[currentLessonIndex]?.updated
+                      {lessons[currentLessonIndex]?.date
                         ? new Date(
-                            lessons[currentLessonIndex].updated
-                          ).toLocaleDateString("vi-VN", {
+                            lessons[currentLessonIndex].updateDate
+                          ).toLocaleString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
                             year: "numeric",
-                            month: "long",
-                            day: "numeric",
                           })
                         : "Null"}
                     </h2>
+
                     <p className="text-lg">
                       Tham gia cộng đồng để cùng học hỏi, chia sẻ và “Thám
                       thính” xem Code Arena có gì mới nhé

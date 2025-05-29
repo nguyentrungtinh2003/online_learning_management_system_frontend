@@ -636,6 +636,7 @@ export default function CourseManagement() {
             </button>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </div>
   );

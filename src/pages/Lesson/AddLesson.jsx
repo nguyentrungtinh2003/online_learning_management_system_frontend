@@ -151,9 +151,23 @@ const AddLesson = () => {
     if (loading || isSubmitted) return;
 
     const missingFields = [];
+    if (!lessonData.lessonName.trim()) {
+      missingFields.push(t("lessonName"));
+    } else if (lessonData.lessonName.length > 255) {
+      toast.error(t("Tên bài học không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
 
-    if (!lessonData.lessonName.trim()) missingFields.push(t("lessonName"));
-    if (!lessonData.description.trim()) missingFields.push(t("description"));
+    if (!lessonData.description.trim()) {
+      missingFields.push(t("description"));
+    } else if (lessonData.description.length > 255) {
+      toast.error(t("Mô tả không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
     if (!video) missingFields.push(t("video"));
     if (!img) missingFields.push(t("image"));
     if (!lessonData.courseId) missingFields.push(t("addLesson.selectCourse"));
@@ -369,23 +383,24 @@ const AddLesson = () => {
             </button>
             <button
               type="submit"
-              className={`px-6 py-2 rounded-lg ${
-                loading
-                  ? "bg-gray-400"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80"
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                loading || isSubmitted
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-scolor text-wcolor hover:bg-opacity-80"
               }`}
-              disabled={loading}
+              style={{ minWidth: "120px" }} // bạn có thể tăng hoặc giảm width tùy ý
             >
-              {loading ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
-                  {t("processing")}
-                </div>
-              ) : isSubmitted ? (
-                <p>{t("submitted")}</p>
-              ) : (
-                <p>{t("submit")}</p>
-              )}{" "}
+              {loading && (
+                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+              )}
+              <span>
+                {loading
+                  ? t("processing")
+                  : isSubmitted
+                  ? t("submitted")
+                  : t("submit")}
+              </span>
             </button>
           </div>
         </form>

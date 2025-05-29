@@ -38,6 +38,7 @@ import ViewPayment from "../pages/Payment/ViewPayment";
 import ManagementCourseMaterial from "../pages/CourseMaterial/ManagementCourseMaterial";
 import AddCourseMaterial from "../pages/CourseMaterial/AddCourseMaterial";
 import EditCourseMaterial from "../pages/CourseMaterial/EditCourseMaterial";
+import UpdateQuestion from "../pages/Question/UpdateQuestion";
 
 const AdminRoutes = () => {
   return (
@@ -121,6 +122,10 @@ const AdminRoutes = () => {
         <Route
           path="quizzes/:quizId/questions"
           element={<QuestionManagementByQuiz />}
+        />
+        <Route
+          path="quizzes/:quizId/questions/:questionId/edit"
+          element={<UpdateQuestion />}
         />
         <Route
           path="quizzes/:quizId/questions/add"
