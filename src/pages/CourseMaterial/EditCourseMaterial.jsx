@@ -179,8 +179,8 @@ const EditCourseMaterial = () => {
     );
 
   return (
-    <div className="w-full">
-      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+    <div className="w-full h-full bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+      <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaFileAlt size={isMobile ? 50 : 30} />
           <MdNavigateNext size={isMobile ? 60 : 30} />
@@ -193,96 +193,97 @@ const EditCourseMaterial = () => {
           </h2>
         </div>
 
-        <form
-          onSubmit={handleUpdate}
-          className="space-y-4 p-2 text-gray-700 dark:text-darkText"
-        >
-          {/* Title */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">
-              {t("addMaterial.titleLabel")}
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={materialData.title}
-              onChange={handleChange}
-              placeholder={t("addMaterial.titlePlaceholder")}
-              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Description */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">{t("description")}</label>
-            <textarea
-              name="description"
-              value={materialData.description}
-              onChange={handleChange}
-              placeholder={t("addMaterial.descriptionPlaceholder")}
-              className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* File Upload */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">
-              {t("addMaterial.selectFile")}
-            </label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
-            />
-          </div>
-
-          {/* Current File Links */}
-          {materialData.file && (
-            <div className="ml-1 text-sm flex gap-3 items-center dark:text-darkText">
-              <a
-                href={materialData.file}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 underline hover:text-blue-800"
-              >
-                {t("View File")}
-              </a>
-              <span>|</span>
-              <a
-                href={materialData.file}
-                download
-                className="text-green-600 underline hover:text-green-800"
-              >
-                {t("Download")}
-              </a>
-            </div>
-          )}
-
-          {/* Course Select */}
-          <div className="flex items-center space-x-4">
-            <label className="w-1/4 font-medium">
-              {t("addMaterial.selectCourse")}
-            </label>
-            <div className="flex-1">
-              <select
-                name="courseId"
-                value={materialData.courseId}
+        <div className="flex flex-col h-full justify-between">
+          <form
+            onSubmit={handleUpdate}
+            className="space-y-4 p-2 text-gray-700 dark:text-darkText"
+          >
+            {/* Title */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("addMaterial.titleLabel")}
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={materialData.title}
                 onChange={handleChange}
-                className="flex-1 w-full px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                placeholder={t("addMaterial.titlePlaceholder")}
+                className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
-              >
-                <option value="">{t("addMaterial.searchAndSelect")}</option>
-                {courses.map((course) => (
-                  <option key={course.value} value={course.value}>
-                    {course.label}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
-          </div>
 
+            {/* Description */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">{t("description")}</label>
+              <textarea
+                name="description"
+                value={materialData.description}
+                onChange={handleChange}
+                placeholder={t("addMaterial.descriptionPlaceholder")}
+                className="flex-1 px-4 py-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* File Upload */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("addMaterial.selectFile")}
+              </label>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="flex-1 dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 dark:file:border-darkBorder file:rounded-xl border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded-lg px-3 py-2"
+              />
+            </div>
+
+            {/* Current File Links */}
+            {materialData.file && (
+              <div className="ml-1 text-sm flex gap-3 items-center dark:text-darkText">
+                <a
+                  href={materialData.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
+                  {t("View File")}
+                </a>
+                <span>|</span>
+                <a
+                  href={materialData.file}
+                  download
+                  className="text-green-600 underline hover:text-green-800"
+                >
+                  {t("Download")}
+                </a>
+              </div>
+            )}
+
+            {/* Course Select */}
+            <div className="flex items-center space-x-4">
+              <label className="w-1/4 font-medium">
+                {t("addMaterial.selectCourse")}
+              </label>
+              <div className="flex-1">
+                <select
+                  name="courseId"
+                  value={materialData.courseId}
+                  onChange={handleChange}
+                  className="flex-1 w-full px-4 border-2 dark:border-darkBorder dark:bg-darkSubbackground py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-scolor"
+                  required
+                >
+                  <option value="">{t("addMaterial.searchAndSelect")}</option>
+                  {courses.map((course) => (
+                    <option key={course.value} value={course.value}>
+                      {course.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </form>
           {/* Submit Button */}
           <div className="flex justify-end space-x-2 mt-6">
             <button
@@ -313,7 +314,7 @@ const EditCourseMaterial = () => {
               )}
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

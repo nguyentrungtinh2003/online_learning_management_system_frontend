@@ -127,10 +127,6 @@ const Profile = () => {
     alert("Bài viết đã được báo cáo.");
     setMenuOpenPost(null); // Đóng menu sau khi báo cáo
   };
-  const handleOpenCreatePost = () => {
-    if (!requireLogin()) return;
-    setIsCreatingPost(true);
-  };
 
   const userId = localStorage.getItem("id");
   const { t } = useTranslation("profile");
@@ -706,17 +702,11 @@ const Profile = () => {
 
                         {/* Post Menu */}
                         <div className="flex text-5xl lg:text-3xl items-center gap-2 relative">
-                          <button
-                            onClick={() =>
-                              setMenuOpenPost(
-                                menuOpenPost === post.id ? null : post.id
-                              )
-                            }
-                          >
-                            <PiDotsThreeBold />
-                          </button>
-                          {menuOpenPost === post.id && (
-                            <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2">
+                          <details className="relative">
+                            <summary className="list-none cursor-pointer">
+                              <PiDotsThreeBold />
+                            </summary>
+                            <div className="absolute right-16 mt-2 bg-wcolor border-1 dark:border-darkBorder dark:bg-darkBackground shadow-md rounded-lg p-2 z-50">
                               <button
                                 className="w-full whitespace-nowrap text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-darkSubbackground rounded-md"
                                 onClick={() => reportPost(post.id)}
@@ -724,7 +714,7 @@ const Profile = () => {
                                 {t("report")}
                               </button>
                             </div>
-                          )}
+                          </details>
                           <button onClick={() => hidePost(post.id)}>
                             <PiBackspace />
                           </button>

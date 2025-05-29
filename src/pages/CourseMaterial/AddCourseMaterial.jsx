@@ -102,8 +102,8 @@ const AddCourseMaterial = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+    <div className="w-full h-full bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+      <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaBuffer size={30} />
           <MdNavigateNext size={30} />
@@ -112,7 +112,8 @@ const AddCourseMaterial = () => {
           <h2 className="text-lg font-bold">{t("addMaterial.title")}</h2>
         </div>
 
-        <form
+        <div className="flex flex-col h-full justify-between">
+          <form
           onSubmit={handleSubmit}
           className="space-y-4 p-2 text-gray-700 dark:text-darkText"
         >
@@ -172,37 +173,37 @@ const AddCourseMaterial = () => {
               />
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="flex justify-end space-x-2 mt-6">
-            <button
-              type="button"
-              onClick={() => !loading && navigate(-1)}
-              disabled={loading || isSubmitted}
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
-            >
-              {t("cancel")}
-            </button>
-            <button
-              type="submit"
-              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
-                loading || isSubmitted
-                  ? "bg-gray-400"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80"
-              }`}
-              disabled={loading || isSubmitted}
-            >
-              {loading && (
-                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
-              )}
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}
-            </button>
-          </div>
         </form>
+        {/* Buttons */}
+        <div className="flex justify-end space-x-2 mt-6">
+          <button
+            type="button"
+            onClick={() => !loading && navigate(-1)}
+            disabled={loading || isSubmitted}
+            className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="submit"
+            className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+              loading || isSubmitted
+                ? "bg-gray-400"
+                : "bg-scolor text-ficolor hover:bg-opacity-80"
+            }`}
+            disabled={loading || isSubmitted}
+          >
+            {loading && (
+              <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+            )}
+            {loading
+              ? t("processing")
+              : isSubmitted
+              ? t("submitted")
+              : t("submit")}
+          </button>
+        </div>
+        </div>
       </div>
     </div>
   );
