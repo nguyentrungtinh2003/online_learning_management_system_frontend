@@ -181,8 +181,8 @@
     "processing": "Processing..."
   },
   "updateQuestion": {
-    "edit": "Edit",
     "title": "Question Management",
+    "edit": "Update Question",
     "addNew": "Add New Question",
     "course": "Course",
     "selectCourse": "-- Select Course --",

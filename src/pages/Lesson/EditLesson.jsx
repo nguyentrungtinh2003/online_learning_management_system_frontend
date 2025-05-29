@@ -281,7 +281,7 @@ const EditLesson = () => {
           {/* Image Preview */}
           {imgPreview && (
             <div className="mt-4 text-center">
-              <h3 className="font-medium">{t("editLesson.imagePreview")}</h3>
+              <h3 className="font-medium">{t("image")}</h3>
               <img
                 src={imgPreview}
                 alt="Preview"

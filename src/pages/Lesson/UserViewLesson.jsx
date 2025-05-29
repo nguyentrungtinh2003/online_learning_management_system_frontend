@@ -2,13 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { PiQuestion } from "react-icons/pi";
 import { getCourseById } from "../../services/courseapi";
-import SkeletonVideo from "../../components/SkeletonLoading/SkeletonVideo";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import SockJS from "sockjs-client";
-import { Client } from "@stomp/stompjs";
-import URLSocket from "../../config/URLsocket";
 import URL from "../../config/URLconfig";
 import axios from "axios";
 import { getAllQuizzesByLessonId } from "../../services/quizapi";
@@ -19,6 +15,7 @@ import { Spinner } from "react-bootstrap";
 import { FiDownload } from "react-icons/fi";
 
 export default function UserViewLesson() {
+  const [loading, setLoading] = useState(true);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [course, setCourse] = useState({});
   const { courseId } = useParams();
@@ -110,6 +107,8 @@ export default function UserViewLesson() {
         }
       } catch (error) {
         console.error("Lỗi khi tải tiến độ khóa học:", error);
+      } finally {
+      setLoading(false)
       }
     };
 
@@ -388,6 +387,7 @@ export default function UserViewLesson() {
         console.log("Error get lesson completed " + error.message);
       });
   };
+  
 
   return (
     <div className="flex flex-1 text-sm font-semibold box-border relative">
@@ -489,7 +489,7 @@ export default function UserViewLesson() {
         className="h-full flex-1 rounded-lg overflow-y-auto bg-wcolor border-2 dark:border-darkBorder dark:bg-darkSubbackground flex-row p-3 z-0"
       >
         <div className="flex w-full gap-4">
-          <div className="flex-1 relative">
+          <div className="flex-1 relative mb-10">
             {/* Navigation buttons */}
             {mainRect && (
               <div

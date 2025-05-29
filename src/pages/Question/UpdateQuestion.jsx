@@ -13,9 +13,10 @@ const UpdateQuestion = () => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [img, setImg] = useState(null);
   const [initialQuestionData, setInitialQuestionData] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -48,6 +49,7 @@ const UpdateQuestion = () => {
         } else {
           console.error("Invalid response format:", response.data);
         }
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching question details:", error);
@@ -63,7 +65,8 @@ const UpdateQuestion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setLoading(true);
+    if (isSubmitted) return;
+    setIsSubmitted(true);
 
     // Kiểm tra các trường bắt buộc
     const missingFields = [];
@@ -78,7 +81,7 @@ const UpdateQuestion = () => {
 
     if (missingFields.length > 0) {
       alert("Missing required fields:\n" + missingFields.join("\n"));
-      setLoading(false);
+      setIsSubmitted(false);
       return;
     }
 
@@ -119,7 +122,7 @@ const UpdateQuestion = () => {
       console.error("Error updating question:", error);
       alert("Failed to update question!");
     } finally {
-      setLoading(false);
+      setIsSubmitted(false);
     }
   };
 
@@ -130,6 +133,12 @@ const UpdateQuestion = () => {
       [name]: value,
     }));
   };
+  if (loading)
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -202,7 +211,7 @@ const UpdateQuestion = () => {
             {questionData.img && !img && (
               <div className="flex items-center space-x-4">
                 <label className="w-1/4 font-medium">
-                  {t("updateQuestion.currentImage")}:
+                  {t("currentImage")}:
                 </label>
                 <img
                   src={questionData.img}
@@ -215,12 +224,13 @@ const UpdateQuestion = () => {
             {/* Input để chọn ảnh mới */}
             <div className="flex items-center space-x-4">
               <label className="w-1/4 font-medium">
-                {t("updateQuestion.changeImage")}:
+                {t("image")}:
               </label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
+                className="flex-1 border-2 px-3 py-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 file:rounded-xl"
               />
             </div>
           </div>
@@ -230,25 +240,29 @@ const UpdateQuestion = () => {
               onClick={() => navigate(-1)}
               className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
             >
-              {t("updateQuestion.cancel")}
+              {t("cancel")}
             </Link>
             <button
               type="submit"
               className={`px-6 py-2 rounded-lg ${
-                loading
+                isSubmitted
                   ? "bg-gray-400"
                   : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
-              disabled={loading}
+              disabled={isSubmitted}
             >
-              {loading
-                ? t("updateQuestion.processing")
-                : t("updateQuestion.submit")}
+              {isSubmitted ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

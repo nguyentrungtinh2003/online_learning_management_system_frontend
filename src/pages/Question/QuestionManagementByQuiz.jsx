@@ -1,7 +1,8 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaBuffer, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import { FaLock, FaEdit, FaEye, FaPlus } from "react-icons/fa";
+import DataTableSkeleton from "../../components/SkeletonLoading/DataTableSkeleton";
 import {
   MdNavigateNext,
   MdDeleteForever,
@@ -9,8 +10,6 @@ import {
 } from "react-icons/md";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Table, Form, Button } from "react-bootstrap";
-import URL from "../../config/URLconfig";
 import {
   getQuestionByPage,
   searchQuestion,
@@ -124,21 +123,23 @@ const QuestionManagement = () => {
     }
   };
 
-  const handledNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
   };
 
-  const handlePrePage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+  const handlePrevPage = () => {
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
+  };
+
+  const stripHtml = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
   };
 
   return (
-    <div className="h-full flex-1 bg-wcolor dark:border-darkBorder dark:border drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
-      <div className="flex-1 w-full flex flex-col h-full">
+    <div className="h-full dark:border-darkBorder dark:border bg-wcolor drop-shadow-xl py-2 px-2 dark:bg-darkBackground rounded-xl pl-2 w-full dark:text-darkText">
+      <div className="w-full flex flex-col h-full">
         <div className="flex mb-2 items-center justify-between">
           <Link
             className="flex items-center mx-2 gap-2 dark:text-darkText"
@@ -160,7 +161,7 @@ const QuestionManagement = () => {
         </div>
 
         {/* Ô tìm kiếm */}
-        <div className="relative h-24 lg:h-12 w-full">
+        <div className="relative mb-2 h-24 lg:h-12 w-full">
           <input
             type="text"
             placeholder={t("question.searchPlaceholder")}
@@ -172,40 +173,45 @@ const QuestionManagement = () => {
 
         <div className="flex-1 w-full overflow-auto overflow-x">
           <div className="bg-wcolor px-2 overflow-auto justify-between flex flex-col lg:h-fit h-full dark:border dark:border-darkBorder dark:bg-darkSubbackground dark:text-darkSubtext rounded-2xl">
-            {loading ? (
-              <p className="text-center">{t("question.loading")}</p>
-            ) : (
-              <table className="lg:w-full w-[200%] h-fit">
-                <thead className="sticky top-0 z-10 dark:text-darkText">
-                  <tr className="text-center lg:h-[5vh] h-[8vh] dark:text-darkText whitespace-nowrap font-bold">
-                    <th className="p-2">ID</th>
-                    <th className="p-2">{t("question.title")}</th>
-                    <th className="p-2">{t("question.answerA")}</th>
-                    <th className="p-2">{t("question.answerB")}</th>
-                    <th className="p-2">{t("question.answerC")}</th>
-                    <th className="p-2">{t("question.answerD")}</th>
-                    <th className="p-2">{t("question.correctAnswer")}</th>
-                    {/* <th className="p-2">{t("question.image")}</th> */}
-                    <th className="p-2">{t("question.action")}</th>
+            <table className="lg:w-full w-[200%] h-fit">
+              <thead className="sticky top-0 z-10 dark:text-darkText">
+                <tr className="border-y lg:h-[5vh] h-[8vh] dark:border-darkBorder text-center lg:text-base text-4xl dark:text-darkText whitespace-nowrap font-bold">
+                  <th className="p-2">ID</th>
+                  <th className="p-2">{t("question.title")}</th>
+                  <th className="p-2">{t("question.answerA")}</th>
+                  <th className="p-2">{t("question.answerB")}</th>
+                  <th className="p-2">{t("question.answerC")}</th>
+                  <th className="p-2">{t("question.answerD")}</th>
+                  <th className="p-2">{t("question.correctAnswer")}</th>
+                  {/* <th className="p-2">{t("question.image")}</th> */}
+                  <th className="p-2">{t("question.action")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <DataTableSkeleton rows={6} cols={8} />
+                ) : questions.length === 0 ? (
+                  <tr>
+                    <td colSpan="8" className="text-center py-4">
+                      {t("question.noLesson")}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {questions.length > 0 ? (
-                    questions.map((question, index) => (
-                      <tr
-                        key={question.id}
-                        className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
-                      >
-                        <td className="p-2">
-                          {index + 1 + currentPage * questionPerPage}
-                        </td>
-                        <td className="p-2">{question.questionName}</td>
-                        <td className="p-2">{question.answerA}</td>
-                        <td className="p-2">{question.answerB}</td>
-                        <td className="p-2">{question.answerC}</td>
-                        <td className="p-2">{question.answerD}</td>
-                        <td className="p-2">{question.answerCorrect}</td>
-                        {/* <td className="p-2">
+                ) : (
+                  questions.map((question, index) => (
+                    <tr
+                      key={question.id}
+                      className="text-center dark:border-darkBorder text-4xl lg:text-base border-b hover:bg-tcolor dark:hover:bg-darkHover"
+                    >
+                      <td className="p-2">
+                        {index + 1 + currentPage * questionPerPage}
+                      </td>
+                      <td className="p-2">{question.questionName}</td>
+                      <td className="p-2">{question.answerA}</td>
+                      <td className="p-2">{question.answerB}</td>
+                      <td className="p-2">{question.answerC}</td>
+                      <td className="p-2">{question.answerD}</td>
+                      <td className="p-2">{question.answerCorrect}</td>
+                      {/* <td className="p-2">
                           {question.img ? (
                             <img
                               src={question.img}
@@ -216,56 +222,50 @@ const QuestionManagement = () => {
                             t("question.noImage")
                           )}
                         </td> */}
-                        <td className="p-2 flex justify-center gap-1">
-                          <Link className="p-2 border rounded">
-                            <FaEye />
-                          </Link>
-                          <Link
-                            to={`${question.id}/edit`}
-                            className="p-2 border rounded"
-                          >
-                            <FaEdit />
-                          </Link>
-                          <button
-                            className="p-2 border rounded"
-                            onClick={() =>
-                              handleDelete(question.id, question.questionName)
-                            }
-                          >
-                            <MdDeleteForever />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="10" className="text-center p-4">
-                        {t("question.notFound")}
+                      <td className="p-2 flex justify-center gap-1">
+                        <Link className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white">
+                          <FaEye />
+                        </Link>
+                        <Link
+                          to={`${question.id}/edit`}
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
+                        >
+                          <FaEdit />
+                        </Link>
+                        <button
+                          className="p-2 border-2 dark:border-darkBorder rounded bg-red-600 hover:bg-red-500 text-white"
+                          onClick={() =>
+                            handleDelete(question.id, question.questionName)
+                          }
+                        >
+                          <FaLock />
+                        </button>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            )}
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        <div className="flex justify-between mt-4">
-          <p>
+        {/* Pagination gắn liền bên dưới */}
+        <div className="flex dark:text-darkText lg:text-base text-3xl pt-2 items-center justify-between">
+          <p className="mx-2">
             {t("page")} {currentPage + 1} {t("of")} {totalPages}
           </p>
           <div className="space-x-2">
             <button
-              className="bg-scolor p-1 hover:scale-105 duration-500"
-              onClick={handlePrePage}
+              onClick={handlePrevPage}
               disabled={currentPage === 0}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateBefore size={isMobile ? 55 : 30} />
             </button>
             <button
-              className="bg-scolor p-1 hover:scale-105 duration-500"
-              onClick={handledNextPage}
-              disabled={currentPage === totalPages - 1}
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages - 1}
+              className="bg-wcolor dark:border-darkBorder dark:bg-darkSubbackground border-2 hover:bg-tcolor p-1 rounded disabled:opacity-50"
             >
               <MdNavigateNext size={isMobile ? 55 : 30} />
             </button>

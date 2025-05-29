@@ -266,9 +266,11 @@ const ChatRoom = () => {
                     {teacher.username}
                   </div>
                   <div className="text-sm truncate">
-                    {teacher.lastMessage?.sender === "teacher"
-                      ? teacher.lastMessage?.content
-                      : `${t("you")}: ${teacher.lastMessage?.content}`}
+                    {teacher.lastMessage?.content?.trim()
+                      ? teacher.lastMessage.sender === "teacher"
+                        ? teacher.lastMessage.content
+                        : `${t("you")}: ${teacher.lastMessage.content}`
+                      : ""}
                   </div>
                 </div>
               </div>

@@ -131,7 +131,7 @@ const AddQuestion = () => {
             />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center">
             <label className="w-1/4 font-medium">
               {t("addQuestion.image")}:
             </label>
@@ -139,7 +139,7 @@ const AddQuestion = () => {
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="flex-1 p-2 border-2 dark:border-darkBorder dark:bg-darkSubbackground rounded"
+              className="flex-1 border-2 px-3 py-2 rounded-lg dark:border-darkBorder dark:bg-darkSubbackground dark:file:bg-darkBackground dark:file:text-darkText file:px-4 file:py-1 file:rounded-xl"
             />
             {imgPreview && (
               <img
@@ -150,7 +150,7 @@ const AddQuestion = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {["A", "B", "C", "D"].map((letter) => (
               <div key={letter} className="flex items-center">
                 <label className="w-1/4 font-medium">{`${t(
@@ -197,12 +197,21 @@ const AddQuestion = () => {
             </Link>
             <button
               type="submit"
-              disabled={loading}
-              className={`px-6 py-2 rounded text-white ${
-                loading ? "bg-gray-400" : "bg-scolor hover:bg-opacity-80"
+              className={`px-6 py-2 rounded-lg ${
+                loading
+                  ? "bg-gray-400"
+                  : "bg-scolor text-ficolor hover:bg-opacity-80"
               }`}
+              disabled={loading}
             >
-              {loading ? t("addQuestion.processing") : t("addQuestion.submit")}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+                  {t("processing")}
+                </div>
+              ) : (
+                t("submit")
+              )}
             </button>
           </div>
         </form>
