@@ -12,22 +12,22 @@ const AddQuizz = () => {
   const { t } = useTranslation("adminmanagement");
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-    
-      useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 1024);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-      }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { lessonId } = useParams();
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",
-    price: "",
+    price: "0.0",
     img: "",
     date: "",
     quizEnum: "FREE",
-    isDeleted: false,
+
     lessonId: lessonId,
   });
 
@@ -90,7 +90,9 @@ const AddQuizz = () => {
           <MdNavigateNext size={isMobile ? 60 : 30} />
           <h2 className="text-4xl lg:text-lg font-bold">{t("quizz.title")}</h2>
           <MdNavigateNext size={isMobile ? 60 : 30} />
-          <h2 className="text-4xl lg:text-lg font-bold">{t("addQuiz.title")}</h2>
+          <h2 className="text-4xl lg:text-lg font-bold">
+            {t("addQuiz.title")}
+          </h2>
         </div>
 
         <form
@@ -124,9 +126,7 @@ const AddQuizz = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <label className="w-1/4 font-medium">
-                {t("description")}
-              </label>
+              <label className="w-1/4 font-medium">{t("description")}</label>
               <textarea
                 name="description"
                 rows={3}

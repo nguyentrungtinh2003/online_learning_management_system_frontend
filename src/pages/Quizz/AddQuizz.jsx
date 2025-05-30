@@ -24,11 +24,10 @@ const AddQuizz = () => {
   const [quizData, setQuizData] = useState({
     quizName: "",
     description: "",
-    price: "0",
+    price: "0.0",
     img: "",
     date: "",
     quizEnum: "FREE",
-    isDeleted: false,
     lessonId: "",
   });
 
@@ -141,7 +140,7 @@ const AddQuizz = () => {
 
     if (name === "courseId") {
       setSelectedCourseId(value);
-      setQuizData((prev) => ({ ...prev, lessonId: "", courseId: value }));
+      setQuizData((prev) => ({ ...prev, lessonId: value }));
     } else if (name === "quizEnum") {
       setQuizData((prev) => ({
         ...prev,
@@ -195,7 +194,7 @@ const AddQuizz = () => {
     if (!quizData.quizName.trim()) missingFields.push(t("quizName"));
     if (!quizData.description.trim()) missingFields.push(t("description"));
     if (!quizData.courseId) missingFields.push(t("addQuiz.selectCourse"));
-    if (!quizData.courseId) missingFields.push(t("addQuiz.selectLesson"));
+    if (!quizData.lessonId) missingFields.push(t("addQuiz.selectLesson"));
 
     if (missingFields.length > 0) {
       toast.error(
@@ -215,6 +214,7 @@ const AddQuizz = () => {
     setLoading(true);
 
     const updatedQuizData = { ...quizData };
+    delete updatedQuizData.courseId;
 
     const formData = new FormData();
     formData.append(
@@ -222,6 +222,8 @@ const AddQuizz = () => {
       new Blob([JSON.stringify(updatedQuizData)], { type: "application/json" })
     );
     if (img) formData.append("img", img);
+
+    console.log(JSON.stringify(updatedQuizData));
 
     try {
       const response = await axios.post(
@@ -273,11 +275,11 @@ const AddQuizz = () => {
         position: "top-right",
         autoClose: 1000,
       });
-      handleReload();
+      // handleReload();
 
-      setTimeout(() => {
-        navigate("/admin/quizzes", { state: { reload: true } });
-      }, 1000);
+      // setTimeout(() => {
+      //   navigate("/admin/quizzes", { state: { reload: true } });
+      // }, 1000);
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       toast.error(<p>{t("addQuiz.toastError")}</p>, {

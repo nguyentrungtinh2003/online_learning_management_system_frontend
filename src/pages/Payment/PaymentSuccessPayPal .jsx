@@ -39,7 +39,7 @@ const PaymentSuccess = () => {
 
       setLoading(true);
       try {
-        const res = await axios.get(`${URL}/payments/execute`, {
+        const res = await axios.get(`${URL}/payments/execute/paypal`, {
           params: { paymentId, payerId, userId: userIdLong },
         });
         if (res.data.statusCode === 200) {

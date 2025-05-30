@@ -19,6 +19,8 @@ const ChatRoom = () => {
   const [loadingChatRoom, setLoadingChatRoom] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
   const { t } = useTranslation("chatroom");
+  const [sendLoading, setSendLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const stompClientRef = useRef(null);
   const messagesEndRef = useRef(null);
