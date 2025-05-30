@@ -536,7 +536,6 @@ export default function ManagementLesson() {
                         </Link>
 
                         <Link
-                          to={`/admin/lessons/edit/${lesson.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-yellow-400 hover:bg-yellow-300 text-white"
                           title="Chỉnh sửa"
                         >

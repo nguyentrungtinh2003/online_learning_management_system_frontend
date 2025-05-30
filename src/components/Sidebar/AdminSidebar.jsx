@@ -233,12 +233,12 @@ export default function Sidebar() {
   return (
     <div
       className={`h-full relative bg-wcolor dark:bg-darkBackground border-box rounded-2xl border-1 dark:border-darkBorder light:bg-white drop-shadow-lg p-4 ${
-        isCollapsed ? "w-[90px]" : "w-56"
+        isCollapsed ? "w-[90px]" : "w-[260px]"
       }`}
     >
       <div className="flex justify-between items-center mb-4">
         {!isCollapsed && !isAnimating && (
-          <h2 className="flex-1 text-center text-xl font-bold text-fcolor">
+          <h2 className="flex-1 whitespace-nowrap text-center text-xl font-bold text-fcolor">
             {localStorage.getItem("systemName")}
           </h2>
         )}

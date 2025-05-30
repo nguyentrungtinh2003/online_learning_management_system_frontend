@@ -313,7 +313,6 @@ const QuizzManagement = () => {
                         </Link>
 
                         <Link
-                          to={`/view-quiz-detail/${quiz.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
                           title="Xem chi tiết"
                         >

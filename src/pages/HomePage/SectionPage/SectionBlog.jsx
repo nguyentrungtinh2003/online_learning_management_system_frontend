@@ -39,7 +39,7 @@ const BlogCard = ({ blog }) => {
 
         <div className="flex items-center mt-2">
           <p className="text-xl lg:text-sm mt-1 flex w-full gap-2 items-center">
-            <img className="h-6 w-6" alt={blog.user?.username} src={blog.user?.img} />
+            <img className="h-6 w-6 rounded-xl" alt={blog.user?.username} src={blog.user?.img} />
             <span>{blog.user?.username}</span>
           </p>
         </div>

@@ -8,10 +8,13 @@ import { getCourseById, updateCourse } from "../../services/courseapi";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useTranslation } from "react-i18next";
+import { QueryClient } from "@tanstack/react-query";
 
 const EditCourse = () => {
   const { t } = useTranslation("adminmanagement");
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -166,9 +169,25 @@ const EditCourse = () => {
 
     const missingFields = [];
 
-    // Kiểm tra các trường bắt buộc
-    if (!courseData.courseName.trim()) missingFields.push(t("courseName"));
-    if (!courseData.description.trim()) missingFields.push(t("description"));
+    // Kiểm tra các trường bắt buộc và độ dài
+    if (!courseData.courseName.trim()) {
+      missingFields.push(t("courseName"));
+    } else if (courseData.courseName.length > 255) {
+      toast.error(t("Tên khóa học không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
+
+    if (!courseData.description.trim()) {
+      missingFields.push(t("description"));
+    } else if (courseData.description.length > 255) {
+      toast.error(t("Mô tả không được vượt quá 255 ký tự"), {
+        autoClose: 2000,
+      });
+      return;
+    }
+
     if (!courseData.courseEnum.trim()) missingFields.push(t("courseType"));
     if (!img && !courseData.img) missingFields.push(t("image"));
     if (
@@ -239,6 +258,9 @@ const EditCourse = () => {
       // localStorage.removeItem("courseCache");
       window.dispatchEvent(new Event("triggerCourseReload"));
 
+      queryClient.invalidateQueries(["freeCourses"]);
+      queryClient.invalidateQueries(["proCourses"]);
+
       toast.success("Course updated successfully!", {
         autoClose: 1000,
         position: "top-right",
@@ -251,7 +273,7 @@ const EditCourse = () => {
       }, 1000);
     } catch (err) {
       console.error("Error updating course:", err);
-      toast.error("Failed to delete course!", {
+      toast.error("Failed to updating course!", {
         autoClose: 1000,
         position: "top-right",
       });
@@ -259,12 +281,13 @@ const EditCourse = () => {
       setLoading(false);
     }
   };
-  if (loading)
-    return (
-      <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-      </div>
-    );
+
+  // if (loading)
+  //   return (
+  //     <div className="w-full h-full flex items-center justify-center bg-wcolor dark:bg-darkBackground">
+  //       <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+  //     </div>
+  //   );
 
   return (
     <div className="w-full">
@@ -328,7 +351,9 @@ const EditCourse = () => {
           {/* Current Image */}
           {courseData.img && !imgPreview && (
             <div className="mt-4 items-center flex space-x-4">
-              <h3 className="font-medium w-1/4">{t("editCourse.currentImage")}</h3>
+              <h3 className="font-medium w-1/4">
+                {t("editCourse.currentImage")}
+              </h3>
               <img
                 src={courseData.img}
                 alt="Current Image"
@@ -379,32 +404,36 @@ const EditCourse = () => {
           <div className="flex justify-end space-x-2 mt-6">
             <button
               onClick={() => !loading && navigate(-1)}
-              disabled={isSubmitted}
+              disabled={loading || isSubmitted}
               className={`px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer`}
             >
               {t("cancel")}
             </button>
             <button
               type="submit"
-              className={`px-6 py-2 rounded-lg ${
-                isSubmitted
-                  ? "bg-gray-400"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80 "
+              disabled={loading || isSubmitted}
+              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+                loading || isSubmitted
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-scolor text-wcolor hover:bg-opacity-80"
               }`}
-              disabled={isSubmitted}
+              style={{ minWidth: "120px" }} // bạn có thể tăng hoặc giảm width tùy ý
             >
-              {isSubmitted ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
-                  {t("processing")}
-                </div>
-              ) : (
-                t("submit")
+              {loading && (
+                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
               )}
+              <span>
+                {loading
+                  ? t("processing")
+                  : isSubmitted
+                  ? t("submitted")
+                  : t("submit")}
+              </span>
             </button>
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

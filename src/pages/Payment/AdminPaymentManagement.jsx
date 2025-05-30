@@ -380,7 +380,6 @@ export default function TransactionAdmin() {
 
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
-                          to={`/admin/transactions/view-payment/${t.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-opacity-80 text-white"
                         >
                           <FaEye />

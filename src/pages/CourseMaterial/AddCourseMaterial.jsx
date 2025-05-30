@@ -1,3 +1,5 @@
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import URL from "../../config/URLconfig";
@@ -6,7 +8,6 @@ import Select from "react-select";
 import { FaBuffer } from "react-icons/fa";
 import { MdNavigateNext } from "react-icons/md";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 
 const AddCourseMaterial = () => {
   const { t } = useTranslation("adminmanagement");
@@ -63,6 +64,8 @@ const AddCourseMaterial = () => {
     setLoading(true);
     e.preventDefault();
 
+    console.log("🔄 Bắt đầu submit form");
+
     const formData = new FormData();
     const courseMaterialDTO = {
       title: materialData.title,
@@ -71,39 +74,56 @@ const AddCourseMaterial = () => {
       lecturerId: materialData.lecturerId,
     };
 
+    console.log("📦 Dữ liệu courseMaterialDTO:", courseMaterialDTO);
+
     const blob = new Blob([JSON.stringify(courseMaterialDTO)], {
       type: "application/json",
     });
 
     formData.append("course-material", blob);
+
     if (file) {
+      console.log("📁 Có file đính kèm:", file.name);
       formData.append("file", file);
+    } else {
+      console.warn("⚠️ Không có file được chọn");
     }
 
     try {
-      await axios.post(`${URL}/course-materials/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${URL}/course-materials/add`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log("✅ API trả về:", response.data);
+
       toast.success("🎉 Thêm tài liệu thành công!", {
         position: "top-right",
         autoClose: 3000,
       });
+
       navigate("/admin/course-material");
     } catch (error) {
-      console.error("Lỗi khi thêm tài liệu:", error);
+      console.error("❌ Lỗi khi thêm tài liệu:", error);
+
       toast.error("❌ Đã xảy ra lỗi khi thêm tài liệu!", {
         position: "top-right",
         autoClose: 3000,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full">
-      <div className="flex-1 bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+    <div className="w-full h-full bg-wcolor dark:border dark:border-darkBorder dark:bg-darkBackground drop-shadow-xl py-4 px-6 rounded-xl">
+      <div className="flex-1 flex flex-col h-full">
         <div className="flex items-center mx-2 gap-2 dark:text-darkText">
           <FaBuffer size={30} />
           <MdNavigateNext size={30} />
@@ -112,7 +132,8 @@ const AddCourseMaterial = () => {
           <h2 className="text-lg font-bold">{t("addMaterial.title")}</h2>
         </div>
 
-        <form
+        <div className="flex flex-col h-full justify-between">
+          <form
           onSubmit={handleSubmit}
           className="space-y-4 p-2 text-gray-700 dark:text-darkText"
         >
@@ -172,38 +193,39 @@ const AddCourseMaterial = () => {
               />
             </div>
           </div>
-
-          {/* Buttons */}
-          <div className="flex justify-end space-x-2 mt-6">
-            <button
-              type="button"
-              onClick={() => !loading && navigate(-1)}
-              disabled={loading || isSubmitted}
-              className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
-            >
-              {t("cancel")}
-            </button>
-            <button
-              type="submit"
-              className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
-                loading || isSubmitted
-                  ? "bg-gray-400"
-                  : "bg-scolor text-ficolor hover:bg-opacity-80"
-              }`}
-              disabled={loading || isSubmitted}
-            >
-              {loading && (
-                <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
-              )}
-              {loading
-                ? t("processing")
-                : isSubmitted
-                ? t("submitted")
-                : t("submit")}
-            </button>
-          </div>
         </form>
+        {/* Buttons */}
+        <div className="flex justify-end space-x-2 mt-6">
+          <button
+            type="button"
+            onClick={() => !loading && navigate(-1)}
+            disabled={loading || isSubmitted}
+            className="px-6 py-2 border-2 dark:border-darkBorder hover:bg-tcolor dark:hover:bg-darkHover text-ficolor dark:text-darkText rounded-lg cursor-pointer"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="submit"
+            className={`px-6 py-2 rounded-lg flex items-center justify-center gap-2 ${
+              loading || isSubmitted
+                ? "bg-gray-400"
+                : "bg-scolor text-ficolor hover:bg-opacity-80"
+            }`}
+            disabled={loading || isSubmitted}
+          >
+            {loading && (
+              <div className="w-4 h-4 border-2 border-cyan-300 border-t-transparent rounded-full animate-spin" />
+            )}
+            {loading
+              ? t("processing")
+              : isSubmitted
+              ? t("submitted")
+              : t("submit")}
+          </button>
+        </div>
+        </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

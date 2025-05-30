@@ -21,7 +21,6 @@ import EditLesson from "../pages/Lesson/EditLesson";
 import QuizzManagementByLesson from "../pages/Quizz/QuizzManagementByLesson";
 import UpdateQuizz from "../pages/Quizz/UpdateQuizz";
 import QuestionManagementByQuiz from "../pages/Question/QuestionManagementByQuiz";
-import AddQuestion from "../pages/Question/AddQuestion";
 import UserQuizz from "../pages/Quizz/UserQuizz";
 import AdminLayout from "../components/Layout/AdminLayout";
 import ManagementLesson from "../pages/Lesson/ManagementLesson";
@@ -29,7 +28,6 @@ import AddLessonByCourse from "../pages/Lesson/AddLessonByCourse";
 import QuizzManagement from "../pages/Quizz/QuizzManagement";
 import ManagementlessonByCourse from "../pages/Lesson/ManagementLessonByCourse";
 import AddQuizz from "../pages/Quizz/AddQuizz";
-import QuestionManagement from "../pages/Question/QuestionManagement";
 import AddQuestionByQuiz from "../pages/Question/AddQuestionByQuiz";
 import AddQuizzByLesson from "../pages/Quizz/AddQuizzByLesson";
 import UserViewCourse from "../pages/Course/UserViewCourse";
@@ -38,6 +36,7 @@ import ViewPayment from "../pages/Payment/ViewPayment";
 import ManagementCourseMaterial from "../pages/CourseMaterial/ManagementCourseMaterial";
 import AddCourseMaterial from "../pages/CourseMaterial/AddCourseMaterial";
 import EditCourseMaterial from "../pages/CourseMaterial/EditCourseMaterial";
+import UpdateQuestion from "../pages/Question/UpdateQuestion";
 
 const AdminRoutes = () => {
   return (
@@ -65,10 +64,8 @@ const AdminRoutes = () => {
         <Route path="admin-view-course/:id" element={<UserViewCourse />} />
         <Route path="lessons" element={<ManagementLesson />} />
         <Route path="quizzes" element={<QuizzManagement />} />
-        <Route path="questions" element={<QuestionManagement />} />
         <Route path="lessons/add" element={<AddLesson />} />
         <Route path="quizzes/add" element={<AddQuizz />} />
-        <Route path="questions/add" element={<AddQuestion />} />
         <Route path="courses/add-course" element={<AddCourse />} />
         <Route path="courses/edit-course/:id" element={<UpdateCourse />} />
         <Route path="course-material" element={<ManagementCourseMaterial />} />
@@ -121,6 +118,10 @@ const AdminRoutes = () => {
         <Route
           path="quizzes/:quizId/questions"
           element={<QuestionManagementByQuiz />}
+        />
+        <Route
+          path="quizzes/:quizId/questions/:questionId/edit"
+          element={<UpdateQuestion />}
         />
         <Route
           path="quizzes/:quizId/questions/add"

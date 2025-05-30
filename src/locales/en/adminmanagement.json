@@ -60,7 +60,7 @@
     "toastPriceError": "❌ Please enter a price greater than 0 for paid courses.",
     "toastError": "❌ An error occurred while adding the course."
   },
-   "addMaterial": {
+  "addMaterial": {
     "title": "Add Material",
     "titleLabel": "Title",
     "titlePlaceholder": "Enter title",
@@ -179,6 +179,26 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "processing": "Processing..."
+  },
+  "updateQuestion": {
+    "title": "Question Management",
+    "edit": "Update Question",
+    "addNew": "Add New Question",
+    "course": "Course",
+    "selectCourse": "-- Select Course --",
+    "lesson": "Lesson",
+    "selectLesson": "-- Select Lesson --",
+    "quiz": "Quiz",
+    "selectQuiz": "-- Select Quiz --",
+    "questionText": "Question Text",
+    "image": "Image",
+    "answer": "Answer",
+    "correctAnswer": "Correct Answer",
+    "selectCorrectAnswer": "-- Select Correct Answer --",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "processing": "Processing...",
+    "selectCorrect": "Select Correct"
   },
   "user": {
     "title": "User Management",

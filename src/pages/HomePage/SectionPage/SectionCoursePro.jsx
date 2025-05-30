@@ -121,7 +121,7 @@ export default function SectionCoursePro() {
         <div className="flex items-center w-full justify-between">
           <p className="text-xl lg:text-sm mt-1 flex w-full gap-2 items-center">
             <img
-              className="h-6 w-6"
+              className="h-6 w-6 rounded-xl"
               alt={course.user?.username}
               src={course.user?.img}
             />
