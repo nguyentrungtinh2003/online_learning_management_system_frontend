@@ -571,7 +571,6 @@ export default function ManagementLesson() {
                         </Link>
 
                         <Link
-                          to={`/view-lesson-detail/${lesson.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-500 hover:bg-green-400 text-white"
                         >
                           <FaEye />

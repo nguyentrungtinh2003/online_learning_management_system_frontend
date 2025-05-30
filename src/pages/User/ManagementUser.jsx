@@ -568,7 +568,6 @@ export default function UserManagement() {
                       </td>
                       <td className="px-2 h-full items-center flex flex-1 justify-center">
                         <Link
-                          to={`/admin/users/view-user/${user.id}`}
                           className="p-2 border-2 dark:border-darkBorder rounded bg-green-600 hover:bg-opacity-80 text-white"
                           title="Chỉnh sửa người dùng"
                         >
