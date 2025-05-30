@@ -681,7 +681,7 @@ export default function Blog() {
                           >
                             {/* Avatar hoặc icon mặc định */}
                             <img
-                              src={comment.img || localStorage.getItem("img")}
+                              src={comment.img || "/user.png"}
                               alt="avatar"
                               className="w-10 h-10 rounded-full object-cover border"
                             />
